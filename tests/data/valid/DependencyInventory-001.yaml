@@ -1,0 +1,20 @@
+# DependencyInventory: Full transitive dependency list for a Python package (Level 1)
+artifact:
+  uri: "https://pypi.org/project/myapp/1.0.0"
+  digest:
+    sha256: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  name: "myapp"
+dependencies:
+  - uri: "https://pypi.org/project/requests/2.31.0"
+    digest:
+      sha256: "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+    name: "requests"
+  - uri: "https://pypi.org/project/urllib3/2.1.0"
+    digest:
+      sha256: "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+    name: "urllib3"
+  - uri: "https://pypi.org/project/certifi/2024.2.2"
+    digest:
+      sha256: "9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba"
+    name: "certifi"
+dependencyLevel: "SLSA_DEPENDENCY_LEVEL_1"

@@ -1,0 +1,29 @@
+# BuildProvenance: SLSA Build L3 provenance for a GitHub Actions build
+type: "https://in-toto.io/Statement/v1"
+subject:
+  - uri: "https://github.com/example/myapp/releases/download/v1.0.0/myapp-linux-amd64"
+    digest:
+      sha256: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+predicateType: "https://slsa.dev/provenance/v1"
+attestationStorageUri: "https://rekor.sigstore.dev/api/v1/log/entries/24296fb24b8ad77a1a2bef2dce16e25dfe895acc76f5a48b17e3be1699a2b7c8"
+buildDefinition:
+  buildType: "https://actions.github.io/buildtypes/workflow/v1"
+  externalParameters:
+    workflow: ".github/workflows/build.yml"
+    ref: "refs/tags/v1.0.0"
+    repository: "https://github.com/example/myapp"
+  resolvedDependencies:
+    - uri: "git+https://github.com/example/myapp@refs/tags/v1.0.0"
+      digest:
+        gitCommit: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+      name: "myapp source at v1.0.0"
+  hermeticBuild: false
+  provenanceGenerationTool: "https://github.com/slsa-framework/slsa-github-generator"
+runDetails:
+  builder:
+    id: "https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0"
+    versionTag: "v1.9.0"
+  buildMetadata:
+    invocationId: "https://github.com/example/myapp/actions/runs/1234567890/attempts/1"
+    startedOn: "2024-01-15T10:00:00Z"
+    finishedOn: "2024-01-15T10:05:30Z"

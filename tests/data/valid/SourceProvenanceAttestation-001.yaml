@@ -1,0 +1,22 @@
+# SourceProvenanceAttestation: Source provenance for a git commit with enforced controls
+type: "https://in-toto.io/Statement/v1"
+subject:
+  - uri: "git+https://github.com/example/myapp@refs/heads/main"
+    digest:
+      gitCommit: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+predicateType: "https://slsa.dev/source_provenance/v1"
+revision:
+  revisionId: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  repository:
+    id: "https://github.com/example/myapp"
+    sourceLevel: "SLSA_SOURCE_LEVEL_3"
+  author: "developer@example.com"
+  timestamp: "2024-01-15T09:00:00Z"
+  parentRevisions:
+    - "abc123def456abc123def456abc123def456abc123"
+  reviewType: "TWO_PARTY"
+sourceLevel: "SLSA_SOURCE_LEVEL_3"
+controlsEnforced:
+  - "two-party review"
+  - "branch protection"
+  - "status checks"

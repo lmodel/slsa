@@ -1,0 +1,13 @@
+# BuildDefinition: All inputs to a GitHub Actions build
+buildType: "https://actions.github.io/buildtypes/workflow/v1"
+externalParameters:
+  workflow: ".github/workflows/build.yml"
+  ref: "refs/heads/main"
+  repository: "https://github.com/example/myapp"
+resolvedDependencies:
+  - uri: "git+https://github.com/example/myapp@refs/heads/main"
+    digest:
+      gitCommit: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    name: "myapp source"
+hermeticBuild: false
+provenanceGenerationTool: "https://github.com/slsa-framework/slsa-github-generator"

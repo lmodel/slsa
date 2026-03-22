@@ -1,0 +1,7 @@
+# ResourceDescriptor: A reference to a software artifact
+uri: "https://github.com/example/myapp"
+digest:
+  sha256: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  gitCommit: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+name: "myapp source repository"
+mediaType: "application/vnd.oci.image.manifest.v1+json"

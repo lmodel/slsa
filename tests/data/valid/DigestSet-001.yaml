@@ -1,0 +1,3 @@
+# DigestSet: Cryptographic digests for an artifact
+sha256: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+gitCommit: "da39a3ee5e6b4b0d3255bfef95601890afd80709"

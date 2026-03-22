@@ -1,0 +1,9 @@
+# INVALID BuildProvenance: missing required fields type, subject, and predicateType
+# (all three are required on the parent Statement class)
+buildDefinition:
+  buildType: "https://actions.github.io/buildtypes/workflow/v1"
+  externalParameters:
+    workflow: ".github/workflows/build.yml"
+runDetails:
+  builder:
+    id: "https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0"

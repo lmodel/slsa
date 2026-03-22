@@ -1,0 +1,7 @@
+# AdoptionMetadata: Records SLSA adoption challenges and mitigation strategies
+challenges:
+  - "COMPLEX_IMPLEMENTATION"
+  - "UNCLEAR_COMMUNICATION"
+strategies:
+  - "STREAMLINE_PROVENANCE_GENERATION"
+  - "PROVIDE_DETAILED_DOCUMENTATION"

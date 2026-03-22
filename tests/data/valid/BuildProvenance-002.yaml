@@ -1,0 +1,31 @@
+# BuildProvenance: SLSA Build L2 provenance for a Tekton-based SSF pipeline
+type: "https://in-toto.io/Statement/v1"
+subject:
+  - uri: "gcr.io/example-project/myapp@sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+    digest:
+      sha256: "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+predicateType: "https://slsa.dev/provenance/v1"
+attestationStorageUri: "https://rekor.sigstore.dev/api/v1/log/entries/abc123"
+buildDefinition:
+  buildType: "https://tekton.dev/chains/v2/tekton"
+  externalParameters:
+    pipelineRun: "build-pipeline-run-20240115-001"
+    gitUrl: "https://github.com/example/myapp"
+    gitRevision: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  resolvedDependencies:
+    - uri: "git+https://github.com/example/myapp"
+      digest:
+        gitCommit: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+      name: "myapp source"
+  hermeticBuild: false
+  provenanceGenerationTool: "https://github.com/tektoncd/chains"
+  pipelineOrchestrator: "https://tekton.dev"
+runDetails:
+  builder:
+    id: "https://tekton.dev/chains/v2"
+  buildMetadata:
+    invocationId: "build-pipeline-run-20240115-001"
+    startedOn: "2024-01-15T09:00:00Z"
+    finishedOn: "2024-01-15T09:12:00Z"
+signingTool: "https://github.com/sigstore/cosign"
+sigstoreLogEntry: "https://rekor.sigstore.dev/api/v1/log/entries/abc123def456"

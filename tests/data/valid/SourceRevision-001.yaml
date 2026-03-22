@@ -1,0 +1,11 @@
+# SourceRevision: A specific git commit with two-party review (Source Level 4)
+revisionId: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+repository:
+  id: "https://github.com/example/myapp"
+  description: "Example application source repository"
+  sourceLevel: "SLSA_SOURCE_LEVEL_4"
+author: "developer@example.com"
+timestamp: "2024-01-15T09:00:00Z"
+parentRevisions:
+  - "abc123def456abc123def456abc123def456abc123"
+reviewType: "TWO_PARTY"

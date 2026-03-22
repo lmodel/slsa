@@ -1,0 +1,19 @@
+# VerificationSummaryAttestation: VSA confirming Build L3 via slsa-verifier
+type: "https://in-toto.io/Statement/v1"
+subject:
+  - uri: "https://github.com/example/myapp/releases/download/v1.0.0/myapp-linux-amd64"
+    digest:
+      sha256: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+predicateType: "https://slsa.dev/verification_summary/v1"
+verifier:
+  id: "https://github.com/slsa-framework/slsa-verifier/releases/tag/v2.4.1"
+timeVerified: "2024-01-15T12:00:00Z"
+resourceUri: "https://github.com/example/myapp/releases/download/v1.0.0/myapp-linux-amd64"
+policy:
+  uri: "https://example.com/policies/slsa-build-l3-github.json"
+  digest:
+    sha256: "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+verificationResult: "PASSED"
+verifiedLevels:
+  - "SLSA_BUILD_LEVEL_3"
+slsaVersion: "1.0"

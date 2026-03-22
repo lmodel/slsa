@@ -1,0 +1,9 @@
+# INVALID VerificationSummaryAttestation: missing required verifier, resourceUri,
+# policy, verificationResult, and verifiedLevels fields
+type: "https://in-toto.io/Statement/v1"
+subject:
+  - uri: "https://example.com/artifact"
+    digest:
+      sha256: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+predicateType: "https://slsa.dev/verification_summary/v1"
+slsaVersion: "1.0"
