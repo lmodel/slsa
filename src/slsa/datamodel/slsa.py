@@ -3,7 +3,7 @@
 # Schema: slsa
 #
 # id: https://w3id.org/lmodel/slsa
-# description: Electronic (LinkML) Version of Supply-chain Levels for Software Artifacts (SLSA)
+# description: Supply-chain Levels for Software Artifacts (SLSA) LinkML schema
 # license: Apache-2.0
 
 import dataclasses

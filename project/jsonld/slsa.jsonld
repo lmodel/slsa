@@ -1,6 +1,6 @@
 {
   "name": "slsa",
-  "description": "Electronic (LinkML) Version of Supply-chain Levels for Software Artifacts (SLSA)",
+  "description": "Supply-chain Levels for Software Artifacts (SLSA) LinkML schema",
   "title": "slsa",
   "source": "https://slsa.dev/spec/v1.0",
   "see_also": [

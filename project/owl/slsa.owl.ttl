@@ -18,7 +18,7 @@
         <https://lmodel.github.io/slsa>,
         <https://openssf.org/technical-initiatives/software-supply-chain/>,
         <https://slsa.dev/spec/v1.2/> ;
-    skos:definition "Electronic (LinkML) Version of Supply-chain Levels for Software Artifacts (SLSA)" .
+    skos:definition "Supply-chain Levels for Software Artifacts (SLSA) LinkML schema" .
 
 slsa:BuildEnvironmentAttestation a owl:Class ;
     rdfs:label "BuildEnvironmentAttestation" ;
