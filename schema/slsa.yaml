@@ -2255,7 +2255,7 @@ classes:
     class_uri: slsa:AdoptionMetadata
 metamodel_version: 1.7.0
 source_file: slsa.yaml
-source_file_date: '2026-03-22T23:46:59'
+source_file_date: '2026-03-22T23:55:49'
 source_file_size: 57934
-generation_date: '2026-03-22T23:47:09'
+generation_date: '2026-03-22T23:55:59'
 
