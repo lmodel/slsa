@@ -1,0 +1,286 @@
+# metamodel_version: 1.7.0
+# version: 1.0.0
+enum AdoptionChallengeEnum
+  {
+    COMPLEX_IMPLEMENTATION
+    UNCLEAR_COMMUNICATION
+    LIMITED_FEASIBILITY
+    UNCLEAR_RELEVANCE
+  }
+
+enum AdoptionStrategyEnum
+  {
+    ENHANCE_ALIGNMENT_FLEXIBILITY
+    PROVIDE_DETAILED_DOCUMENTATION
+    STREAMLINE_PROVENANCE_GENERATION
+    IMPROVE_VERIFICATION_PROCESS
+    COLLABORATE_WITH_COMMUNITY
+  }
+
+enum BuildEnvLevelEnum
+  {
+    SLSA_BUILD_ENV_LEVEL_0
+    SLSA_BUILD_ENV_LEVEL_1
+    SLSA_BUILD_ENV_LEVEL_2
+    SLSA_BUILD_ENV_LEVEL_3
+  }
+
+enum BuildLevelEnum
+  {
+    SLSA_BUILD_LEVEL_0
+    SLSA_BUILD_LEVEL_1
+    SLSA_BUILD_LEVEL_2
+    SLSA_BUILD_LEVEL_3
+  }
+
+enum DependencyLevelEnum
+  {
+    SLSA_DEPENDENCY_LEVEL_0
+    SLSA_DEPENDENCY_LEVEL_1
+    SLSA_DEPENDENCY_LEVEL_2
+    SLSA_DEPENDENCY_LEVEL_3
+    SLSA_DEPENDENCY_LEVEL_4
+  }
+
+enum ReviewTypeEnum
+  {
+    TWO_PARTY
+    PAIR_PROGRAMMING
+    MOB_PROGRAMMING
+    AUTOMATED
+  }
+
+enum SlsaResultEnum
+  {
+    SLSA_BUILD_LEVEL_0
+    SLSA_BUILD_LEVEL_1
+    SLSA_BUILD_LEVEL_2
+    SLSA_BUILD_LEVEL_3
+    SLSA_SOURCE_LEVEL_1
+    SLSA_SOURCE_LEVEL_2
+    SLSA_SOURCE_LEVEL_3
+    SLSA_SOURCE_LEVEL_4
+  }
+
+enum SourceLevelEnum
+  {
+    SLSA_SOURCE_LEVEL_1
+    SLSA_SOURCE_LEVEL_2
+    SLSA_SOURCE_LEVEL_3
+    SLSA_SOURCE_LEVEL_4
+  }
+
+enum VerificationResultEnum
+  {
+    PASSED
+    FAILED
+  }
+
+type AdoptionMetadata
+  {
+    challenges: [AdoptionChallengeEnum]
+    strategies: [AdoptionStrategyEnum]
+  }
+
+type BuildDefinition
+  {
+    buildType: String!
+    externalParameters: String
+    internalParameters: String
+    resolvedDependencies: [ResourceDescriptor]
+    hermeticBuild: Boolean
+    provenanceGenerationTool: String
+    pipelineOrchestrator: String
+  }
+
+type BuildEnvironmentAttestation
+  {
+    type: String!
+    subject: [ResourceDescriptor]!
+    predicateType: String!
+    predicate: String
+    attestationStorageUri: String
+    signingTool: String
+    sigstoreLogEntry: String
+    buildId: String!
+    buildImage: BuildImage
+    measurements: [String]
+    buildEnvLevel: BuildEnvLevelEnum
+  }
+
+type Builder
+  {
+    id: String!
+    builderDependencies: [ResourceDescriptor]
+    version: String
+    versionTag: String
+  }
+
+type BuildImage
+  {
+    id: String!
+    provenance: BuildProvenance
+    buildEnvLevel: BuildEnvLevelEnum
+  }
+
+type BuildMetadata
+  {
+    invocationId: String
+    startedOn: String
+    finishedOn: String
+  }
+
+type BuildPlatform
+  {
+    id: String!
+    buildLevel: BuildLevelEnum
+    isHosted: Boolean
+  }
+
+type BuildProvenance
+  {
+    type: String!
+    subject: [ResourceDescriptor]!
+    predicateType: String!
+    predicate: String
+    attestationStorageUri: String
+    signingTool: String
+    sigstoreLogEntry: String
+    buildDefinition: BuildDefinition!
+    runDetails: RunDetails!
+  }
+
+type Consumer
+  {
+  }
+
+type ControlPlane
+  {
+  }
+
+type DependencyInventory
+  {
+    artifact: ResourceDescriptor
+    dependencies: [ResourceDescriptor]
+    dependencyLevel: DependencyLevelEnum
+  }
+
+type DigestSet
+  {
+    sha256: String
+    sha512: String
+    gitCommit: String
+  }
+
+type InfrastructureProvider
+  {
+  }
+
+type Package
+  {
+    name: String
+    ecosystem: String
+    registry: String
+    artifact: ResourceDescriptor
+  }
+
+type Producer
+  {
+    name: String
+    buildPlatformId: String
+  }
+
+type ResourceDescriptor
+  {
+    uri: String
+    digest: DigestSet
+    name: String
+    downloadLocation: String
+    mediaType: String
+    annotations: [String]
+  }
+
+type RunDetails
+  {
+    builder: Builder!
+    buildMetadata: BuildMetadata
+    byproducts: [ResourceDescriptor]
+  }
+
+type SlsaDocument
+  {
+    buildDefinition: BuildDefinition!
+    runDetails: RunDetails!
+    verifier: Verifier!
+    verificationResult: VerificationResultEnum!
+    verifiedLevels: [SlsaResultEnum]!
+    adoptionMetadata: AdoptionMetadata
+  }
+
+type SourceProvenanceAttestation
+  {
+    type: String!
+    subject: [ResourceDescriptor]!
+    predicateType: String!
+    predicate: String
+    attestationStorageUri: String
+    signingTool: String
+    sigstoreLogEntry: String
+    revision: SourceRevision
+    sourceLevel: SourceLevelEnum
+    controlsEnforced: [String]
+  }
+
+type SourceRepository
+  {
+    id: String!
+    description: String
+    sourceLevel: SourceLevelEnum
+  }
+
+type SourceRevision
+  {
+    revisionId: String!
+    repository: SourceRepository
+    author: String
+    timestamp: String
+    parentRevisions: [String]
+    reviewType: ReviewTypeEnum
+  }
+
+interface Statement
+  {
+    type: String!
+    subject: [ResourceDescriptor]!
+    predicateType: String!
+    predicate: String
+    attestationStorageUri: String
+    signingTool: String
+    sigstoreLogEntry: String
+  }
+
+type VerificationSummaryAttestation
+  {
+    type: String!
+    subject: [ResourceDescriptor]!
+    predicateType: String!
+    predicate: String
+    attestationStorageUri: String
+    signingTool: String
+    sigstoreLogEntry: String
+    verifier: Verifier!
+    timeVerified: String
+    resourceUri: String!
+    policy: ResourceDescriptor!
+    inputAttestations: [ResourceDescriptor]
+    verificationResult: VerificationResultEnum!
+    verifiedLevels: [SlsaResultEnum]!
+    dependencyLevels: String
+    slsaVersion: String
+  }
+
+type Verifier
+  {
+    id: String!
+    version: String
+  }

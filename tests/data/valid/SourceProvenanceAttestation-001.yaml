@@ -1,5 +1,5 @@
 # SourceProvenanceAttestation: Source provenance for a git commit with enforced controls
-type: "https://in-toto.io/Statement/v1"
+_type: "https://in-toto.io/Statement/v1"
 subject:
   - uri: "git+https://github.com/example/myapp@refs/heads/main"
     digest:

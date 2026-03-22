@@ -1,5 +1,5 @@
 # BuildProvenance: SLSA Build L2 provenance for a Tekton-based SSF pipeline
-type: "https://in-toto.io/Statement/v1"
+_type: "https://in-toto.io/Statement/v1"
 subject:
   - uri: "gcr.io/example-project/myapp@sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
     digest:
@@ -8,10 +8,7 @@ predicateType: "https://slsa.dev/provenance/v1"
 attestationStorageUri: "https://rekor.sigstore.dev/api/v1/log/entries/abc123"
 buildDefinition:
   buildType: "https://tekton.dev/chains/v2/tekton"
-  externalParameters:
-    pipelineRun: "build-pipeline-run-20240115-001"
-    gitUrl: "https://github.com/example/myapp"
-    gitRevision: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  externalParameters: '{"pipelineRun": "build-pipeline-run-20240115-001", "gitUrl": "https://github.com/example/myapp", "gitRevision": "da39a3ee5e6b4b0d3255bfef95601890afd80709"}'
   resolvedDependencies:
     - uri: "git+https://github.com/example/myapp"
       digest:

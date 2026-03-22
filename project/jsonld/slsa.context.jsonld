@@ -1,0 +1,363 @@
+{
+   "@context": {
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "linkml": "https://w3id.org/linkml/",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "slsa": "https://w3id.org/lmodel/slsa/",
+      "@vocab": "https://w3id.org/lmodel/slsa/",
+      "_type": {
+         "@id": "_type"
+      },
+      "adoptionMetadata": {
+         "@type": "@id",
+         "@id": "adoptionMetadata"
+      },
+      "annotations": {
+         "@id": "annotations"
+      },
+      "artifact": {
+         "@type": "@id",
+         "@id": "artifact"
+      },
+      "attestationStorageUri": {
+         "@id": "attestationStorageUri"
+      },
+      "author": {
+         "@id": "author"
+      },
+      "buildDefinition": {
+         "@type": "@id",
+         "@id": "buildDefinition"
+      },
+      "buildEnvLevel": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "buildEnvLevel"
+      },
+      "builder": {
+         "@type": "@id",
+         "@id": "builder"
+      },
+      "builderDependencies": {
+         "@type": "@id",
+         "@id": "builderDependencies"
+      },
+      "buildId": {
+         "@id": "buildId"
+      },
+      "buildImage": {
+         "@type": "@id",
+         "@id": "buildImage"
+      },
+      "buildLevel": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "buildLevel"
+      },
+      "buildMetadata": {
+         "@type": "@id",
+         "@id": "buildMetadata"
+      },
+      "buildPlatformId": {
+         "@id": "buildPlatformId"
+      },
+      "buildType": {
+         "@id": "buildType"
+      },
+      "byproducts": {
+         "@type": "@id",
+         "@id": "byproducts"
+      },
+      "challenges": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "challenges"
+      },
+      "controlsEnforced": {
+         "@id": "controlsEnforced"
+      },
+      "dependencies": {
+         "@type": "@id",
+         "@id": "dependencies"
+      },
+      "dependencyLevel": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "dependencyLevel"
+      },
+      "dependencyLevels": {
+         "@id": "dependencyLevels"
+      },
+      "description": {
+         "@id": "description"
+      },
+      "digest": {
+         "@type": "@id",
+         "@id": "digest"
+      },
+      "downloadLocation": {
+         "@id": "downloadLocation"
+      },
+      "ecosystem": {
+         "@id": "ecosystem"
+      },
+      "externalParameters": {
+         "@id": "externalParameters"
+      },
+      "finishedOn": {
+         "@id": "finishedOn"
+      },
+      "gitCommit": {
+         "@id": "gitCommit"
+      },
+      "guacUri": {
+         "@id": "guacUri"
+      },
+      "hermeticBuild": {
+         "@type": "xsd:boolean",
+         "@id": "hermeticBuild"
+      },
+      "id": {
+         "@id": "id"
+      },
+      "inputAttestations": {
+         "@type": "@id",
+         "@id": "inputAttestations"
+      },
+      "internalParameters": {
+         "@id": "internalParameters"
+      },
+      "invocationId": {
+         "@id": "invocationId"
+      },
+      "isHosted": {
+         "@type": "xsd:boolean",
+         "@id": "isHosted"
+      },
+      "measurements": {
+         "@id": "measurements"
+      },
+      "mediaType": {
+         "@id": "mediaType"
+      },
+      "name": {
+         "@id": "name"
+      },
+      "parentRevisions": {
+         "@id": "parentRevisions"
+      },
+      "pipelineOrchestrator": {
+         "@id": "pipelineOrchestrator"
+      },
+      "policy": {
+         "@type": "@id",
+         "@id": "policy"
+      },
+      "predicate": {
+         "@id": "predicate"
+      },
+      "predicateType": {
+         "@id": "predicateType"
+      },
+      "provenance": {
+         "@type": "@id",
+         "@id": "provenance"
+      },
+      "provenanceGenerationTool": {
+         "@id": "provenanceGenerationTool"
+      },
+      "registry": {
+         "@id": "registry"
+      },
+      "repository": {
+         "@type": "@id",
+         "@id": "repository"
+      },
+      "resolvedDependencies": {
+         "@type": "@id",
+         "@id": "resolvedDependencies"
+      },
+      "resourceUri": {
+         "@id": "resourceUri"
+      },
+      "reviewType": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "reviewType"
+      },
+      "revision": {
+         "@type": "@id",
+         "@id": "revision"
+      },
+      "revisionId": {
+         "@id": "revisionId"
+      },
+      "runDetails": {
+         "@type": "@id",
+         "@id": "runDetails"
+      },
+      "securityInsightsUri": {
+         "@id": "securityInsightsUri"
+      },
+      "sha256": {
+         "@id": "sha256"
+      },
+      "sha512": {
+         "@id": "sha512"
+      },
+      "signingTool": {
+         "@id": "signingTool"
+      },
+      "sigstoreLogEntry": {
+         "@id": "sigstoreLogEntry"
+      },
+      "slsaVersion": {
+         "@id": "slsaVersion"
+      },
+      "sourceLevel": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "sourceLevel"
+      },
+      "startedOn": {
+         "@id": "startedOn"
+      },
+      "strategies": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "strategies"
+      },
+      "subject": {
+         "@type": "@id",
+         "@id": "subject"
+      },
+      "timestamp": {
+         "@id": "timestamp"
+      },
+      "timeVerified": {
+         "@id": "timeVerified"
+      },
+      "uri": {
+         "@id": "uri"
+      },
+      "verificationResult": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "verificationResult"
+      },
+      "verifiedLevels": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "verifiedLevels"
+      },
+      "verifier": {
+         "@type": "@id",
+         "@id": "verifier"
+      },
+      "version": {
+         "@id": "version"
+      },
+      "versionTag": {
+         "@id": "versionTag"
+      },
+      "AdoptionMetadata": {
+         "@id": "AdoptionMetadata"
+      },
+      "BuildDefinition": {
+         "@id": "BuildDefinition"
+      },
+      "BuildEnvironmentAttestation": {
+         "@id": "BuildEnvironmentAttestation"
+      },
+      "Builder": {
+         "@id": "Builder"
+      },
+      "BuildImage": {
+         "@id": "BuildImage"
+      },
+      "BuildMetadata": {
+         "@id": "BuildMetadata"
+      },
+      "BuildPlatform": {
+         "@id": "BuildPlatform"
+      },
+      "BuildProvenance": {
+         "@id": "BuildProvenance"
+      },
+      "Consumer": {
+         "@id": "Consumer"
+      },
+      "ControlPlane": {
+         "@id": "ControlPlane"
+      },
+      "DependencyInventory": {
+         "@id": "DependencyInventory"
+      },
+      "DigestSet": {
+         "@id": "DigestSet"
+      },
+      "InfrastructureProvider": {
+         "@id": "InfrastructureProvider"
+      },
+      "Package": {
+         "@id": "Package"
+      },
+      "Producer": {
+         "@id": "Producer"
+      },
+      "ResourceDescriptor": {
+         "@id": "ResourceDescriptor"
+      },
+      "RunDetails": {
+         "@id": "RunDetails"
+      },
+      "SlsaDocument": {
+         "@id": "SlsaDocument"
+      },
+      "SourceProvenanceAttestation": {
+         "@id": "SourceProvenanceAttestation"
+      },
+      "SourceRepository": {
+         "@id": "SourceRepository"
+      },
+      "SourceRevision": {
+         "@id": "SourceRevision"
+      },
+      "Statement": {
+         "@id": "Statement"
+      },
+      "VerificationSummaryAttestation": {
+         "@id": "VerificationSummaryAttestation"
+      },
+      "Verifier": {
+         "@id": "Verifier"
+      }
+   }
+}

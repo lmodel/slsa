@@ -1,0 +1,190 @@
+ syntax="proto3";
+ package
+// metamodel_version: 1.7.0
+// version: 1.0.0
+// Optional structured metadata capturing the SLSA adoption challenges and mitigation strategies relevant to a given attestation or deployment context. Derived from empirical analysis of 1,523 SLSA-related GitHub issues across 233 repositories (Tamanna et al., 2024, arXiv:2409.05014). Use this class to document which challenge themes apply to the current deployment and which strategies are being employed or recommended. Attach via the adoptionMetadata slot on SlsaDocument.
+message AdoptionMetadata
+ {
+ repeated  adoptionChallengeEnum challenges = 0
+ repeated  adoptionStrategyEnum strategies = 0
+ }
+// Describes all inputs to the build in enough detail to initialise and reproduce the build. The accuracy and completeness are implied by the builder identified in runDetails.
+message BuildDefinition
+ {
+  string buildType = 0
+  string externalParameters = 0
+  string internalParameters = 0
+ repeated  resourceDescriptor resolvedDependencies = 0
+  boolean hermeticBuild = 0
+  string provenanceGenerationTool = 0
+  string pipelineOrchestrator = 0
+ }
+// An attestation describing the integrity of a build environment at the time a specific build was dispatched and executed. Used to verify that a build ran in the expected, untampered environment.
+message BuildEnvironmentAttestation
+ {
+  string type = 0
+ repeated  resourceDescriptor subject = 0
+  string predicateType = 0
+  string predicate = 0
+  string attestationStorageUri = 0
+  string signingTool = 0
+  string sigstoreLogEntry = 0
+  string buildId = 0
+  buildImage buildImage = 0
+ repeated  string measurements = 0
+  buildEnvLevelEnum buildEnvLevel = 0
+ }
+// Represents the transitive closure of all software, hardware, and entities trusted to faithfully execute the build and record provenance. The builder.id is the primary basis for determining SLSA Build Level.
+message Builder
+ {
+  string id = 0
+ repeated  resourceDescriptor builderDependencies = 0
+  string version = 0
+  string versionTag = 0
+ }
+// The template for a build environment, such as a VM or container image. Comprises the root filesystem, pre-installed guest OS and packages, the build executor, and the build agent. Created by a build image producer and consumed by the hosted build platform.
+message BuildImage
+ {
+  string id = 0
+  buildProvenance provenance = 0
+  buildEnvLevelEnum buildEnvLevel = 0
+ }
+// Metadata about a specific invocation of the build, including timing information and a unique build identifier for log correlation.
+message BuildMetadata
+ {
+  string invocationId = 0
+  string startedOn = 0
+  string finishedOn = 0
+ }
+// The infrastructure (software, hardware, people, and organizations) used to transform source code into package artifacts. Responsible for provenance generation and isolation between tenant builds. Often a hosted, multi-tenant build service.
+message BuildPlatform
+ {
+  string id = 0
+  buildLevelEnum buildLevel = 0
+  boolean isHosted = 0
+ }
+// An attestation predicate (predicateType "https://slsa.dev/provenance/v1") that describes how a set of output artifacts was produced by a build platform. Consumers use this to verify artifact authenticity and trace artifacts back through the supply chain.
+message BuildProvenance
+ {
+  string type = 0
+ repeated  resourceDescriptor subject = 0
+  string predicateType = 0
+  string predicate = 0
+  string attestationStorageUri = 0
+  string signingTool = 0
+  string sigstoreLogEntry = 0
+  buildDefinition buildDefinition = 0
+  runDetails runDetails = 0
+ }
+// A comprehensive inventory of all third-party build dependencies for an artifact, capturing direct and transitive dependencies. Supports vulnerability management and incident response.
+message DependencyInventory
+ {
+  resourceDescriptor artifact = 0
+ repeated  resourceDescriptor dependencies = 0
+  dependencyLevelEnum dependencyLevel = 0
+ }
+// A set of cryptographic digests for an artifact, keyed by algorithm name (e.g., "sha256", "gitCommit"). Provides enough information for consumers to verify artifact integrity using their preferred algorithm.
+message DigestSet
+ {
+  string sha256 = 0
+  string sha512 = 0
+  string gitCommit = 0
+ }
+// An identifiable unit of software intended for distribution. In the SLSA model, a package is always the output of a build process (which may be a no-op). The package name is the primary security boundary within a package ecosystem.
+message Package
+ {
+  string name = 0
+  string ecosystem = 0
+  string registry = 0
+  resourceDescriptor artifact = 0
+ }
+// A party who creates software and provides it to others. Responsible for choosing an appropriate build platform, following a consistent build process, and distributing provenance to consumers.
+message Producer
+ {
+  string name = 0
+  string buildPlatformId = 0
+ }
+// A reference to a software artifact including its location, digest, and optional metadata. Used throughout SLSA to describe inputs, outputs, and dependencies in provenance attestations.
+message ResourceDescriptor
+ {
+  string uri = 0
+  digestSet digest = 0
+  string name = 0
+  string downloadLocation = 0
+  string mediaType = 0
+ repeated  string annotations = 0
+ }
+// Details specific to this particular execution of the build, including the trusted builder and optional run-level metadata.
+message RunDetails
+ {
+  builder builder = 0
+  buildMetadata buildMetadata = 0
+ repeated  resourceDescriptor byproducts = 0
+ }
+// Root wrapper for any SLSA attestation payload. Acts as the entry point for schema validation and tools.
+message SlsaDocument
+ {
+  buildDefinition buildDefinition = 0
+  runDetails runDetails = 0
+  verifier verifier = 0
+  verificationResultEnum verificationResult = 0
+ repeated  slsaResultEnum verifiedLevels = 0
+  adoptionMetadata adoptionMetadata = 0
+ }
+// An attestation describing how a source revision came to exist: where it was hosted, when it was generated, what process was used, who the contributors were, and which technical controls were enforced by the Source Control System.
+message SourceProvenanceAttestation
+ {
+  string type = 0
+ repeated  resourceDescriptor subject = 0
+  string predicateType = 0
+  string predicate = 0
+  string attestationStorageUri = 0
+  string signingTool = 0
+  string sigstoreLogEntry = 0
+  sourceRevision revision = 0
+  sourceLevelEnum sourceLevel = 0
+ repeated  string controlsEnforced = 0
+ }
+// A self-contained unit that holds the content and complete revision history for a set of files, along with metadata such as branches and tags. Hosted and governed by a Source Control System.
+message SourceRepository
+ {
+  string id = 0
+  string description = 0
+  sourceLevelEnum sourceLevel = 0
+ }
+// A specific, logically immutable snapshot of a source repository's tracked files. Uniquely identified by a revision identifier such as a cryptographic hash (e.g., git commit SHA) or a path-qualified sequential number (e.g., SVN).
+message SourceRevision
+ {
+  string revisionId = 0
+  sourceRepository repository = 0
+  string author = 0
+  string timestamp = 0
+ repeated  string parentRevisions = 0
+  reviewTypeEnum reviewType = 0
+ }
+// An attestation predicate (predicateType "https://slsa.dev/verification_summary/v1") issued by a trusted verifier stating that one or more artifacts were evaluated against a policy and the SLSA level at which they were verified. Allows consumers to trust the verifier's determination without needing access to all underlying provenance.
+message VerificationSummaryAttestation
+ {
+  string type = 0
+ repeated  resourceDescriptor subject = 0
+  string predicateType = 0
+  string predicate = 0
+  string attestationStorageUri = 0
+  string signingTool = 0
+  string sigstoreLogEntry = 0
+  verifier verifier = 0
+  string timeVerified = 0
+  string resourceUri = 0
+  resourceDescriptor policy = 0
+ repeated  resourceDescriptor inputAttestations = 0
+  verificationResultEnum verificationResult = 0
+ repeated  slsaResultEnum verifiedLevels = 0
+  string dependencyLevels = 0
+  string slsaVersion = 0
+ }
+// The entity that performed verification of an artifact and issued a Verification Summary Attestation. Consumers MUST accept only specific (signer, verifier) pairs.
+message Verifier
+ {
+  string id = 0
+  string version = 0
+ }

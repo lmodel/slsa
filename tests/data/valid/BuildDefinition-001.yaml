@@ -1,9 +1,6 @@
 # BuildDefinition: All inputs to a GitHub Actions build
 buildType: "https://actions.github.io/buildtypes/workflow/v1"
-externalParameters:
-  workflow: ".github/workflows/build.yml"
-  ref: "refs/heads/main"
-  repository: "https://github.com/example/myapp"
+externalParameters: '{"workflow": ".github/workflows/build.yml", "ref": "refs/heads/main", "repository": "https://github.com/example/myapp"}'
 resolvedDependencies:
   - uri: "git+https://github.com/example/myapp@refs/heads/main"
     digest:

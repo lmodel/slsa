@@ -141,7 +141,6 @@ slots:
   # ── Statement (in-toto) slots ─────────────────────────────────────────────
 
   _type:
-    alias: type
     description: >-
       Always "https://in-toto.io/Statement/v1". Identifies the in-toto
       statement schema version and namespace.
@@ -1113,7 +1112,6 @@ classes:
       Root wrapper for any SLSA attestation payload. Acts as the entry point
       for schema validation and tools.
     tree_root: true
-    class_uri: linkml:Any
     slots:
       - buildDefinition
       - runDetails
@@ -1131,7 +1129,6 @@ classes:
       A set of cryptographic digests for an artifact, keyed by algorithm name
       (e.g., "sha256", "gitCommit"). Provides enough information for consumers
       to verify artifact integrity using their preferred algorithm.
-    class_uri: linkml:Any
     slots:
       - sha256
       - sha512
@@ -1145,7 +1142,6 @@ classes:
       A reference to a software artifact including its location, digest, and
       optional metadata. Used throughout SLSA to describe inputs, outputs,
       and dependencies in provenance attestations.
-    class_uri: linkml:Any
     slots:
       - uri
       - digest
@@ -1179,13 +1175,14 @@ classes:
         Sigstore and VCS-embedded storage are two common approaches. Use the
         attestationStorageUri slot to record where this statement is stored.
     abstract: true
-    class_uri: linkml:Any
     slots:
       - _type
       - subject
       - predicateType
       - predicate
       - attestationStorageUri
+      - signingTool
+      - sigstoreLogEntry
     in_subset:
       - slsa_build_track
       - slsa_source_track
@@ -1232,7 +1229,6 @@ classes:
         Recording which tool generated this provenance via
         provenanceGenerationTool supports standardization, reproducibility
         verification, and incident response.
-    class_uri: linkml:Any
     slots:
       - buildType
       - externalParameters
@@ -1240,6 +1236,7 @@ classes:
       - resolvedDependencies
       - hermeticBuild
       - provenanceGenerationTool
+      - pipelineOrchestrator
     in_subset:
       - slsa_build_track
 
@@ -1247,7 +1244,6 @@ classes:
     description: >-
       Details specific to this particular execution of the build, including
       the trusted builder and optional run-level metadata.
-    class_uri: linkml:Any
     slots:
       - builder
       - buildMetadata
@@ -1260,7 +1256,6 @@ classes:
       Represents the transitive closure of all software, hardware, and
       entities trusted to faithfully execute the build and record provenance.
       The builder.id is the primary basis for determining SLSA Build Level.
-    class_uri: linkml:Any
     slots:
       - id
       - builderDependencies
@@ -1273,7 +1268,6 @@ classes:
     description: >-
       Metadata about a specific invocation of the build, including timing
       information and a unique build identifier for log correlation.
-    class_uri: linkml:Any
     slots:
       - invocationId
       - startedOn
@@ -1322,7 +1316,6 @@ classes:
       The entity that performed verification of an artifact and issued a
       Verification Summary Attestation. Consumers MUST accept only specific
       (signer, verifier) pairs.
-    class_uri: linkml:Any
     slots:
       - id
       - version
@@ -1423,7 +1416,6 @@ classes:
       tracked files. Uniquely identified by a revision identifier such as
       a cryptographic hash (e.g., git commit SHA) or a path-qualified
       sequential number (e.g., SVN).
-    class_uri: linkml:Any
     slots:
       - revisionId
       - repository
@@ -1460,7 +1452,6 @@ classes:
       A comprehensive inventory of all third-party build dependencies for
       an artifact, capturing direct and transitive dependencies. Supports
       vulnerability management and incident response.
-    class_uri: linkml:Any
     slots:
       - artifact
       - dependencies
@@ -1513,7 +1504,6 @@ classes:
       Use this class to document which challenge themes apply to the current
       deployment and which strategies are being employed or recommended.
       Attach via the adoptionMetadata slot on SlsaDocument.
-    class_uri: linkml:Any
     slots:
       - challenges
       - strategies

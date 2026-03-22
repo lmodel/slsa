@@ -1,5 +1,5 @@
 # BuildProvenance: SLSA Build L3 provenance for a GitHub Actions build
-type: "https://in-toto.io/Statement/v1"
+_type: "https://in-toto.io/Statement/v1"
 subject:
   - uri: "https://github.com/example/myapp/releases/download/v1.0.0/myapp-linux-amd64"
     digest:
@@ -8,10 +8,7 @@ predicateType: "https://slsa.dev/provenance/v1"
 attestationStorageUri: "https://rekor.sigstore.dev/api/v1/log/entries/24296fb24b8ad77a1a2bef2dce16e25dfe895acc76f5a48b17e3be1699a2b7c8"
 buildDefinition:
   buildType: "https://actions.github.io/buildtypes/workflow/v1"
-  externalParameters:
-    workflow: ".github/workflows/build.yml"
-    ref: "refs/tags/v1.0.0"
-    repository: "https://github.com/example/myapp"
+  externalParameters: '{"workflow": ".github/workflows/build.yml", "ref": "refs/tags/v1.0.0", "repository": "https://github.com/example/myapp"}'
   resolvedDependencies:
     - uri: "git+https://github.com/example/myapp@refs/tags/v1.0.0"
       digest:

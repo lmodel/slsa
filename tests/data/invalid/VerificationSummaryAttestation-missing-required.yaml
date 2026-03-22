@@ -1,6 +1,6 @@
 # INVALID VerificationSummaryAttestation: missing required verifier, resourceUri,
 # policy, verificationResult, and verifiedLevels fields
-type: "https://in-toto.io/Statement/v1"
+_type: "https://in-toto.io/Statement/v1"
 subject:
   - uri: "https://example.com/artifact"
     digest:
