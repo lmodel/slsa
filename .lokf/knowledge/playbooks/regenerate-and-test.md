@@ -18,6 +18,9 @@ generated:
   by: process:ktl-librarian
   at: "2026-10-21T22:03:37Z"
 status: draft
+verified:
+  - by: process:ktl-librarian
+    at: "2026-10-21T22:14:46Z"
 ---
 
 # Regenerate and test the schema

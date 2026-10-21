@@ -2,6 +2,15 @@
 
 ## 2026-10-21
 
+* **Added**: the SLSA project as an organization, from the SLSA repository README.
+* **Added**: CNCF TAG-Security as an organization, from its repository's license file.
+* **Changed**: the SLSA specification now names its publisher and its license, from the SLSA repository.
+* **Changed**: the whitepaper now names its publisher, its upstream copy and its CC BY 4.0 license.
+* **Rewrite**: the specification copy now records which upstream tree it matches, from a hash comparison with SLSA tag v1.2.
+* **Resolved**: 38 of the 42 files match `docs/spec/draft/` at SLSA tag v1.2 by git blob hash.
+* **Question**: three files of the specification copy have no match at SLSA tag v1.2.
+* **Changed**: the subsets explanation no longer states a purpose the schema does not give.
+* **Changed**: the source map now lists the SLSA and CNCF TAG-Security repositories.
 * **Prose**: reworded 4 concept bodies in plain English. No fact, link, number or frontmatter changed.
 * **Added**: the SLSA specification, from `docs/about.md` and the schema header.
 * **Added**: the CNCF Secure Software Factory whitepaper, from `docs/about.md`.

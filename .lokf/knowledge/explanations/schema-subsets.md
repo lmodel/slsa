@@ -9,13 +9,13 @@ isPartOf:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:03:37Z"
+  at: "2026-10-21T22:14:46Z"
 status: draft
 ---
 
 # Schema subsets
 
-The schema tags each class, slot and enum with `in_subset`, so that a reader can see which part of SLSA or which outside source an element comes from. An element can belong to several subsets.
+The schema tags its classes, slots and enums with `in_subset`. Each subset's description says which part of SLSA or which outside source it covers. An element can belong to several subsets.
 
 - **`slsa_build_track`**: the trustworthiness of the build process and the resulting provenance.
 - **`slsa_source_track`**: the trustworthiness of how source revisions are created and managed.

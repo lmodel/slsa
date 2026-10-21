@@ -10,10 +10,17 @@ sources:
     title: the CNCF TAG-Security Secure Software Factory section
   - resource: src/slsa/schema/slsa.yaml
     title: the slsa_ssf subset
+  - resource: https://github.com/cncf/tag-security/blob/main/community/working-groups/supply-chain-security/secure-software-factory/Secure_Software_Factory_Whitepaper.pdf
+    title: the upstream copy of the whitepaper
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:03:37Z"
+  at: "2026-10-21T22:14:46Z"
 status: draft
+author:
+  - type: Organization
+    id: https://w3id.org/lmodel/slsa/knowledge/org/cncf-tag-security
+    name: CNCF TAG-Security
+license: https://creativecommons.org/licenses/by/4.0/
 ---
 
 # CNCF Secure Software Factory whitepaper
@@ -28,3 +35,7 @@ The whitepaper is kept in the repository as `docs/Secure_Software_Factory_Whitep
 - Runtime Security.
 
 Schema elements drawn from this architecture are tagged with the `slsa_ssf` subset. `docs/about.md` names `pipelineOrchestrator`, `signingTool`, `sigstoreLogEntry`, `guacUri` and `securityInsightsUri`. The subset's description in the schema points at <https://github.com/cncf/tag-security/tree/main/supply-chain-security/secure-software-factory>.
+
+## Upstream copy
+
+The file is byte-identical to `community/working-groups/supply-chain-security/secure-software-factory/Secure_Software_Factory_Whitepaper.pdf` in the archived `cncf/tag-security` repository: both have the git blob hash `c3c6b99f8444fa1d78fef15ace5baba12d37d1bf`. That repository licenses its documentation under CC BY 4.0.

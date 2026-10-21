@@ -24,7 +24,7 @@ sources:
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:03:37Z"
+  at: "2026-10-21T22:14:46Z"
 status: draft
 ---
 
@@ -45,6 +45,8 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `mkdocs.yml`, `docs/index.md`, `.github/workflows/deploy-docs.yaml`, `.github/workflows/test_pages_build.yaml` | `services/documentation-site` | confirm the triggers and the `gen-doc` plus `gh-deploy` and preview steps |
 | `.github/workflows/main.yaml`, `CONTRIBUTING.md` | CI facts in `playbooks/regenerate-and-test` | confirm the Python matrix and the `just test` step |
 | `.github/workflows/pypi-publish.yaml` | `playbooks/release` | re-read the triggers, the environment and the two publish steps |
+| `https://github.com/slsa-framework/slsa` (README, `LICENSE.md`, tag `v1.2`) | `org/slsa-project`, the license in `references/slsa-specification`, the upstream section of `datasets/slsa-spec-copy` | re-read the Governance and License sections; compare `git hash-object` of each copied file with the tree at the tag in use; watch for a release after v1.2 |
+| `https://github.com/cncf/tag-security` (`LICENSE.md`, the whitepaper's folder) | `org/cncf-tag-security`, the upstream section of `references/secure-software-factory` | re-read the license; compare the PDF's blob hash |
 | `https://slsa.dev/spec/v1.2/`, `https://arxiv.org/abs/2409.05014`, `https://openssf.org/technical-initiatives/software-supply-chain/` | the `references/` concepts | external authorities: cite on change |
 
 These are not knowledge sources, and are left out on purpose:

@@ -30,7 +30,7 @@ A [LOKF](https://lokf.nolan-nichols.com) knowledge base for SLSA. Every Markdown
 # Datasets
 
 * [slsa LinkML schema](datasets/slsa-linkml-schema.md) - The LinkML schema for SLSA attestations and adoption metadata (schema id `https://w3id.org/lmodel/slsa`), covering the Build, Source, Dependency and Build Environment tracks, the in-toto Statement layer, and the SSF and adoption-study subsets.
-* [SLSA specification copy](datasets/slsa-spec-copy.md) - The SLSA specification's Markdown pages, images and provenance schemas (.proto, .cue) copied into `src/slsa/schema/spec/`; its index page calls itself the Working Draft and Version 1.2.
+* [SLSA specification copy](datasets/slsa-spec-copy.md) - The SLSA specification's Markdown pages, images and provenance schemas (.proto, .cue) copied into `src/slsa/schema/spec/`; 38 of its 42 files match `docs/spec/draft/` at SLSA tag v1.2.
 * [Generated artifacts](datasets/generated-artefacts.md) - Files generated from the slsa schema and never edited by hand, committed or git-ignored: the merged schema in docs/schema/, the Python data models, project/ (JSON Schema, OWL, SHACL, Java and more) and docs/elements/.
 * [Test data](datasets/test-data.md) - Example YAML instances of the slsa schema in tests/data/, valid and invalid, named after the class they instantiate; pytest and linkml-run-examples check them.
 
@@ -48,3 +48,8 @@ A [LOKF](https://lokf.nolan-nichols.com) knowledge base for SLSA. Every Markdown
 * [Regenerate and test the schema](playbooks/regenerate-and-test.md) - How to change the slsa schema and regenerate its artifacts and docs with just (gen-project, gen-doc), then run the tests CI runs (just test) on Python 3.9 to 3.13.
 * [Release the slsa package](playbooks/release.md) - How a version tag or a published GitHub release builds the slsa Python package and publishes it to TestPyPI or PyPI through trusted publishing in the pypi-release environment.
 * [Knowledge sources map](playbooks/knowledge-sources.md) - The librarian's scrape map: every repository location and external URL this bundle derives concepts from, and how to re-verify each on a refresh run.
+
+# Org
+
+* [SLSA project (OpenSSF)](org/slsa-project.md) - The OpenSSF project that publishes the SLSA specification from the slsa-framework/slsa repository, governed by a steering committee and licensed under the Community Specification License 1.0.
+* [CNCF TAG-Security](org/cncf-tag-security.md) - The CNCF Security Technical Advisory Group, publisher of the Secure Software Factory whitepaper from its cncf/tag-security repository (now archived), which licenses its documentation under CC BY 4.0.
