@@ -23,4 +23,4 @@ The package version comes from git through `uv-dynamic-versioning`, with `0.0.0`
 - `build` checks out the repository, runs `uv build` on Python 3.13, and stores `dist/` as an artifact.
 - `pypi-publish` runs in the `pypi-release` environment with `id-token: write` for trusted publishing. On a pushed tag such as `v1.2.3`, it publishes to TestPyPI. On a published GitHub release, it publishes to PyPI.
 
-The environment's URL names the PyPI project `https://pypi.org/p/slsa`, after the `name` in `pyproject.toml`.
+The environment's URL is `https://pypi.org/p/slsa`, the PyPI project that matches the `name` in `pyproject.toml`.

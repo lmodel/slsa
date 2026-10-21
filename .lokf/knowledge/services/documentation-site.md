@@ -28,4 +28,4 @@ status: draft
 
 `.github/workflows/test_pages_build.yaml` builds the site with `mkdocs build` for each opened, reopened or updated pull request, and publishes a preview with `rossjrw/pr-preview-action`.
 
-The hand-written pages are `docs/index.md` and `docs/about.md`; the site also links `docs/Secure_Software_Factory_Whitepaper.pdf`. `just testdoc` builds the site and serves it locally.
+The hand-written pages are `docs/index.md` and `docs/about.md`. The about page links `docs/Secure_Software_Factory_Whitepaper.pdf`. `just testdoc` builds the site and serves it locally.

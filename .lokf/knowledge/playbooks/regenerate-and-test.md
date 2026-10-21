@@ -26,7 +26,10 @@ status: draft
 2. Edit `src/slsa/schema/slsa.yaml`, the only source file.
 3. Run `just gen-project` to regenerate `project/` and the Python data models.
 4. Run `just gen-doc` to regenerate `docs/schema/slsa.yaml` and `docs/elements/`, or `just testdoc` to build and serve the site.
-5. Run `just test`. It runs three steps: `_test-schema` runs `gen-project` into a scratch `tmp/` folder, `_test-python` regenerates the Python models and runs pytest, and `_test-examples` runs `linkml-run-examples` over `tests/data/`.
+5. Run `just test`. It runs three steps:
+    - `_test-schema` runs `gen-project` into a scratch `tmp/` folder.
+    - `_test-python` regenerates the Python models and runs pytest.
+    - `_test-examples` runs `linkml-run-examples` over `tests/data/`.
 6. Run `just lint` for the schema linter.
 7. Commit the regenerated files with the schema change.
 

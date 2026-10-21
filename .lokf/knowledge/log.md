@@ -2,6 +2,7 @@
 
 ## 2026-10-21
 
+* **Prose**: reworded 4 concept bodies in plain English. No fact, link, number or frontmatter changed.
 * **Added**: the SLSA specification, from `docs/about.md` and the schema header.
 * **Added**: the CNCF Secure Software Factory whitepaper, from `docs/about.md`.
 * **Added**: the SLSA adoption study, from `docs/about.md`.
