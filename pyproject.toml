@@ -3,13 +3,15 @@ requires = ["hatchling", "uv-dynamic-versioning"]
 build-backend = "hatchling.build"
 
 [project]
-name = "slsa"
+# Named like lmodel/gist's gist-linkml, so the PyPI name says what it holds;
+# the import package stays slsa.
+name = "slsa-linkml"
 description = "Supply-chain Levels for Software Artifacts (LinkML)"
 authors = [
   {name = "Noel McLoughlin", email = "noel.mcloughlin@gmail.com"},
 ]
 license = "Apache-2.0"
-license-files = ["LICENSE"]
+license-files = ["LICENSE", "NOTICE"]
 readme = "README.md"
 requires-python = ">=3.9,<4.0"
 dynamic = ["version"]
@@ -27,6 +29,9 @@ dev = [
     "jupyter>=1.0.0",
     "mknotebooks>= 0.8.0",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/slsa"]
 
 # See https://hatch.pypa.io/latest/config/build/#file-selection for how to
 # explicitly include files other than default into the build distributions.
@@ -53,6 +58,7 @@ skip = [
   "project/*",
   "src/slsa/datamodel/slsa_pydantic.py",
   "src/slsa/datamodel/slsa.py",
+  "src/slsa/schema/spec/*",
 ]
 
 # Reminder: words have to be lowercased for the ignore-words-list
@@ -70,4 +76,5 @@ extend-exclude = [
   "project/*",
   "src/slsa/datamodel/slsa_pydantic.py",
   "src/slsa/datamodel/slsa.py",
+  "src/slsa/schema/spec/*",
 ]
