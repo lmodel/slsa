@@ -34,7 +34,7 @@ The whitepaper is kept in the repository as `docs/Secure_Software_Factory_Whitep
 - Policy Engine (OPA, Gatekeeper, Kyverno);
 - Runtime Security.
 
-Schema elements drawn from this architecture are tagged with the `slsa_ssf` subset. `docs/about.md` names `pipelineOrchestrator`, `signingTool`, `sigstoreLogEntry`, `guacUri` and `securityInsightsUri`. The subset's description in the schema points at <https://github.com/cncf/tag-security/tree/main/supply-chain-security/secure-software-factory>.
+Schema elements drawn from this architecture are tagged with the `slsa_ssf` subset. `docs/about.md` names `pipelineOrchestrator`, `signingTool`, `sigstoreLogEntry`, `guacUri` and `securityInsightsUri`. The subset's description in the schema points at <https://github.com/cncf/tag-security/tree/main/community/working-groups/supply-chain-security/secure-software-factory>.
 
 ## Upstream copy
 
