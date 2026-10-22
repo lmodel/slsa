@@ -57,7 +57,7 @@ subsets:
       Integrity Working Group ecosystem. The SSF defines a standard pipeline
       pattern — Version Control, CI Build Service, Artifact Registry, Signing
       Service, and Policy Engine — that implements SLSA requirements end-to-end.
-      See: https://github.com/cncf/tag-security/tree/main/supply-chain-security/secure-software-factory
+      See: https://github.com/cncf/tag-security/tree/main/community/working-groups/supply-chain-security/secure-software-factory
       and https://openssf.org/technical-initiatives/software-supply-chain/
 
 slots:

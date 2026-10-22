@@ -66,7 +66,7 @@
     {
       "name": "slsa_ssf",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaSsf",
-      "description": "Slots and classes related to the CNCF TAG-Security Secure Software Factory (SSF) reference architecture and the OpenSSF Supply Chain Integrity Working Group ecosystem. The SSF defines a standard pipeline pattern \u2014 Version Control, CI Build Service, Artifact Registry, Signing Service, and Policy Engine \u2014 that implements SLSA requirements end-to-end. See: https://github.com/cncf/tag-security/tree/main/supply-chain-security/secure-software-factory and https://openssf.org/technical-initiatives/software-supply-chain/",
+      "description": "Slots and classes related to the CNCF TAG-Security Secure Software Factory (SSF) reference architecture and the OpenSSF Supply Chain Integrity Working Group ecosystem. The SSF defines a standard pipeline pattern \u2014 Version Control, CI Build Service, Artifact Registry, Signing Service, and Policy Engine \u2014 that implements SLSA requirements end-to-end. See: https://github.com/cncf/tag-security/tree/main/community/working-groups/supply-chain-security/secure-software-factory and https://openssf.org/technical-initiatives/software-supply-chain/",
       "from_schema": "https://w3id.org/lmodel/slsa",
       "@type": "SubsetDefinition"
     }

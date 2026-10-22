@@ -62,7 +62,7 @@ subsets:
       \ Factory (SSF) reference architecture and the OpenSSF Supply Chain Integrity\
       \ Working Group ecosystem. The SSF defines a standard pipeline pattern \u2014\
       \ Version Control, CI Build Service, Artifact Registry, Signing Service, and\
-      \ Policy Engine \u2014 that implements SLSA requirements end-to-end. See: https://github.com/cncf/tag-security/tree/main/supply-chain-security/secure-software-factory\
+      \ Policy Engine \u2014 that implements SLSA requirements end-to-end. See: https://github.com/cncf/tag-security/tree/main/community/working-groups/supply-chain-security/secure-software-factory\
       \ and https://openssf.org/technical-initiatives/software-supply-chain/"
     from_schema: https://w3id.org/lmodel/slsa
 types:
