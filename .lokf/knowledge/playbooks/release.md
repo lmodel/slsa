@@ -35,7 +35,7 @@ The package is named `slsa-linkml` in `pyproject.toml`, and its import package s
 2. Type each commit with Conventional Commits. Only `feat:`, `fix:` and `security:` cut a release. A pull request that would release must carry a releasing type in its title too, because a squash merge takes its subject from the title.
 3. Merge to `main`. The `release` job of `.github/workflows/semantic-release.yml` runs in the `release` GitHub Environment. It retitles the changelog section to `## [X.Y.Z] - YYYY-MM-DD`, commits `CHANGELOG.md`, tags `vX.Y.Z` and publishes the GitHub Release from the same text.
 
-The `plan` job previews every pull request into `main` with `--dry-run`. It fails a pull request that would release with an empty changelog section, or with a title that has no releasing type.
+The `plan` job previews every pull request into `main` with `--dry-run`. When a pull request would release, the job fails it if its changelog section is empty or its title has no releasing type.
 
 The schema stays below 1.0.0. The `v0.1.0` baseline tag stops semantic-release from making a first release 1.0.0, and both jobs refuse to run without a `v*` tag. `.releaserc.json` maps a breaking change to a minor bump.
 
