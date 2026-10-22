@@ -20,6 +20,9 @@ author:
   - type: Organization
     id: https://w3id.org/lmodel/slsa/knowledge/org/slsa-project
     name: SLSA project (OpenSSF)
+verified:
+  - by: process:ktl-librarian
+    at: "2026-10-22T18:46:59Z"
 ---
 
 # SLSA specification

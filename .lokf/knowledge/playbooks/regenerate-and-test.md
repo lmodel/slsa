@@ -16,7 +16,7 @@ references:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/test-data
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:03:37Z"
+  at: "2026-10-22T18:46:59Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -36,4 +36,4 @@ verified:
 6. Run `just lint` for the schema linter.
 7. Commit the regenerated files with the schema change.
 
-`.github/workflows/main.yaml` runs `just test` on every push to `main` and on every pull request, on Python 3.9, 3.10, 3.11, 3.12 and 3.13.
+`.github/workflows/main.yaml` runs `just test` on every push to `main` and on every pull request, on Python 3.9, 3.10, 3.11, 3.12 and 3.13. On Python 3.13 it runs `just lint` first.

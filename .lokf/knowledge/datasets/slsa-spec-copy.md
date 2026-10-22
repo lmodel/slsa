@@ -9,11 +9,17 @@ derivedFrom:
   - https://w3id.org/lmodel/slsa/knowledge/references/slsa-specification
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:14:46Z"
+  at: "2026-10-22T18:46:59Z"
 status: draft
 sources:
   - resource: https://github.com/slsa-framework/slsa/tree/v1.2/docs/spec/draft
     title: the SLSA repository's draft specification at tag v1.2 (commit 19e4e2f005f871270c4f555fc47afecfb37f3efe)
+  - resource: .github/workflows/upstream-watch.yaml
+    title: the weekly upstream watch
+  - resource: scripts/check_upstream_release.py
+    title: the comparison script and its pinned tag
+  - resource: NOTICE
+    title: the SLSA specification section
 ---
 
 # SLSA specification copy
@@ -31,6 +37,10 @@ The copy was added in commit `eb37747` with the schema. Compared by git blob has
 - `attested-build-env-levels.md`, `levels.md` and `verifying-systems.md` are not in that folder at that tag.
 
 The [SLSA specification](../references/slsa-specification.md) page gives the license and its attribution condition.
+
+## Upstream watch
+
+`.github/workflows/upstream-watch.yaml` runs `scripts/check_upstream_release.py` every Monday at 07:00 UTC, and by hand. The script compares every copied file with its blob in the pinned tree, `PINNED_TAG = "v1.2"`, by git object hash, and checks whether the SLSA repository has tagged a newer version. It fails on a newer version or on a difference it does not list as known. A failure opens an issue, or comments on the one already open.
 
 ## Open questions
 
