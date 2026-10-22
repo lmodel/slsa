@@ -148,7 +148,7 @@ linkml_meta = LinkMLMeta({'default_prefix': 'slsa',
                                              'Service, and Policy Engine — that '
                                              'implements SLSA requirements '
                                              'end-to-end. See: '
-                                             'https://github.com/cncf/tag-security/tree/main/supply-chain-security/secure-software-factory '
+                                             'https://github.com/cncf/tag-security/tree/main/community/working-groups/supply-chain-security/secure-software-factory '
                                              'and '
                                              'https://openssf.org/technical-initiatives/software-supply-chain/',
                               'from_schema': 'https://w3id.org/lmodel/slsa',
