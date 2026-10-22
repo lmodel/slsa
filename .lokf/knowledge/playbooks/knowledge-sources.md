@@ -7,6 +7,8 @@ description: "The librarian's scrape map: every repository location and external
 resource: https://github.com/lmodel/slsa
 sources:
   - resource: README.md
+  - resource: NOTICE
+  - resource: LICENSE
   - resource: pyproject.toml
   - resource: docs/
   - resource: src/slsa/schema/
@@ -21,10 +23,15 @@ sources:
   - resource: .github/workflows/deploy-docs.yaml
   - resource: .github/workflows/test_pages_build.yaml
   - resource: .github/workflows/pypi-publish.yaml
+  - resource: .github/workflows/semantic-release.yml
+  - resource: .github/workflows/upstream-watch.yaml
+  - resource: .releaserc.json
+  - resource: .github/scripts/changelog-release.mjs
+  - resource: scripts/check_upstream_release.py
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-22T09:13:59Z"
+  at: "2026-10-22T18:46:59Z"
 status: draft
 ---
 
@@ -44,7 +51,9 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `tests/data/`, `tests/test_data.py` | `datasets/test-data` | re-list `tests/data/`; re-read the test |
 | `mkdocs.yml`, `docs/index.md`, `.github/workflows/deploy-docs.yaml`, `.github/workflows/test_pages_build.yaml` | `services/documentation-site` | confirm the triggers and the `gen-doc` plus `gh-deploy` and preview steps |
 | `.github/workflows/main.yaml`, `CONTRIBUTING.md` | CI facts in `playbooks/regenerate-and-test` | confirm the Python matrix and the `just test` step |
-| `.github/workflows/pypi-publish.yaml` | `playbooks/release` | re-read the triggers, the environment and the two publish steps |
+| `.github/workflows/pypi-publish.yaml`, `.github/workflows/semantic-release.yml`, `.releaserc.json`, `.github/scripts/changelog-release.mjs`, the Releasing section of `CONTRIBUTING.md` | `playbooks/release` | re-read the triggers, the environments, the repository variables and the release rules |
+| `README.md` (License and attribution), `NOTICE`, `LICENSE`, the License section of `CONTRIBUTING.md` | `policies/license-and-attribution` | re-read each third-party entry in `NOTICE` and the README's attribution paragraph |
+| `.github/workflows/upstream-watch.yaml`, `scripts/check_upstream_release.py` | the upstream watch in `datasets/slsa-spec-copy` | re-read the schedule and `PINNED_TAG` |
 | `https://github.com/slsa-framework/slsa` (README, `LICENSE.md`, tag `v1.2`) | `org/slsa-project`, the license in `references/slsa-specification`, the upstream section of `datasets/slsa-spec-copy` | re-read the Governance and License sections; compare `git hash-object` of each copied file with the tree at the tag in use; watch for a release after v1.2 |
 | `https://github.com/cncf/tag-security` (`LICENSE.md`, the whitepaper's folder) | `org/cncf-tag-security`, the upstream section of `references/secure-software-factory` | re-read the license; compare the PDF's blob hash |
 | `https://slsa.dev/spec/v1.2/`, `https://arxiv.org/abs/2409.05014`, `https://openssf.org/technical-initiatives/software-supply-chain/` | the `references/` concepts | external authorities: cite on change |
@@ -54,8 +63,8 @@ These are not knowledge sources, and are left out on purpose:
 - `docs/elements/` and `examples/output/` (git-ignored build output);
 - `docs/templates-linkml/` and `docs/js/` (site theming);
 - `examples/README.md`, `src/slsa/schema/README.md` and `tests/data/README.md` beyond the naming rule (short pages from the project template);
-- `CODE_OF_CONDUCT.md`, `LICENSE` and the rest of `CONTRIBUTING.md` (governance text);
-- `uv.lock`, `.gitignore`, `.pre-commit-config.yaml`, `.yamllint.yaml`, `.editorconfig`, `config.public.mk` and `.github/dependabot.yml` (tooling);
+- `CODE_OF_CONDUCT.md`, `AI_COVENANT.md`, `SECURITY.md`, `CHANGELOG.md`, the rest of `CONTRIBUTING.md` and the issue and pull request templates (governance text);
+- `uv.lock`, `.gitignore`, `.pre-commit-config.yaml`, `.yamllint.yaml`, `.editorconfig`, `config.public.mk`, `.github/dependabot.yml`, `.github/workflows/lint-and-docs.yaml`, `.markdownlint-cli2.jsonc`, `lychee.toml` and `.github/scripts/report-issue.sh` (tooling);
 - `src/slsa/__init__.py`, `src/slsa/_version.py` and `tests/__init__.py` (package and test plumbing);
 - `llms.txt` (the pointer that sends agents to this bundle);
 - the `.lokf/` sidecar itself, including the `knowledge_bundle` link, `.github/workflows/knowledge-*.yaml` and `.github/PULL_REQUEST_TEMPLATE/knowledge-sync.md`.

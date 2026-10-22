@@ -18,7 +18,7 @@ A [LOKF](https://lokf.nolan-nichols.com) knowledge base for SLSA. Every Markdown
 
 # Services
 
-* [slsa documentation site](services/documentation-site.md) - The MkDocs site at `https://lmodel.github.io/slsa`, generated from the slsa schema and deployed to GitHub Pages on every push to main, with a preview built for each pull request.
+* [slsa documentation site](services/documentation-site.md) - The MkDocs site at `https://lmodel.github.io/slsa`, generated from the slsa schema and deployed to GitHub Pages on every push to main, with a preview built for each pull request from a branch of this repository.
 
 # References
 
@@ -46,10 +46,14 @@ A [LOKF](https://lokf.nolan-nichols.com) knowledge base for SLSA. Every Markdown
 # Playbooks
 
 * [Regenerate and test the schema](playbooks/regenerate-and-test.md) - How to change the slsa schema and regenerate its artifacts and docs with just (gen-project, gen-doc), then run the tests CI runs (just test) on Python 3.9 to 3.13.
-* [Release the slsa package](playbooks/release.md) - How a version tag or a published GitHub release builds the slsa Python package and publishes it to TestPyPI or PyPI through trusted publishing in the pypi-release environment.
+* [Release the slsa package](playbooks/release.md) - How a releasing commit merged to main makes semantic-release promote the changelog, tag vX.Y.Z and publish a GitHub Release, and how pypi-publish.yaml then publishes slsa-linkml to PyPI once PYPI_RELEASE_ENABLED is true.
 * [Knowledge sources map](playbooks/knowledge-sources.md) - The librarian's scrape map: every repository location and external URL this bundle derives concepts from, and how to re-verify each on a refresh run.
 
 # Org
 
 * [SLSA project (OpenSSF)](org/slsa-project.md) - The OpenSSF project that publishes the SLSA specification from the slsa-framework/slsa repository, governed by a steering committee and licensed under the Community Specification License 1.0.
 * [CNCF TAG-Security](org/cncf-tag-security.md) - The CNCF Security Technical Advisory Group, publisher of the Secure Software Factory whitepaper from its cncf/tag-security repository (now archived), which licenses its documentation under CC BY 4.0.
+
+# Policies
+
+* [License and attribution](policies/license-and-attribution.md) - Which license covers what in the slsa repository: Apache-2.0 for the schema and code, the SLSA specification copy under the Community Specification License 1.0 with its name, version and source attribution, the whitepaper under CC BY 4.0, and what NOTICE lists.
