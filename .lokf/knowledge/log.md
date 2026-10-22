@@ -1,5 +1,11 @@
 # Change Log
 
+## 2026-10-22
+
+* **Changed**: gen-project's settings moved from `config.yaml` to `.linkml/generators.yaml`, which `config.public.mk` now names, so the generated artifacts cite the new path.
+* **Resolved**: the merged schema in `docs/schema/slsa.yaml` was regenerated and now carries the schema's new description.
+* **Changed**: the source map names `.linkml/generators.yaml` where it named `config.yaml`.
+
 ## 2026-10-21
 
 * **Added**: the SLSA project as an organization, from the SLSA repository README.

@@ -12,7 +12,7 @@ sources:
   - resource: src/slsa/schema/
   - resource: src/slsa/datamodel/
   - resource: project/
-  - resource: config.yaml
+  - resource: .linkml/generators.yaml
   - resource: justfile
   - resource: project.justfile
   - resource: tests/
@@ -24,7 +24,7 @@ sources:
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:14:46Z"
+  at: "2026-10-22T09:13:59Z"
 status: draft
 ---
 
@@ -40,7 +40,7 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `src/slsa/schema/slsa.yaml` | `datasets/slsa-linkml-schema`, `explanations/schema-subsets`, the level enums in `glossary/slsa-level` | reload it and recount classes, slots, enums and subsets; re-read the header's `version`, `source` and `see_also` |
 | `src/slsa/schema/spec/` | `datasets/slsa-spec-copy`, the two `glossary/` terms | re-read `index.md`'s version line; re-list the pages; re-read `levels.md`, `tracks.md`, `source-requirements.md` and `dependency-track.md` |
 | `docs/Secure_Software_Factory_Whitepaper.pdf` | `references/secure-software-factory` | confirm the file is still there |
-| `justfile`, `project.justfile`, `config.yaml`, `project/`, `src/slsa/datamodel/`, `docs/schema/` | `datasets/generated-artefacts`, `playbooks/regenerate-and-test` | re-read the `gen-project`, `gen-python`, `gen-doc` and `test` recipe chains; re-list `project/*/`; re-read `config.yaml` excludes |
+| `justfile`, `project.justfile`, `.linkml/generators.yaml`, `project/`, `src/slsa/datamodel/`, `docs/schema/` | `datasets/generated-artefacts`, `playbooks/regenerate-and-test` | re-read the `gen-project`, `gen-python`, `gen-doc` and `test` recipe chains; re-list `project/*/`; re-read the `excludes` in `.linkml/generators.yaml` |
 | `tests/data/`, `tests/test_data.py` | `datasets/test-data` | re-list `tests/data/`; re-read the test |
 | `mkdocs.yml`, `docs/index.md`, `.github/workflows/deploy-docs.yaml`, `.github/workflows/test_pages_build.yaml` | `services/documentation-site` | confirm the triggers and the `gen-doc` plus `gh-deploy` and preview steps |
 | `.github/workflows/main.yaml`, `CONTRIBUTING.md` | CI facts in `playbooks/regenerate-and-test` | confirm the Python matrix and the `just test` step |
