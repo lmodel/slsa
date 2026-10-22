@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-22
+
 ### Added
 
 - **Governance files.** `AI_COVENANT.md`, `SECURITY.md`, `NOTICE`, this changelog, and issue and pull request templates.
