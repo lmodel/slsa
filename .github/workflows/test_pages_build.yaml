@@ -1,3 +1,4 @@
+---
 name: Preview documentation build
 
 on:  # yamllint disable-line rule:truthy
@@ -10,20 +11,19 @@ on:  # yamllint disable-line rule:truthy
 env:
   CLICOLOR: 1
 
-concurrency: preview-${{ github.ref }}
-
 permissions: {}
+
+concurrency: preview-${{ github.ref }}
 
 jobs:
   run:
-    # Don't run for PRs from forks which fails due to lack of permissions.
+    # A pull request from a fork gets a read-only token, and this job pushes
+    # the preview to gh-pages, so it runs only for branches of this
+    # repository. Their authors can already push here.
     if: github.event.pull_request.head.repo.full_name == github.repository
-    # Grant GITHUB_TOKEN the permissions required to make a gh-pages deployment
     permissions:
-      contents: write  # to let mkdocs write the new docs
-      pages: write     # to deploy to Pages
-      id-token: write  # allow to generate an OpenID Connect (OIDC) token
-      pull-requests: write  # add comment on the PR with the preview URL
+      contents: write  # to push the preview to gh-pages
+      pull-requests: write  # to comment on the pull request with the preview URL
     runs-on: ubuntu-latest
 
     strategy:
@@ -31,35 +31,39 @@ jobs:
         pyversion: ["3.13"]
 
     steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+
       # https://github.com/actions/checkout
+      # Keeps the checkout credential: the preview action pushes gh-pages
+      # with it. The dev dependencies uv.lock pins run while it is on disk.
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      # https://github.com/actions/setup-python
-      - name: Set up Python
-        uses: actions/setup-python@v6.2.0
-        with:
-          
-          python-version: ${{ matrix.pyversion }}
-          
       # https://github.com/astral-sh/setup-uv
       - name: Install uv
-        uses: astral-sh/setup-uv@v7.6.0
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
-          
           python-version: ${{ matrix.pyversion }}
-          
           enable-cache: true
           cache-dependency-glob: "uv.lock"
+
+      # https://github.com/actions/setup-python
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.pyversion }}
 
       - name: Install just
         run: |
           uv tool install rust-just
 
       - name: Install dependencies
-        run: uv sync --dev --no-progress
+        run: uv sync --locked --group dev --no-progress
 
       - name: Build documentation
         run: |
@@ -69,7 +73,7 @@ jobs:
 
       # https://github.com/rossjrw/pr-preview-action
       - name: Deploy preview
-        uses: rossjrw/pr-preview-action@v1.8.1
+        uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 # v1.8.1
         with:
           source-dir: site/
           preview-branch: gh-pages

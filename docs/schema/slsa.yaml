@@ -1,6 +1,5 @@
 name: slsa
-description: Electronic (LinkML) Version of Supply-chain Levels for Software Artifacts
-  (SLSA)
+description: Supply-chain Levels for Software Artifacts (SLSA) LinkML schema
 title: slsa
 source: https://slsa.dev/spec/v1.0
 see_also:
@@ -2256,7 +2255,7 @@ classes:
     class_uri: slsa:AdoptionMetadata
 metamodel_version: 1.7.0
 source_file: slsa.yaml
-source_file_date: '2026-03-22T23:41:50'
-source_file_size: 57951
-generation_date: '2026-03-22T23:42:51'
+source_file_date: '2026-10-21T23:13:43'
+source_file_size: 57934
+generation_date: '2026-10-21T23:18:14'
 
