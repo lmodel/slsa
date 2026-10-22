@@ -22,7 +22,7 @@ references:
   - https://w3id.org/lmodel/slsa/knowledge/org/cncf-tag-security
 generated:
   by: process:ktl-librarian
-  at: "2026-10-22T18:46:59Z"
+  at: "2026-10-22T18:54:27Z"
 status: draft
 ---
 
@@ -39,7 +39,7 @@ The README says the schema and the code in this repository are under the Apache 
 
 ## Endorsement
 
-The README and `NOTICE` say the schema, the data models, `project/` and the slsa-linkml package are this project's rendering, not an official SLSA release. Their use does not imply endorsement by the SLSA Working Group, OpenSSF or the CNCF.
+`NOTICE` says that `src/slsa/schema/slsa.yaml`, `src/slsa/datamodel/`, `project/` and the slsa-linkml package are this project's rendering, not an official SLSA release, and that their use does not imply endorsement by the SLSA Working Group or OpenSSF. The README says that this is not an official SLSA release, and that its use does not imply endorsement by the SLSA Working Group, OpenSSF or the CNCF.
 
 ## Contributions
 

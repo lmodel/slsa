@@ -2,6 +2,7 @@
 
 ## 2026-10-22
 
+* **Changed**: the attribution policy's endorsement paragraph now says which claim the README makes and which `NOTICE` makes.
 * **Prose**: reworded 2 concept bodies in plain English (license-and-attribution, release). No fact, link, number or frontmatter changed.
 * **Added**: License and attribution, from the README's License and attribution section, `NOTICE` and `CONTRIBUTING.md`.
 * **Rewrite**: the release playbook now follows `semantic-release.yml` and the reworked `pypi-publish.yaml`, which publishes `slsa-linkml` only when `PYPI_RELEASE_ENABLED` is `true`.
