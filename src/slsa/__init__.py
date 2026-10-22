@@ -1,3 +1,8 @@
+"""slsa.
+
+Supply-chain Levels for Software Artifacts (LinkML)
+"""
+
 try:
     from slsa._version import __version__, __version_tuple__
 except ImportError:  # pragma: no cover
