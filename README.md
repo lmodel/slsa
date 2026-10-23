@@ -4,19 +4,9 @@
 
 Supply-chain Levels for Software Artifacts (LinkML)
 
-> **Two ways in.** This README is one; the other is a docent, a museum's name
-> for a guide. Install
-> [`ktl-docent`](https://github.com/noelmcloughlin/knowledge-trust-ladder) into
-> whatever agent you already use, by a route from
-> [the install page](https://w3id.org/ktl/docs/install/), and ask it anything
-> about this project. It answers from `.lokf/knowledge/`,
-> the checked part of what the project knows, and says how far each answer has
-> been trusted (still a draft, checked by automation only, or confirmed by a
-> named person). It opens the source for exact values, and records what it
-> could not answer so the gap gets filled. The same docent serves a person at a
-> prompt, an agent reading this file, or a chatbot that can load a skill.
-> **Agents:** if `.lokf/knowledge/index.md` exists, read it first. `llms.txt`
-> says how to weigh it.
+> **Only want to ask?** Install `ktl-docent` into any agent you use, by a route from [the install page](https://w3id.org/ktl/docs/install/), and ask it about this project. It answers from the bundle and says how far each answer has been checked.
+>
+> **Agents:** if `.lokf/knowledge/index.md` exists, read it first. `llms.txt` says how to weigh it.
 
 ## Documentation Website
 
@@ -41,6 +31,18 @@ Supply-chain Levels for Software Artifacts (LinkML)
 
 There are several pre-defined command-recipes available.
 They are written for the command runner [just](https://github.com/casey/just/). To list all pre-defined commands, run `just` or `just --list`.
+
+## Knowledge Trust Ladder (KTL)
+
+`.lokf/` holds this project's [KTL](https://w3id.org/ktl/) knowledge bundle. Its domain schema is `.lokf/slsa.yaml`, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy.
+
+A concept may name one of ten SLSA classes as its `type`. In the KTL Registrar and KTL Curator plugins, add them to the *Known LOKF types* setting, after the built-ins, so the two lists stay the same:
+
+```text
+Producer, Consumer, InfrastructureProvider, Verifier, Builder, BuildPlatform, ControlPlane, BuildImage, Package, SourceRepository
+```
+
+The copy renames the SLSA keys that LOKF also uses: `slsa_id`, `slsa_name`, `slsa_description`, `slsa_version`, `slsa_author`, `slsa_timestamp` and `slsa_predicate`. Two of them mean the same as LOKF's keys, so a concept writes `title` and `description` and leaves `slsa_name` and `slsa_description` empty.
 
 ## License and attribution
 
