@@ -13,7 +13,8 @@ Element names are the schema's own: classes carry a prefix
 (`InTotoStatement`, `SlsaPackage`) so they can be imported beside other
 vocabularies, slots are
 snake_case, and permissible values keep the strings SLSA defines, such as
-`SLSA_BUILD_LEVEL_3`. Every element links to the page it renders.
+`SLSA_BUILD_LEVEL_3`. Every element links to the page it renders, and lives
+under `slsa:` (`https://w3id.org/lmodel/slsa/`).
 
 ## Beyond the specification
 

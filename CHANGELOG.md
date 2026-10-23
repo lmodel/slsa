@@ -8,7 +8,7 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ### Changed
 
-- **The schema is rebuilt to LinkML conventions, and every data key changes.** Classes carry a prefix (`InTotoStatement`, `SlsaPackage`), slots are snake_case attributes of their class, a statement nests its predicate as in-toto does, build parameters and component versions are lists of named values, references between classes go through identifiers, and the paper's citations move from descriptions into comments. Data written for the old schema does not validate.
+- **The schema is rebuilt to LinkML conventions, and every data key changes.** Classes carry a prefix (`InTotoStatement`, `SlsaPackage`), and slots are snake_case attributes of their class. A statement nests its predicate as in-toto does, build parameters and component versions are lists of named values, references between classes go through identifiers, and the paper's citations move from descriptions into comments. Data written for the old schema does not validate.
 - **The schema is modular.** `slsa_core` and one module per track or predicate sit under `slsa.yaml`, so an importer can take one module; `docs/schema/slsa.yaml` stays the merged file.
 - **`.lokf/slsa.yaml` is regenerated**, and `just lokf-adapt` and `just lokf-adapt-check` write and check it. The README lists the classes a concept may use as its `type`.
 - **The specification copy is exactly `docs/spec/draft/` at tag `v1.2`**: `build-requirements.md` is upstream's text again, and three pages that were not in that tree are gone.

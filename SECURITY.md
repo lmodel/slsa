@@ -8,7 +8,7 @@ Use GitHub's [private vulnerability reporting](https://github.com/lmodel/slsa/se
 
 ## Supported versions
 
-**No release has been cut yet**, and the schema is pre-1.0 by design ([CONTRIBUTING.md](CONTRIBUTING.md#releasing-maintainers)). Once releases exist, only the latest receives fixes; a security fix ships as a patch release and is noted in [CHANGELOG.md](CHANGELOG.md).
+**Only the latest release receives fixes.** A security fix is released as a patch and noted in [CHANGELOG.md](CHANGELOG.md). The schema is pre-1.0 by design ([CONTRIBUTING.md](CONTRIBUTING.md#releasing-maintainers)).
 
 ## What this repository ships
 
