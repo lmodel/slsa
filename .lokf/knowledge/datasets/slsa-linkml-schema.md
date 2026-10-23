@@ -3,7 +3,7 @@ type: Dataset
 id: https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
 genre: reference
 title: slsa LinkML schema
-description: The LinkML schema for SLSA attestations and adoption metadata (schema id `https://w3id.org/lmodel/slsa`), covering the Build, Source, Dependency and Build Environment tracks, the in-toto Statement layer, and the SSF and adoption-study subsets.
+description: The LinkML schema for SLSA attestations and adoption metadata (schema id `https://w3id.org/lmodel/slsa`), covering the Build, Source, Dependency and Build Environment tracks, the in-toto Statement layer, and the SSF and adoption-study subsets; its `lokf adapt` copy in `.lokf/slsa.yaml` is the bundle's domain schema, with ten SLSA classes a concept may use as its type.
 resource: src/slsa/schema/slsa.yaml
 version: 1.0.0
 license: Apache-2.0
@@ -22,11 +22,14 @@ relatedTo:
   - https://w3id.org/lmodel/slsa/knowledge/references/openssf-supply-chain
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:03:37Z"
+  at: "2026-10-23T20:08:09Z"
 status: draft
 verified:
   - by: process:ktl-librarian
     at: "2026-10-22T18:46:59Z"
+sources:
+  - resource: README.md
+    title: the Knowledge Trust Ladder (KTL) section
 ---
 
 # slsa LinkML schema
@@ -50,3 +53,11 @@ verified:
 Each element is tagged with the subsets it belongs to; [Schema subsets](../explanations/schema-subsets.md) explains them.
 
 The merged copy in `docs/schema/slsa.yaml`, the Python data models and the `project/` artifacts are generated from this file: see [Generated artifacts](generated-artefacts.md).
+
+## As the bundle's domain schema
+
+The README says `.lokf/slsa.yaml` is the bundle's domain schema, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy.
+
+A concept may name one of ten SLSA classes as its `type`: `Producer`, `Consumer`, `InfrastructureProvider`, `Verifier`, `Builder`, `BuildPlatform`, `ControlPlane`, `BuildImage`, `Package` and `SourceRepository`. The README asks for the same ten in the *Known LOKF types* setting of the KTL Registrar and KTL Curator plugins, after the built-ins, so the two lists stay the same.
+
+The copy renames the SLSA keys that LOKF also uses: `slsa_id`, `slsa_name`, `slsa_description`, `slsa_version`, `slsa_author`, `slsa_timestamp` and `slsa_predicate`. `slsa_name` and `slsa_description` mean the same as LOKF's `title` and `description`, so a concept writes `title` and `description` and leaves those two empty.

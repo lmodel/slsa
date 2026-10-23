@@ -7,6 +7,7 @@ description: "The librarian's scrape map: every repository location and external
 resource: https://github.com/lmodel/slsa
 sources:
   - resource: README.md
+  - resource: .copier-answers.yml
   - resource: NOTICE
   - resource: LICENSE
   - resource: pyproject.toml
@@ -31,7 +32,7 @@ sources:
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-22T18:46:59Z"
+  at: "2026-10-23T20:08:09Z"
 status: draft
 ---
 
@@ -53,6 +54,7 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `.github/workflows/main.yaml`, `CONTRIBUTING.md` | CI facts in `playbooks/regenerate-and-test` | confirm the Python matrix and the `just test` step |
 | `.github/workflows/pypi-publish.yaml`, `.github/workflows/semantic-release.yml`, `.releaserc.json`, `.github/scripts/changelog-release.mjs`, the Releasing section of `CONTRIBUTING.md` | `playbooks/release` | re-read the triggers, the environments, the repository variables and the release rules |
 | `README.md` (License and attribution), `NOTICE`, `LICENSE`, the License section of `CONTRIBUTING.md` | `policies/license-and-attribution` | re-read each third-party entry in `NOTICE` and the README's attribution paragraph |
+| `README.md` (Knowledge Trust Ladder (KTL) section) | the domain-schema section of `datasets/slsa-linkml-schema` | re-read the ten classes and the renamed keys |
 | `.github/workflows/upstream-watch.yaml`, `scripts/check_upstream_release.py` | the upstream watch in `datasets/slsa-spec-copy` | re-read the schedule and `PINNED_TAG` |
 | `https://github.com/slsa-framework/slsa` (README, `LICENSE.md`, tag `v1.2`) | `org/slsa-project`, the license in `references/slsa-specification`, the upstream section of `datasets/slsa-spec-copy` | re-read the Governance and License sections; compare `git hash-object` of each copied file with the tree at the tag in use; watch for a release after v1.2 |
 | `https://github.com/cncf/tag-security` (`LICENSE.md`, the whitepaper's folder) | `org/cncf-tag-security`, the upstream section of `references/secure-software-factory` | re-read the license; compare the PDF's blob hash |
@@ -62,7 +64,7 @@ These are not knowledge sources, and are left out on purpose:
 
 - `docs/elements/` and `examples/output/` (git-ignored build output);
 - `docs/templates-linkml/` and `docs/js/` (site theming);
-- `examples/README.md`, `src/slsa/schema/README.md` and `tests/data/README.md` beyond the naming rule (short pages from the project template);
+- `examples/README.md`, `src/README.md`, `src/slsa/schema/README.md` and `tests/data/README.md` beyond the naming rule (short pages from the project template);
 - `CODE_OF_CONDUCT.md`, `AI_COVENANT.md`, `SECURITY.md`, `CHANGELOG.md`, the rest of `CONTRIBUTING.md` and the issue and pull request templates (governance text);
 - `uv.lock`, `.gitignore`, `.pre-commit-config.yaml`, `.yamllint.yaml`, `.editorconfig`, `config.public.mk`, `.github/dependabot.yml`, `.github/workflows/lint-and-docs.yaml`, `.markdownlint-cli2.jsonc`, `lychee.toml` and `.github/scripts/report-issue.sh` (tooling);
 - `src/slsa/__init__.py`, `src/slsa/_version.py` and `tests/__init__.py` (package and test plumbing);
