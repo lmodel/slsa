@@ -58,7 +58,12 @@ export const DOCS = "auto";
 // mkdocs.yml is retired, give its settings here, in its own keys; null reads
 // none.
 //   export const MKDOCS = { docs_dir: "docs", nav: [{ Home: "index.md" }, { About: "about.md" }], exclude_docs: "/templates-linkml/\n", site_url: "https://acme.github.io/acme-platform" };
-export const MKDOCS = "auto";
+export const MKDOCS = {
+  docs_dir: "docs",
+  nav: [{ Home: "index.md" }, { Schema: "elements/index.md" }, { About: "about.md" }],
+  exclude_docs: "/templates-linkml/\n",
+  site_url: "https://lmodel.github.io/slsa",
+};
 
 // A Keep a Changelog file, read as a page per release. "auto" takes
 // CHANGELOG.md when it holds a released version.
