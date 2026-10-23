@@ -56,8 +56,8 @@ The merged copy in `docs/schema/slsa.yaml`, the Python data models and the `proj
 
 ## As the bundle's domain schema
 
-The README says `.lokf/slsa.yaml` is the bundle's domain schema, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy.
+A domain schema adds a host's own classes and keys to the LOKF vocabulary. The README says the bundle's domain schema is `.lokf/slsa.yaml`, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source schema, never the copy.
 
-A concept may name one of ten SLSA classes as its `type`: `Producer`, `Consumer`, `InfrastructureProvider`, `Verifier`, `Builder`, `BuildPlatform`, `ControlPlane`, `BuildImage`, `Package` and `SourceRepository`. The README asks for the same ten in the *Known LOKF types* setting of the KTL Registrar and KTL Curator plugins, after the built-ins, so the two lists stay the same.
+A concept may name one of ten SLSA classes as its `type`: `Producer`, `Consumer`, `InfrastructureProvider`, `Verifier`, `Builder`, `BuildPlatform`, `ControlPlane`, `BuildImage`, `Package` and `SourceRepository`. The README says to add the same ten classes to the *Known LOKF types* setting of two Knowledge Trust Ladder (KTL) plugins, KTL Registrar and KTL Curator, after the built-in types, so that both plugins keep the same list.
 
-The copy renames the SLSA keys that LOKF also uses: `slsa_id`, `slsa_name`, `slsa_description`, `slsa_version`, `slsa_author`, `slsa_timestamp` and `slsa_predicate`. `slsa_name` and `slsa_description` mean the same as LOKF's `title` and `description`, so a concept writes `title` and `description` and leaves those two empty.
+The copy renames the SLSA keys that LOKF also uses, to `slsa_id`, `slsa_name`, `slsa_description`, `slsa_version`, `slsa_author`, `slsa_timestamp` and `slsa_predicate`. `slsa_name` and `slsa_description` mean the same as LOKF's `title` and `description`. So a concept sets `title` and `description`, and leaves the two SLSA keys empty.

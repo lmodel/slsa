@@ -38,4 +38,4 @@ verified:
 
 `.github/workflows/main.yaml` runs `just test` on every push to `main` and on every pull request, on Python 3.10, 3.11, 3.12, 3.13 and 3.14. On Python 3.13 it runs `just lint` first.
 
-On WSL2, run `export JUST_TEMPDIR=/tmp` before any recipe. The justfile warns when `JUST_TEMPDIR` is not set there, because shebang recipes then fail with "Permission denied" errors.
+On WSL2 (Windows Subsystem for Linux), run `export JUST_TEMPDIR=/tmp` before any recipe. Without `JUST_TEMPDIR`, shebang recipes fail with "Permission denied" errors, so the justfile prints a warning when the variable is missing.

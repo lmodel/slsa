@@ -2,6 +2,7 @@
 
 ## 2026-10-23
 
+* **Prose**: reworded 2 concept bodies in plain English (regenerate-and-test, slsa-linkml-schema). No fact, link, number or frontmatter changed.
 * **Changed**: the test playbook names the Python 3.10 to 3.14 matrix and the WSL2 `JUST_TEMPDIR` setting, from `main.yaml` and the `justfile` after the copier v0.5.0 update.
 * **Changed**: the schema concept says its `lokf adapt` copy is the bundle's domain schema, which ten SLSA classes it adds as concept types and which keys it renames, from the README's KTL section.
 * **Changed**: the source map adds the README's KTL section and `.copier-answers.yml` to its sources, and leaves out `src/README.md`, a short page from the project template.
