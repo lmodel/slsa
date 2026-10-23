@@ -1,0 +1,496 @@
+---
+id: https://w3id.org/lmodel/slsa/slsa_core
+name: slsa_core
+title: SLSA core
+description: >-
+  The parts of the SLSA model that every track shares: the in-toto attestation
+  layer, artifact descriptors, the supply-chain roles, the build platform and
+  the package model.
+license: Apache-2.0
+see_also:
+  - https://slsa.dev/spec/v1.2/terminology
+  - https://slsa.dev/spec/v1.2/attestation-model
+
+default_prefix: slsa
+default_range: string
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  slsa: https://w3id.org/lmodel/slsa/
+
+imports:
+  - linkml:types
+
+subsets:
+  slsa_build_track:
+    description: >-
+      Elements of the SLSA Build track, which measures the trustworthiness of a build
+      and its provenance.
+  slsa_source_track:
+    description: >-
+      Elements of the SLSA Source track, which measures how source revisions are created
+      and managed.
+  slsa_dependency_track:
+    description: >-
+      Elements of the SLSA Dependency track, a working-draft track for managing risk
+      from third-party dependencies.
+  slsa_build_environment_track:
+    description: >-
+      Elements of the SLSA Build Environment track, a working-draft track for the
+      integrity of the compute environment that runs builds.
+  slsa_adoption_study:
+    description: >-
+      Elements this schema adds from an empirical study of SLSA adoption
+      (Tamanna et al., 2024, arXiv:2409.05014). They are not part of the SLSA
+      specification.
+  slsa_ssf:
+    description: >-
+      Elements this schema adds from the CNCF TAG-Security Secure Software
+      Factory reference architecture and the OpenSSF supply-chain projects. They
+      are not part of the SLSA specification.
+
+slots:
+  resource_uri:
+    description: >-
+      The URI that identifies a resource, such as a package URL, a git repository
+      address or an OCI image reference.
+    slot_uri: slsa:resource_uri
+    range: uri
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  digest:
+    description: The cryptographic digests of a resource's content, keyed by algorithm.
+    slot_uri: slsa:digest
+    range: InTotoDigestSet
+    inlined: true
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  component_versions:
+    description: The version of each named component of a platform.
+    slot_uri: slsa:component_versions
+    range: SlsaComponentVersion
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+    in_subset:
+      - slsa_build_track
+
+  ecosystem:
+    description: >-
+      The package ecosystem whose rules govern how a package is named and distributed,
+      such as PyPA, npm or OCI.
+    slot_uri: slsa:ecosystem
+    comments:
+      - >-
+        The same source can yield differently named packages in one ecosystem, so
+        verifiers match provenance to package names with care (Tamanna et al., 2024,
+        UR.1).
+    in_subset:
+      - slsa_build_track
+      - slsa_dependency_track
+
+  build_platform:
+    description: The build platform this party or component belongs to or uses.
+    slot_uri: slsa:build_platform
+    range: SlsaBuildPlatform
+    in_subset:
+      - slsa_build_track
+
+classes:
+  # ── Artifact descriptors (in-toto attestation framework) ─────────────────
+
+  InTotoDigestSet:
+    description: >-
+      A set of digests over one artifact, keyed by algorithm, from which a consumer
+      picks the algorithm it trusts.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md
+    comments:
+      - >-
+        Digests are lowercase hexadecimal. The in-toto framework defines more algorithms
+        than the five modelled here.
+    attributes:
+      sha256:
+        description: The SHA-256 digest of the artifact.
+        pattern: "^[a-f0-9]{64}$"
+      sha512:
+        description: The SHA-512 digest of the artifact.
+        pattern: "^[a-f0-9]{128}$"
+      git_commit:
+        description: The git commit id of a source revision.
+        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
+      git_tree:
+        description: The git tree id of a source revision's content.
+        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
+      dir_hash:
+        description: >-
+          A digest over a directory's content, as the in-toto framework defines it.
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  InTotoAnnotation:
+    description: >-
+      One vendor-specific annotation on a resource descriptor, with a key and one or
+      more values.
+    attributes:
+      annotation_key:
+        description: The annotation's key.
+        required: true
+      annotation_values:
+        description: The annotation's values.
+        multivalued: true
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  InTotoResourceDescriptor:
+    description: >-
+      A reference to a software artifact or other resource, by URI, by digest, or both,
+      with optional metadata.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/main/spec/v1/resource_descriptor.md
+    comments:
+      - >-
+        A descriptor needs a URI, a digest or both; which one a field requires is said
+        on that field.
+    slots:
+      - resource_uri
+      - digest
+    attributes:
+      resource_name:
+        description: A name for the resource within the attestation that carries it.
+      download_location:
+        description: >-
+          Where the resource can be fetched, when that differs from its identifying URI.
+        range: uri
+      media_type:
+        description: The IANA media type of the resource's content.
+      annotations:
+        description: >-
+          Vendor-specific annotations on the resource, such as the source references a
+          Source VSA records.
+        range: InTotoAnnotation
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+      - slsa_dependency_track
+      - slsa_build_environment_track
+
+  # ── Attestation layer ────────────────────────────────────────────────────
+
+  InTotoStatement:
+    description: >-
+      The statement layer of an in-toto attestation: the subjects it is about,
+      the type of its predicate and the predicate itself.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md
+      - https://slsa.dev/spec/v1.2/attestation-model
+    comments:
+      - The signature envelope around a statement is outside this model.
+      - >-
+        Attestation and provenance are often confused; a statement is the attestation,
+        and build provenance is one kind of predicate it may carry (Tamanna et al.,
+        2024, UC.1).
+    attributes:
+      statement_type:
+        description: The in-toto statement type, always https://in-toto.io/Statement/v1.
+        range: uri
+        required: true
+        pattern: "^https://in-toto\\.io/Statement/v1$"
+      subject:
+        description: The artifacts the predicate is about; each carries a digest.
+        range: InTotoResourceDescriptor
+        multivalued: true
+        required: true
+        inlined: true
+        inlined_as_list: true
+      predicate_type:
+        description: >-
+          The URI that names the predicate's type and so its schema, such as
+          https://slsa.dev/provenance/v1.
+        range: uri
+        required: true
+      predicate:
+        description: >-
+          The predicate, one of the kinds this schema models; predicate_kind names
+          which.
+        range: SlsaPredicate
+        inlined: true
+      attestation_storage_uri:
+        description: Where the signed attestation is stored or can be fetched.
+        range: uri
+        comments:
+          - >-
+            SLSA names no standard place to store attestations; recording the place used
+            helps consumers find them (Tamanna et al., 2024, LF.1).
+        in_subset:
+          - slsa_adoption_study
+      signing_tool:
+        description: >-
+          The tool that signed the attestation, named by URI, such as Cosign or
+          Notation.
+        range: uri
+        in_subset:
+          - slsa_ssf
+      transparency_log_entry:
+        description: >-
+          The transparency log entry that records the signature, such as a Rekor entry.
+        range: uri
+        in_subset:
+          - slsa_ssf
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+      - slsa_build_environment_track
+
+  SlsaPredicate:
+    abstract: true
+    description: >-
+      The base of every predicate this schema models; predicate_kind names the concrete
+      kind.
+    attributes:
+      predicate_kind:
+        description: The kind of predicate, one of this class's descendants.
+        designates_type: true
+        range: string
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+      - slsa_build_environment_track
+
+  # ── Roles ────────────────────────────────────────────────────────────────
+
+  SlsaParty:
+    abstract: true
+    description: >-
+      A person or organization that takes part in a software supply chain, in one of the
+      roles SLSA names.
+    see_also:
+      - https://slsa.dev/spec/v1.2/terminology#roles
+    comments:
+      - One party may act in several roles, and several parties may share one role.
+    attributes:
+      party_type:
+        description: The role the party acts in, one of this class's descendants.
+        designates_type: true
+        range: string
+      party_name:
+        description: The party's name.
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  SlsaProducer:
+    is_a: SlsaParty
+    description: >-
+      A party that creates software and provides it to others, choosing a build platform
+      and distributing provenance.
+    slots:
+      - build_platform
+    in_subset:
+      - slsa_build_track
+
+  SlsaConsumer:
+    is_a: SlsaParty
+    description: >-
+      A party that uses software a producer provides, verifying its provenance itself or
+      through a verifier.
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  SlsaVerifier:
+    is_a: SlsaParty
+    description: >-
+      A party that inspects provenance or other attestations and decides whether an
+      artifact is authentic.
+    see_also:
+      - https://slsa.dev/spec/v1.2/verification_summary#verifier
+    comments:
+      - Consumers accept only specific signer and verifier pairs.
+    slots:
+      - component_versions
+    attributes:
+      verifier_id:
+        description: The URI that identifies the verifier.
+        range: uri
+        required: true
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  SlsaInfrastructureProvider:
+    is_a: SlsaParty
+    description: >-
+      A party that provides software or services to the other roles, such as a package
+      registry's or a build platform's maintainers.
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  # ── Build model ──────────────────────────────────────────────────────────
+
+  SlsaBuildPlatform:
+    description: >-
+      The system that runs builds and records their provenance: the transitive
+      closure of software, hardware, people and organizations trusted to do so.
+      Provenance names it as the builder.
+    see_also:
+      - https://slsa.dev/spec/v1.2/terminology#build-model
+      - https://slsa.dev/spec/v1.2/build-provenance#builder
+    comments:
+      - >-
+        A platform with several modes of operation at different levels has a different
+        builder_id for each.
+    slots:
+      - component_versions
+    attributes:
+      builder_id:
+        identifier: true
+        description: >-
+          The URI that identifies the platform and determines its SLSA Build level.
+        range: uri
+      build_level:
+        description: The highest SLSA Build level the platform's provenance can meet.
+        range: SlsaBuildLevel
+      hosted:
+        description: >-
+          Whether the platform is a hosted service on shared or dedicated infrastructure
+          rather than an individual's workstation.
+        range: boolean
+        comments:
+          - Build L2 and above require a hosted platform.
+      builder_dependencies:
+        description: >-
+          Dependencies of the platform's orchestrator that do not run inside the build
+          but may affect provenance generation or its guarantees.
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+    in_subset:
+      - slsa_build_track
+
+  SlsaControlPlane:
+    description: >-
+      The component of a build platform that orchestrates each build and generates its
+      provenance, outside the tenant's control.
+    see_also:
+      - https://slsa.dev/spec/v1.2/terminology#build-model
+    slots:
+      - build_platform
+    in_subset:
+      - slsa_build_track
+
+  SlsaComponentVersion:
+    description: The version of one named component of a platform.
+    attributes:
+      component:
+        description: The component's name.
+        required: true
+      component_version:
+        description: The component's version string.
+    in_subset:
+      - slsa_build_track
+
+  # ── Distribution model ───────────────────────────────────────────────────
+
+  SlsaPackageRegistry:
+    description: >-
+      A distribution platform that resolves package names to immutable package artifacts
+      within an ecosystem.
+    see_also:
+      - https://slsa.dev/spec/v1.2/terminology#distribution-model
+    slots:
+      - ecosystem
+    attributes:
+      registry_uri:
+        identifier: true
+        description: The URI that identifies the registry.
+        range: uri
+    in_subset:
+      - slsa_build_track
+      - slsa_dependency_track
+
+  SlsaPackage:
+    description: >-
+      A unit of software distributed under a package name, which is the primary
+      security boundary SLSA protects. Its artifacts are the outputs of builds.
+    see_also:
+      - https://slsa.dev/spec/v1.2/terminology#distribution-model
+    slots:
+      - ecosystem
+    attributes:
+      package_name:
+        description: >-
+          The name consumers use to obtain the package within its ecosystem and
+          registry.
+        required: true
+      registry:
+        description: The registry the package is published to.
+        range: SlsaPackageRegistry
+      package_artifacts:
+        description: The immutable artifacts the package name has resolved to.
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      guac_uri:
+        description: >-
+          Where a GUAC instance answers queries about the package's dependency and
+          provenance graph.
+        range: uri
+        in_subset:
+          - slsa_ssf
+      security_insights_uri:
+        description: >-
+          The SECURITY-INSIGHTS.yml file of the project that produces the package.
+        range: uri
+        in_subset:
+          - slsa_ssf
+    in_subset:
+      - slsa_build_track
+      - slsa_dependency_track
+
+enums:
+  SlsaBuildLevel:
+    description: >-
+      The levels of the SLSA Build track, each adding protection against tampering with
+      the build or its provenance.
+    see_also:
+      - https://slsa.dev/spec/v1.2/build-track-basics
+    permissible_values:
+      SLSA_BUILD_LEVEL_0:
+        description: >-
+          No requirements; the absence of SLSA, as for development or test builds.
+      SLSA_BUILD_LEVEL_1:
+        description: >-
+          Provenance exists and shows how the package was built; it prevents mistakes
+          but is easy to forge.
+      SLSA_BUILD_LEVEL_2:
+        description: >-
+          A hosted platform generates and signs the provenance, so tampering after the
+          build needs an explicit attack.
+        comments:
+          - >-
+            Integrating signing tools into varied CI workflows is a common adoption
+            difficulty (Tamanna et al., 2024, CI.2).
+      SLSA_BUILD_LEVEL_3:
+        description: >-
+          A hardened platform prevents runs from influencing one another and keeps
+          signing material away from build steps, so forging provenance needs an
+          exploit.
+        comments:
+          - >-
+            Hermetic and isolated builds were the adoption barrier practitioners cited
+            most (Tamanna et al., 2024, CI.1).
+    in_subset:
+      - slsa_build_track

@@ -1,0 +1,33 @@
+# A VSA from slsa-verifier confirming Build L3, with dependency counts.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - resource_uri: https://github.com/example/myapp/releases/download/v1.0.0/myapp-linux-amd64
+    digest:
+      sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+predicate_type: https://slsa.dev/verification_summary/v1
+predicate:
+  predicate_kind: SlsaVerificationSummary
+  verifier:
+    verifier_id: https://github.com/slsa-framework/slsa-verifier
+    component_versions:
+      - component: slsa-verifier-linux-amd64
+        component_version: v2.4.1
+  time_verified: "2024-01-15T12:00:00Z"
+  resource_uri: https://github.com/example/myapp/releases/download/v1.0.0/myapp-linux-amd64
+  policy:
+    resource_uri: https://example.com/policies/slsa-build-l3-github.json
+    digest:
+      sha256: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+  input_attestations:
+    - resource_uri: https://github.com/example/myapp/attestations/1
+      digest:
+        sha256: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+  verification_result: PASSED
+  verified_levels:
+    - SLSA_BUILD_LEVEL_3
+  dependency_levels:
+    - verified_level: SLSA_BUILD_LEVEL_3
+      dependency_count: 5
+    - verified_level: SLSA_BUILD_LEVEL_2
+      dependency_count: 7
+  slsa_version: "1.2"

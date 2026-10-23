@@ -5,74 +5,103 @@
       "skos": "http://www.w3.org/2004/02/skos/core#",
       "slsa": "https://w3id.org/lmodel/slsa/",
       "@vocab": "https://w3id.org/lmodel/slsa/",
-      "_type": {
-         "@id": "_type"
+      "build_env_level": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "build_env_level"
       },
-      "adoptionMetadata": {
+      "build_platform": {
          "@type": "@id",
-         "@id": "adoptionMetadata"
+         "@id": "build_platform"
+      },
+      "component_versions": {
+         "@type": "@id",
+         "@id": "component_versions"
+      },
+      "digest": {
+         "@type": "@id",
+         "@id": "digest"
+      },
+      "ecosystem": {
+         "@id": "ecosystem"
+      },
+      "annotation_key": {
+         "@id": "annotation_key"
+      },
+      "annotation_values": {
+         "@id": "annotation_values"
+      },
+      "dir_hash": {
+         "@id": "dir_hash"
+      },
+      "git_commit": {
+         "@id": "git_commit"
+      },
+      "git_tree": {
+         "@id": "git_tree"
+      },
+      "sha256": {
+         "@id": "sha256"
+      },
+      "sha512": {
+         "@id": "sha512"
       },
       "annotations": {
+         "@type": "@id",
          "@id": "annotations"
       },
-      "artifact": {
+      "download_location": {
+         "@type": "xsd:anyURI",
+         "@id": "download_location"
+      },
+      "media_type": {
+         "@id": "media_type"
+      },
+      "resource_name": {
+         "@id": "resource_name"
+      },
+      "attestation_storage_uri": {
+         "@type": "xsd:anyURI",
+         "@id": "attestation_storage_uri"
+      },
+      "predicate": {
          "@type": "@id",
-         "@id": "artifact"
+         "@id": "predicate"
       },
-      "attestationStorageUri": {
-         "@id": "attestationStorageUri"
+      "predicate_type": {
+         "@type": "xsd:anyURI",
+         "@id": "predicate_type"
       },
-      "author": {
-         "@id": "author"
+      "signing_tool": {
+         "@type": "xsd:anyURI",
+         "@id": "signing_tool"
       },
-      "buildDefinition": {
+      "statement_type": {
+         "@type": "xsd:anyURI",
+         "@id": "statement_type"
+      },
+      "subject": {
          "@type": "@id",
-         "@id": "buildDefinition"
+         "@id": "subject"
       },
-      "buildEnvLevel": {
-         "@context": {
-            "text": "skos:notation",
-            "description": "skos:prefLabel",
-            "meaning": "@id"
-         },
-         "@id": "buildEnvLevel"
+      "transparency_log_entry": {
+         "@type": "xsd:anyURI",
+         "@id": "transparency_log_entry"
       },
-      "builder": {
+      "repository": {
          "@type": "@id",
-         "@id": "builder"
+         "@id": "repository"
       },
-      "builderDependencies": {
+      "resource_uri": {
+         "@type": "xsd:anyURI",
+         "@id": "resource_uri"
+      },
+      "revision": {
          "@type": "@id",
-         "@id": "builderDependencies"
-      },
-      "buildId": {
-         "@id": "buildId"
-      },
-      "buildImage": {
-         "@type": "@id",
-         "@id": "buildImage"
-      },
-      "buildLevel": {
-         "@context": {
-            "text": "skos:notation",
-            "description": "skos:prefLabel",
-            "meaning": "@id"
-         },
-         "@id": "buildLevel"
-      },
-      "buildMetadata": {
-         "@type": "@id",
-         "@id": "buildMetadata"
-      },
-      "buildPlatformId": {
-         "@id": "buildPlatformId"
-      },
-      "buildType": {
-         "@id": "buildType"
-      },
-      "byproducts": {
-         "@type": "@id",
-         "@id": "byproducts"
+         "@id": "revision"
       },
       "challenges": {
          "@context": {
@@ -82,164 +111,6 @@
          },
          "@id": "challenges"
       },
-      "controlsEnforced": {
-         "@id": "controlsEnforced"
-      },
-      "dependencies": {
-         "@type": "@id",
-         "@id": "dependencies"
-      },
-      "dependencyLevel": {
-         "@context": {
-            "text": "skos:notation",
-            "description": "skos:prefLabel",
-            "meaning": "@id"
-         },
-         "@id": "dependencyLevel"
-      },
-      "dependencyLevels": {
-         "@id": "dependencyLevels"
-      },
-      "description": {
-         "@id": "description"
-      },
-      "digest": {
-         "@type": "@id",
-         "@id": "digest"
-      },
-      "downloadLocation": {
-         "@id": "downloadLocation"
-      },
-      "ecosystem": {
-         "@id": "ecosystem"
-      },
-      "externalParameters": {
-         "@id": "externalParameters"
-      },
-      "finishedOn": {
-         "@id": "finishedOn"
-      },
-      "gitCommit": {
-         "@id": "gitCommit"
-      },
-      "guacUri": {
-         "@id": "guacUri"
-      },
-      "hermeticBuild": {
-         "@type": "xsd:boolean",
-         "@id": "hermeticBuild"
-      },
-      "id": {
-         "@id": "id"
-      },
-      "inputAttestations": {
-         "@type": "@id",
-         "@id": "inputAttestations"
-      },
-      "internalParameters": {
-         "@id": "internalParameters"
-      },
-      "invocationId": {
-         "@id": "invocationId"
-      },
-      "isHosted": {
-         "@type": "xsd:boolean",
-         "@id": "isHosted"
-      },
-      "measurements": {
-         "@id": "measurements"
-      },
-      "mediaType": {
-         "@id": "mediaType"
-      },
-      "name": {
-         "@id": "name"
-      },
-      "parentRevisions": {
-         "@id": "parentRevisions"
-      },
-      "pipelineOrchestrator": {
-         "@id": "pipelineOrchestrator"
-      },
-      "policy": {
-         "@type": "@id",
-         "@id": "policy"
-      },
-      "predicate": {
-         "@id": "predicate"
-      },
-      "predicateType": {
-         "@id": "predicateType"
-      },
-      "provenance": {
-         "@type": "@id",
-         "@id": "provenance"
-      },
-      "provenanceGenerationTool": {
-         "@id": "provenanceGenerationTool"
-      },
-      "registry": {
-         "@id": "registry"
-      },
-      "repository": {
-         "@type": "@id",
-         "@id": "repository"
-      },
-      "resolvedDependencies": {
-         "@type": "@id",
-         "@id": "resolvedDependencies"
-      },
-      "resourceUri": {
-         "@id": "resourceUri"
-      },
-      "reviewType": {
-         "@context": {
-            "text": "skos:notation",
-            "description": "skos:prefLabel",
-            "meaning": "@id"
-         },
-         "@id": "reviewType"
-      },
-      "revision": {
-         "@type": "@id",
-         "@id": "revision"
-      },
-      "revisionId": {
-         "@id": "revisionId"
-      },
-      "runDetails": {
-         "@type": "@id",
-         "@id": "runDetails"
-      },
-      "securityInsightsUri": {
-         "@id": "securityInsightsUri"
-      },
-      "sha256": {
-         "@id": "sha256"
-      },
-      "sha512": {
-         "@id": "sha512"
-      },
-      "signingTool": {
-         "@id": "signingTool"
-      },
-      "sigstoreLogEntry": {
-         "@id": "sigstoreLogEntry"
-      },
-      "slsaVersion": {
-         "@id": "slsaVersion"
-      },
-      "sourceLevel": {
-         "@context": {
-            "text": "skos:notation",
-            "description": "skos:prefLabel",
-            "meaning": "@id"
-         },
-         "@id": "sourceLevel"
-      },
-      "startedOn": {
-         "@id": "startedOn"
-      },
       "strategies": {
          "@context": {
             "text": "skos:notation",
@@ -248,116 +119,422 @@
          },
          "@id": "strategies"
       },
-      "subject": {
+      "build_type": {
+         "@type": "xsd:anyURI",
+         "@id": "build_type"
+      },
+      "external_parameters": {
          "@type": "@id",
-         "@id": "subject"
+         "@id": "external_parameters"
       },
-      "timestamp": {
-         "@id": "timestamp"
+      "hermetic": {
+         "@type": "xsd:boolean",
+         "@id": "hermetic"
       },
-      "timeVerified": {
-         "@id": "timeVerified"
+      "internal_parameters": {
+         "@type": "@id",
+         "@id": "internal_parameters"
       },
-      "uri": {
-         "@id": "uri"
+      "pipeline_orchestrator": {
+         "@type": "xsd:anyURI",
+         "@id": "pipeline_orchestrator"
       },
-      "verificationResult": {
+      "provenance_generation_tool": {
+         "@type": "xsd:anyURI",
+         "@id": "provenance_generation_tool"
+      },
+      "resolved_dependencies": {
+         "@type": "@id",
+         "@id": "resolved_dependencies"
+      },
+      "build_id": {
+         "@id": "build_id"
+      },
+      "build_image": {
+         "@type": "@id",
+         "@id": "build_image"
+      },
+      "measurements": {
+         "@type": "@id",
+         "@id": "measurements"
+      },
+      "image_uri": "@id",
+      "produced_by": {
+         "@type": "@id",
+         "@id": "produced_by"
+      },
+      "provenance": {
+         "@type": "@id",
+         "@id": "provenance"
+      },
+      "finished_on": {
+         "@type": "xsd:dateTime",
+         "@id": "finished_on"
+      },
+      "invocation_id": {
+         "@id": "invocation_id"
+      },
+      "started_on": {
+         "@type": "xsd:dateTime",
+         "@id": "started_on"
+      },
+      "parameter_name": {
+         "@id": "parameter_name"
+      },
+      "parameter_value": {
+         "@id": "parameter_value"
+      },
+      "build_level": {
          "@context": {
             "text": "skos:notation",
             "description": "skos:prefLabel",
             "meaning": "@id"
          },
-         "@id": "verificationResult"
+         "@id": "build_level"
       },
-      "verifiedLevels": {
+      "builder_dependencies": {
+         "@type": "@id",
+         "@id": "builder_dependencies"
+      },
+      "builder_id": "@id",
+      "hosted": {
+         "@type": "xsd:boolean",
+         "@id": "hosted"
+      },
+      "build_definition": {
+         "@type": "@id",
+         "@id": "build_definition"
+      },
+      "run_details": {
+         "@type": "@id",
+         "@id": "run_details"
+      },
+      "component": {
+         "@id": "component"
+      },
+      "component_version": {
+         "@id": "component_version"
+      },
+      "artifact": {
+         "@type": "@id",
+         "@id": "artifact"
+      },
+      "dependencies": {
+         "@type": "@id",
+         "@id": "dependencies"
+      },
+      "dependency_level": {
          "@context": {
             "text": "skos:notation",
             "description": "skos:prefLabel",
             "meaning": "@id"
          },
-         "@id": "verifiedLevels"
+         "@id": "dependency_level"
+      },
+      "dependency_count": {
+         "@type": "xsd:integer",
+         "@id": "dependency_count"
+      },
+      "verified_level": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "verified_level"
+      },
+      "adoption_metadata": {
+         "@type": "@id",
+         "@id": "adoption_metadata"
+      },
+      "attestations": {
+         "@type": "@id",
+         "@id": "attestations"
+      },
+      "build_images": {
+         "@type": "@id",
+         "@id": "build_images"
+      },
+      "build_platforms": {
+         "@type": "@id",
+         "@id": "build_platforms"
+      },
+      "dependency_inventories": {
+         "@type": "@id",
+         "@id": "dependency_inventories"
+      },
+      "named_references": {
+         "@type": "@id",
+         "@id": "named_references"
+      },
+      "package_registries": {
+         "@type": "@id",
+         "@id": "package_registries"
+      },
+      "packages": {
+         "@type": "@id",
+         "@id": "packages"
+      },
+      "parties": {
+         "@type": "@id",
+         "@id": "parties"
+      },
+      "source_control_systems": {
+         "@type": "@id",
+         "@id": "source_control_systems"
+      },
+      "source_repositories": {
+         "@type": "@id",
+         "@id": "source_repositories"
+      },
+      "source_revisions": {
+         "@type": "@id",
+         "@id": "source_revisions"
+      },
+      "measured_component": {
+         "@id": "measured_component"
+      },
+      "protected": {
+         "@type": "xsd:boolean",
+         "@id": "protected"
+      },
+      "reference_name": {
+         "@id": "reference_name"
+      },
+      "reference_type": {
+         "@id": "reference_type"
+      },
+      "guac_uri": {
+         "@type": "xsd:anyURI",
+         "@id": "guac_uri"
+      },
+      "package_artifacts": {
+         "@type": "@id",
+         "@id": "package_artifacts"
+      },
+      "package_name": {
+         "@id": "package_name"
+      },
+      "registry": {
+         "@type": "@id",
+         "@id": "registry"
+      },
+      "security_insights_uri": {
+         "@type": "xsd:anyURI",
+         "@id": "security_insights_uri"
+      },
+      "registry_uri": "@id",
+      "party_name": {
+         "@id": "party_name"
+      },
+      "party_type": {
+         "@id": "party_type"
+      },
+      "predicate_kind": {
+         "@id": "predicate_kind"
+      },
+      "build_metadata": {
+         "@type": "@id",
+         "@id": "build_metadata"
+      },
+      "builder": {
+         "@type": "@id",
+         "@id": "builder"
+      },
+      "byproducts": {
+         "@type": "@id",
+         "@id": "byproducts"
+      },
+      "scs_uri": "@id",
+      "controls_enforced": {
+         "@id": "controls_enforced"
+      },
+      "hosted_by": {
+         "@type": "@id",
+         "@id": "hosted_by"
+      },
+      "repository_uri": "@id",
+      "authored_at": {
+         "@type": "xsd:dateTime",
+         "@id": "authored_at"
+      },
+      "authored_by": {
+         "@id": "authored_by"
+      },
+      "parent_revisions": {
+         "@type": "@id",
+         "@id": "parent_revisions"
+      },
+      "review_type": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "review_type"
+      },
+      "revision_id": "@id",
+      "source_level": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "source_level"
+      },
+      "dependency_levels": {
+         "@type": "@id",
+         "@id": "dependency_levels"
+      },
+      "input_attestations": {
+         "@type": "@id",
+         "@id": "input_attestations"
+      },
+      "organization_properties": {
+         "@id": "organization_properties"
+      },
+      "policy": {
+         "@type": "@id",
+         "@id": "policy"
+      },
+      "slsa_version": {
+         "@id": "slsa_version"
+      },
+      "time_verified": {
+         "@type": "xsd:dateTime",
+         "@id": "time_verified"
+      },
+      "verification_result": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "verification_result"
+      },
+      "verified_levels": {
+         "@context": {
+            "text": "skos:notation",
+            "description": "skos:prefLabel",
+            "meaning": "@id"
+         },
+         "@id": "verified_levels"
       },
       "verifier": {
          "@type": "@id",
          "@id": "verifier"
       },
-      "version": {
-         "@id": "version"
+      "verifier_id": {
+         "@type": "xsd:anyURI",
+         "@id": "verifier_id"
       },
-      "versionTag": {
-         "@id": "versionTag"
+      "InTotoAnnotation": {
+         "@id": "InTotoAnnotation"
       },
-      "AdoptionMetadata": {
-         "@id": "AdoptionMetadata"
+      "InTotoDigestSet": {
+         "@id": "InTotoDigestSet"
       },
-      "BuildDefinition": {
-         "@id": "BuildDefinition"
+      "InTotoResourceDescriptor": {
+         "@id": "InTotoResourceDescriptor"
       },
-      "BuildEnvironmentAttestation": {
-         "@id": "BuildEnvironmentAttestation"
+      "InTotoStatement": {
+         "@id": "InTotoStatement"
       },
-      "Builder": {
-         "@id": "Builder"
+      "SlsaAdoptionMetadata": {
+         "@id": "SlsaAdoptionMetadata"
       },
-      "BuildImage": {
-         "@id": "BuildImage"
+      "SlsaBranch": {
+         "@id": "SlsaBranch"
       },
-      "BuildMetadata": {
-         "@id": "BuildMetadata"
+      "SlsaBuildDefinition": {
+         "@id": "SlsaBuildDefinition"
       },
-      "BuildPlatform": {
-         "@id": "BuildPlatform"
+      "SlsaBuildEnvironmentAttestation": {
+         "@id": "SlsaBuildEnvironmentAttestation"
       },
-      "BuildProvenance": {
-         "@id": "BuildProvenance"
+      "SlsaBuildImage": {
+         "@id": "SlsaBuildImage"
       },
-      "Consumer": {
-         "@id": "Consumer"
+      "SlsaBuildImageProducer": {
+         "@id": "SlsaBuildImageProducer"
       },
-      "ControlPlane": {
-         "@id": "ControlPlane"
+      "SlsaBuildMetadata": {
+         "@id": "SlsaBuildMetadata"
       },
-      "DependencyInventory": {
-         "@id": "DependencyInventory"
+      "SlsaBuildParameter": {
+         "@id": "SlsaBuildParameter"
       },
-      "DigestSet": {
-         "@id": "DigestSet"
+      "SlsaBuildPlatform": {
+         "@id": "SlsaBuildPlatform"
       },
-      "InfrastructureProvider": {
-         "@id": "InfrastructureProvider"
+      "SlsaBuildProvenance": {
+         "@id": "SlsaBuildProvenance"
       },
-      "Package": {
-         "@id": "Package"
+      "SlsaComponentVersion": {
+         "@id": "SlsaComponentVersion"
       },
-      "Producer": {
-         "@id": "Producer"
+      "SlsaConsumer": {
+         "@id": "SlsaConsumer"
       },
-      "ResourceDescriptor": {
-         "@id": "ResourceDescriptor"
+      "SlsaControlPlane": {
+         "@id": "SlsaControlPlane"
       },
-      "RunDetails": {
-         "@id": "RunDetails"
+      "SlsaDependencyInventory": {
+         "@id": "SlsaDependencyInventory"
+      },
+      "SlsaDependencyLevelCount": {
+         "@id": "SlsaDependencyLevelCount"
       },
       "SlsaDocument": {
          "@id": "SlsaDocument"
       },
-      "SourceProvenanceAttestation": {
-         "@id": "SourceProvenanceAttestation"
+      "SlsaInfrastructureProvider": {
+         "@id": "SlsaInfrastructureProvider"
       },
-      "SourceRepository": {
-         "@id": "SourceRepository"
+      "SlsaMeasurement": {
+         "@id": "SlsaMeasurement"
       },
-      "SourceRevision": {
-         "@id": "SourceRevision"
+      "SlsaNamedReference": {
+         "@id": "SlsaNamedReference"
       },
-      "Statement": {
-         "@id": "Statement"
+      "SlsaPackage": {
+         "@id": "SlsaPackage"
       },
-      "VerificationSummaryAttestation": {
-         "@id": "VerificationSummaryAttestation"
+      "SlsaPackageRegistry": {
+         "@id": "SlsaPackageRegistry"
       },
-      "Verifier": {
-         "@id": "Verifier"
+      "SlsaParty": {
+         "@id": "SlsaParty"
+      },
+      "SlsaPredicate": {
+         "@id": "SlsaPredicate"
+      },
+      "SlsaProducer": {
+         "@id": "SlsaProducer"
+      },
+      "SlsaRunDetails": {
+         "@id": "SlsaRunDetails"
+      },
+      "SlsaSourceControlSystem": {
+         "@id": "SlsaSourceControlSystem"
+      },
+      "SlsaSourceProvenance": {
+         "@id": "SlsaSourceProvenance"
+      },
+      "SlsaSourceRepository": {
+         "@id": "SlsaSourceRepository"
+      },
+      "SlsaSourceRevision": {
+         "@id": "SlsaSourceRevision"
+      },
+      "SlsaTag": {
+         "@id": "SlsaTag"
+      },
+      "SlsaVerificationSummary": {
+         "@id": "SlsaVerificationSummary"
+      },
+      "SlsaVerifier": {
+         "@id": "SlsaVerifier"
       }
    }
 }

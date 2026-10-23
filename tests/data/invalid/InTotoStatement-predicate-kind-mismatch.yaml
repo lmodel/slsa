@@ -1,0 +1,14 @@
+# INVALID: a verification summary's fields in a build provenance predicate.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - digest:
+      sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+predicate_type: https://slsa.dev/provenance/v1
+predicate:
+  predicate_kind: SlsaBuildProvenance
+  build_definition:
+    build_type: https://actions.github.io/buildtypes/workflow/v1
+  run_details:
+    builder:
+      builder_id: https://example.com/builder
+  verification_result: PASSED

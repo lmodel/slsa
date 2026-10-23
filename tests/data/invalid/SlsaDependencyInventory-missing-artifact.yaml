@@ -1,0 +1,4 @@
+# INVALID: an inventory says which artifact it is for.
+dependencies:
+  - resource_uri: pkg:pypi/requests@2.31.0
+dependency_level: SLSA_DEPENDENCY_LEVEL_1

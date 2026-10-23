@@ -1,0 +1,13 @@
+# The transitive dependencies of a Python package, at Dependency L1.
+artifact:
+  resource_uri: pkg:pypi/myapp@1.0.0
+  digest:
+    sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+dependencies:
+  - resource_uri: pkg:pypi/requests@2.31.0
+    digest:
+      sha256: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+  - resource_uri: pkg:pypi/urllib3@2.1.0
+    digest:
+      sha256: fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210
+dependency_level: SLSA_DEPENDENCY_LEVEL_1

@@ -10,7 +10,7 @@ A LinkML schema for the SLSA specification's tracks, levels and attestation form
 
 | Path | Holds |
 | --- | --- |
-| `src/slsa/schema/slsa.yaml` | The LinkML schema. Edit this. |
+| `src/slsa/schema/*.yaml` | The LinkML schema and its modules. Edit these. |
 | `src/slsa/schema/spec/` | A copy of the SLSA specification's pages. Never edit. |
 | `src/slsa/datamodel/`, `project/`, `docs/schema/` | Artefacts generated from the schema. |
 | `docs/` | The documentation site's pages and the whitepaper. |
@@ -28,7 +28,7 @@ uv sync --group dev
 just --list
 ```
 
-`just gen-project` regenerates `project/` and the Python datamodel; `just gen-doc` regenerates `docs/schema/slsa.yaml` and the site's element pages.
+`just gen-project` regenerates `project/` and the Python datamodel; `just gen-doc` and `just gen-merged` regenerate `docs/schema/` and the site's element pages.
 
 ### Agent skills (optional, only for this repo's `.lokf/` bundle)
 
@@ -41,11 +41,11 @@ npx skills add noelmcloughlin/knowledge-trust-ladder --skill ktl-curator --yes  
 
 ## Before opening a pull request
 
-- **Edit the schema, then regenerate.** Change `src/slsa/schema/slsa.yaml`, run `just gen-project` and `just gen-doc`, and commit the regenerated files with it. Never edit `project/`, `src/slsa/datamodel/` or `docs/schema/` by hand.
+- **Edit the schema, then regenerate.** Edit `src/slsa/schema/`, run `just gen-project`, `just gen-doc`, `just gen-merged` and `just lokf-adapt`, and commit the output; `project/`, `src/slsa/datamodel/`, `docs/schema/` and `.lokf/slsa.yaml` are generated.
 - **Cite the passage a description renders.** A class, slot or enum value says what the SLSA specification, the whitepaper or the study says; name the page in the pull request. [AI_COVENANT.md](AI_COVENANT.md) says why.
 - **Leave `src/slsa/schema/spec/` as upstream wrote it.** Replace it from a SLSA release instead; [NOTICE](NOTICE) records which release, and `upstream-watch.yaml` checks it.
 - **Run the tests**: `just test` (schema generation, `pytest`, and the examples under `tests/data/`). Example data goes in `tests/data/valid/` and `tests/data/invalid/`, named `ClassName-###.yaml`.
-- **Follow LinkML conventions**: UpperCamelCase classes and enums, snake_case slots, plural names for multivalued slots, a description on every element. `just lint` runs `linkml-lint`; the [LinkML docs](https://linkml.io/linkml/) cover the rest.
+- **Follow the schema's conventions**: prefixed UpperCamelCase classes and enums (`SlsaPackage`), snake_case slots, UPPER_CASE values (`.linkmllint.yaml` says why), attributes unless two classes share a field, a short description on every element. `just lint` checks.
 - **Run the pre-commit hooks** on what you staged (`uvx pre-commit run`): ruff, yamllint, codespell, typos and the `uv.lock` check.
 - **Lock files are part of the change.** CI installs with `uv sync --locked`; a dependency edit that does not update `uv.lock` (or `.lokf/uv.lock`) fails the run.
 - **Knowledge-bundle changes**: `cd .lokf && just lokf-validate` must pass, and `knowledge-registrar.yaml` runs on any `.lokf/**` change.

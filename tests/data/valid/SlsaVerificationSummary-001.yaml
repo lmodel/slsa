@@ -1,0 +1,9 @@
+# A VSA predicate on its own, with the fields a verifier must give.
+verifier:
+  verifier_id: https://example.com/publication_verifier
+resource_uri: https://example.com/example-1.2.3.tar.gz
+policy:
+  resource_uri: https://example.com/example_tarball.policy
+verification_result: FAILED
+verified_levels:
+  - FAILED

@@ -1,0 +1,19 @@
+# Evidence of the build environment a build was dispatched to.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - resource_uri: https://ci.example.com/builds/8f2c1a
+    digest:
+      sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+predicate_type: https://example.com/build_environment/v1
+predicate:
+  predicate_kind: SlsaBuildEnvironmentAttestation
+  build_id: 8f2c1a3e-4d5b-4c6a-9e7f-0a1b2c3d4e5f
+  build_image: oci://ghcr.io/example/build-image@sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+  build_env_level: SLSA_BUILD_ENV_LEVEL_2
+  measurements:
+    - measured_component: bootloader
+      digest:
+        sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+    - measured_component: build agent
+      digest:
+        sha256: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890

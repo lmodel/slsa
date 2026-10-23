@@ -1,0 +1,187 @@
+---
+id: https://w3id.org/lmodel/slsa/slsa_build
+name: slsa_build
+title: SLSA build provenance
+description: >-
+  The SLSA Build track's provenance predicate (https://slsa.dev/provenance/v1):
+  what a build platform ran and what it took in.
+license: Apache-2.0
+see_also:
+  - https://slsa.dev/spec/v1.2/build-provenance
+
+default_prefix: slsa
+default_range: string
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  slsa: https://w3id.org/lmodel/slsa/
+
+imports:
+  - linkml:types
+  - ./slsa_core
+
+classes:
+  SlsaBuildProvenance:
+    is_a: SlsaPredicate
+    description: >-
+      The predicate that says how a build platform produced a set of artifacts,
+      so that consumers can verify the build met their expectations and others
+      can rebuild it.
+    see_also:
+      - https://slsa.dev/spec/v1.2/build-provenance#provenance
+    comments:
+      - The statement that carries it has predicate_type https://slsa.dev/provenance/v1.
+      - >-
+        Generating valid provenance was the most frequent adoption difficulty
+        practitioners reported (Tamanna et al., 2024, CI.1).
+    attributes:
+      build_definition:
+        description: The inputs to the build; required at Build L1.
+        range: SlsaBuildDefinition
+        required: true
+        inlined: true
+      run_details:
+        description: >-
+          What is specific to this execution of the build; required at Build L1.
+        range: SlsaRunDetails
+        required: true
+        inlined: true
+    in_subset:
+      - slsa_build_track
+
+  SlsaBuildDefinition:
+    description: >-
+      The inputs to a build, in enough detail to initialize it and begin execution; the
+      builder vouches for their accuracy.
+    see_also:
+      - https://slsa.dev/spec/v1.2/build-provenance#builddefinition
+    attributes:
+      build_type:
+        description: >-
+          The URI of the template that says how to run the build and read its parameters
+          and dependencies; required at Build L1.
+        range: uri
+        required: true
+      external_parameters:
+        description: >-
+          The inputs under the tenant's control; complete at Build L3 and verified by
+          consumers.
+        range: SlsaBuildParameter
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+        comments:
+          - Verifiers reject parameters they do not recognize here.
+      internal_parameters:
+        description: >-
+          The inputs the platform sets itself; kept for debugging, incident response and
+          reproduction, and not verified by consumers.
+        range: SlsaBuildParameter
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      resolved_dependencies:
+        description: >-
+          The artifacts fetched during the build, as far as the platform knows them;
+          completeness is best effort through Build L3.
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      hermetic:
+        description: >-
+          Whether the build could reach only the dependencies it declared, with no other
+          network or filesystem access.
+        range: boolean
+        comments:
+          - >-
+            Hermetic builds are an isolation property Build L3 platforms aim for, and
+            the one practitioners found hardest (Tamanna et al., 2024, CI.1).
+        in_subset:
+          - slsa_adoption_study
+      provenance_generation_tool:
+        description: The tool that generated this provenance, named by URI.
+        range: uri
+        comments:
+          - >-
+            Naming the generator supports the strategy of standardizing provenance
+            generation (Tamanna et al., 2024, S3.1).
+        in_subset:
+          - slsa_adoption_study
+      pipeline_orchestrator:
+        description: >-
+          The CI/CD system that coordinated the build, named by URI, where it differs
+          from the builder.
+        range: uri
+        comments:
+          - >-
+            In the Secure Software Factory architecture this is the Build Service layer,
+            distinct from the provenance-generating builder.
+        in_subset:
+          - slsa_ssf
+    in_subset:
+      - slsa_build_track
+
+  SlsaBuildParameter:
+    description: One named input to a build, with a string value.
+    comments:
+      - >-
+        The specification recommends string values; a structured value is written as its
+        JSON text.
+    attributes:
+      parameter_name:
+        description: The parameter's name.
+        required: true
+      parameter_value:
+        description: The parameter's value.
+    in_subset:
+      - slsa_build_track
+
+  SlsaRunDetails:
+    description: >-
+      What is specific to one execution of a build: the platform that ran it, metadata
+      about the run and its by-products.
+    see_also:
+      - https://slsa.dev/spec/v1.2/build-provenance#rundetails
+    attributes:
+      builder:
+        description: >-
+          The build platform that ran the build and is trusted to have written this
+          provenance; required at Build L1.
+        range: SlsaBuildPlatform
+        required: true
+        inlined: true
+      build_metadata:
+        description: Metadata about this execution of the build.
+        range: SlsaBuildMetadata
+        inlined: true
+      byproducts:
+        description: >-
+          Artifacts the build produced beside its outputs that may help debugging or
+          incident response, such as logs.
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+    in_subset:
+      - slsa_build_track
+
+  SlsaBuildMetadata:
+    description: >-
+      Metadata about one execution of a build: its identifier and when it started and
+      finished.
+    see_also:
+      - https://slsa.dev/spec/v1.2/build-provenance#buildmetadata
+    attributes:
+      invocation_id:
+        description: >-
+          An identifier for this build invocation, in a format the builder defines;
+          useful for finding its logs.
+      started_on:
+        description: When the build started.
+        range: datetime
+      finished_on:
+        description: When the build finished.
+        range: datetime
+    in_subset:
+      - slsa_build_track

@@ -1,0 +1,76 @@
+---
+id: https://w3id.org/lmodel/slsa/slsa_dependency
+name: slsa_dependency
+title: SLSA dependency track
+description: >-
+  The SLSA Dependency track, a working-draft track in which a producer
+  inventories, triages and controls its third-party build dependencies.
+license: Apache-2.0
+see_also:
+  - https://slsa.dev/spec/draft/dependency-track
+
+default_prefix: slsa
+default_range: string
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  slsa: https://w3id.org/lmodel/slsa/
+
+imports:
+  - linkml:types
+  - ./slsa_core
+
+classes:
+  SlsaDependencyInventory:
+    description: >-
+      The inventory of every third-party build dependency, direct and transitive, of one
+      artifact version.
+    see_also:
+      - https://slsa.dev/spec/draft/dependency-track
+    comments:
+      - The Dependency track is a working draft and not part of the SLSA v1.2 release.
+      - A build-time SBOM or a lock file with hashes is a common form of the inventory.
+    attributes:
+      artifact:
+        description: The artifact whose dependencies are inventoried.
+        range: InTotoResourceDescriptor
+        required: true
+        inlined: true
+      dependencies:
+        description: The dependencies, each identified by URI and digest.
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      dependency_level:
+        description: >-
+          The SLSA Dependency level the producer's process meets for this artifact.
+        range: SlsaDependencyLevel
+    in_subset:
+      - slsa_dependency_track
+
+enums:
+  SlsaDependencyLevel:
+    description: >-
+      The levels of the SLSA Dependency track, each reducing the risk third-party
+      dependencies bring.
+    see_also:
+      - https://slsa.dev/spec/draft/dependency-track#levels
+    permissible_values:
+      SLSA_DEPENDENCY_LEVEL_0:
+        description: No Dependency track claims.
+      SLSA_DEPENDENCY_LEVEL_1:
+        description: >-
+          An inventory of all build dependencies, direct and transitive, exists.
+      SLSA_DEPENDENCY_LEVEL_2:
+        description: >-
+          Every known vulnerability in the dependencies was triaged before release.
+      SLSA_DEPENDENCY_LEVEL_3:
+        description: >-
+          Every third-party build dependency is consumed from a location the producer
+          controls.
+      SLSA_DEPENDENCY_LEVEL_4:
+        description: >-
+          An ingestion policy keeps compromised upstream dependencies out of the build.
+    in_subset:
+      - slsa_dependency_track

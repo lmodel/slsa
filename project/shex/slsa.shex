@@ -44,288 +44,407 @@ linkml:Jsonpath xsd:string
 
 linkml:Sparqlpath xsd:string
 
-<AdoptionMetadata> CLOSED {
-    (  $<AdoptionMetadata_tes> (  <challenges> [ <https://w3id.org/lmodel/slsa/AdoptionChallengeEnum#COMPLEX_IMPLEMENTATION>
-             <https://w3id.org/lmodel/slsa/AdoptionChallengeEnum#UNCLEAR_COMMUNICATION>
-             <https://w3id.org/lmodel/slsa/AdoptionChallengeEnum#LIMITED_FEASIBILITY>
-             <https://w3id.org/lmodel/slsa/AdoptionChallengeEnum#UNCLEAR_RELEVANCE> ] * ;
-          <strategies> [ <https://w3id.org/lmodel/slsa/AdoptionStrategyEnum#ENHANCE_ALIGNMENT_FLEXIBILITY>
-             <https://w3id.org/lmodel/slsa/AdoptionStrategyEnum#PROVIDE_DETAILED_DOCUMENTATION>
-             <https://w3id.org/lmodel/slsa/AdoptionStrategyEnum#STREAMLINE_PROVENANCE_GENERATION>
-             <https://w3id.org/lmodel/slsa/AdoptionStrategyEnum#IMPROVE_VERIFICATION_PROCESS>
-             <https://w3id.org/lmodel/slsa/AdoptionStrategyEnum#COLLABORATE_WITH_COMMUNITY> ] *
+<InTotoAnnotation> CLOSED {
+    (  $<InTotoAnnotation_tes> (  <annotation_key> @linkml:String ;
+          <annotation_values> @linkml:String *
        ) ;
-       rdf:type [ <AdoptionMetadata> ] ?
+       rdf:type [ <InTotoAnnotation> ] ?
     )
 }
 
-<BuildDefinition> CLOSED {
-    (  $<BuildDefinition_tes> (  <buildType> @linkml:String ;
-          <externalParameters> @linkml:String ? ;
-          <internalParameters> @linkml:String ? ;
-          <resolvedDependencies> @<ResourceDescriptor> * ;
-          <hermeticBuild> @linkml:Boolean ? ;
-          <provenanceGenerationTool> @linkml:String ? ;
-          <pipelineOrchestrator> @linkml:String ?
-       ) ;
-       rdf:type [ <BuildDefinition> ] ?
-    )
-}
-
-<BuildEnvironmentAttestation> CLOSED {
-    (  $<BuildEnvironmentAttestation_tes> (  &<Statement_tes> ;
-          rdf:type [ <Statement> ] ? ;
-          <buildId> @linkml:String ;
-          <buildImage> @<BuildImage> ? ;
-          <measurements> @linkml:String * ;
-          <buildEnvLevel> [ <https://w3id.org/lmodel/slsa/BuildEnvLevelEnum#SLSA_BUILD_ENV_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/BuildEnvLevelEnum#SLSA_BUILD_ENV_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/BuildEnvLevelEnum#SLSA_BUILD_ENV_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/BuildEnvLevelEnum#SLSA_BUILD_ENV_LEVEL_3> ] ?
-       ) ;
-       rdf:type [ <BuildEnvironmentAttestation> ] ?
-    )
-}
-
-<Builder> CLOSED {
-    (  $<Builder_tes> (  <id> @linkml:String ;
-          <builderDependencies> @<ResourceDescriptor> * ;
-          <version> @linkml:String ? ;
-          <versionTag> @linkml:String ?
-       ) ;
-       rdf:type [ <Builder> ] ?
-    )
-}
-
-<BuildImage> CLOSED {
-    (  $<BuildImage_tes> (  <id> @linkml:String ;
-          <provenance> @<BuildProvenance> ? ;
-          <buildEnvLevel> [ <https://w3id.org/lmodel/slsa/BuildEnvLevelEnum#SLSA_BUILD_ENV_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/BuildEnvLevelEnum#SLSA_BUILD_ENV_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/BuildEnvLevelEnum#SLSA_BUILD_ENV_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/BuildEnvLevelEnum#SLSA_BUILD_ENV_LEVEL_3> ] ?
-       ) ;
-       rdf:type [ <BuildImage> ] ?
-    )
-}
-
-<BuildMetadata> CLOSED {
-    (  $<BuildMetadata_tes> (  <invocationId> @linkml:String ? ;
-          <startedOn> @linkml:String ? ;
-          <finishedOn> @linkml:String ?
-       ) ;
-       rdf:type [ <BuildMetadata> ] ?
-    )
-}
-
-<BuildPlatform> CLOSED {
-    (  $<BuildPlatform_tes> (  <id> @linkml:String ;
-          <buildLevel> [ <https://w3id.org/lmodel/slsa/BuildLevelEnum#SLSA_BUILD_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/BuildLevelEnum#SLSA_BUILD_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/BuildLevelEnum#SLSA_BUILD_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/BuildLevelEnum#SLSA_BUILD_LEVEL_3> ] ? ;
-          <isHosted> @linkml:Boolean ?
-       ) ;
-       rdf:type [ <BuildPlatform> ] ?
-    )
-}
-
-<BuildProvenance> CLOSED {
-    (  $<BuildProvenance_tes> (  &<Statement_tes> ;
-          rdf:type [ <Statement> ] ? ;
-          <buildDefinition> @<BuildDefinition> ;
-          <runDetails> @<RunDetails>
-       ) ;
-       rdf:type [ <BuildProvenance> ] ?
-    )
-}
-
-<Consumer> CLOSED {
-    (  $<Consumer_tes> rdf:type . * ;
-       rdf:type [ <Consumer> ] ?
-    )
-}
-
-<ControlPlane> CLOSED {
-    (  $<ControlPlane_tes> rdf:type . * ;
-       rdf:type [ <ControlPlane> ] ?
-    )
-}
-
-<DependencyInventory> CLOSED {
-    (  $<DependencyInventory_tes> (  <artifact> @<ResourceDescriptor> ? ;
-          <dependencies> @<ResourceDescriptor> * ;
-          <dependencyLevel> [ <https://w3id.org/lmodel/slsa/DependencyLevelEnum#SLSA_DEPENDENCY_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/DependencyLevelEnum#SLSA_DEPENDENCY_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/DependencyLevelEnum#SLSA_DEPENDENCY_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/DependencyLevelEnum#SLSA_DEPENDENCY_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/DependencyLevelEnum#SLSA_DEPENDENCY_LEVEL_4> ] ?
-       ) ;
-       rdf:type [ <DependencyInventory> ] ?
-    )
-}
-
-<DigestSet> CLOSED {
-    (  $<DigestSet_tes> (  <sha256> @linkml:String ? ;
+<InTotoDigestSet> CLOSED {
+    (  $<InTotoDigestSet_tes> (  <sha256> @linkml:String ? ;
           <sha512> @linkml:String ? ;
-          <gitCommit> @linkml:String ?
+          <git_commit> @linkml:String ? ;
+          <git_tree> @linkml:String ? ;
+          <dir_hash> @linkml:String ?
        ) ;
-       rdf:type [ <DigestSet> ] ?
+       rdf:type [ <InTotoDigestSet> ] ?
     )
 }
 
-<InfrastructureProvider> CLOSED {
-    (  $<InfrastructureProvider_tes> rdf:type . * ;
-       rdf:type [ <InfrastructureProvider> ] ?
+<InTotoResourceDescriptor> CLOSED {
+    (  $<InTotoResourceDescriptor_tes> (  <resource_uri> @linkml:Uri ? ;
+          <digest> @<InTotoDigestSet> ? ;
+          <resource_name> @linkml:String ? ;
+          <download_location> @linkml:Uri ? ;
+          <media_type> @linkml:String ? ;
+          <annotations> @<InTotoAnnotation> *
+       ) ;
+       rdf:type [ <InTotoResourceDescriptor> ] ?
     )
 }
 
-<Package> CLOSED {
-    (  $<Package_tes> (  <name> @linkml:String ? ;
-          <ecosystem> @linkml:String ? ;
-          <registry> @linkml:String ? ;
-          <artifact> @<ResourceDescriptor> ?
+<InTotoStatement> CLOSED {
+    (  $<InTotoStatement_tes> (  <statement_type> @linkml:Uri ;
+          <subject> @<InTotoResourceDescriptor> + ;
+          <predicate_type> @linkml:Uri ;
+          <predicate> @<SlsaPredicate> ? ;
+          <attestation_storage_uri> @linkml:Uri ? ;
+          <signing_tool> @linkml:Uri ? ;
+          <transparency_log_entry> @linkml:Uri ?
        ) ;
-       rdf:type [ <Package> ] ?
+       rdf:type [ <InTotoStatement> ] ?
     )
 }
 
-<Producer> CLOSED {
-    (  $<Producer_tes> (  <name> @linkml:String ? ;
-          <buildPlatformId> @linkml:String ?
+<SlsaAdoptionMetadata> CLOSED {
+    (  $<SlsaAdoptionMetadata_tes> (  <challenges> [ <https://w3id.org/lmodel/slsa/SlsaAdoptionChallenge#COMPLEX_IMPLEMENTATION>
+             <https://w3id.org/lmodel/slsa/SlsaAdoptionChallenge#UNCLEAR_COMMUNICATION>
+             <https://w3id.org/lmodel/slsa/SlsaAdoptionChallenge#LIMITED_FEASIBILITY>
+             <https://w3id.org/lmodel/slsa/SlsaAdoptionChallenge#UNCLEAR_RELEVANCE> ] * ;
+          <strategies> [ <https://w3id.org/lmodel/slsa/SlsaAdoptionStrategy#ENHANCE_ALIGNMENT_FLEXIBILITY>
+             <https://w3id.org/lmodel/slsa/SlsaAdoptionStrategy#PROVIDE_DETAILED_DOCUMENTATION>
+             <https://w3id.org/lmodel/slsa/SlsaAdoptionStrategy#STREAMLINE_PROVENANCE_GENERATION>
+             <https://w3id.org/lmodel/slsa/SlsaAdoptionStrategy#IMPROVE_VERIFICATION_PROCESS>
+             <https://w3id.org/lmodel/slsa/SlsaAdoptionStrategy#COLLABORATE_WITH_COMMUNITY> ] *
        ) ;
-       rdf:type [ <Producer> ] ?
+       rdf:type [ <SlsaAdoptionMetadata> ] ?
     )
 }
 
-<ResourceDescriptor> CLOSED {
-    (  $<ResourceDescriptor_tes> (  <uri> @linkml:String ? ;
-          <digest> @<DigestSet> ? ;
-          <name> @linkml:String ? ;
-          <downloadLocation> @linkml:String ? ;
-          <mediaType> @linkml:String ? ;
-          <annotations> @linkml:String *
+<SlsaBranch> CLOSED {
+    (  $<SlsaBranch_tes> (  &<SlsaNamedReference_tes> ;
+          rdf:type [ <SlsaNamedReference> ] ?
        ) ;
-       rdf:type [ <ResourceDescriptor> ] ?
+       rdf:type [ <SlsaBranch> ] ?
     )
 }
 
-<RunDetails> CLOSED {
-    (  $<RunDetails_tes> (  <builder> @<Builder> ;
-          <buildMetadata> @<BuildMetadata> ? ;
-          <byproducts> @<ResourceDescriptor> *
+<SlsaBuildDefinition> CLOSED {
+    (  $<SlsaBuildDefinition_tes> (  <build_type> @linkml:Uri ;
+          <external_parameters> @<SlsaBuildParameter> * ;
+          <internal_parameters> @<SlsaBuildParameter> * ;
+          <resolved_dependencies> @<InTotoResourceDescriptor> * ;
+          <hermetic> @linkml:Boolean ? ;
+          <provenance_generation_tool> @linkml:Uri ? ;
+          <pipeline_orchestrator> @linkml:Uri ?
        ) ;
-       rdf:type [ <RunDetails> ] ?
+       rdf:type [ <SlsaBuildDefinition> ] ?
+    )
+}
+
+<SlsaBuildEnvironmentAttestation> CLOSED {
+    (  $<SlsaBuildEnvironmentAttestation_tes> (  &<SlsaPredicate_tes> ;
+          rdf:type [ <SlsaPredicate> ] ? ;
+          <build_env_level> [ <https://w3id.org/lmodel/slsa/SlsaBuildEnvironmentLevel#SLSA_BUILD_ENV_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaBuildEnvironmentLevel#SLSA_BUILD_ENV_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaBuildEnvironmentLevel#SLSA_BUILD_ENV_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaBuildEnvironmentLevel#SLSA_BUILD_ENV_LEVEL_3> ] ? ;
+          <build_id> @linkml:String ;
+          <build_image> @<SlsaBuildImage> ? ;
+          <measurements> @<SlsaMeasurement> *
+       ) ;
+       rdf:type [ <SlsaBuildEnvironmentAttestation> ] ?
+    )
+}
+
+<SlsaBuildImage> CLOSED {
+    (  $<SlsaBuildImage_tes> (  <build_env_level> [ <https://w3id.org/lmodel/slsa/SlsaBuildEnvironmentLevel#SLSA_BUILD_ENV_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaBuildEnvironmentLevel#SLSA_BUILD_ENV_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaBuildEnvironmentLevel#SLSA_BUILD_ENV_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaBuildEnvironmentLevel#SLSA_BUILD_ENV_LEVEL_3> ] ? ;
+          <provenance> @<SlsaBuildProvenance> ? ;
+          <produced_by> @<SlsaBuildImageProducer> ?
+       ) ;
+       rdf:type [ <SlsaBuildImage> ]
+    )
+}
+
+<SlsaBuildImageProducer> CLOSED {
+    (  $<SlsaBuildImageProducer_tes> (  &<SlsaParty_tes> ;
+          rdf:type [ <SlsaParty> ] ?
+       ) ;
+       rdf:type [ <SlsaBuildImageProducer> ] ?
+    )
+}
+
+<SlsaBuildMetadata> CLOSED {
+    (  $<SlsaBuildMetadata_tes> (  <invocation_id> @linkml:String ? ;
+          <started_on> @linkml:Datetime ? ;
+          <finished_on> @linkml:Datetime ?
+       ) ;
+       rdf:type [ <SlsaBuildMetadata> ] ?
+    )
+}
+
+<SlsaBuildParameter> CLOSED {
+    (  $<SlsaBuildParameter_tes> (  <parameter_name> @linkml:String ;
+          <parameter_value> @linkml:String ?
+       ) ;
+       rdf:type [ <SlsaBuildParameter> ] ?
+    )
+}
+
+<SlsaBuildPlatform> CLOSED {
+    (  $<SlsaBuildPlatform_tes> (  <component_versions> @<SlsaComponentVersion> * ;
+          <build_level> [ <https://w3id.org/lmodel/slsa/SlsaBuildLevel#SLSA_BUILD_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaBuildLevel#SLSA_BUILD_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaBuildLevel#SLSA_BUILD_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaBuildLevel#SLSA_BUILD_LEVEL_3> ] ? ;
+          <hosted> @linkml:Boolean ? ;
+          <builder_dependencies> @<InTotoResourceDescriptor> *
+       ) ;
+       rdf:type [ <SlsaBuildPlatform> ]
+    )
+}
+
+<SlsaBuildProvenance> CLOSED {
+    (  $<SlsaBuildProvenance_tes> (  &<SlsaPredicate_tes> ;
+          rdf:type [ <SlsaPredicate> ] ? ;
+          <build_definition> @<SlsaBuildDefinition> ;
+          <run_details> @<SlsaRunDetails>
+       ) ;
+       rdf:type [ <SlsaBuildProvenance> ] ?
+    )
+}
+
+<SlsaComponentVersion> CLOSED {
+    (  $<SlsaComponentVersion_tes> (  <component> @linkml:String ;
+          <component_version> @linkml:String ?
+       ) ;
+       rdf:type [ <SlsaComponentVersion> ] ?
+    )
+}
+
+<SlsaConsumer> CLOSED {
+    (  $<SlsaConsumer_tes> (  &<SlsaParty_tes> ;
+          rdf:type [ <SlsaParty> ] ?
+       ) ;
+       rdf:type [ <SlsaConsumer> ] ?
+    )
+}
+
+<SlsaControlPlane> CLOSED {
+    (  $<SlsaControlPlane_tes> <build_platform> @<SlsaBuildPlatform> ? ;
+       rdf:type [ <SlsaControlPlane> ] ?
+    )
+}
+
+<SlsaDependencyInventory> CLOSED {
+    (  $<SlsaDependencyInventory_tes> (  <artifact> @<InTotoResourceDescriptor> ;
+          <dependencies> @<InTotoResourceDescriptor> * ;
+          <dependency_level> [ <https://w3id.org/lmodel/slsa/SlsaDependencyLevel#SLSA_DEPENDENCY_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaDependencyLevel#SLSA_DEPENDENCY_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaDependencyLevel#SLSA_DEPENDENCY_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaDependencyLevel#SLSA_DEPENDENCY_LEVEL_3>
+             <https://w3id.org/lmodel/slsa/SlsaDependencyLevel#SLSA_DEPENDENCY_LEVEL_4> ] ?
+       ) ;
+       rdf:type [ <SlsaDependencyInventory> ] ?
+    )
+}
+
+<SlsaDependencyLevelCount> CLOSED {
+    (  $<SlsaDependencyLevelCount_tes> (  <verified_level> [ <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_UNEVALUATED>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_3>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_UNEVALUATED>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_3>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_4>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_TWO_PARTY_REVIEWED>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_REPRODUCED> <https://w3id.org/lmodel/slsa/SlsaResult#FAILED> ] ;
+          <dependency_count> @linkml:Integer
+       ) ;
+       rdf:type [ <SlsaDependencyLevelCount> ] ?
     )
 }
 
 <SlsaDocument> CLOSED {
-    (  $<SlsaDocument_tes> (  <buildDefinition> @<BuildDefinition> ;
-          <runDetails> @<RunDetails> ;
-          <verifier> @<Verifier> ;
-          <verificationResult> [ <https://w3id.org/lmodel/slsa/VerificationResultEnum#PASSED>
-             <https://w3id.org/lmodel/slsa/VerificationResultEnum#FAILED> ] ;
-          <verifiedLevels> [ <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_BUILD_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_BUILD_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_BUILD_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_BUILD_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_SOURCE_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_SOURCE_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_SOURCE_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_SOURCE_LEVEL_4> ] + ;
-          <adoptionMetadata> @<AdoptionMetadata> ?
+    (  $<SlsaDocument_tes> (  <attestations> @<InTotoStatement> * ;
+          <parties> @<SlsaParty> * ;
+          <build_platforms> @<SlsaBuildPlatform> * ;
+          <packages> @<SlsaPackage> * ;
+          <package_registries> @<SlsaPackageRegistry> * ;
+          <source_control_systems> @<SlsaSourceControlSystem> * ;
+          <source_repositories> @<SlsaSourceRepository> * ;
+          <source_revisions> @<SlsaSourceRevision> * ;
+          <named_references> @<SlsaNamedReference> * ;
+          <build_images> @<SlsaBuildImage> * ;
+          <dependency_inventories> @<SlsaDependencyInventory> * ;
+          <adoption_metadata> @<SlsaAdoptionMetadata> ?
        ) ;
        rdf:type [ <SlsaDocument> ] ?
     )
 }
 
-<SourceProvenanceAttestation> CLOSED {
-    (  $<SourceProvenanceAttestation_tes> (  &<Statement_tes> ;
-          rdf:type [ <Statement> ] ? ;
-          <revision> @<SourceRevision> ? ;
-          <sourceLevel> [ <https://w3id.org/lmodel/slsa/SourceLevelEnum#SLSA_SOURCE_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SourceLevelEnum#SLSA_SOURCE_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SourceLevelEnum#SLSA_SOURCE_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SourceLevelEnum#SLSA_SOURCE_LEVEL_4> ] ? ;
-          <controlsEnforced> @linkml:String *
+<SlsaInfrastructureProvider> CLOSED {
+    (  $<SlsaInfrastructureProvider_tes> (  &<SlsaParty_tes> ;
+          rdf:type [ <SlsaParty> ] ?
        ) ;
-       rdf:type [ <SourceProvenanceAttestation> ] ?
+       rdf:type [ <SlsaInfrastructureProvider> ] ?
     )
 }
 
-<SourceRepository> CLOSED {
-    (  $<SourceRepository_tes> (  <id> @linkml:String ;
-          <description> @linkml:String ? ;
-          <sourceLevel> [ <https://w3id.org/lmodel/slsa/SourceLevelEnum#SLSA_SOURCE_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SourceLevelEnum#SLSA_SOURCE_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SourceLevelEnum#SLSA_SOURCE_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SourceLevelEnum#SLSA_SOURCE_LEVEL_4> ] ?
+<SlsaMeasurement> CLOSED {
+    (  $<SlsaMeasurement_tes> (  <digest> @<InTotoDigestSet> ? ;
+          <measured_component> @linkml:String
        ) ;
-       rdf:type [ <SourceRepository> ] ?
+       rdf:type [ <SlsaMeasurement> ] ?
     )
 }
 
-<SourceRevision> CLOSED {
-    (  $<SourceRevision_tes> (  <revisionId> @linkml:String ;
-          <repository> @<SourceRepository> ? ;
-          <author> @linkml:String ? ;
-          <timestamp> @linkml:String ? ;
-          <parentRevisions> @linkml:String * ;
-          <reviewType> [ <https://w3id.org/lmodel/slsa/ReviewTypeEnum#TWO_PARTY>
-             <https://w3id.org/lmodel/slsa/ReviewTypeEnum#PAIR_PROGRAMMING>
-             <https://w3id.org/lmodel/slsa/ReviewTypeEnum#MOB_PROGRAMMING> <https://w3id.org/lmodel/slsa/ReviewTypeEnum#AUTOMATED>
-             ] ?
-       ) ;
-       rdf:type [ <SourceRevision> ] ?
-    )
-}
-
-<Statement>  (
-    @<BuildEnvironmentAttestation> OR @<BuildProvenance> OR @<SourceProvenanceAttestation> OR @<VerificationSummaryAttestation>
+<SlsaNamedReference>  (
+    CLOSED {
+       (  $<SlsaNamedReference_tes> (  <repository> @<SlsaSourceRepository> ? ;
+             <revision> @<SlsaSourceRevision> ? ;
+             <reference_type> @linkml:String ? ;
+             <reference_name> @linkml:String ;
+             <protected> @linkml:Boolean ?
+          ) ;
+          rdf:type [ <SlsaNamedReference> ] ?
+       )
+    } OR @<SlsaBranch> OR @<SlsaTag>
 )
 
-<Statement_struct> {
-    (  $<Statement_tes> (  <_type> @linkml:String ;
-          <subject> @<ResourceDescriptor> + ;
-          <predicateType> @linkml:String ;
-          <predicate> @linkml:String ? ;
-          <attestationStorageUri> @linkml:String ? ;
-          <signingTool> @linkml:String ? ;
-          <sigstoreLogEntry> @linkml:String ?
+<SlsaPackage> CLOSED {
+    (  $<SlsaPackage_tes> (  <ecosystem> @linkml:String ? ;
+          <package_name> @linkml:String ;
+          <registry> @<SlsaPackageRegistry> ? ;
+          <package_artifacts> @<InTotoResourceDescriptor> * ;
+          <guac_uri> @linkml:Uri ? ;
+          <security_insights_uri> @linkml:Uri ?
        ) ;
-       rdf:type [ <Statement> ] ?
+       rdf:type [ <SlsaPackage> ] ?
     )
 }
 
-<VerificationSummaryAttestation> CLOSED {
-    (  $<VerificationSummaryAttestation_tes> (  &<Statement_tes> ;
-          rdf:type [ <Statement> ] ? ;
-          <verifier> @<Verifier> ;
-          <timeVerified> @linkml:String ? ;
-          <resourceUri> @linkml:String ;
-          <policy> @<ResourceDescriptor> ;
-          <inputAttestations> @<ResourceDescriptor> * ;
-          <verificationResult> [ <https://w3id.org/lmodel/slsa/VerificationResultEnum#PASSED>
-             <https://w3id.org/lmodel/slsa/VerificationResultEnum#FAILED> ] ;
-          <verifiedLevels> [ <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_BUILD_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_BUILD_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_BUILD_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_BUILD_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_SOURCE_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_SOURCE_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_SOURCE_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SlsaResultEnum#SLSA_SOURCE_LEVEL_4> ] + ;
-          <dependencyLevels> @linkml:String ? ;
-          <slsaVersion> @linkml:String ?
-       ) ;
-       rdf:type [ <VerificationSummaryAttestation> ] ?
+<SlsaPackageRegistry> CLOSED {
+    (  $<SlsaPackageRegistry_tes> <ecosystem> @linkml:String ? ;
+       rdf:type [ <SlsaPackageRegistry> ]
     )
 }
 
-<Verifier> CLOSED {
-    (  $<Verifier_tes> (  <id> @linkml:String ;
-          <version> @linkml:String ?
+<SlsaParty>  (
+    @<SlsaBuildImageProducer> OR @<SlsaConsumer> OR @<SlsaInfrastructureProvider> OR @<SlsaProducer> OR @<SlsaVerifier>
+)
+
+<SlsaParty_struct> {
+    (  $<SlsaParty_tes> (  <party_type> @linkml:String ? ;
+          <party_name> @linkml:String ?
        ) ;
-       rdf:type [ <Verifier> ] ?
+       rdf:type [ <SlsaParty> ] ?
+    )
+}
+
+<SlsaPredicate>  (
+    @<SlsaBuildEnvironmentAttestation> OR @<SlsaBuildProvenance> OR @<SlsaSourceProvenance> OR @<SlsaVerificationSummary>
+)
+
+<SlsaPredicate_struct> {
+    (  $<SlsaPredicate_tes> <predicate_kind> @linkml:String ? ;
+       rdf:type [ <SlsaPredicate> ] ?
+    )
+}
+
+<SlsaProducer> CLOSED {
+    (  $<SlsaProducer_tes> (  &<SlsaParty_tes> ;
+          rdf:type [ <SlsaParty> ] ? ;
+          <build_platform> @<SlsaBuildPlatform> ?
+       ) ;
+       rdf:type [ <SlsaProducer> ] ?
+    )
+}
+
+<SlsaRunDetails> CLOSED {
+    (  $<SlsaRunDetails_tes> (  <builder> @<SlsaBuildPlatform> ;
+          <build_metadata> @<SlsaBuildMetadata> ? ;
+          <byproducts> @<InTotoResourceDescriptor> *
+       ) ;
+       rdf:type [ <SlsaRunDetails> ] ?
+    )
+}
+
+<SlsaSourceControlSystem> CLOSED {
+    (  $<SlsaSourceControlSystem_tes> rdf:type . * ;
+       rdf:type [ <SlsaSourceControlSystem> ]
+    )
+}
+
+<SlsaSourceProvenance> CLOSED {
+    (  $<SlsaSourceProvenance_tes> (  &<SlsaPredicate_tes> ;
+          rdf:type [ <SlsaPredicate> ] ? ;
+          <revision> @<SlsaSourceRevision> ;
+          <controls_enforced> @linkml:String *
+       ) ;
+       rdf:type [ <SlsaSourceProvenance> ] ?
+    )
+}
+
+<SlsaSourceRepository> CLOSED {
+    (  $<SlsaSourceRepository_tes> <hosted_by> @<SlsaSourceControlSystem> ? ;
+       rdf:type [ <SlsaSourceRepository> ]
+    )
+}
+
+<SlsaSourceRevision> CLOSED {
+    (  $<SlsaSourceRevision_tes> (  <repository> @<SlsaSourceRepository> ? ;
+          <authored_by> @linkml:String ? ;
+          <authored_at> @linkml:Datetime ? ;
+          <parent_revisions> @<SlsaSourceRevision> * ;
+          <source_level> [ <https://w3id.org/lmodel/slsa/SlsaSourceLevel#SLSA_SOURCE_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaSourceLevel#SLSA_SOURCE_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaSourceLevel#SLSA_SOURCE_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaSourceLevel#SLSA_SOURCE_LEVEL_3>
+             <https://w3id.org/lmodel/slsa/SlsaSourceLevel#SLSA_SOURCE_LEVEL_4> ] ? ;
+          <review_type> [ <https://w3id.org/lmodel/slsa/SlsaReviewType#TWO_PARTY>
+             <https://w3id.org/lmodel/slsa/SlsaReviewType#PAIR_PROGRAMMING>
+             <https://w3id.org/lmodel/slsa/SlsaReviewType#MOB_PROGRAMMING> <https://w3id.org/lmodel/slsa/SlsaReviewType#AUTOMATED>
+             ] ?
+       ) ;
+       rdf:type [ <SlsaSourceRevision> ]
+    )
+}
+
+<SlsaTag> CLOSED {
+    (  $<SlsaTag_tes> (  &<SlsaNamedReference_tes> ;
+          rdf:type [ <SlsaNamedReference> ] ?
+       ) ;
+       rdf:type [ <SlsaTag> ] ?
+    )
+}
+
+<SlsaVerificationSummary> CLOSED {
+    (  $<SlsaVerificationSummary_tes> (  &<SlsaPredicate_tes> ;
+          rdf:type [ <SlsaPredicate> ] ? ;
+          <resource_uri> @linkml:Uri ;
+          <verifier> @<SlsaVerifier> ;
+          <time_verified> @linkml:Datetime ? ;
+          <policy> @<InTotoResourceDescriptor> ;
+          <input_attestations> @<InTotoResourceDescriptor> * ;
+          <verification_result> [ <https://w3id.org/lmodel/slsa/SlsaVerificationResult#PASSED>
+             <https://w3id.org/lmodel/slsa/SlsaVerificationResult#FAILED> ] ;
+          <verified_levels> [ <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_UNEVALUATED>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_3>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_UNEVALUATED>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_0>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_1>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_2>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_3>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_4>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_TWO_PARTY_REVIEWED>
+             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_REPRODUCED> <https://w3id.org/lmodel/slsa/SlsaResult#FAILED> ] + ;
+          <organization_properties> @linkml:String * ;
+          <dependency_levels> @<SlsaDependencyLevelCount> * ;
+          <slsa_version> @linkml:String ?
+       ) ;
+       rdf:type [ <SlsaVerificationSummary> ] ?
+    )
+}
+
+<SlsaVerifier> CLOSED {
+    (  $<SlsaVerifier_tes> (  &<SlsaParty_tes> ;
+          rdf:type [ <SlsaParty> ] ? ;
+          <component_versions> @<SlsaComponentVersion> * ;
+          <verifier_id> @linkml:Uri
+       ) ;
+       rdf:type [ <SlsaVerifier> ] ?
     )
 }

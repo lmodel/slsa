@@ -1,0 +1,10 @@
+# linkml-lint reads this file from the directory `just lint` runs in.
+# The recommended rules apply, with one change: permissible values are
+# UPPER_CASE, because the SLSA-defined ones (SLSA_BUILD_LEVEL_3, PASSED) are
+# the strings that appear in attestations and policies, and the schema keeps
+# one style for all of its enums.
+extends: recommended
+rules:
+  standard_naming:
+    level: warning
+    permissible_values_upper_case: true

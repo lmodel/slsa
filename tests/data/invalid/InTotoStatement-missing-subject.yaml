@@ -1,0 +1,3 @@
+# INVALID: a statement needs at least one subject.
+statement_type: https://in-toto.io/Statement/v1
+predicate_type: https://slsa.dev/provenance/v1

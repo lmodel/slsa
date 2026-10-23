@@ -1,0 +1,14 @@
+# A build image with its own build provenance, at Build Environment L1.
+image_uri: oci://ghcr.io/example/build-image@sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+build_env_level: SLSA_BUILD_ENV_LEVEL_1
+produced_by:
+  party_name: Example platform team
+provenance:
+  build_definition:
+    build_type: https://actions.github.io/buildtypes/workflow/v1
+    external_parameters:
+      - parameter_name: workflow
+        parameter_value: .github/workflows/image.yml
+  run_details:
+    builder:
+      builder_id: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@refs/tags/v1.9.0

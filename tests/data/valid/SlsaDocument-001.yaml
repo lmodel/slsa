@@ -1,0 +1,110 @@
+# A document that ties the parts together: the platform, the package, its
+# source, and the attestations about one release.
+build_platforms:
+  - builder_id: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
+    build_level: SLSA_BUILD_LEVEL_3
+    hosted: true
+parties:
+  - party_type: SlsaProducer
+    party_name: Example project maintainers
+    build_platform: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
+  - party_type: SlsaConsumer
+    party_name: Example Corp platform engineering
+  - party_type: SlsaVerifier
+    verifier_id: https://github.com/slsa-framework/slsa-verifier
+  - party_type: SlsaInfrastructureProvider
+    party_name: GitHub
+package_registries:
+  - registry_uri: https://pypi.org/simple/
+    ecosystem: PyPA
+packages:
+  - package_name: myapp
+    ecosystem: PyPA
+    registry: https://pypi.org/simple/
+    package_artifacts:
+      - resource_uri: pkg:pypi/myapp@1.0.0
+        digest:
+          sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+source_control_systems:
+  - scs_uri: https://github.com
+source_repositories:
+  - repository_uri: https://github.com/example/myapp
+    hosted_by: https://github.com
+source_revisions:
+  - revision_id: abc123def456abc123def456abc123def456abc1
+    repository: https://github.com/example/myapp
+  - revision_id: da39a3ee5e6b4b0d3255bfef95601890afd80709
+    repository: https://github.com/example/myapp
+    authored_by: developer@example.com
+    authored_at: "2024-01-15T09:00:00Z"
+    parent_revisions:
+      - abc123def456abc123def456abc123def456abc1
+    source_level: SLSA_SOURCE_LEVEL_3
+    review_type: TWO_PARTY
+named_references:
+  - reference_type: SlsaBranch
+    reference_name: refs/heads/main
+    repository: https://github.com/example/myapp
+    revision: da39a3ee5e6b4b0d3255bfef95601890afd80709
+    protected: true
+  - reference_type: SlsaTag
+    reference_name: refs/tags/v1.0.0
+    repository: https://github.com/example/myapp
+    revision: da39a3ee5e6b4b0d3255bfef95601890afd80709
+attestations:
+  - statement_type: https://in-toto.io/Statement/v1
+    subject:
+      - resource_uri: pkg:pypi/myapp@1.0.0
+        digest:
+          sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+    predicate_type: https://slsa.dev/provenance/v1
+    predicate:
+      predicate_kind: SlsaBuildProvenance
+      build_definition:
+        build_type: https://actions.github.io/buildtypes/workflow/v1
+        external_parameters:
+          - parameter_name: workflow
+            parameter_value: .github/workflows/release.yml
+          - parameter_name: ref
+            parameter_value: refs/tags/v1.0.0
+          - parameter_name: repository
+            parameter_value: https://github.com/example/myapp
+        resolved_dependencies:
+          - resource_uri: git+https://github.com/example/myapp@refs/tags/v1.0.0
+            digest:
+              git_commit: da39a3ee5e6b4b0d3255bfef95601890afd80709
+      run_details:
+        builder:
+          builder_id: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
+  - statement_type: https://in-toto.io/Statement/v1
+    subject:
+      - resource_uri: pkg:pypi/myapp@1.0.0
+        digest:
+          sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+    predicate_type: https://slsa.dev/verification_summary/v1
+    predicate:
+      predicate_kind: SlsaVerificationSummary
+      verifier:
+        verifier_id: https://github.com/slsa-framework/slsa-verifier
+      resource_uri: pkg:pypi/myapp@1.0.0
+      policy:
+        resource_uri: https://example.com/policies/slsa-build-l3-github.json
+      verification_result: PASSED
+      verified_levels:
+        - SLSA_BUILD_LEVEL_3
+      slsa_version: "1.2"
+dependency_inventories:
+  - artifact:
+      resource_uri: pkg:pypi/myapp@1.0.0
+      digest:
+        sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+    dependencies:
+      - resource_uri: pkg:pypi/requests@2.31.0
+        digest:
+          sha256: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+    dependency_level: SLSA_DEPENDENCY_LEVEL_1
+adoption_metadata:
+  challenges:
+    - COMPLEX_IMPLEMENTATION
+  strategies:
+    - STREAMLINE_PROVENANCE_GENERATION

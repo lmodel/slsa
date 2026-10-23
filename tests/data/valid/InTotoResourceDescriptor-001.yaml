@@ -1,0 +1,7 @@
+# A descriptor of a container image.
+resource_uri: pkg:oci/myapp@sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890?repository_url=gcr.io/example-project/myapp
+digest:
+  sha256: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+resource_name: myapp image
+media_type: application/vnd.oci.image.manifest.v1+json
+download_location: https://gcr.io/v2/example-project/myapp/manifests/sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890

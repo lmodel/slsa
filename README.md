@@ -20,8 +20,8 @@ Supply-chain Levels for Software Artifacts (LinkML)
 * [project/](project/) - project files (these files are auto-generated, do not edit)
 * [src/](src/) - source files (edit these)
   * [slsa](src/slsa)
-    * [schema/](src/slsa/schema) -- LinkML schema
-      (edit this)
+    * [schema/](src/slsa/schema) -- LinkML schema: `slsa.yaml` and
+      the modules it imports (edit these)
     * [datamodel/](src/slsa/datamodel) -- generated
       Python datamodel
 * [tests/](tests/) - Python tests
@@ -36,13 +36,13 @@ They are written for the command runner [just](https://github.com/casey/just/). 
 
 `.lokf/` holds this project's [KTL](https://w3id.org/ktl/) knowledge bundle. Its domain schema is `.lokf/slsa.yaml`, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy.
 
-A concept may name one of ten SLSA classes as its `type`. In the KTL Registrar and KTL Curator plugins, add them to the *Known LOKF types* setting, after the built-ins, so the two lists stay the same:
+`just lokf-adapt` rewrites the copy and `just lokf-adapt-check` says when it is stale; `project.justfile` says which classes the copy roots on `Concept`. A concept may name any of them, or a subclass, as its `type`. In the KTL Registrar and KTL Curator plugins, add them to the *Known LOKF types* setting, after the built-ins, so the two lists stay the same:
 
 ```text
-Producer, Consumer, InfrastructureProvider, Verifier, Builder, BuildPlatform, ControlPlane, BuildImage, Package, SourceRepository
+SlsaProducer, SlsaConsumer, SlsaVerifier, SlsaInfrastructureProvider, SlsaBuildImageProducer, SlsaBuildPlatform, SlsaControlPlane, SlsaPackage, SlsaPackageRegistry, SlsaSourceControlSystem, SlsaSourceRepository, SlsaSourceRevision, SlsaBuildImage
 ```
 
-The copy renames the SLSA keys that LOKF also uses: `slsa_id`, `slsa_name`, `slsa_description`, `slsa_version`, `slsa_author`, `slsa_timestamp` and `slsa_predicate`. Two of them mean the same as LOKF's keys, so a concept writes `title` and `description` and leaves `slsa_name` and `slsa_description` empty.
+In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. No SLSA key shares a name with a LOKF key, so none is renamed.
 
 ## License and attribution
 
@@ -62,8 +62,7 @@ third-party work this repository carries, and is included in the package.
   [Community Specification License 1.0](https://github.com/slsa-framework/slsa/blob/main/LICENSE.md),
   which asks every derivative work to name the material, its version and
   its source, as this paragraph does. Older portions are Apache-2.0. The
-  copy is kept unmodified for reference; [NOTICE](NOTICE) says which files
-  differ from that tree.
+  copy is that tree, unmodified; [NOTICE](NOTICE) records the commit.
 * **The Secure Software Factory whitepaper.**
   [docs/Secure_Software_Factory_Whitepaper.pdf](docs/Secure_Software_Factory_Whitepaper.pdf)
   is CNCF TAG-Security's whitepaper, copied unmodified from

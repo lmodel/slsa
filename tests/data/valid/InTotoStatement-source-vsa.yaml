@@ -1,0 +1,27 @@
+# A Source VSA: the repository is the resource, the revision id is the digest,
+# and the branches that pointed at the revision are an annotation.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - resource_uri: https://github.com/example/myapp/commit/da39a3ee5e6b4b0d3255bfef95601890afd80709
+    digest:
+      git_commit: da39a3ee5e6b4b0d3255bfef95601890afd80709
+    annotations:
+      - annotation_key: sourceRefs
+        annotation_values:
+          - refs/heads/main
+          - refs/heads/release_1.0
+predicate_type: https://slsa.dev/verification_summary/v1
+predicate:
+  predicate_kind: SlsaVerificationSummary
+  verifier:
+    verifier_id: https://example.com/source_verifier
+  time_verified: "2024-01-15T09:30:00Z"
+  resource_uri: git+https://github.com/example/myapp
+  policy:
+    resource_uri: https://example.com/slsa_source.policy
+  verification_result: PASSED
+  verified_levels:
+    - SLSA_SOURCE_LEVEL_3
+    - SLSA_SOURCE_TWO_PARTY_REVIEWED
+  organization_properties:
+    - ORG_SOURCE_STATIC_ANALYSIS

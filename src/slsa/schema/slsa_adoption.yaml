@@ -1,0 +1,132 @@
+---
+id: https://w3id.org/lmodel/slsa/slsa_adoption
+name: slsa_adoption
+title: SLSA adoption study
+description: >-
+  The challenge and strategy themes of an empirical study of SLSA adoption
+  (Tamanna et al., 2024, arXiv:2409.05014), for recording how a deployment
+  fares against them. Not part of the SLSA specification.
+license: Apache-2.0
+see_also:
+  - https://arxiv.org/abs/2409.05014
+
+default_prefix: slsa
+default_range: string
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  slsa: https://w3id.org/lmodel/slsa/
+
+imports:
+  - linkml:types
+  - ./slsa_core
+
+classes:
+  SlsaAdoptionMetadata:
+    description: >-
+      The adoption challenges a deployment meets and the strategies it applies, from the
+      study's taxonomy.
+    see_also:
+      - https://arxiv.org/abs/2409.05014
+    notes:
+      - >-
+        The study analysed 1,523 SLSA-related GitHub issues from 233 repositories and
+        derived four challenge themes and five strategy themes.
+    attributes:
+      challenges:
+        description: The challenge themes that apply.
+        range: SlsaAdoptionChallenge
+        multivalued: true
+      strategies:
+        description: The strategy themes applied or recommended.
+        range: SlsaAdoptionStrategy
+        multivalued: true
+    in_subset:
+      - slsa_adoption_study
+
+enums:
+  SlsaAdoptionChallenge:
+    description: The four themes of difficulty practitioners met when adopting SLSA.
+    see_also:
+      - https://arxiv.org/abs/2409.05014
+    permissible_values:
+      COMPLEX_IMPLEMENTATION:
+        description: >-
+          Generating provenance and maintaining the required tools is complicated.
+        annotations:
+          study_theme: CI
+        comments:
+          - >-
+            Sub-themes: complicated provenance generation (CI.1) and intricate tool
+            maintenance (CI.2); 901 issues.
+      UNCLEAR_COMMUNICATION:
+        description: >-
+          SLSA's terms and its guidance for particular ecosystems are hard to
+          understand.
+        annotations:
+          study_theme: UC
+        comments:
+          - >-
+            Sub-themes: unclear definitions of key terms (UC.1) and a lack of ecosystem-
+            specific guidance (UC.2); 357 issues.
+      LIMITED_FEASIBILITY:
+        description: >-
+          Verification tooling, attestation storage and two-party review are hard to put
+          into practice.
+        annotations:
+          study_theme: LF
+        comments:
+          - >-
+            Sub-themes: verification and storage (LF.1) and two-party review for small
+            projects (LF.2); 219 issues.
+      UNCLEAR_RELEVANCE:
+        description: >-
+          Which attacks SLSA mitigates, and how it differs from other practices, is
+          unclear.
+        annotations:
+          study_theme: UR
+        comments:
+          - >-
+            Sub-theme: unclear scope and ecosystem-level inconsistencies (UR.1); 46
+            issues.
+    in_subset:
+      - slsa_adoption_study
+
+  SlsaAdoptionStrategy:
+    description: >-
+      The five themes of strategy practitioners proposed for the adoption challenges.
+    see_also:
+      - https://arxiv.org/abs/2409.05014
+    permissible_values:
+      ENHANCE_ALIGNMENT_FLEXIBILITY:
+        description: >-
+          Make SLSA fit more contexts, with build-system tracks, flexibility for varied
+          organizations and alignment with OpenSSF practices.
+        annotations:
+          study_theme: S1
+      PROVIDE_DETAILED_DOCUMENTATION:
+        description: >-
+          Give clearer definitions, standard terms, negative examples and better
+          navigation.
+        annotations:
+          study_theme: S2
+      STREAMLINE_PROVENANCE_GENERATION:
+        description: >-
+          Simplify and standardize provenance generation with tools and templates, and
+          fix release-tool inconsistencies.
+        annotations:
+          study_theme: S3
+      IMPROVE_VERIFICATION_PROCESS:
+        description: >-
+          Strengthen verification and level determination, tag versions early, and give
+          downstream users more signals.
+        annotations:
+          study_theme: S4
+      COLLABORATE_WITH_COMMUNITY:
+        description: >-
+          Align with industry standards, guide newcomers, and share knowledge across
+          projects.
+        annotations:
+          study_theme: S5
+    in_subset:
+      - slsa_adoption_study

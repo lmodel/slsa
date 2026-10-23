@@ -1,0 +1,5 @@
+# A release tag.
+reference_name: refs/tags/v1.0.0
+repository: https://github.com/example/myapp
+revision: da39a3ee5e6b4b0d3255bfef95601890afd80709
+protected: true

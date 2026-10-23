@@ -1,0 +1,3 @@
+# INVALID: a build platform is identified by its builder_id.
+build_level: SLSA_BUILD_LEVEL_3
+hosted: true

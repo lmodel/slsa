@@ -1,0 +1,11 @@
+# INVALID: an organization's property starts with ORG_SOURCE_.
+verifier:
+  verifier_id: https://example.com/source_verifier
+resource_uri: git+https://github.com/example/myapp
+policy:
+  resource_uri: https://example.com/slsa_source.policy
+verification_result: PASSED
+verified_levels:
+  - SLSA_SOURCE_LEVEL_3
+organization_properties:
+  - STATIC_ANALYSIS

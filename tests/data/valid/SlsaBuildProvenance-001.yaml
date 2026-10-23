@@ -1,0 +1,9 @@
+# A build provenance predicate on its own, with the minimum Build L1 fields.
+build_definition:
+  build_type: https://actions.github.io/buildtypes/workflow/v1
+  external_parameters:
+    - parameter_name: workflow
+      parameter_value: .github/workflows/build.yml
+run_details:
+  builder:
+    builder_id: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
