@@ -1,5 +1,4 @@
 # Auto generated from slsa.yaml by pythongen.py version: 0.0.1
-# Generation date: 2026-03-22T23:42:41
 # Schema: slsa
 #
 # id: https://w3id.org/lmodel/slsa
@@ -59,8 +58,8 @@ from rdflib import (
 from linkml_runtime.linkml_model.types import Boolean, String
 from linkml_runtime.utils.metamodelcore import Bool
 
-metamodel_version = "1.7.0"
-version = "1.0.0"
+metamodel_version = "1.12.0"
+version = "1.2.0"
 
 # Namespaces
 LINKML = CurieNamespace('linkml', 'https://w3id.org/linkml/')

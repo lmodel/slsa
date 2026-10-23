@@ -19,7 +19,7 @@ A LinkML schema for the SLSA specification's tracks, levels and attestation form
 
 ## Development setup
 
-Python 3.9+, [uv](https://docs.astral.sh/uv/) and [just](https://github.com/casey/just) are required.
+Python 3.10+, [uv](https://docs.astral.sh/uv/) and [just](https://github.com/casey/just) are required.
 
 ```bash
 git clone https://github.com/lmodel/slsa.git

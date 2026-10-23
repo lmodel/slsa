@@ -138,7 +138,14 @@
                     ]
                 },
                 "buildEnvLevel": {
-                    "$ref": "#/$defs/BuildEnvLevelEnum",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/BuildEnvLevelEnum"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "The SLSA Build Environment Level supported or represented, reflecting the strength of the integrity guarantees provided."
                 },
                 "buildId": {
@@ -213,7 +220,14 @@
             "description": "The template for a build environment, such as a VM or container image. Comprises the root filesystem, pre-installed guest OS and packages, the build executor, and the build agent. Created by a build image producer and consumed by the hosted build platform.",
             "properties": {
                 "buildEnvLevel": {
-                    "$ref": "#/$defs/BuildEnvLevelEnum",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/BuildEnvLevelEnum"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "The SLSA Build Environment Level supported or represented, reflecting the strength of the integrity guarantees provided."
                 },
                 "id": {
@@ -283,7 +297,14 @@
             "description": "The infrastructure (software, hardware, people, and organizations) used to transform source code into package artifacts. Responsible for provenance generation and isolation between tenant builds. Often a hosted, multi-tenant build service.",
             "properties": {
                 "buildLevel": {
-                    "$ref": "#/$defs/BuildLevelEnum",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/BuildLevelEnum"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "The SLSA Build Level this platform is capable of producing, as determined by its provenance generation and isolation guarantees."
                 },
                 "id": {
@@ -447,7 +468,14 @@
                     ]
                 },
                 "dependencyLevel": {
-                    "$ref": "#/$defs/DependencyLevelEnum",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DependencyLevelEnum"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "The SLSA Dependency Level that this inventory and associated triage process supports."
                 }
             },
@@ -804,7 +832,14 @@
                     ]
                 },
                 "sourceLevel": {
-                    "$ref": "#/$defs/SourceLevelEnum",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/SourceLevelEnum"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "The SLSA Source Level achieved or verified for a source repository or revision."
                 },
                 "subject": {
@@ -839,7 +874,14 @@
                     "type": "string"
                 },
                 "sourceLevel": {
-                    "$ref": "#/$defs/SourceLevelEnum",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/SourceLevelEnum"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "The SLSA Source Level achieved or verified for a source repository or revision."
                 }
             },
@@ -882,7 +924,14 @@
                     "description": "The source repository that contains this revision."
                 },
                 "reviewType": {
-                    "$ref": "#/$defs/ReviewTypeEnum",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ReviewTypeEnum"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "The type of human or automated review process used to approve this source revision. Captures the contested forms of two-party review \u2014 including pair programming and mob programming \u2014 whose security equivalence to standard asynchronous two-party review is an open question identified in practitioner community discussions (Tamanna et al., 2024, LF.2). See ReviewTypeEnum for defined values."
                 },
                 "revisionId": {
@@ -901,6 +950,62 @@
                 "revisionId"
             ],
             "title": "SourceRevision",
+            "type": "object"
+        },
+        "Statement": {
+            "additionalProperties": false,
+            "description": "The middle layer of an in-toto software attestation (Statement v1). Binds an authenticated predicate to one or more subject artifacts, allowing predicate-agnostic processing and storage.",
+            "properties": {
+                "_type": {
+                    "description": "Always \"https://in-toto.io/Statement/v1\". Identifies the in-toto statement schema version and namespace.",
+                    "type": "string"
+                },
+                "attestationStorageUri": {
+                    "description": "URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "predicate": {
+                    "description": "The attestation payload \u2014 an arbitrary JSON object whose schema is fully determined by predicateType.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "predicateType": {
+                    "description": "URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation).",
+                    "type": "string"
+                },
+                "signingTool": {
+                    "description": "URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., \"https://github.com/sigstore/cosign\", \"https://github.com/notaryproject/notation\"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sigstoreLogEntry": {
+                    "description": "URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., \"https://rekor.sigstore.dev/api/v1/log/entries/24296fb...\"). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "subject": {
+                    "description": "The set of software artifacts to which a predicate applies. Each entry MUST contain a digest.",
+                    "items": {
+                        "$ref": "#/$defs/ResourceDescriptor"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "_type",
+                "subject",
+                "predicateType"
+            ],
+            "title": "Statement",
             "type": "object"
         },
         "VerificationResultEnum": {
@@ -1052,9 +1157,9 @@
     },
     "$id": "https://w3id.org/lmodel/slsa",
     "$schema": "https://json-schema.org/draft/2019-09/schema",
-    "additionalProperties": true,
+    "additionalProperties": false,
     "description": "Root wrapper for any SLSA attestation payload. Acts as the entry point for schema validation and tools.",
-    "metamodel_version": "1.7.0",
+    "metamodel_version": "1.12.0",
     "properties": {
         "adoptionMetadata": {
             "anyOf": [
@@ -1100,5 +1205,5 @@
     ],
     "title": "slsa",
     "type": "object",
-    "version": "1.0.0"
+    "version": "1.2.0"
 }

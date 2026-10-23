@@ -1,190 +1,379 @@
- syntax="proto3";
- package
-// metamodel_version: 1.7.0
-// version: 1.0.0
+syntax = "proto3";
+package slsa;
+// metamodel_version: 1.12.0
+// version: 1.2.0
 // Optional structured metadata capturing the SLSA adoption challenges and mitigation strategies relevant to a given attestation or deployment context. Derived from empirical analysis of 1,523 SLSA-related GitHub issues across 233 repositories (Tamanna et al., 2024, arXiv:2409.05014). Use this class to document which challenge themes apply to the current deployment and which strategies are being employed or recommended. Attach via the adoptionMetadata slot on SlsaDocument.
-message AdoptionMetadata
- {
- repeated  adoptionChallengeEnum challenges = 0
- repeated  adoptionStrategyEnum strategies = 0
- }
+message AdoptionMetadata {
+  // The adoption challenge themes that apply to this attestation or deployment context, drawn from the empirically identified challenge taxonomy (Tamanna et al., 2024, arXiv:2409.05014).
+  repeated AdoptionChallengeEnum challenges = 1;
+  // The mitigation strategies being employed or recommended in this attestation or deployment context, drawn from the empirically identified strategy taxonomy (Tamanna et al., 2024, arXiv:2409.05014).
+  repeated AdoptionStrategyEnum strategies = 2;
+}
 // Describes all inputs to the build in enough detail to initialise and reproduce the build. The accuracy and completeness are implied by the builder identified in runDetails.
-message BuildDefinition
- {
-  string buildType = 0
-  string externalParameters = 0
-  string internalParameters = 0
- repeated  resourceDescriptor resolvedDependencies = 0
-  boolean hermeticBuild = 0
-  string provenanceGenerationTool = 0
-  string pipelineOrchestrator = 0
- }
+message BuildDefinition {
+  // URI identifying the template for how to perform the build and how to interpret the parameters and dependencies. SHOULD resolve to a human-readable specification. REQUIRED at SLSA Build L1.
+  string buildType = 1;
+  // Top-level, independent inputs under external (tenant or user) control. MUST be complete at SLSA Build L3. Stored as a JSON object. Verifiers SHOULD reject unrecognized fields.
+  string externalParameters = 2;
+  // Parameters set internally by the build platform. Intended for debugging, incident response, and enabling reproducible builds. Stored as a JSON object; need not be verified by consumers.
+  string internalParameters = 3;
+  // Unordered collection of artifacts needed at build time (config files, source, build tools). Completeness is best effort through SLSA Build L3.
+  repeated ResourceDescriptor resolvedDependencies = 4;
+  // Whether all build inputs are fully isolated to the dependencies declared in resolvedDependencies, with no network access or filesystem references outside the explicit build graph. Hermetic builds are a stated requirement for SLSA Build L3; practitioners identified this as one of the most commonly cited implementation barriers, with over 50% of surveyed practitioners finding hermetic build requirements difficult to implement (Tamanna et al., 2024, CI.1).
+  bool hermeticBuild = 5;
+  // URI or name of the tool used to generate provenance for this build (e.g., "https://github.com/slsa-framework/slsa-github-generator"). Standardizing this field across builds reduces confusion, supports reproducibility verification, and aligns with the recommended strategy of simplifying and standardizing provenance generation processes (Tamanna et al., 2024, S3.1).
+  string provenanceGenerationTool = 6;
+  // URI or name of the CI/CD pipeline orchestration system that coordinated this build (e.g., "https://tekton.dev", "https://github.com/features/actions", "https://jenkins.io"). In the SSF reference architecture this is the Build Service layer that feeds the Artifact Registry. Providing this field helps distinguish the orchestrator from the provenance-generating builder identity (builder.id) in complex deployments where they differ (e.g., a Tekton Pipeline running on Google Cloud Pipelines).
+  string pipelineOrchestrator = 7;
+}
 // An attestation describing the integrity of a build environment at the time a specific build was dispatched and executed. Used to verify that a build ran in the expected, untampered environment.
-message BuildEnvironmentAttestation
- {
-  string type = 0
- repeated  resourceDescriptor subject = 0
-  string predicateType = 0
-  string predicate = 0
-  string attestationStorageUri = 0
-  string signingTool = 0
-  string sigstoreLogEntry = 0
-  string buildId = 0
-  buildImage buildImage = 0
- repeated  string measurements = 0
-  buildEnvLevelEnum buildEnvLevel = 0
- }
+message BuildEnvironmentAttestation {
+  // Always "https://in-toto.io/Statement/v1". Identifies the in-toto statement schema version and namespace.
+  string type = 1;
+  // The set of software artifacts to which a predicate applies. Each entry MUST contain a digest.
+  repeated ResourceDescriptor subject = 2;
+  // URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation).
+  string predicateType = 3;
+  // The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType.
+  string predicate = 4;
+  // URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1).
+  string attestationStorageUri = 5;
+  // URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., "https://github.com/sigstore/cosign", "https://github.com/notaryproject/notation"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI.
+  string signingTool = 6;
+  // URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., "https://rekor.sigstore.dev/api/v1/log/entries/24296fb..."). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key.
+  string sigstoreLogEntry = 7;
+  // An immutable identifier uniquely assigned to a build execution (e.g., a UUID). Links a BuildEnvironmentAttestation to the corresponding build provenance.
+  string buildId = 8;
+  // The build image from which the build environment was instantiated.
+  BuildImage buildImage = 9;
+  // Cryptographic measurements (hashes) of build environment components captured during boot and initialization, used to verify integrity against known-good reference values.
+  repeated string measurements = 10;
+  // The SLSA Build Environment Level supported or represented, reflecting the strength of the integrity guarantees provided.
+  BuildEnvLevelEnum buildEnvLevel = 11;
+}
 // Represents the transitive closure of all software, hardware, and entities trusted to faithfully execute the build and record provenance. The builder.id is the primary basis for determining SLSA Build Level.
-message Builder
- {
-  string id = 0
- repeated  resourceDescriptor builderDependencies = 0
-  string version = 0
-  string versionTag = 0
- }
+message Builder {
+  // A URI uniquely identifying an entity (build platform, verifier, build image, or source repository). The primary trust anchor for consumers.
+  string id = 1;
+  // Dependencies used by the control plane orchestrator that are not run within the build workload but may affect provenance generation or security guarantees.
+  repeated ResourceDescriptor builderDependencies = 2;
+  // Map of component names to their version strings, represented as a JSON object (string → string).
+  string version = 3;
+  // A semantic version tag (e.g., "v1.2.3") assigned to the builder or the produced artifact at the time of the build. Practitioners recommended implementing versioning tagging early in SLSA framework deployment to facilitate progress tracking, reduce maintenance confusion from breaking changes, and enable more straightforward verification (Tamanna et al., 2024, S4.2).
+  string versionTag = 4;
+}
 // The template for a build environment, such as a VM or container image. Comprises the root filesystem, pre-installed guest OS and packages, the build executor, and the build agent. Created by a build image producer and consumed by the hosted build platform.
-message BuildImage
- {
-  string id = 0
-  buildProvenance provenance = 0
-  buildEnvLevelEnum buildEnvLevel = 0
- }
+message BuildImage {
+  // URI uniquely identifying this build image version (e.g., an OCI image reference with digest).
+  string id = 1;
+  // SLSA Build Provenance for a build image, describing how the image itself was produced. Required for SLSA Build Environment L1+.
+  BuildProvenance provenance = 2;
+  // The SLSA Build Environment Level supported or represented, reflecting the strength of the integrity guarantees provided.
+  BuildEnvLevelEnum buildEnvLevel = 3;
+}
 // Metadata about a specific invocation of the build, including timing information and a unique build identifier for log correlation.
-message BuildMetadata
- {
-  string invocationId = 0
-  string startedOn = 0
-  string finishedOn = 0
- }
+message BuildMetadata {
+  // A globally unique identifier for a build invocation, useful for finding associated logs. Format defined by builder.id; treated as opaque and case-sensitive. The value SHOULD be globally unique.
+  string invocationId = 1;
+  // Timestamp (RFC 3339) of when the build started.
+  string startedOn = 2;
+  // Timestamp (RFC 3339) of when the build completed.
+  string finishedOn = 3;
+}
 // The infrastructure (software, hardware, people, and organizations) used to transform source code into package artifacts. Responsible for provenance generation and isolation between tenant builds. Often a hosted, multi-tenant build service.
-message BuildPlatform
- {
-  string id = 0
-  buildLevelEnum buildLevel = 0
-  boolean isHosted = 0
- }
+message BuildPlatform {
+  // A URI uniquely identifying an entity (build platform, verifier, build image, or source repository). The primary trust anchor for consumers.
+  string id = 1;
+  // The SLSA Build Level this platform is capable of producing, as determined by its provenance generation and isolation guarantees.
+  BuildLevelEnum buildLevel = 2;
+  // True if this is a hosted (multi-tenant) platform running on shared or dedicated infrastructure, rather than an individual's workstation. Required for SLSA Build L2+.
+  bool isHosted = 3;
+}
 // An attestation predicate (predicateType "https://slsa.dev/provenance/v1") that describes how a set of output artifacts was produced by a build platform. Consumers use this to verify artifact authenticity and trace artifacts back through the supply chain.
-message BuildProvenance
- {
-  string type = 0
- repeated  resourceDescriptor subject = 0
-  string predicateType = 0
-  string predicate = 0
-  string attestationStorageUri = 0
-  string signingTool = 0
-  string sigstoreLogEntry = 0
-  buildDefinition buildDefinition = 0
-  runDetails runDetails = 0
- }
+message BuildProvenance {
+  // Always "https://in-toto.io/Statement/v1". Identifies the in-toto statement schema version and namespace.
+  string type = 1;
+  // The set of software artifacts to which a predicate applies. Each entry MUST contain a digest.
+  repeated ResourceDescriptor subject = 2;
+  // URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation).
+  string predicateType = 3;
+  // The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType.
+  string predicate = 4;
+  // URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1).
+  string attestationStorageUri = 5;
+  // URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., "https://github.com/sigstore/cosign", "https://github.com/notaryproject/notation"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI.
+  string signingTool = 6;
+  // URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., "https://rekor.sigstore.dev/api/v1/log/entries/24296fb..."). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key.
+  string sigstoreLogEntry = 7;
+  // All inputs to the build, sufficient to initialise and reproduce it. REQUIRED at SLSA Build L1.
+  BuildDefinition buildDefinition = 8;
+  // Details specific to this particular execution of the build, including builder identity and metadata. REQUIRED at SLSA Build L1.
+  RunDetails runDetails = 9;
+}
+// A party who uses software provided by a producer. May verify provenance directly or delegate that responsibility to a separate verifier.
+message Consumer {
+}
+// The build platform component that orchestrates each independent build execution and generates provenance. Managed by an admin and trusted to be outside of tenant control. Responsible for generating and signing provenance at SLSA Build L2+.
+message ControlPlane {
+}
 // A comprehensive inventory of all third-party build dependencies for an artifact, capturing direct and transitive dependencies. Supports vulnerability management and incident response.
-message DependencyInventory
- {
-  resourceDescriptor artifact = 0
- repeated  resourceDescriptor dependencies = 0
-  dependencyLevelEnum dependencyLevel = 0
- }
+message DependencyInventory {
+  // A specific immutable package artifact or the artifact whose dependency inventory is recorded.
+  ResourceDescriptor artifact = 1;
+  // All third-party build dependencies (direct and transitive) for an artifact version, identified by URI and digest.
+  repeated ResourceDescriptor dependencies = 2;
+  // The SLSA Dependency Level that this inventory and associated triage process supports.
+  DependencyLevelEnum dependencyLevel = 3;
+}
 // A set of cryptographic digests for an artifact, keyed by algorithm name (e.g., "sha256", "gitCommit"). Provides enough information for consumers to verify artifact integrity using their preferred algorithm.
-message DigestSet
- {
-  string sha256 = 0
-  string sha512 = 0
-  string gitCommit = 0
- }
+message DigestSet {
+  // Lowercase hex-encoded SHA-256 digest of the artifact.
+  string sha256 = 1;
+  // Lowercase hex-encoded SHA-512 digest of the artifact.
+  string sha512 = 2;
+  // Git commit SHA identifying a source-backed artifact.
+  string gitCommit = 3;
+}
+// A party who provides software or services to other roles in the supply chain, such as a package registry maintainer or build platform operator.
+message InfrastructureProvider {
+}
 // An identifiable unit of software intended for distribution. In the SLSA model, a package is always the output of a build process (which may be a no-op). The package name is the primary security boundary within a package ecosystem.
-message Package
- {
-  string name = 0
-  string ecosystem = 0
-  string registry = 0
-  resourceDescriptor artifact = 0
- }
+message Package {
+  // A local name for a resource within the context of an attestation, or the name of a package, producer, or party.
+  string name = 1;
+  // The package ecosystem (e.g., "PyPA", "npm", "OCI", "cargo") governing distribution conventions for this package.
+  string ecosystem = 2;
+  // URI of the package registry where a package is published and from which consumers resolve the package name to an artifact.
+  string registry = 3;
+  // A specific immutable package artifact or the artifact whose dependency inventory is recorded.
+  ResourceDescriptor artifact = 4;
+}
 // A party who creates software and provides it to others. Responsible for choosing an appropriate build platform, following a consistent build process, and distributing provenance to consumers.
-message Producer
- {
-  string name = 0
-  string buildPlatformId = 0
- }
+message Producer {
+  // A local name for a resource within the context of an attestation, or the name of a package, producer, or party.
+  string name = 1;
+  // URI of the build platform chosen to produce artifacts.
+  string buildPlatformId = 2;
+}
 // A reference to a software artifact including its location, digest, and optional metadata. Used throughout SLSA to describe inputs, outputs, and dependencies in provenance attestations.
-message ResourceDescriptor
- {
-  string uri = 0
-  digestSet digest = 0
-  string name = 0
-  string downloadLocation = 0
-  string mediaType = 0
- repeated  string annotations = 0
- }
+message ResourceDescriptor {
+  // A URI uniquely identifying a resource, such as a package URL (purl), git repository URL, or OCI image reference.
+  string uri = 1;
+  // Set of cryptographic digests of a resource's content used for integrity verification.
+  DigestSet digest = 2;
+  // A local name for a resource within the context of an attestation, or the name of a package, producer, or party.
+  string name = 3;
+  // URI from which a resource can be downloaded, if different from its identifying URI.
+  string downloadLocation = 4;
+  // IANA media type of a resource's content (e.g., "application/octet-stream", "application/vnd.oci.image.manifest.v1+json").
+  string mediaType = 5;
+  // Arbitrary vendor-specific key-value annotations.
+  repeated string annotations = 6;
+}
 // Details specific to this particular execution of the build, including the trusted builder and optional run-level metadata.
-message RunDetails
- {
-  builder builder = 0
-  buildMetadata buildMetadata = 0
- repeated  resourceDescriptor byproducts = 0
- }
+message RunDetails {
+  // Identifies the build platform that executed the build and is trusted to have correctly generated this provenance. REQUIRED at SLSA Build L1.
+  Builder builder = 1;
+  // Metadata about this particular build execution.
+  BuildMetadata buildMetadata = 2;
+  // Additional artifacts produced during the build that are NOT the primary output but may be useful for debugging or incident response (e.g., build logs, intermediate artifacts).
+  repeated ResourceDescriptor byproducts = 3;
+}
 // Root wrapper for any SLSA attestation payload. Acts as the entry point for schema validation and tools.
-message SlsaDocument
- {
-  buildDefinition buildDefinition = 0
-  runDetails runDetails = 0
-  verifier verifier = 0
-  verificationResultEnum verificationResult = 0
- repeated  slsaResultEnum verifiedLevels = 0
-  adoptionMetadata adoptionMetadata = 0
- }
+message SlsaDocument {
+  // All inputs to the build, sufficient to initialise and reproduce it. REQUIRED at SLSA Build L1.
+  BuildDefinition buildDefinition = 1;
+  // Details specific to this particular execution of the build, including builder identity and metadata. REQUIRED at SLSA Build L1.
+  RunDetails runDetails = 2;
+  // Identifies the entity that performed the verification.
+  Verifier verifier = 3;
+  // Whether the artifact passed or failed policy verification.
+  VerificationResultEnum verificationResult = 4;
+  // The highest verified SLSA level for each applicable track (not including transitive dependencies). At most one level per track. Implies all levels below it within the same track.
+  repeated SlsaResultEnum verifiedLevels = 5;
+  // Optional structured metadata recording the SLSA adoption challenges and mitigation strategies relevant to this attestation context. Derived from empirical analysis of SLSA-related GitHub issues (Tamanna et al., 2024, arXiv:2409.05014). Intended for use by framework authors, practitioners, and tooling that tracks adoption progress alongside attestation payloads.
+  AdoptionMetadata adoptionMetadata = 6;
+}
 // An attestation describing how a source revision came to exist: where it was hosted, when it was generated, what process was used, who the contributors were, and which technical controls were enforced by the Source Control System.
-message SourceProvenanceAttestation
- {
-  string type = 0
- repeated  resourceDescriptor subject = 0
-  string predicateType = 0
-  string predicate = 0
-  string attestationStorageUri = 0
-  string signingTool = 0
-  string sigstoreLogEntry = 0
-  sourceRevision revision = 0
-  sourceLevelEnum sourceLevel = 0
- repeated  string controlsEnforced = 0
- }
+message SourceProvenanceAttestation {
+  // Always "https://in-toto.io/Statement/v1". Identifies the in-toto statement schema version and namespace.
+  string type = 1;
+  // The set of software artifacts to which a predicate applies. Each entry MUST contain a digest.
+  repeated ResourceDescriptor subject = 2;
+  // URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation).
+  string predicateType = 3;
+  // The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType.
+  string predicate = 4;
+  // URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1).
+  string attestationStorageUri = 5;
+  // URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., "https://github.com/sigstore/cosign", "https://github.com/notaryproject/notation"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI.
+  string signingTool = 6;
+  // URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., "https://rekor.sigstore.dev/api/v1/log/entries/24296fb..."). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key.
+  string sigstoreLogEntry = 7;
+  // The source revision that this attestation describes.
+  SourceRevision revision = 8;
+  // The SLSA Source Level achieved or verified for a source repository or revision.
+  SourceLevelEnum sourceLevel = 9;
+  // Technical controls actively enforced by the Source Control System when this revision was created (e.g., "two-party review", "branch protection", "status checks").
+  repeated string controlsEnforced = 10;
+}
 // A self-contained unit that holds the content and complete revision history for a set of files, along with metadata such as branches and tags. Hosted and governed by a Source Control System.
-message SourceRepository
- {
-  string id = 0
-  string description = 0
-  sourceLevelEnum sourceLevel = 0
- }
+message SourceRepository {
+  // Canonical URI that uniquely identifies this source repository.
+  string id = 1;
+  // Human-readable description of a repository's purpose or a resource.
+  string description = 2;
+  // The SLSA Source Level achieved or verified for a source repository or revision.
+  SourceLevelEnum sourceLevel = 3;
+}
 // A specific, logically immutable snapshot of a source repository's tracked files. Uniquely identified by a revision identifier such as a cryptographic hash (e.g., git commit SHA) or a path-qualified sequential number (e.g., SVN).
-message SourceRevision
- {
-  string revisionId = 0
-  sourceRepository repository = 0
-  string author = 0
-  string timestamp = 0
- repeated  string parentRevisions = 0
-  reviewTypeEnum reviewType = 0
- }
+message SourceRevision {
+  // Immutable identifier for a source revision (e.g., git commit SHA, path-qualified sequential number).
+  string revisionId = 1;
+  // The source repository that contains this revision.
+  SourceRepository repository = 2;
+  // Identity of the person or automation that authored this revision (e.g., an email address or platform username).
+  string author = 3;
+  // Timestamp (RFC 3339) of when this source revision was created.
+  string timestamp = 4;
+  // Revision IDs of the parent revision(s), forming the directed acyclic graph of change history.
+  repeated string parentRevisions = 5;
+  // The type of human or automated review process used to approve this source revision. Captures the contested forms of two-party review — including pair programming and mob programming — whose security equivalence to standard asynchronous two-party review is an open question identified in practitioner community discussions (Tamanna et al., 2024, LF.2). See ReviewTypeEnum for defined values.
+  ReviewTypeEnum reviewType = 6;
+}
+// The middle layer of an in-toto software attestation (Statement v1). Binds an authenticated predicate to one or more subject artifacts, allowing predicate-agnostic processing and storage.
+message Statement {
+  // Always "https://in-toto.io/Statement/v1". Identifies the in-toto statement schema version and namespace.
+  string type = 1;
+  // The set of software artifacts to which a predicate applies. Each entry MUST contain a digest.
+  repeated ResourceDescriptor subject = 2;
+  // URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation).
+  string predicateType = 3;
+  // The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType.
+  string predicate = 4;
+  // URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1).
+  string attestationStorageUri = 5;
+  // URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., "https://github.com/sigstore/cosign", "https://github.com/notaryproject/notation"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI.
+  string signingTool = 6;
+  // URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., "https://rekor.sigstore.dev/api/v1/log/entries/24296fb..."). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key.
+  string sigstoreLogEntry = 7;
+}
 // An attestation predicate (predicateType "https://slsa.dev/verification_summary/v1") issued by a trusted verifier stating that one or more artifacts were evaluated against a policy and the SLSA level at which they were verified. Allows consumers to trust the verifier's determination without needing access to all underlying provenance.
-message VerificationSummaryAttestation
- {
-  string type = 0
- repeated  resourceDescriptor subject = 0
-  string predicateType = 0
-  string predicate = 0
-  string attestationStorageUri = 0
-  string signingTool = 0
-  string sigstoreLogEntry = 0
-  verifier verifier = 0
-  string timeVerified = 0
-  string resourceUri = 0
-  resourceDescriptor policy = 0
- repeated  resourceDescriptor inputAttestations = 0
-  verificationResultEnum verificationResult = 0
- repeated  slsaResultEnum verifiedLevels = 0
-  string dependencyLevels = 0
-  string slsaVersion = 0
- }
+message VerificationSummaryAttestation {
+  // Always "https://in-toto.io/Statement/v1". Identifies the in-toto statement schema version and namespace.
+  string type = 1;
+  // The set of software artifacts to which a predicate applies. Each entry MUST contain a digest.
+  repeated ResourceDescriptor subject = 2;
+  // URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation).
+  string predicateType = 3;
+  // The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType.
+  string predicate = 4;
+  // URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1).
+  string attestationStorageUri = 5;
+  // URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., "https://github.com/sigstore/cosign", "https://github.com/notaryproject/notation"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI.
+  string signingTool = 6;
+  // URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., "https://rekor.sigstore.dev/api/v1/log/entries/24296fb..."). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key.
+  string sigstoreLogEntry = 7;
+  // Identifies the entity that performed the verification.
+  Verifier verifier = 8;
+  // Timestamp (RFC 3339) indicating when the verification occurred.
+  string timeVerified = 9;
+  // URI identifying the resource associated with the artifact being verified. SHOULD be the URI from which the consumer fetches the artifact.
+  string resourceUri = 10;
+  // The policy the subject was verified against. MUST contain a URI; SHOULD contain a digest identifying the exact policy version.
+  ResourceDescriptor policy = 11;
+  // All attestations consulted during verification. If non-empty, MUST be complete — it MUST list every attestation used. Each entry MUST contain a digest; SHOULD contain a URI.
+  repeated ResourceDescriptor inputAttestations = 12;
+  // Whether the artifact passed or failed policy verification.
+  VerificationResultEnum verificationResult = 13;
+  // The highest verified SLSA level for each applicable track (not including transitive dependencies). At most one level per track. Implies all levels below it within the same track.
+  repeated SlsaResultEnum verifiedLevels = 14;
+  // Map from SlsaResult to count of transitive dependencies verified at that level (JSON object string). Allows policy engines to enforce minimum levels on the full dependency graph.
+  string dependencyLevels = 15;
+  // Version of the SLSA specification used during verification, in MAJOR.MINOR format (e.g., "1.0").
+  string slsaVersion = 16;
+}
 // The entity that performed verification of an artifact and issued a Verification Summary Attestation. Consumers MUST accept only specific (signer, verifier) pairs.
-message Verifier
- {
-  string id = 0
-  string version = 0
- }
+message Verifier {
+  // A URI uniquely identifying an entity (build platform, verifier, build image, or source repository). The primary trust anchor for consumers.
+  string id = 1;
+  // Map of component names to their version strings, represented as a JSON object (string → string).
+  string version = 2;
+}
+
+// The four empirically identified themes of challenges practitioners encounter when deploying SLSA, derived from thematic analysis of 1,523 SLSA-related GitHub issues across 233 repositories (Tamanna et al., 2024, arXiv:2409.05014). Challenge counts in parentheses reflect total issues associated with each theme.
+enum AdoptionChallengeEnum {
+  ADOPTION_CHALLENGE_ENUM_UNSPECIFIED = 0;
+  ADOPTION_CHALLENGE_ENUM_COMPLEX_IMPLEMENTATION = 1;
+  ADOPTION_CHALLENGE_ENUM_UNCLEAR_COMMUNICATION = 2;
+  ADOPTION_CHALLENGE_ENUM_LIMITED_FEASIBILITY = 3;
+  ADOPTION_CHALLENGE_ENUM_UNCLEAR_RELEVANCE = 4;
+}
+// The five empirically identified themes of strategies practitioners suggested to overcome SLSA adoption challenges, derived from thematic analysis of 1,523 SLSA-related GitHub issues (Tamanna et al., 2024, arXiv:2409.05014). Each strategy theme contains 2–4 sub-strategies (13 total).
+enum AdoptionStrategyEnum {
+  ADOPTION_STRATEGY_ENUM_UNSPECIFIED = 0;
+  ADOPTION_STRATEGY_ENUM_ENHANCE_ALIGNMENT_FLEXIBILITY = 1;
+  ADOPTION_STRATEGY_ENUM_PROVIDE_DETAILED_DOCUMENTATION = 2;
+  ADOPTION_STRATEGY_ENUM_STREAMLINE_PROVENANCE_GENERATION = 3;
+  ADOPTION_STRATEGY_ENUM_IMPROVE_VERIFICATION_PROCESS = 4;
+  ADOPTION_STRATEGY_ENUM_COLLABORATE_WITH_COMMUNITY = 5;
+}
+// SLSA Build Environment Track levels for validating the integrity of the compute environment executing builds.
+enum BuildEnvLevelEnum {
+  BUILD_ENV_LEVEL_ENUM_UNSPECIFIED = 0;
+  BUILD_ENV_LEVEL_ENUM_SLSA_BUILD_ENV_LEVEL_N0 = 1;
+  BUILD_ENV_LEVEL_ENUM_SLSA_BUILD_ENV_LEVEL_N1 = 2;
+  BUILD_ENV_LEVEL_ENUM_SLSA_BUILD_ENV_LEVEL_N2 = 3;
+  BUILD_ENV_LEVEL_ENUM_SLSA_BUILD_ENV_LEVEL_N3 = 4;
+}
+// SLSA Build Track levels providing increasing supply chain security guarantees for the build process. Higher levels require stronger tamper-resistance and provenance integrity.
+enum BuildLevelEnum {
+  BUILD_LEVEL_ENUM_UNSPECIFIED = 0;
+  BUILD_LEVEL_ENUM_SLSA_BUILD_LEVEL_N0 = 1;
+  BUILD_LEVEL_ENUM_SLSA_BUILD_LEVEL_N1 = 2;
+  BUILD_LEVEL_ENUM_SLSA_BUILD_LEVEL_N2 = 3;
+  BUILD_LEVEL_ENUM_SLSA_BUILD_LEVEL_N3 = 4;
+}
+// SLSA Dependency Track levels for measuring and controlling risk introduced from third-party dependencies.
+enum DependencyLevelEnum {
+  DEPENDENCY_LEVEL_ENUM_UNSPECIFIED = 0;
+  DEPENDENCY_LEVEL_ENUM_SLSA_DEPENDENCY_LEVEL_N0 = 1;
+  DEPENDENCY_LEVEL_ENUM_SLSA_DEPENDENCY_LEVEL_N1 = 2;
+  DEPENDENCY_LEVEL_ENUM_SLSA_DEPENDENCY_LEVEL_N2 = 3;
+  DEPENDENCY_LEVEL_ENUM_SLSA_DEPENDENCY_LEVEL_N3 = 4;
+  DEPENDENCY_LEVEL_ENUM_SLSA_DEPENDENCY_LEVEL_N4 = 5;
+}
+// Categories of code-review process applied to a source revision. Captures the forms of two-party review discussed by practitioners (Tamanna et al., 2024, LF.2), including contested alternatives whose security equivalence with standard asynchronous two-party review has not been formally established.
+enum ReviewTypeEnum {
+  REVIEW_TYPE_ENUM_UNSPECIFIED = 0;
+  REVIEW_TYPE_ENUM_TWO_PARTY = 1;
+  REVIEW_TYPE_ENUM_PAIR_PROGRAMMING = 2;
+  REVIEW_TYPE_ENUM_MOB_PROGRAMMING = 3;
+  REVIEW_TYPE_ENUM_AUTOMATED = 4;
+}
+// A named SLSA result used in Verification Summary Attestations to indicate the verified level of an artifact or its dependencies.
+enum SlsaResultEnum {
+  SLSA_RESULT_ENUM_UNSPECIFIED = 0;
+  SLSA_RESULT_ENUM_SLSA_BUILD_LEVEL_N0 = 1;
+  SLSA_RESULT_ENUM_SLSA_BUILD_LEVEL_N1 = 2;
+  SLSA_RESULT_ENUM_SLSA_BUILD_LEVEL_N2 = 3;
+  SLSA_RESULT_ENUM_SLSA_BUILD_LEVEL_N3 = 4;
+  SLSA_RESULT_ENUM_SLSA_SOURCE_LEVEL_N1 = 5;
+  SLSA_RESULT_ENUM_SLSA_SOURCE_LEVEL_N2 = 6;
+  SLSA_RESULT_ENUM_SLSA_SOURCE_LEVEL_N3 = 7;
+  SLSA_RESULT_ENUM_SLSA_SOURCE_LEVEL_N4 = 8;
+}
+// SLSA Source Track levels providing increasing trust in source code provenance and the controls used to create source revisions.
+enum SourceLevelEnum {
+  SOURCE_LEVEL_ENUM_UNSPECIFIED = 0;
+  SOURCE_LEVEL_ENUM_SLSA_SOURCE_LEVEL_N1 = 1;
+  SOURCE_LEVEL_ENUM_SLSA_SOURCE_LEVEL_N2 = 2;
+  SOURCE_LEVEL_ENUM_SLSA_SOURCE_LEVEL_N3 = 3;
+  SOURCE_LEVEL_ENUM_SLSA_SOURCE_LEVEL_N4 = 4;
+}
+// Outcome of a policy verification check on an artifact.
+enum VerificationResultEnum {
+  VERIFICATION_RESULT_ENUM_UNSPECIFIED = 0;
+  VERIFICATION_RESULT_ENUM_PASSED = 1;
+  VERIFICATION_RESULT_ENUM_FAILED = 2;
+}

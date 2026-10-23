@@ -383,8 +383,8 @@ CREATE TABLE "ResourceDescriptor_annotations" (
 	PRIMARY KEY ("ResourceDescriptor_id", annotations),
 	FOREIGN KEY("ResourceDescriptor_id") REFERENCES "ResourceDescriptor" (id)
 );
-CREATE INDEX "ix_ResourceDescriptor_annotations_annotations" ON "ResourceDescriptor_annotations" (annotations);
 CREATE INDEX "ix_ResourceDescriptor_annotations_ResourceDescriptor_id" ON "ResourceDescriptor_annotations" ("ResourceDescriptor_id");
+CREATE INDEX "ix_ResourceDescriptor_annotations_annotations" ON "ResourceDescriptor_annotations" (annotations);
 
 CREATE TABLE "VerificationSummaryAttestation_verifiedLevels" (
 	"VerificationSummaryAttestation_id" INTEGER,
@@ -493,8 +493,8 @@ CREATE TABLE "SourceProvenanceAttestation_controlsEnforced" (
 	PRIMARY KEY ("SourceProvenanceAttestation_id", "controlsEnforced"),
 	FOREIGN KEY("SourceProvenanceAttestation_id") REFERENCES "SourceProvenanceAttestation" (id)
 );
-CREATE INDEX "ix_SourceProvenanceAttestation_controlsEnforced_SourceProvenanceAttestation_id" ON "SourceProvenanceAttestation_controlsEnforced" ("SourceProvenanceAttestation_id");
 CREATE INDEX "ix_SourceProvenanceAttestation_controlsEnforced_controlsEnforced" ON "SourceProvenanceAttestation_controlsEnforced" ("controlsEnforced");
+CREATE INDEX "ix_SourceProvenanceAttestation_controlsEnforced_SourceProvenanceAttestation_id" ON "SourceProvenanceAttestation_controlsEnforced" ("SourceProvenanceAttestation_id");
 
 CREATE TABLE "BuildEnvironmentAttestation" (
 	id INTEGER NOT NULL,
@@ -518,5 +518,5 @@ CREATE TABLE "BuildEnvironmentAttestation_measurements" (
 	PRIMARY KEY ("BuildEnvironmentAttestation_id", measurements),
 	FOREIGN KEY("BuildEnvironmentAttestation_id") REFERENCES "BuildEnvironmentAttestation" (id)
 );
-CREATE INDEX "ix_BuildEnvironmentAttestation_measurements_BuildEnvironmentAttestation_id" ON "BuildEnvironmentAttestation_measurements" ("BuildEnvironmentAttestation_id");
 CREATE INDEX "ix_BuildEnvironmentAttestation_measurements_measurements" ON "BuildEnvironmentAttestation_measurements" (measurements);
+CREATE INDEX "ix_BuildEnvironmentAttestation_measurements_BuildEnvironmentAttestation_id" ON "BuildEnvironmentAttestation_measurements" ("BuildEnvironmentAttestation_id");

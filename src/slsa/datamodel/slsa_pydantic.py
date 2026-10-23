@@ -29,8 +29,8 @@ from pydantic import (
 )
 
 
-metamodel_version = "1.7.0"
-version = "1.0.0"
+metamodel_version = "1.12.0"
+version = "1.2.0"
 
 
 class ConfiguredBaseModel(BaseModel):
@@ -68,8 +68,8 @@ class LinkMLMeta(RootModel):
 
 linkml_meta = LinkMLMeta({'default_prefix': 'slsa',
      'default_range': 'string',
-     'description': 'Electronic (LinkML) Version of Supply-chain Levels for '
-                    'Software Artifacts (SLSA)',
+     'description': 'Supply-chain Levels for Software Artifacts (SLSA) LinkML '
+                    'schema',
      'id': 'https://w3id.org/lmodel/slsa',
      'imports': ['linkml:types'],
      'license': 'Apache-2.0',
@@ -82,7 +82,7 @@ linkml_meta = LinkMLMeta({'default_prefix': 'slsa',
                   'https://slsa.dev/spec/v1.2/',
                   'https://arxiv.org/abs/2409.05014',
                   'https://openssf.org/technical-initiatives/software-supply-chain/'],
-     'source': 'https://slsa.dev/spec/v1.0',
+     'source': 'https://slsa.dev/spec/v1.2',
      'source_file': 'src/slsa/schema/slsa.yaml',
      'subsets': {'slsa_adoption_study': {'description': 'Slots, classes, and enums '
                                                         'derived from empirical '
