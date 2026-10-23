@@ -18,7 +18,7 @@ A [LOKF](https://lokf.nolan-nichols.com) knowledge base for SLSA. Every Markdown
 
 # Services
 
-* [slsa documentation site](services/documentation-site.md) - The MkDocs site at `https://lmodel.github.io/slsa`, generated from the slsa schema and deployed to GitHub Pages on every push to main, with a preview built for each pull request from a branch of this repository.
+* [slsa documentation site](services/documentation-site.md) - The Astro Starlight site in `website/`, built from the README, `docs/`, the schema's gen-doc pages and the knowledge bundle by the Knowledge website workflow, which publishes it at `https://lmodel.github.io/slsa/` once `KNOWLEDGE_WEBSITE_ENABLED` is true. It keeps the addresses of the retired mkdocs site.
 
 # References
 

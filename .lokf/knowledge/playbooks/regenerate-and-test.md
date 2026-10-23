@@ -12,13 +12,15 @@ sources:
     title: the contribution guide
   - resource: project.justfile
     title: the gen-merged and lokf-adapt recipes
+  - resource: website/README.md
+    title: how to preview the site
 references:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
   - https://w3id.org/lmodel/slsa/knowledge/datasets/generated-artefacts
   - https://w3id.org/lmodel/slsa/knowledge/datasets/test-data
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T22:17:38Z"
+  at: "2026-10-23T23:24:55Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -30,7 +32,7 @@ verified:
 1. Install the dependencies with `just install`. `CONTRIBUTING.md` asks for Python 3.10 or later, uv and just.
 2. Edit the schema in `src/slsa/schema/`: `slsa.yaml` and the modules it imports.
 3. Run `just gen-project` to regenerate `project/` and the Python data models.
-4. Run `just gen-doc` to regenerate `docs/schema/slsa.yaml` and `docs/elements/`, or `just testdoc` to build and serve the site. Then run `just gen-merged` to regenerate `docs/schema/slsa_merged.yaml`.
+4. Run `just gen-doc` to regenerate `docs/schema/slsa.yaml` and `docs/elements/`. To see them on the site, run `npm run dev` in `website/`, as `website/README.md` says. Then run `just gen-merged` to regenerate `docs/schema/slsa_merged.yaml`.
 5. Run `just lokf-adapt` to regenerate `.lokf/slsa.yaml`, the bundle's domain schema. Until `lokf adapt` is in a lokf release, run it from a lokf checkout, as [slsa LinkML schema](../datasets/slsa-linkml-schema.md) says.
 6. Run `just test`. It runs three steps:
     - `_test-schema` runs `gen-project` into a scratch `tmp/` folder.

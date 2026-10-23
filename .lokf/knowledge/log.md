@@ -2,6 +2,11 @@
 
 ## 2026-10-23
 
+* **Changed**: the documentation site's list of page sources reads as a list.
+* **Changed**: the documentation site is now the ktl-website Starlight site in `website/`, built by `knowledge-website.yaml`; the mkdocs workflows and `mkdocs.yml` are gone.
+* **Changed**: the schema's HTML distribution names its pages at `schema/` on the documentation site, where `website/site.config.mjs` puts the schema's gen-doc pages.
+* **Changed**: the site preview step names `npm run dev` in `website/`, since `just testdoc` needs mkdocs, which is no longer installed.
+* **Changed**: the source map names `website/` and `knowledge-website.yaml` for the documentation site, in place of `mkdocs.yml` and the two mkdocs workflows.
 * **Changed**: the adoption study concept quotes the title `docs/about.md` now cites, the arXiv record's current one (ab04158).
 * **Resolved**: `docs/about.md` cites arXiv:2409.05014 by its current title since ab04158.
 * **Changed**: the spec copy concept says that the upstream check lists no known differences, since 85c99e4 emptied `KNOWN_DIFFERENCES`.
