@@ -9,7 +9,7 @@ in this repository:
 - the copied files drift from the tree they were taken from.
 
 The copy has no version in its path, so the tree it was taken from is pinned
-below, beside the files known to differ from it (NOTICE lists them too).
+below, beside any files known to differ from it (NOTICE lists them too).
 This script asks the GitHub API for slsa-framework/slsa's version tags and
 for the pinned tree, and compares every copied file with its blob there by
 git object hash, so nothing is downloaded but two listings. It prints a
@@ -40,14 +40,9 @@ API = "https://api.github.com/repos/slsa-framework/slsa"
 PINNED_TAG = "v1.2"
 PINNED_PATH = "docs/spec/draft"
 
-# Files that differed from the pinned tree when this check was added: one
-# edited link, and three pages that are not in that tree.
-KNOWN_DIFFERENCES = {
-    "build-requirements.md",
-    "attested-build-env-levels.md",
-    "levels.md",
-    "verifying-systems.md",
-}
+# Files known to differ from the pinned tree. The copy is exact, so there
+# are none; list a file here and in NOTICE if one is ever edited on purpose.
+KNOWN_DIFFERENCES: set[str] = set()
 
 # A version tag: v1.2 or v1.0.0, not a release candidate or a dated tag.
 VERSION_TAG = re.compile(r"^v\d+(\.\d+)+$")
