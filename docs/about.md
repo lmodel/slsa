@@ -33,8 +33,9 @@ projects GUAC and Security Insights.
 
 ### Adoption study (`slsa_adoption_study`)
 
-Tamanna et al. (2024), *An Empirical Study on the Adoption of SLSA in Open
-Source Projects* ([arXiv:2409.05014](https://arxiv.org/abs/2409.05014)),
+Tamanna et al. (2024), *Analyzing Challenges in Deployment of the SLSA
+Framework for Software Supply Chain Security*
+([arXiv:2409.05014](https://arxiv.org/abs/2409.05014)),
 analysed 1,523 SLSA-related GitHub issues. The `slsa_adoption` module encodes
 its four challenge themes and five strategy themes as enums on
 `SlsaAdoptionMetadata`; `hermetic`, `provenance_generation_tool`,
