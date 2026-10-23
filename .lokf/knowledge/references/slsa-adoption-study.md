@@ -3,16 +3,18 @@ type: Reference
 id: https://w3id.org/lmodel/slsa/knowledge/references/slsa-adoption-study
 genre: reference
 title: SLSA adoption study (Tamanna et al., 2024)
-description: An empirical study of SLSA adoption in open source projects (arXiv:2409.05014), whose challenge and strategy themes the schema's slsa_adoption_study subset encodes as enums and slots.
+description: An empirical study by Tamanna et al. (2024, arXiv:2409.05014) of 1,523 SLSA-related GitHub issues from 233 repositories; the schema's slsa_adoption module encodes its four challenge and five strategy themes as enums on SlsaAdoptionMetadata.
 resource: https://arxiv.org/abs/2409.05014
 sources:
   - resource: docs/about.md
-    title: the Adoption Study section
-  - resource: src/slsa/schema/slsa.yaml
-    title: the slsa_adoption_study subset and its enums
+    title: the Adoption study section
+  - resource: src/slsa/schema/slsa_adoption.yaml
+    title: the adoption module and its enums
+  - resource: https://export.arxiv.org/api/query?id_list=2409.05014
+    title: the arXiv record's title, authors and abstract
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:03:37Z"
+  at: "2026-10-23T22:22:59Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -21,6 +23,10 @@ verified:
 
 # SLSA adoption study
 
-Tamanna et al. (2024), "An Empirical Study on the Adoption of SLSA in Open Source Projects", performed a thematic analysis of 1,523 SLSA-related GitHub issues across 233 repositories. `docs/about.md` says the four challenge themes (CI, UC, LF, UR) and five strategy themes (S1 to S5) it identified are encoded as enums and slots in the `slsa_adoption_study` subset.
+The arXiv record for 2409.05014 names six authors: Mahzabin Tamanna, Sivana Hamer, Mindy Tran, Sascha Fahl, Yasemin Acar and Laurie Williams. Its abstract says that the study analyzed 1,523 SLSA-related issues extracted from 233 GitHub repositories. It used a topic-guided thematic analysis with Latent Dirichlet Allocation (LDA), and identified four challenges and five suggested adoption strategies.
 
-In `src/slsa/schema/slsa.yaml` they appear as `AdoptionChallengeEnum` (four values) and `AdoptionStrategyEnum` (five values), used by the `AdoptionMetadata` class.
+The current version is titled "Analyzing Challenges in Deployment of the SLSA Framework for Software Supply Chain Security". Version 1, submitted on 8 September 2024, was titled "Unraveling Challenges with Supply-Chain Levels for Software Artifacts (SLSA) for Securing the Software Supply Chain".
+
+`docs/about.md` cites the study as Tamanna et al. (2024), *Analyzing Challenges in Deployment of the SLSA Framework for Software Supply Chain Security*, the arXiv record's current title. It says that the `slsa_adoption` module encodes the four challenge themes and five strategy themes as enums on `SlsaAdoptionMetadata`. The slots `hermetic`, `provenance_generation_tool`, `attestation_storage_uri` and `review_type` record the practices the study discusses, and a comment on the element concerned cites the study's theme.
+
+In the schema, `SlsaAdoptionChallenge` holds `COMPLEX_IMPLEMENTATION`, `UNCLEAR_COMMUNICATION`, `LIMITED_FEASIBILITY` and `UNCLEAR_RELEVANCE`. `SlsaAdoptionStrategy` holds `ENHANCE_ALIGNMENT_FLEXIBILITY`, `PROVIDE_DETAILED_DOCUMENTATION`, `STREAMLINE_PROVENANCE_GENERATION`, `IMPROVE_VERIFICATION_PROCESS` and `COLLABORATE_WITH_COMMUNITY`.

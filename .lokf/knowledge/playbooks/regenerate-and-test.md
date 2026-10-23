@@ -3,20 +3,22 @@ type: Playbook
 id: https://w3id.org/lmodel/slsa/knowledge/playbooks/regenerate-and-test
 genre: how-to
 title: Regenerate and test the schema
-description: How to change the slsa schema and regenerate its artifacts and docs with just (gen-project, gen-doc), then run the tests CI runs (just test) on Python 3.10 to 3.14.
+description: How to change the slsa schema and its modules, regenerate the artifacts, the docs and the bundle's domain schema with just (gen-project, gen-doc, gen-merged, lokf-adapt), then run the tests CI runs (just test) on Python 3.10 to 3.14.
 resource: justfile
 sources:
   - resource: .github/workflows/main.yaml
     title: the CI test workflow
   - resource: CONTRIBUTING.md
     title: the contribution guide
+  - resource: project.justfile
+    title: the gen-merged and lokf-adapt recipes
 references:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
   - https://w3id.org/lmodel/slsa/knowledge/datasets/generated-artefacts
   - https://w3id.org/lmodel/slsa/knowledge/datasets/test-data
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T20:08:09Z"
+  at: "2026-10-23T22:17:38Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -25,16 +27,17 @@ verified:
 
 # Regenerate and test the schema
 
-1. Install the dependencies with `just install`.
-2. Edit `src/slsa/schema/slsa.yaml`, the only source file.
+1. Install the dependencies with `just install`. `CONTRIBUTING.md` asks for Python 3.10 or later, uv and just.
+2. Edit the schema in `src/slsa/schema/`: `slsa.yaml` and the modules it imports.
 3. Run `just gen-project` to regenerate `project/` and the Python data models.
-4. Run `just gen-doc` to regenerate `docs/schema/slsa.yaml` and `docs/elements/`, or `just testdoc` to build and serve the site.
-5. Run `just test`. It runs three steps:
+4. Run `just gen-doc` to regenerate `docs/schema/slsa.yaml` and `docs/elements/`, or `just testdoc` to build and serve the site. Then run `just gen-merged` to regenerate `docs/schema/slsa_merged.yaml`.
+5. Run `just lokf-adapt` to regenerate `.lokf/slsa.yaml`, the bundle's domain schema. Until `lokf adapt` is in a lokf release, run it from a lokf checkout, as [slsa LinkML schema](../datasets/slsa-linkml-schema.md) says.
+6. Run `just test`. It runs three steps:
     - `_test-schema` runs `gen-project` into a scratch `tmp/` folder.
     - `_test-python` regenerates the Python models and runs pytest.
     - `_test-examples` runs `linkml-run-examples` over `tests/data/`.
-6. Run `just lint` for the schema linter.
-7. Commit the regenerated files with the schema change.
+7. Run `just lint`, which runs `linkml-lint` over the schema folder and reports errors only. `.linkmllint.yaml` sets its rules.
+8. Commit the regenerated files with the schema change.
 
 `.github/workflows/main.yaml` runs `just test` on every push to `main` and on every pull request, on Python 3.10, 3.11, 3.12, 3.13 and 3.14. On Python 3.13 it runs `just lint` first.
 

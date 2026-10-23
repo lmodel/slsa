@@ -18,11 +18,11 @@ dependsOn:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
 generated:
   by: process:ktl-librarian
-  at: "2026-10-22T18:46:59Z"
+  at: "2026-10-23T22:17:38Z"
 status: draft
 verified:
   - by: process:ktl-librarian
-    at: "2026-10-23T20:08:09Z"
+    at: "2026-10-23T22:22:59Z"
 ---
 
 # Documentation site
@@ -31,4 +31,4 @@ verified:
 
 `.github/workflows/test_pages_build.yaml` builds the site with `mkdocs build` for each opened, reopened or updated pull request from a branch of this repository, and publishes a preview with `rossjrw/pr-preview-action`. It skips a pull request from a fork, whose token cannot push the preview to `gh-pages`.
 
-The hand-written pages are `docs/index.md` and `docs/about.md`. The about page links `docs/Secure_Software_Factory_Whitepaper.pdf`. `just testdoc` builds the site and serves it locally.
+The hand-written pages are `docs/index.md` and `docs/about.md`. The home page links the generated element pages, the about page, and the two schema files the site serves: `schema/slsa.yaml`, and `schema/slsa_merged.yaml`, the same with no imports, for vendoring or loading offline. The about page links `docs/Secure_Software_Factory_Whitepaper.pdf`. `just testdoc` builds the site and serves it locally.

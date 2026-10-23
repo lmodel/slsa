@@ -3,18 +3,18 @@ type: Reference
 id: https://w3id.org/lmodel/slsa/knowledge/references/secure-software-factory
 genre: reference
 title: CNCF Secure Software Factory whitepaper
-description: The CNCF TAG-Security Secure Software Factory whitepaper (2022), a reference architecture for an end-to-end SLSA pipeline; the schema's slsa_ssf subset draws on it.
+description: The CNCF TAG-Security Secure Software Factory whitepaper (2022), which describes a pipeline of version control, build service, artifact registry, signing service and policy engine; the schema's slsa_ssf subset takes five slots from it.
 resource: docs/Secure_Software_Factory_Whitepaper.pdf
 sources:
   - resource: docs/about.md
-    title: the CNCF TAG-Security Secure Software Factory section
-  - resource: src/slsa/schema/slsa.yaml
+    title: the Secure Software Factory section
+  - resource: src/slsa/schema/slsa_core.yaml
     title: the slsa_ssf subset
   - resource: https://github.com/cncf/tag-security/blob/main/community/working-groups/supply-chain-security/secure-software-factory/Secure_Software_Factory_Whitepaper.pdf
     title: the upstream copy of the whitepaper
 generated:
   by: process:ktl-librarian
-  at: "2026-10-21T22:14:46Z"
+  at: "2026-10-23T22:17:38Z"
 status: draft
 author:
   - type: Organization
@@ -23,21 +23,20 @@ author:
 license: https://creativecommons.org/licenses/by/4.0/
 verified:
   - by: process:ktl-librarian
-    at: "2026-10-22T18:46:59Z"
+    at: "2026-10-23T22:22:59Z"
 ---
 
 # CNCF Secure Software Factory whitepaper
 
-The whitepaper is kept in the repository as `docs/Secure_Software_Factory_Whitepaper.pdf`. `docs/about.md` describes it as CNCF TAG-Security's 2022 reference architecture for end-to-end SLSA implementation, composed of six pipeline stages:
+The whitepaper is kept in the repository as `docs/Secure_Software_Factory_Whitepaper.pdf`. `docs/about.md` says that the whitepaper, by CNCF TAG-Security (2022), describes a pipeline of version control, build service, artifact registry, signing service and policy engine.
 
-- Version Control System;
-- CI Build Service;
-- Artifact Registry;
-- Signing Service (Sigstore, Cosign, Fulcio);
-- Policy Engine (OPA, Gatekeeper, Kyverno);
-- Runtime Security.
+`docs/about.md` names what the schema takes from it, each in the `slsa_ssf` subset:
 
-Schema elements drawn from this architecture are tagged with the `slsa_ssf` subset. `docs/about.md` names `pipelineOrchestrator`, `signingTool`, `sigstoreLogEntry`, `guacUri` and `securityInsightsUri`. The subset's description in the schema points at <https://github.com/cncf/tag-security/tree/main/community/working-groups/supply-chain-security/secure-software-factory>.
+- `pipeline_orchestrator` on a build definition;
+- `signing_tool` and `transparency_log_entry` on a statement;
+- `guac_uri` and `security_insights_uri` on a package, which point at the [OpenSSF](openssf-supply-chain.md) projects GUAC and Security Insights.
+
+The subset's description says that these elements are not part of the SLSA specification.
 
 ## Upstream copy
 

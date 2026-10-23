@@ -2,6 +2,29 @@
 
 ## 2026-10-23
 
+* **Changed**: the adoption study concept quotes the title `docs/about.md` now cites, the arXiv record's current one (ab04158).
+* **Resolved**: `docs/about.md` cites arXiv:2409.05014 by its current title since ab04158.
+* **Changed**: the spec copy concept says that the upstream check lists no known differences, since 85c99e4 emptied `KNOWN_DIFFERENCES`.
+* **Changed**: the source map's upstream-watch row also re-reads `KNOWN_DIFFERENCES`.
+* **Prose**: reworded 10 concept bodies in plain English (generated-artefacts, license-and-attribution, openssf-supply-chain, secure-software-factory, slsa-adoption-study, slsa-level, slsa-linkml-schema, slsa-spec-copy, slsa-specification, test-data). No fact, link, number or frontmatter changed.
+* **Rewrite**: the schema concept follows the modular schema at version 1.2.0: the umbrella and its seven modules, the prefixed class and enum names, and the nine `lokf adapt` roots and thirteen known types the README and `project.justfile` now give.
+* **Rewrite**: the subsets explanation names the subsets as `slsa_core.yaml` now defines them, including the renamed `slsa_build_environment_track`, with their new descriptions.
+* **Rewrite**: the specification copy now matches `docs/spec/draft/` at SLSA tag v1.2 file for file, as `NOTICE` says, since the three extra files were dropped and `build-requirements.md` restored.
+* **Resolved**: the three files with no upstream match were removed and `build-requirements.md` restored in 57a4025; all 39 files now match SLSA tag v1.2 by git blob hash.
+* **Rewrite**: the specification page follows the new `docs/about.md`, which names the tracks and predicates the schema renders, and the schema header, which now names v1.2.
+* **Resolved**: the schema header gives `version: 1.2.0` and `source: https://slsa.dev/spec/v1.2` since 8695dc4, as `docs/about.md` does.
+* **Rewrite**: the level term cites the track pages the specification copy now holds, since `levels.md` is gone, adds the Build Environment levels, and names the renamed enums.
+* **Rewrite**: the track term cites `tracks.md` and `about.md`, since `levels.md` is gone from the specification copy, and names the renamed subsets and enums.
+* **Rewrite**: the generated artifacts add `docs/schema/slsa_merged.yaml` from `just gen-merged` and `.lokf/slsa.yaml` from `just lokf-adapt`, which `project.justfile` and `CONTRIBUTING.md` now name.
+* **Rewrite**: the test data follows the new example files, named after the prefixed classes, and the `ClassName-###.yaml` rule in `tests/data/README.md`.
+* **Rewrite**: the regenerate playbook adds `just gen-merged` and `just lokf-adapt`, which `CONTRIBUTING.md` now asks for after a schema edit, and says the schema is a folder of modules.
+* **Rewrite**: the attribution policy follows the README's shorter License section, which points to `NOTICE`; `NOTICE` now carries the specification's name, version and source, and says the copy is exact.
+* **Rewrite**: the OpenSSF page now carries the working group's name and project list from openssf.org, since `docs/about.md` no longer describes the group, and names the two slots that point at its projects.
+* **Rewrite**: the whitepaper page follows the new `docs/about.md`, which names five pipeline stages and the five snake_case slots the schema takes from the whitepaper.
+* **Rewrite**: the adoption study takes its authors, numbers and titles from the arXiv record, and the module, enums and slots from the new `docs/about.md` and `slsa_adoption.yaml`.
+* **Question**: the study's title in `docs/about.md` matches neither arXiv version.
+* **Changed**: the documentation site names the two schema files the new home page links.
+* **Changed**: the source map names the schema modules, `.linkmllint.yaml`, the `gen-merged` and `lokf-adapt` recipes, the specification pages that replace `levels.md`, and the openssf.org and arXiv records, and now counts `src/slsa/schema/README.md` as a source.
 * **Prose**: reworded 2 concept bodies in plain English (regenerate-and-test, slsa-linkml-schema). No fact, link, number or frontmatter changed.
 * **Changed**: the test playbook names the Python 3.10 to 3.14 matrix and the WSL2 `JUST_TEMPDIR` setting, from `main.yaml` and the `justfile` after the copier v0.5.0 update.
 * **Changed**: the schema concept says its `lokf adapt` copy is the bundle's domain schema, which ten SLSA classes it adds as concept types and which keys it renames, from the README's KTL section.
