@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-23
+
 ### Added
 
 - **The knowledge bundle's domain schema is the SLSA schema.** `.lokf/slsa.yaml` is the copy `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`, and `.lokf/justfile` validates the bundle against it, so a concept may name one of ten SLSA classes as its `type`.
