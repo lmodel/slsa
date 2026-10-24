@@ -26,10 +26,6 @@ exclude = [
   # 200 elsewhere; not dead links. Drop an exclusion if CI reaches it again.
   '^https://www\.conventionalcommits\.org/',
   '^https://slsa\.dev/',
-  # The knowledge site's schema pages. GitHub Pages still serves the retired
-  # mkdocs build, which has no page there. Drop once the Knowledge website
-  # workflow has deployed the site.
-  '^https://lmodel\.github\.io/slsa/schema/',
 ]
 
 # knowledge_bundle is a symlink to .lokf/knowledge (the Obsidian vault entry
