@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-24
+
 ### Changed
 
 - **The schema is rebuilt to LinkML conventions, and every data key changes.** Classes carry a prefix (`InTotoStatement`, `SlsaPackage`), and slots are snake_case attributes of their class. A statement nests its predicate as in-toto does, build parameters and component versions are lists of named values, references between classes go through identifiers, and the paper's citations move from descriptions into comments. Data written for the old schema does not validate.
