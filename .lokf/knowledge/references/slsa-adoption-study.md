@@ -10,7 +10,7 @@ sources:
     title: the Adoption study section
   - resource: src/slsa/schema/slsa_adoption.yaml
     title: the adoption module and its enums
-  - resource: https://export.arxiv.org/api/query?id_list=2409.05014
+  - resource: https://arxiv.org/abs/2409.05014
     title: the arXiv record's title, authors and abstract
 generated:
   by: process:ktl-librarian

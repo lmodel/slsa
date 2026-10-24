@@ -60,7 +60,7 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `https://github.com/slsa-framework/slsa` (README, `LICENSE.md`, tag `v1.2`) | `org/slsa-project`, the license in `references/slsa-specification`, the upstream section of `datasets/slsa-spec-copy` | re-read the Governance and License sections; compare `git hash-object` of each copied file with the tree at the tag in use; watch for a release after v1.2 |
 | `https://github.com/cncf/tag-security` (`LICENSE.md`, the whitepaper's folder) | `org/cncf-tag-security`, the upstream section of `references/secure-software-factory` | re-read the license; compare the PDF's blob hash |
 | `https://openssf.org/technical-initiatives/software-supply-chain/` | `references/openssf-supply-chain` | re-read the working group's name and the project list |
-| `https://export.arxiv.org/api/query?id_list=2409.05014` | `references/slsa-adoption-study` | re-read the title, the authors and the abstract's numbers |
+| `https://arxiv.org/abs/2409.05014` | `references/slsa-adoption-study` | re-read the title, the authors and the abstract's numbers |
 | `https://slsa.dev/spec/v1.2/` | `references/slsa-specification` | external authority: cite on change |
 
 These are not knowledge sources, and are left out on purpose:
