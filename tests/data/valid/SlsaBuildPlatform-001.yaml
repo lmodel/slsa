@@ -1,0 +1,9 @@
+# A hosted build platform capable of Build L3.
+builder_id: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
+build_level: SLSA_BUILD_LEVEL_3
+hosted: true
+component_versions:
+  - component: slsa-github-generator
+    component_version: v1.9.0
+  - component: github-actions-runner
+    component_version: 2.311.0

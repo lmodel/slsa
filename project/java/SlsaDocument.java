@@ -1,22 +1,33 @@
-package None;
+package example;
 
-/* metamodel_version: 1.7.0 */
-/* version: 1.0.0 */
+/* metamodel_version: 1.12.0 */
+/* version: 1.2.0 */
+import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.*;
 
 /**
-  Root wrapper for any SLSA attestation payload. Acts as the entry point for schema validation and tools.
+  A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern.
 **/
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class SlsaDocument  {
 
-  private BuildDefinition buildDefinition;
-  private RunDetails runDetails;
-  private Verifier verifier;
-  private String verificationResult;
-  private List<String> verifiedLevels;
-  private AdoptionMetadata adoptionMetadata;
+  private List<InTotoStatement> attestations;
+  private List<SlsaParty> parties;
+  private List<SlsaBuildPlatform> buildPlatforms;
+  private List<SlsaPackage> packages;
+  private List<SlsaPackageRegistry> packageRegistries;
+  private List<SlsaSourceControlSystem> sourceControlSystems;
+  private List<SlsaSourceRepository> sourceRepositories;
+  private List<SlsaSourceRevision> sourceRevisions;
+  private List<SlsaNamedReference> namedReferences;
+  private List<SlsaBuildImage> buildImages;
+  private List<SlsaDependencyInventory> dependencyInventories;
+  private SlsaAdoptionMetadata adoptionMetadata;
+
 
 }

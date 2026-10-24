@@ -1,0 +1,45 @@
+# A statement carrying SLSA Build L3 provenance for a GitHub Actions build.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - resource_uri: https://github.com/example/myapp/releases/download/v1.0.0/myapp-linux-amd64
+    digest:
+      sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+predicate_type: https://slsa.dev/provenance/v1
+attestation_storage_uri: https://github.com/example/myapp/attestations/1
+signing_tool: https://github.com/sigstore/cosign
+transparency_log_entry: https://rekor.sigstore.dev/api/v1/log/entries/24296fb24b8ad77a
+predicate:
+  predicate_kind: SlsaBuildProvenance
+  build_definition:
+    build_type: https://actions.github.io/buildtypes/workflow/v1
+    external_parameters:
+      - parameter_name: workflow
+        parameter_value: .github/workflows/build.yml
+      - parameter_name: ref
+        parameter_value: refs/tags/v1.0.0
+      - parameter_name: repository
+        parameter_value: https://github.com/example/myapp
+    internal_parameters:
+      - parameter_name: github_event_name
+        parameter_value: push
+    resolved_dependencies:
+      - resource_uri: git+https://github.com/example/myapp@refs/tags/v1.0.0
+        digest:
+          git_commit: da39a3ee5e6b4b0d3255bfef95601890afd80709
+        resource_name: myapp source at v1.0.0
+    hermetic: false
+    provenance_generation_tool: https://github.com/slsa-framework/slsa-github-generator
+  run_details:
+    builder:
+      builder_id: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
+      component_versions:
+        - component: slsa-github-generator
+          component_version: v1.9.0
+    build_metadata:
+      invocation_id: https://github.com/example/myapp/actions/runs/1234567890/attempts/1
+      started_on: "2024-01-15T10:00:00Z"
+      finished_on: "2024-01-15T10:05:30Z"
+    byproducts:
+      - resource_uri: https://github.com/example/myapp/actions/runs/1234567890/logs
+        resource_name: build log
+        media_type: text/plain

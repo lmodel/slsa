@@ -1,0 +1,6 @@
+# INVALID: the statement type is fixed to the v1 in-toto statement.
+statement_type: https://in-toto.io/Statement/v0.1
+subject:
+  - digest:
+      sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+predicate_type: https://slsa.dev/provenance/v1

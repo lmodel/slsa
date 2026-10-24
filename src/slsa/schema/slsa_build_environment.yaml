@@ -1,0 +1,146 @@
+---
+id: https://w3id.org/lmodel/slsa/slsa_build_environment
+name: slsa_build_environment
+title: SLSA build environment track
+description: >-
+  The SLSA Build Environment track, a working-draft track for the integrity of
+  the build images and compute that hosted builds run on.
+license: Apache-2.0
+see_also:
+  - https://slsa.dev/spec/draft/build-env-track-basics
+
+default_prefix: slsa
+default_range: string
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  slsa: https://w3id.org/lmodel/slsa/
+
+imports:
+  - linkml:types
+  - ./slsa_core
+  - ./slsa_build
+
+slots:
+  build_env_level:
+    description: The SLSA Build Environment level this meets.
+    slot_uri: slsa:build_env_level
+    range: SlsaBuildEnvironmentLevel
+    in_subset:
+      - slsa_build_environment_track
+
+classes:
+  SlsaBuildImageProducer:
+    is_a: SlsaParty
+    description: >-
+      The party that creates and distributes build images; the hosted build platform
+      itself, or a third party in a bring-your-own-image setting.
+    see_also:
+      - https://slsa.dev/spec/draft/build-env-track-basics#build-environment-model
+    in_subset:
+      - slsa_build_environment_track
+
+  SlsaBuildImage:
+    description: >-
+      The template a build environment is instantiated from, such as a VM or
+      container image: root filesystem, guest OS and packages, build executor
+      and build agent.
+    see_also:
+      - https://slsa.dev/spec/draft/build-env-track-basics#build-environment-model
+    comments:
+      - >-
+        The Build Environment track is a working draft and not part of the SLSA v1.2
+        release.
+    slots:
+      - build_env_level
+    attributes:
+      image_uri:
+        identifier: true
+        description: >-
+          The URI that identifies the image version, such as an OCI reference with its
+          digest.
+        range: uri
+      provenance:
+        description: >-
+          The build provenance of the image itself, required at Build Environment L1.
+        range: SlsaBuildProvenance
+        inlined: true
+      produced_by:
+        description: The party that created and distributes the image.
+        range: SlsaBuildImageProducer
+        inlined: true
+    in_subset:
+      - slsa_build_environment_track
+
+  SlsaMeasurement:
+    description: >-
+      The digest of one component or state of a build environment, to compare with its
+      reference value.
+    see_also:
+      - https://slsa.dev/spec/draft/build-env-track-basics#build-environment-model
+    slots:
+      - digest
+    attributes:
+      measured_component:
+        description: >-
+          The component or state that was measured, such as the bootloader, guest
+          kernel, build agent or root filesystem.
+        required: true
+    in_subset:
+      - slsa_build_environment_track
+
+  SlsaBuildEnvironmentAttestation:
+    is_a: SlsaPredicate
+    description: >-
+      Evidence of the state of a build environment when a build was dispatched
+      to it: the image it came from and the measurements taken at boot.
+    see_also:
+      - https://slsa.dev/spec/draft/build-env-track-basics#buildenv-levels
+    comments:
+      - >-
+        The track names no single predicate type; platforms issue this evidence in
+        formats such as SCAI or a VSA.
+    slots:
+      - build_env_level
+    attributes:
+      build_id:
+        description: >-
+          The immutable identifier of the build execution the environment was assigned
+          to.
+        required: true
+      build_image:
+        description: The image the environment was instantiated from.
+        range: SlsaBuildImage
+      measurements:
+        description: The measurements of the environment's components taken during boot.
+        range: SlsaMeasurement
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+    in_subset:
+      - slsa_build_environment_track
+
+enums:
+  SlsaBuildEnvironmentLevel:
+    description: >-
+      The levels of the SLSA Build Environment track, each extending integrity further
+      into the compute that runs builds.
+    see_also:
+      - https://slsa.dev/spec/draft/build-env-track-basics#track-overview
+    permissible_values:
+      SLSA_BUILD_ENV_LEVEL_0:
+        description: No Build Environment track claims.
+      SLSA_BUILD_ENV_LEVEL_1:
+        description: >-
+          The build image has signed build provenance, protecting against tampering
+          while the image is distributed.
+      SLSA_BUILD_ENV_LEVEL_2:
+        description: >-
+          The compute platform attests to the environment's state at boot, protecting
+          against tampering through the control plane.
+      SLSA_BUILD_ENV_LEVEL_3:
+        description: >-
+          Trusted hardware attests to the host's state, protecting against tampering
+          through the host interface.
+    in_subset:
+      - slsa_build_environment_track

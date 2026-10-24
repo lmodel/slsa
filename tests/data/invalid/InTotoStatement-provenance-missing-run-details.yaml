@@ -1,0 +1,10 @@
+# INVALID: build provenance needs run_details at Build L1.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - digest:
+      sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+predicate_type: https://slsa.dev/provenance/v1
+predicate:
+  predicate_kind: SlsaBuildProvenance
+  build_definition:
+    build_type: https://actions.github.io/buildtypes/workflow/v1

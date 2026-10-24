@@ -24,7 +24,7 @@ This repository models someone else's specification. SLSA is the work of the SLS
 So:
 
 - **A description says what its source says.** Every class, slot and enum value in `src/slsa/schema/slsa.yaml` renders a passage of the SLSA specification, the Secure Software Factory whitepaper or the adoption study. Cite that passage in the pull request, and never give a SLSA term a meaning its source does not carry. "The model said so" is not a source.
-- **The specification copy is upstream text.** `src/slsa/schema/spec/` is SLSA's own pages, kept for reference. Never edit it; replace it from upstream, as the [README](README.md#license-and-attribution) says, and `upstream-watch.yaml` checks it still matches.
+- **The specification copy is upstream text.** `src/slsa/schema/spec/` is SLSA's own pages, kept for reference. Never edit it; replace it from the upstream tag and commit that [NOTICE](NOTICE) records, and `upstream-watch.yaml` checks it still matches.
 - **The namespace is this project's.** Everything the schema defines lives under `slsa:` (`https://w3id.org/lmodel/slsa/`). SLSA's own identifiers, such as predicate types under `https://slsa.dev/`, appear only as values the schema documents.
 
 ## AI-Assisted Code Reviews
@@ -66,7 +66,7 @@ In short:
 Some of what runs here isn't "a person using an AI tool". It is a scheduled agent (this repo's `knowledge-librarian.yaml` workflow, running the `ktl-librarian` skill) that reads the repository and proposes changes on its own initiative, with no one drafting alongside it in real time. The core principle above still applies; here is what it means in that case:
 
 - **Identity.** Such an agent commits as either a clearly labeled bot identity (here, `knowledge-librarian[bot]`) or the maintainer who invoked it interactively, never both. A bot identity already discloses what produced the change, so it carries no further trailer; a commit made under a maintainer's identity carries no AI co-authorship trailer either, for the same reason the "Not required" section below discourages one generally.
-- **Review, always.** Every change such an agent proposes lands as a pull request, never a direct push to the default branch, and requires a human maintainer's approval before merge. An agent's own review of its own work, or one agent approving another's, does not satisfy it.
+- **Review, always.** Every change such an agent proposes is opened as a pull request, never a direct push to the default branch, and requires a human maintainer's approval before merge. An agent's own review of its own work, or one agent approving another's, does not satisfy it.
 - **Least privilege, enforced.** The agent runs in a read-only job with no git credentials on disk and hands its proposed change to a separate privileged job that runs no agent code. The "edit only `.lokf/knowledge/`" contract is checked after the agent runs, not merely requested of it.
 - **Verdicts must be real.** A skill that records a person's judgment (for instance, `ktl-curator` writing a `verified: human:<id>` event) may write only what that person actually said about that specific item, in that session: never inferred, batched, or supplied by the agent itself.
 

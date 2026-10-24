@@ -1,0 +1,3 @@
+# INVALID: a named reference has a name.
+repository: https://github.com/example/myapp
+protected: true

@@ -1,30 +1,43 @@
 # About slsa
 
-Supply-chain Levels for Software Artifacts (LinkML)
+This project is a [LinkML](https://linkml.io) model of the
+[SLSA specification](https://slsa.dev/spec/v1.2/), version 1.2. It renders
+the specification's Build and Source tracks, the build provenance and
+Verification Summary Attestation predicates, the in-toto statement layer they
+sit in, and the roles, build platform and package model the specification
+defines. The Dependency and Build Environment tracks follow the working draft
+at version 1.2, which the release does not include. A copy of the
+specification's pages sits beside the schema in `src/slsa/schema/spec/`.
 
-This project provides a [LinkML](https://linkml.io) schema for the
-[SLSA framework](https://slsa.dev), covering the Build, Source, Dependency,and Build Environment tracks, along with empirical adoption-study metadata and Secure Software Factory ecosystem annotations.
+Element names are the schema's own: classes carry a prefix
+(`InTotoStatement`, `SlsaPackage`) so they can be imported beside other
+vocabularies, slots are
+snake_case, and permissible values keep the strings SLSA defines, such as
+`SLSA_BUILD_LEVEL_3`. Every element links to the page it renders, and lives
+under `slsa:` (`https://w3id.org/lmodel/slsa/`).
 
-## References
+## Beyond the specification
 
-### SLSA Specification
+Two sources add elements that are not SLSA's, each in a subset of its own.
 
-The schema targets [SLSA v1.2](https://slsa.dev/spec/v1.2/), which defines the four tracks (Build, Source, Dependency, Build Environment) and the in-toto-based attestation model.
+### Secure Software Factory (`slsa_ssf`)
 
-### CNCF TAG-Security — Secure Software Factory
+The [Secure Software Factory whitepaper](Secure_Software_Factory_Whitepaper.pdf)
+(CNCF TAG-Security, 2022) describes a pipeline of version control, build
+service, artifact registry, signing service and policy engine. From it the
+schema takes `pipeline_orchestrator` on a build definition, `signing_tool` and
+`transparency_log_entry` on a statement, and `guac_uri` and
+`security_insights_uri` on a package, which point at the
+[OpenSSF](https://openssf.org/technical-initiatives/software-supply-chain/)
+projects GUAC and Security Insights.
 
-The [Secure Software Factory Whitepaper](Secure_Software_Factory_Whitepaper.pdf)
-(CNCF TAG-Security, 2022) defines a reference architecture for end-to-end SLSA implementation composed of six pipeline stages: Version Control System, CI Build Service, Artifact Registry, Signing Service (Sigstore/Cosign/Fulcio),Policy Engine (OPA/Gatekeeper/Kyverno), and Runtime Security.
+### Adoption study (`slsa_adoption_study`)
 
-Schema elements drawn from the SSF architecture are tagged with the
-`slsa_ssf` subset and include `pipelineOrchestrator`, `signingTool`,
-`sigstoreLogEntry`, `guacUri`, and `securityInsightsUri`.
-
-### OpenSSF Software Supply Chain Integrity
-
-The [OpenSSF Software Supply Chain](https://openssf.org/technical-initiatives/software-supply-chain/)
-working group coordinates SLSA, Sigstore, GUAC, gittuf, Security Insights, and related projects.  Cross-references to these projects are captured in `notes:` and `see_also:` annotations on the relevant schema classes and slots.
-
-### Adoption Study
-
-Tamanna et al. (2024), *"An Empirical Study on the Adoption of SLSA in Open Source Projects"* — [arXiv:2409.05014](https://arxiv.org/abs/2409.05014) — performed thematic analysis of 1,523 SLSA-related GitHub issues across 233 repositories.  The four challenge themes (CI, UC, LF, UR) and five strategy themes (S1–S5) they identified are encoded as enums and slots in the `slsa_adoption_study` subset.
+Tamanna et al. (2024), *Analyzing Challenges in Deployment of the SLSA
+Framework for Software Supply Chain Security*
+([arXiv:2409.05014](https://arxiv.org/abs/2409.05014)),
+analysed 1,523 SLSA-related GitHub issues. The `slsa_adoption` module encodes
+its four challenge themes and five strategy themes as enums on
+`SlsaAdoptionMetadata`; `hermetic`, `provenance_generation_tool`,
+`attestation_storage_uri` and `review_type` record the practices the study
+discusses; and a comment on the element concerned cites the study's theme.

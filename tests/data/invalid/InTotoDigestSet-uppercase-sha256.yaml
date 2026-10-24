@@ -1,0 +1,2 @@
+# INVALID: digests are lowercase hexadecimal of the algorithm's length.
+sha256: 1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF

@@ -1,7 +1,11 @@
-package None;
+package example;
 
-/* metamodel_version: 1.7.0 */
-/* version: 1.0.0 */
+/* metamodel_version: 1.12.0 */
+/* version: 1.2.0 */
+import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.*;
 
@@ -16,8 +20,9 @@ public class BuildDefinition  {
   private String externalParameters;
   private String internalParameters;
   private List<ResourceDescriptor> resolvedDependencies;
-  private boolean hermeticBuild;
+  private Boolean hermeticBuild;
   private String provenanceGenerationTool;
   private String pipelineOrchestrator;
+
 
 }

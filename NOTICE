@@ -21,12 +21,11 @@ https://github.com/slsa-framework/slsa/blob/main/LICENSE.md
 Pre-existing portions from contributors who have not since contributed
 under that license are licensed under the Apache License, Version 2.0.
 
-38 of the 42 files are identical to docs/spec/draft/ at tag v1.2
-(commit 19e4e2f005f871270c4f555fc47afecfb37f3efe). build-requirements.md
-differs from it by one relative link, and attested-build-env-levels.md,
-levels.md and verifying-systems.md are not in that tree.
+Every file is identical to its counterpart in docs/spec/draft/ at tag v1.2
+(commit 19e4e2f005f871270c4f555fc47afecfb37f3efe), and the copy holds
+nothing else.
 
-src/slsa/schema/slsa.yaml, src/slsa/datamodel/, project/ and the
+src/slsa/schema/*.yaml, src/slsa/datamodel/, project/ and the
 slsa-linkml package model the specification's tracks, levels and
 attestation formats in LinkML. They are this project's rendering, not an
 official SLSA release, and their use does not imply endorsement by the

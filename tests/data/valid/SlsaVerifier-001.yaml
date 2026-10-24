@@ -1,0 +1,6 @@
+# A verifier and the versions of its components.
+verifier_id: https://github.com/slsa-framework/slsa-verifier
+party_name: slsa-verifier
+component_versions:
+  - component: slsa-verifier-linux-amd64
+    component_version: v2.4.1

@@ -1,190 +1,474 @@
- syntax="proto3";
- package
-// metamodel_version: 1.7.0
-// version: 1.0.0
-// Optional structured metadata capturing the SLSA adoption challenges and mitigation strategies relevant to a given attestation or deployment context. Derived from empirical analysis of 1,523 SLSA-related GitHub issues across 233 repositories (Tamanna et al., 2024, arXiv:2409.05014). Use this class to document which challenge themes apply to the current deployment and which strategies are being employed or recommended. Attach via the adoptionMetadata slot on SlsaDocument.
-message AdoptionMetadata
- {
- repeated  adoptionChallengeEnum challenges = 0
- repeated  adoptionStrategyEnum strategies = 0
- }
-// Describes all inputs to the build in enough detail to initialise and reproduce the build. The accuracy and completeness are implied by the builder identified in runDetails.
-message BuildDefinition
- {
-  string buildType = 0
-  string externalParameters = 0
-  string internalParameters = 0
- repeated  resourceDescriptor resolvedDependencies = 0
-  boolean hermeticBuild = 0
-  string provenanceGenerationTool = 0
-  string pipelineOrchestrator = 0
- }
-// An attestation describing the integrity of a build environment at the time a specific build was dispatched and executed. Used to verify that a build ran in the expected, untampered environment.
-message BuildEnvironmentAttestation
- {
-  string type = 0
- repeated  resourceDescriptor subject = 0
-  string predicateType = 0
-  string predicate = 0
-  string attestationStorageUri = 0
-  string signingTool = 0
-  string sigstoreLogEntry = 0
-  string buildId = 0
-  buildImage buildImage = 0
- repeated  string measurements = 0
-  buildEnvLevelEnum buildEnvLevel = 0
- }
-// Represents the transitive closure of all software, hardware, and entities trusted to faithfully execute the build and record provenance. The builder.id is the primary basis for determining SLSA Build Level.
-message Builder
- {
-  string id = 0
- repeated  resourceDescriptor builderDependencies = 0
-  string version = 0
-  string versionTag = 0
- }
-// The template for a build environment, such as a VM or container image. Comprises the root filesystem, pre-installed guest OS and packages, the build executor, and the build agent. Created by a build image producer and consumed by the hosted build platform.
-message BuildImage
- {
-  string id = 0
-  buildProvenance provenance = 0
-  buildEnvLevelEnum buildEnvLevel = 0
- }
-// Metadata about a specific invocation of the build, including timing information and a unique build identifier for log correlation.
-message BuildMetadata
- {
-  string invocationId = 0
-  string startedOn = 0
-  string finishedOn = 0
- }
-// The infrastructure (software, hardware, people, and organizations) used to transform source code into package artifacts. Responsible for provenance generation and isolation between tenant builds. Often a hosted, multi-tenant build service.
-message BuildPlatform
- {
-  string id = 0
-  buildLevelEnum buildLevel = 0
-  boolean isHosted = 0
- }
-// An attestation predicate (predicateType "https://slsa.dev/provenance/v1") that describes how a set of output artifacts was produced by a build platform. Consumers use this to verify artifact authenticity and trace artifacts back through the supply chain.
-message BuildProvenance
- {
-  string type = 0
- repeated  resourceDescriptor subject = 0
-  string predicateType = 0
-  string predicate = 0
-  string attestationStorageUri = 0
-  string signingTool = 0
-  string sigstoreLogEntry = 0
-  buildDefinition buildDefinition = 0
-  runDetails runDetails = 0
- }
-// A comprehensive inventory of all third-party build dependencies for an artifact, capturing direct and transitive dependencies. Supports vulnerability management and incident response.
-message DependencyInventory
- {
-  resourceDescriptor artifact = 0
- repeated  resourceDescriptor dependencies = 0
-  dependencyLevelEnum dependencyLevel = 0
- }
-// A set of cryptographic digests for an artifact, keyed by algorithm name (e.g., "sha256", "gitCommit"). Provides enough information for consumers to verify artifact integrity using their preferred algorithm.
-message DigestSet
- {
-  string sha256 = 0
-  string sha512 = 0
-  string gitCommit = 0
- }
-// An identifiable unit of software intended for distribution. In the SLSA model, a package is always the output of a build process (which may be a no-op). The package name is the primary security boundary within a package ecosystem.
-message Package
- {
-  string name = 0
-  string ecosystem = 0
-  string registry = 0
-  resourceDescriptor artifact = 0
- }
-// A party who creates software and provides it to others. Responsible for choosing an appropriate build platform, following a consistent build process, and distributing provenance to consumers.
-message Producer
- {
-  string name = 0
-  string buildPlatformId = 0
- }
-// A reference to a software artifact including its location, digest, and optional metadata. Used throughout SLSA to describe inputs, outputs, and dependencies in provenance attestations.
-message ResourceDescriptor
- {
-  string uri = 0
-  digestSet digest = 0
-  string name = 0
-  string downloadLocation = 0
-  string mediaType = 0
- repeated  string annotations = 0
- }
-// Details specific to this particular execution of the build, including the trusted builder and optional run-level metadata.
-message RunDetails
- {
-  builder builder = 0
-  buildMetadata buildMetadata = 0
- repeated  resourceDescriptor byproducts = 0
- }
-// Root wrapper for any SLSA attestation payload. Acts as the entry point for schema validation and tools.
-message SlsaDocument
- {
-  buildDefinition buildDefinition = 0
-  runDetails runDetails = 0
-  verifier verifier = 0
-  verificationResultEnum verificationResult = 0
- repeated  slsaResultEnum verifiedLevels = 0
-  adoptionMetadata adoptionMetadata = 0
- }
-// An attestation describing how a source revision came to exist: where it was hosted, when it was generated, what process was used, who the contributors were, and which technical controls were enforced by the Source Control System.
-message SourceProvenanceAttestation
- {
-  string type = 0
- repeated  resourceDescriptor subject = 0
-  string predicateType = 0
-  string predicate = 0
-  string attestationStorageUri = 0
-  string signingTool = 0
-  string sigstoreLogEntry = 0
-  sourceRevision revision = 0
-  sourceLevelEnum sourceLevel = 0
- repeated  string controlsEnforced = 0
- }
-// A self-contained unit that holds the content and complete revision history for a set of files, along with metadata such as branches and tags. Hosted and governed by a Source Control System.
-message SourceRepository
- {
-  string id = 0
-  string description = 0
-  sourceLevelEnum sourceLevel = 0
- }
-// A specific, logically immutable snapshot of a source repository's tracked files. Uniquely identified by a revision identifier such as a cryptographic hash (e.g., git commit SHA) or a path-qualified sequential number (e.g., SVN).
-message SourceRevision
- {
-  string revisionId = 0
-  sourceRepository repository = 0
-  string author = 0
-  string timestamp = 0
- repeated  string parentRevisions = 0
-  reviewTypeEnum reviewType = 0
- }
-// An attestation predicate (predicateType "https://slsa.dev/verification_summary/v1") issued by a trusted verifier stating that one or more artifacts were evaluated against a policy and the SLSA level at which they were verified. Allows consumers to trust the verifier's determination without needing access to all underlying provenance.
-message VerificationSummaryAttestation
- {
-  string type = 0
- repeated  resourceDescriptor subject = 0
-  string predicateType = 0
-  string predicate = 0
-  string attestationStorageUri = 0
-  string signingTool = 0
-  string sigstoreLogEntry = 0
-  verifier verifier = 0
-  string timeVerified = 0
-  string resourceUri = 0
-  resourceDescriptor policy = 0
- repeated  resourceDescriptor inputAttestations = 0
-  verificationResultEnum verificationResult = 0
- repeated  slsaResultEnum verifiedLevels = 0
-  string dependencyLevels = 0
-  string slsaVersion = 0
- }
-// The entity that performed verification of an artifact and issued a Verification Summary Attestation. Consumers MUST accept only specific (signer, verifier) pairs.
-message Verifier
- {
-  string id = 0
-  string version = 0
- }
+syntax = "proto3";
+package slsa;
+// metamodel_version: 1.12.0
+// version: 1.2.0
+// One vendor-specific annotation on a resource descriptor, with a key and one or more values.
+message InTotoAnnotation {
+  // The annotation's key.
+  string annotation_key = 1;
+  // The annotation's values.
+  repeated string annotation_values = 2;
+}
+// A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+message InTotoDigestSet {
+  // The SHA-256 digest of the artifact.
+  string sha256 = 1;
+  // The SHA-512 digest of the artifact.
+  string sha512 = 2;
+  // The git commit id of a source revision.
+  string git_commit = 3;
+  // The git tree id of a source revision's content.
+  string git_tree = 4;
+  // A digest over a directory's content, as the in-toto framework defines it.
+  string dir_hash = 5;
+}
+// A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata.
+message InTotoResourceDescriptor {
+  // The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+  string resource_uri = 1;
+  // The cryptographic digests of a resource's content, keyed by algorithm.
+  InTotoDigestSet digest = 2;
+  // A name for the resource within the attestation that carries it.
+  string resource_name = 3;
+  // Where the resource can be fetched, when that differs from its identifying URI.
+  string download_location = 4;
+  // The IANA media type of the resource's content.
+  string media_type = 5;
+  // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
+  repeated InTotoAnnotation annotations = 6;
+}
+// The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
+message InTotoStatement {
+  // The in-toto statement type, always https://in-toto.io/Statement/v1.
+  string statement_type = 1;
+  // The artifacts the predicate is about; each carries a digest.
+  repeated InTotoResourceDescriptor subject = 2;
+  // The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1.
+  string predicate_type = 3;
+  // The predicate, one of the kinds this schema models; predicate_kind names which.
+  SlsaPredicate predicate = 4;
+  // Where the signed attestation is stored or can be fetched.
+  string attestation_storage_uri = 5;
+  // The tool that signed the attestation, named by URI, such as Cosign or Notation.
+  string signing_tool = 6;
+  // The transparency log entry that records the signature, such as a Rekor entry.
+  string transparency_log_entry = 7;
+}
+// The adoption challenges a deployment meets and the strategies it applies, from the study's taxonomy.
+message SlsaAdoptionMetadata {
+  // The challenge themes that apply.
+  repeated SlsaAdoptionChallenge challenges = 1;
+  // The strategy themes applied or recommended.
+  repeated SlsaAdoptionStrategy strategies = 2;
+}
+// A named reference that moves to track a line of development.
+message SlsaBranch {
+  // The source repository this belongs to.
+  SlsaSourceRepository repository = 1;
+  // The source revision this refers to.
+  SlsaSourceRevision revision = 2;
+  // The kind of named reference, one of this class's descendants.
+  string reference_type = 3;
+  // The reference's name, fully qualified in git, such as refs/heads/main.
+  string reference_name = 4;
+  // Whether the organization has the SCS enforce its technical controls on this reference.
+  bool protected = 5;
+}
+// The inputs to a build, in enough detail to initialize it and begin execution; the builder vouches for their accuracy.
+message SlsaBuildDefinition {
+  // The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.
+  string build_type = 1;
+  // The inputs under the tenant's control; complete at Build L3 and verified by consumers.
+  repeated SlsaBuildParameter external_parameters = 2;
+  // The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.
+  repeated SlsaBuildParameter internal_parameters = 3;
+  // The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.
+  repeated InTotoResourceDescriptor resolved_dependencies = 4;
+  // Whether the build could reach only the dependencies it declared, with no other network or filesystem access.
+  bool hermetic = 5;
+  // The tool that generated this provenance, named by URI.
+  string provenance_generation_tool = 6;
+  // The CI/CD system that coordinated the build, named by URI, where it differs from the builder.
+  string pipeline_orchestrator = 7;
+}
+// Evidence of the state of a build environment when a build was dispatched to it: the image it came from and the measurements taken at boot.
+message SlsaBuildEnvironmentAttestation {
+  // The kind of predicate, one of this class's descendants.
+  string predicate_kind = 1;
+  // The SLSA Build Environment level this meets.
+  SlsaBuildEnvironmentLevel build_env_level = 2;
+  // The immutable identifier of the build execution the environment was assigned to.
+  string build_id = 3;
+  // The image the environment was instantiated from.
+  SlsaBuildImage build_image = 4;
+  // The measurements of the environment's components taken during boot.
+  repeated SlsaMeasurement measurements = 5;
+}
+// The template a build environment is instantiated from, such as a VM or container image: root filesystem, guest OS and packages, build executor and build agent.
+message SlsaBuildImage {
+  // The SLSA Build Environment level this meets.
+  SlsaBuildEnvironmentLevel build_env_level = 1;
+  // The URI that identifies the image version, such as an OCI reference with its digest.
+  string image_uri = 2;
+  // The build provenance of the image itself, required at Build Environment L1.
+  SlsaBuildProvenance provenance = 3;
+  // The party that created and distributes the image.
+  SlsaBuildImageProducer produced_by = 4;
+}
+// The party that creates and distributes build images; the hosted build platform itself, or a third party in a bring-your-own-image setting.
+message SlsaBuildImageProducer {
+  // The role the party acts in, one of this class's descendants.
+  string party_type = 1;
+  // The party's name.
+  string party_name = 2;
+}
+// Metadata about one execution of a build: its identifier and when it started and finished.
+message SlsaBuildMetadata {
+  // An identifier for this build invocation, in a format the builder defines; useful for finding its logs.
+  string invocation_id = 1;
+  // When the build started.
+  string started_on = 2;
+  // When the build finished.
+  string finished_on = 3;
+}
+// One named input to a build, with a string value.
+message SlsaBuildParameter {
+  // The parameter's name.
+  string parameter_name = 1;
+  // The parameter's value.
+  string parameter_value = 2;
+}
+// The system that runs builds and records their provenance: the transitive closure of software, hardware, people and organizations trusted to do so. Provenance names it as the builder.
+message SlsaBuildPlatform {
+  // The version of each named component of a platform.
+  repeated SlsaComponentVersion component_versions = 1;
+  // The URI that identifies the platform and determines its SLSA Build level.
+  string builder_id = 2;
+  // The highest SLSA Build level the platform's provenance can meet.
+  SlsaBuildLevel build_level = 3;
+  // Whether the platform is a hosted service on shared or dedicated infrastructure rather than an individual's workstation.
+  bool hosted = 4;
+  // Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.
+  repeated InTotoResourceDescriptor builder_dependencies = 5;
+}
+// The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build met their expectations and others can rebuild it.
+message SlsaBuildProvenance {
+  // The kind of predicate, one of this class's descendants.
+  string predicate_kind = 1;
+  // The inputs to the build; required at Build L1.
+  SlsaBuildDefinition build_definition = 2;
+  // What is specific to this execution of the build; required at Build L1.
+  SlsaRunDetails run_details = 3;
+}
+// The version of one named component of a platform.
+message SlsaComponentVersion {
+  // The component's name.
+  string component = 1;
+  // The component's version string.
+  string component_version = 2;
+}
+// A party that uses software a producer provides, verifying its provenance itself or through a verifier.
+message SlsaConsumer {
+  // The role the party acts in, one of this class's descendants.
+  string party_type = 1;
+  // The party's name.
+  string party_name = 2;
+}
+// The component of a build platform that orchestrates each build and generates its provenance, outside the tenant's control.
+message SlsaControlPlane {
+  // The build platform this party or component belongs to or uses.
+  SlsaBuildPlatform build_platform = 1;
+}
+// The inventory of every third-party build dependency, direct and transitive, of one artifact version.
+message SlsaDependencyInventory {
+  // The artifact whose dependencies are inventoried.
+  InTotoResourceDescriptor artifact = 1;
+  // The dependencies, each identified by URI and digest.
+  repeated InTotoResourceDescriptor dependencies = 2;
+  // The SLSA Dependency level the producer's process meets for this artifact.
+  SlsaDependencyLevel dependency_level = 3;
+}
+// The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level.
+message SlsaDependencyLevelCount {
+  // The level the dependencies were verified at.
+  SlsaResult verified_level = 1;
+  // How many dependencies were verified at that level.
+  int32 dependency_count = 2;
+}
+// A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern.
+message SlsaDocument {
+  // The attestations, as in-toto statements.
+  repeated InTotoStatement attestations = 1;
+  // The parties, each in its role.
+  repeated SlsaParty parties = 2;
+  // The build platforms.
+  repeated SlsaBuildPlatform build_platforms = 3;
+  // The packages.
+  repeated SlsaPackage packages = 4;
+  // The package registries.
+  repeated SlsaPackageRegistry package_registries = 5;
+  // The source control systems.
+  repeated SlsaSourceControlSystem source_control_systems = 6;
+  // The source repositories.
+  repeated SlsaSourceRepository source_repositories = 7;
+  // The source revisions.
+  repeated SlsaSourceRevision source_revisions = 8;
+  // The branches and tags.
+  repeated SlsaNamedReference named_references = 9;
+  // The build images.
+  repeated SlsaBuildImage build_images = 10;
+  // The dependency inventories.
+  repeated SlsaDependencyInventory dependency_inventories = 11;
+  // How the deployment the document describes fares against the adoption study's themes.
+  SlsaAdoptionMetadata adoption_metadata = 12;
+}
+// A party that provides software or services to the other roles, such as a package registry's or a build platform's maintainers.
+message SlsaInfrastructureProvider {
+  // The role the party acts in, one of this class's descendants.
+  string party_type = 1;
+  // The party's name.
+  string party_name = 2;
+}
+// The digest of one component or state of a build environment, to compare with its reference value.
+message SlsaMeasurement {
+  // The cryptographic digests of a resource's content, keyed by algorithm.
+  InTotoDigestSet digest = 1;
+  // The component or state that was measured, such as the bootloader, guest kernel, build agent or root filesystem.
+  string measured_component = 2;
+}
+// A user-friendly name for a revision in a repository, such as main or v1.2.3; reference_type says whether it is a branch or a tag.
+message SlsaNamedReference {
+  // The source repository this belongs to.
+  SlsaSourceRepository repository = 1;
+  // The source revision this refers to.
+  SlsaSourceRevision revision = 2;
+  // The kind of named reference, one of this class's descendants.
+  string reference_type = 3;
+  // The reference's name, fully qualified in git, such as refs/heads/main.
+  string reference_name = 4;
+  // Whether the organization has the SCS enforce its technical controls on this reference.
+  bool protected = 5;
+}
+// A unit of software distributed under a package name, which is the primary security boundary SLSA protects. Its artifacts are the outputs of builds.
+message SlsaPackage {
+  // The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI.
+  string ecosystem = 1;
+  // The name consumers use to obtain the package within its ecosystem and registry.
+  string package_name = 2;
+  // The registry the package is published to.
+  SlsaPackageRegistry registry = 3;
+  // The immutable artifacts the package name has resolved to.
+  repeated InTotoResourceDescriptor package_artifacts = 4;
+  // Where a GUAC instance answers queries about the package's dependency and provenance graph.
+  string guac_uri = 5;
+  // The SECURITY-INSIGHTS.yml file of the project that produces the package.
+  string security_insights_uri = 6;
+}
+// A distribution platform that resolves package names to immutable package artifacts within an ecosystem.
+message SlsaPackageRegistry {
+  // The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI.
+  string ecosystem = 1;
+  // The URI that identifies the registry.
+  string registry_uri = 2;
+}
+// A person or organization that takes part in a software supply chain, in one of the roles SLSA names.
+message SlsaParty {
+  // The role the party acts in, one of this class's descendants.
+  string party_type = 1;
+  // The party's name.
+  string party_name = 2;
+}
+// The base of every predicate this schema models; predicate_kind names the concrete kind.
+message SlsaPredicate {
+  // The kind of predicate, one of this class's descendants.
+  string predicate_kind = 1;
+}
+// A party that creates software and provides it to others, choosing a build platform and distributing provenance.
+message SlsaProducer {
+  // The role the party acts in, one of this class's descendants.
+  string party_type = 1;
+  // The party's name.
+  string party_name = 2;
+  // The build platform this party or component belongs to or uses.
+  SlsaBuildPlatform build_platform = 3;
+}
+// What is specific to one execution of a build: the platform that ran it, metadata about the run and its by-products.
+message SlsaRunDetails {
+  // The build platform that ran the build and is trusted to have written this provenance; required at Build L1.
+  SlsaBuildPlatform builder = 1;
+  // Metadata about this execution of the build.
+  SlsaBuildMetadata build_metadata = 2;
+  // Artifacts the build produced beside its outputs that may help debugging or incident response, such as logs.
+  repeated InTotoResourceDescriptor byproducts = 3;
+}
+// The platform or services that host a source repository and enforce its organization's policies on authentication, authorization and change management.
+message SlsaSourceControlSystem {
+  // The URI that identifies the source control system.
+  string scs_uri = 1;
+}
+// Evidence from an SCS of how a revision came to exist and which technical controls were enforced when it did.
+message SlsaSourceProvenance {
+  // The kind of predicate, one of this class's descendants.
+  string predicate_kind = 1;
+  // The source revision this refers to.
+  SlsaSourceRevision revision = 2;
+  // The technical controls the SCS enforced when the revision was created, as the organization documents them.
+  repeated string controls_enforced = 3;
+}
+// A self-contained unit that holds a set of files, their revision history and metadata such as branches and tags.
+message SlsaSourceRepository {
+  // The stable locator the SCS gives the repository.
+  string repository_uri = 1;
+  // The source control system that hosts the repository.
+  SlsaSourceControlSystem hosted_by = 2;
+}
+// A logically immutable snapshot of a repository's tracked files, with its version-control metadata: author, time and parent revisions.
+message SlsaSourceRevision {
+  // The source repository this belongs to.
+  SlsaSourceRepository repository = 1;
+  // The revision identifier the SCS assigns, such as a git commit id or a path- qualified sequence number.
+  string revision_id = 2;
+  // The identity of the person or automation that authored the revision.
+  string authored_by = 3;
+  // When the revision was created.
+  string authored_at = 4;
+  // The revisions this one descends from, which together form the change history.
+  repeated SlsaSourceRevision parent_revisions = 5;
+  // The SLSA Source level the SCS asserts for the revision.
+  SlsaSourceLevel source_level = 6;
+  // The form of review that approved the revision.
+  SlsaReviewType review_type = 7;
+}
+// A named reference meant never to move once created.
+message SlsaTag {
+  // The source repository this belongs to.
+  SlsaSourceRepository repository = 1;
+  // The source revision this refers to.
+  SlsaSourceRevision revision = 2;
+  // The kind of named reference, one of this class's descendants.
+  string reference_type = 3;
+  // The reference's name, fully qualified in git, such as refs/heads/main.
+  string reference_name = 4;
+  // Whether the organization has the SCS enforce its technical controls on this reference.
+  bool protected = 5;
+}
+// The predicate in which a verifier records that it evaluated artifacts against a policy and the SLSA levels they met, so consumers can rely on the verifier instead of reading every underlying attestation.
+message SlsaVerificationSummary {
+  // The kind of predicate, one of this class's descendants.
+  string predicate_kind = 1;
+  // The URI consumers fetch the artifact from, which the verifier verified it as.
+  string resource_uri = 2;
+  // The verifier that made this determination.
+  SlsaVerifier verifier = 3;
+  // When the verification happened.
+  string time_verified = 4;
+  // The policy the subject was verified against, by URI and preferably by digest too.
+  InTotoResourceDescriptor policy = 5;
+  // Every attestation the verifier consulted, each with a digest; complete when present.
+  repeated InTotoResourceDescriptor input_attestations = 6;
+  // Whether the subject passed the policy.
+  SlsaVerificationResult verification_result = 7;
+  // The highest level verified in each track, and any verified property; a level implies the levels below it.
+  repeated SlsaResult verified_levels = 8;
+  // Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_.
+  repeated string organization_properties = 9;
+  // How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.
+  repeated SlsaDependencyLevelCount dependency_levels = 10;
+  // The SLSA specification version the verifier applied, as MAJOR.MINOR.
+  string slsa_version = 11;
+}
+// A party that inspects provenance or other attestations and decides whether an artifact is authentic.
+message SlsaVerifier {
+  // The role the party acts in, one of this class's descendants.
+  string party_type = 1;
+  // The party's name.
+  string party_name = 2;
+  // The version of each named component of a platform.
+  repeated SlsaComponentVersion component_versions = 3;
+  // The URI that identifies the verifier.
+  string verifier_id = 4;
+}
+
+// The four themes of difficulty practitioners met when adopting SLSA.
+enum SlsaAdoptionChallenge {
+  SLSA_ADOPTION_CHALLENGE_UNSPECIFIED = 0;
+  SLSA_ADOPTION_CHALLENGE_COMPLEX_IMPLEMENTATION = 1;
+  SLSA_ADOPTION_CHALLENGE_UNCLEAR_COMMUNICATION = 2;
+  SLSA_ADOPTION_CHALLENGE_LIMITED_FEASIBILITY = 3;
+  SLSA_ADOPTION_CHALLENGE_UNCLEAR_RELEVANCE = 4;
+}
+// The five themes of strategy practitioners proposed for the adoption challenges.
+enum SlsaAdoptionStrategy {
+  SLSA_ADOPTION_STRATEGY_UNSPECIFIED = 0;
+  SLSA_ADOPTION_STRATEGY_ENHANCE_ALIGNMENT_FLEXIBILITY = 1;
+  SLSA_ADOPTION_STRATEGY_PROVIDE_DETAILED_DOCUMENTATION = 2;
+  SLSA_ADOPTION_STRATEGY_STREAMLINE_PROVENANCE_GENERATION = 3;
+  SLSA_ADOPTION_STRATEGY_IMPROVE_VERIFICATION_PROCESS = 4;
+  SLSA_ADOPTION_STRATEGY_COLLABORATE_WITH_COMMUNITY = 5;
+}
+// The levels of the SLSA Build Environment track, each extending integrity further into the compute that runs builds.
+enum SlsaBuildEnvironmentLevel {
+  SLSA_BUILD_ENVIRONMENT_LEVEL_UNSPECIFIED = 0;
+  SLSA_BUILD_ENVIRONMENT_LEVEL_SLSA_BUILD_ENV_LEVEL_N0 = 1;
+  SLSA_BUILD_ENVIRONMENT_LEVEL_SLSA_BUILD_ENV_LEVEL_N1 = 2;
+  SLSA_BUILD_ENVIRONMENT_LEVEL_SLSA_BUILD_ENV_LEVEL_N2 = 3;
+  SLSA_BUILD_ENVIRONMENT_LEVEL_SLSA_BUILD_ENV_LEVEL_N3 = 4;
+}
+// The levels of the SLSA Build track, each adding protection against tampering with the build or its provenance.
+enum SlsaBuildLevel {
+  SLSA_BUILD_LEVEL_UNSPECIFIED = 0;
+  SLSA_BUILD_LEVEL_SLSA_BUILD_LEVEL_N0 = 1;
+  SLSA_BUILD_LEVEL_SLSA_BUILD_LEVEL_N1 = 2;
+  SLSA_BUILD_LEVEL_SLSA_BUILD_LEVEL_N2 = 3;
+  SLSA_BUILD_LEVEL_SLSA_BUILD_LEVEL_N3 = 4;
+}
+// The levels of the SLSA Dependency track, each reducing the risk third-party dependencies bring.
+enum SlsaDependencyLevel {
+  SLSA_DEPENDENCY_LEVEL_UNSPECIFIED = 0;
+  SLSA_DEPENDENCY_LEVEL_SLSA_DEPENDENCY_LEVEL_N0 = 1;
+  SLSA_DEPENDENCY_LEVEL_SLSA_DEPENDENCY_LEVEL_N1 = 2;
+  SLSA_DEPENDENCY_LEVEL_SLSA_DEPENDENCY_LEVEL_N2 = 3;
+  SLSA_DEPENDENCY_LEVEL_SLSA_DEPENDENCY_LEVEL_N3 = 4;
+  SLSA_DEPENDENCY_LEVEL_SLSA_DEPENDENCY_LEVEL_N4 = 5;
+}
+// A result of evaluating an artifact against SLSA: a track level, a verified property, or a failure. A level implies the levels below it in the same track.
+enum SlsaResult {
+  SLSA_RESULT_UNSPECIFIED = 0;
+  SLSA_RESULT_SLSA_BUILD_LEVEL_UNEVALUATED = 1;
+  SLSA_RESULT_SLSA_BUILD_LEVEL_N0 = 2;
+  SLSA_RESULT_SLSA_BUILD_LEVEL_N1 = 3;
+  SLSA_RESULT_SLSA_BUILD_LEVEL_N2 = 4;
+  SLSA_RESULT_SLSA_BUILD_LEVEL_N3 = 5;
+  SLSA_RESULT_SLSA_SOURCE_LEVEL_UNEVALUATED = 6;
+  SLSA_RESULT_SLSA_SOURCE_LEVEL_N0 = 7;
+  SLSA_RESULT_SLSA_SOURCE_LEVEL_N1 = 8;
+  SLSA_RESULT_SLSA_SOURCE_LEVEL_N2 = 9;
+  SLSA_RESULT_SLSA_SOURCE_LEVEL_N3 = 10;
+  SLSA_RESULT_SLSA_SOURCE_LEVEL_N4 = 11;
+  SLSA_RESULT_SLSA_SOURCE_TWO_PARTY_REVIEWED = 12;
+  SLSA_RESULT_SLSA_BUILD_REPRODUCED = 13;
+  SLSA_RESULT_FAILED = 14;
+}
+// The forms of review that may approve a revision, including the contested forms the adoption study records.
+enum SlsaReviewType {
+  SLSA_REVIEW_TYPE_UNSPECIFIED = 0;
+  SLSA_REVIEW_TYPE_TWO_PARTY = 1;
+  SLSA_REVIEW_TYPE_PAIR_PROGRAMMING = 2;
+  SLSA_REVIEW_TYPE_MOB_PROGRAMMING = 3;
+  SLSA_REVIEW_TYPE_AUTOMATED = 4;
+}
+// The levels of the SLSA Source track, each adding trust in how a revision was created.
+enum SlsaSourceLevel {
+  SLSA_SOURCE_LEVEL_UNSPECIFIED = 0;
+  SLSA_SOURCE_LEVEL_SLSA_SOURCE_LEVEL_N0 = 1;
+  SLSA_SOURCE_LEVEL_SLSA_SOURCE_LEVEL_N1 = 2;
+  SLSA_SOURCE_LEVEL_SLSA_SOURCE_LEVEL_N2 = 3;
+  SLSA_SOURCE_LEVEL_SLSA_SOURCE_LEVEL_N3 = 4;
+  SLSA_SOURCE_LEVEL_SLSA_SOURCE_LEVEL_N4 = 5;
+}
+// The outcome of verifying an artifact against a policy.
+enum SlsaVerificationResult {
+  SLSA_VERIFICATION_RESULT_UNSPECIFIED = 0;
+  SLSA_VERIFICATION_RESULT_PASSED = 1;
+  SLSA_VERIFICATION_RESULT_FAILED = 2;
+}

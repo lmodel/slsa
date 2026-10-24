@@ -1,0 +1,9 @@
+# A git commit at Source L4, approved by two-party review.
+revision_id: da39a3ee5e6b4b0d3255bfef95601890afd80709
+repository: https://github.com/example/myapp
+authored_by: developer@example.com
+authored_at: "2024-01-15T09:00:00Z"
+parent_revisions:
+  - abc123def456abc123def456abc123def456abc1
+source_level: SLSA_SOURCE_LEVEL_4
+review_type: TWO_PARTY

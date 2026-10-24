@@ -1,0 +1,11 @@
+# A package, its registry and one of its artifacts.
+package_name: myapp
+ecosystem: PyPA
+registry: https://pypi.org/simple/
+package_artifacts:
+  - resource_uri: pkg:pypi/myapp@1.0.0
+    digest:
+      sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+    resource_name: myapp-1.0.0-py3-none-any.whl
+guac_uri: https://guac.example.com/api/v0/artifact/sha256:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+security_insights_uri: https://raw.githubusercontent.com/example/myapp/main/SECURITY-INSIGHTS.yml

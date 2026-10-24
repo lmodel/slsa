@@ -1,0 +1,244 @@
+---
+id: https://w3id.org/lmodel/slsa/slsa_source
+name: slsa_source
+title: SLSA source track
+description: >-
+  The SLSA Source track: source control systems, repositories, revisions and
+  named references, and the source provenance an SCS issues about them.
+license: Apache-2.0
+see_also:
+  - https://slsa.dev/spec/v1.2/source-requirements
+
+default_prefix: slsa
+default_range: string
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  slsa: https://w3id.org/lmodel/slsa/
+
+imports:
+  - linkml:types
+  - ./slsa_core
+
+slots:
+  repository:
+    description: The source repository this belongs to.
+    slot_uri: slsa:repository
+    range: SlsaSourceRepository
+    in_subset:
+      - slsa_source_track
+
+  revision:
+    description: The source revision this refers to.
+    slot_uri: slsa:revision
+    range: SlsaSourceRevision
+    in_subset:
+      - slsa_source_track
+
+classes:
+  SlsaSourceControlSystem:
+    description: >-
+      The platform or services that host a source repository and enforce its
+      organization's policies on authentication, authorization and change
+      management.
+    see_also:
+      - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    comments:
+      - The SCS issues the Source VSAs and source provenance for the revisions it hosts.
+    attributes:
+      scs_uri:
+        identifier: true
+        description: The URI that identifies the source control system.
+        range: uri
+    in_subset:
+      - slsa_source_track
+
+  SlsaSourceRepository:
+    description: >-
+      A self-contained unit that holds a set of files, their revision history and
+      metadata such as branches and tags.
+    see_also:
+      - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    attributes:
+      repository_uri:
+        identifier: true
+        description: The stable locator the SCS gives the repository.
+        range: uri
+      hosted_by:
+        description: The source control system that hosts the repository.
+        range: SlsaSourceControlSystem
+    in_subset:
+      - slsa_source_track
+
+  SlsaSourceRevision:
+    description: >-
+      A logically immutable snapshot of a repository's tracked files, with its
+      version-control metadata: author, time and parent revisions.
+    see_also:
+      - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    comments:
+      - >-
+        A revision id is unique within its repository and may recur in another; a
+        document that holds revisions from several repositories qualifies them.
+    slots:
+      - repository
+    attributes:
+      revision_id:
+        identifier: true
+        description: >-
+          The revision identifier the SCS assigns, such as a git commit id or a path-
+          qualified sequence number.
+      authored_by:
+        description: >-
+          The identity of the person or automation that authored the revision.
+      authored_at:
+        description: When the revision was created.
+        range: datetime
+      parent_revisions:
+        description: >-
+          The revisions this one descends from, which together form the change history.
+        range: SlsaSourceRevision
+        multivalued: true
+      source_level:
+        description: The SLSA Source level the SCS asserts for the revision.
+        range: SlsaSourceLevel
+      review_type:
+        description: The form of review that approved the revision.
+        range: SlsaReviewType
+        in_subset:
+          - slsa_adoption_study
+    in_subset:
+      - slsa_source_track
+
+  SlsaNamedReference:
+    description: >-
+      A user-friendly name for a revision in a repository, such as main or v1.2.3;
+      reference_type says whether it is a branch or a tag.
+    see_also:
+      - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    slots:
+      - repository
+      - revision
+    attributes:
+      reference_type:
+        description: The kind of named reference, one of this class's descendants.
+        designates_type: true
+        range: string
+      reference_name:
+        description: >-
+          The reference's name, fully qualified in git, such as refs/heads/main.
+        required: true
+      protected:
+        description: >-
+          Whether the organization has the SCS enforce its technical controls on this
+          reference.
+        range: boolean
+    in_subset:
+      - slsa_source_track
+
+  SlsaBranch:
+    is_a: SlsaNamedReference
+    description: A named reference that moves to track a line of development.
+    in_subset:
+      - slsa_source_track
+
+  SlsaTag:
+    is_a: SlsaNamedReference
+    description: A named reference meant never to move once created.
+    comments:
+      - >-
+        A version-control tag that is allowed to move, such as latest, is a named
+        reference and not a tag in this sense.
+    in_subset:
+      - slsa_source_track
+
+  SlsaSourceProvenance:
+    is_a: SlsaPredicate
+    description: >-
+      Evidence from an SCS of how a revision came to exist and which technical
+      controls were enforced when it did.
+    see_also:
+      - https://slsa.dev/spec/v1.2/source-requirements#source-provenance-attestations
+    comments:
+      - >-
+        SLSA leaves the format of source provenance to each SCS and defines no predicate
+        type for it; this class holds what the specification says such provenance
+        conveys.
+      - Source L2 and above require the SCS to issue it with each new revision.
+    slots:
+      - revision
+    slot_usage:
+      revision:
+        required: true
+    attributes:
+      controls_enforced:
+        description: >-
+          The technical controls the SCS enforced when the revision was created, as the
+          organization documents them.
+        multivalued: true
+        comments:
+          - >-
+            Two-party review is a control many single-maintainer projects cannot meet
+            (Tamanna et al., 2024, LF.2).
+    in_subset:
+      - slsa_source_track
+
+enums:
+  SlsaSourceLevel:
+    description: >-
+      The levels of the SLSA Source track, each adding trust in how a revision was
+      created.
+    see_also:
+      - https://slsa.dev/spec/v1.2/source-requirements#basics
+    permissible_values:
+      SLSA_SOURCE_LEVEL_0:
+        description: No Source track claims; the SCS issued no VSA for the revision.
+      SLSA_SOURCE_LEVEL_1:
+        description: >-
+          The source is managed in a version control system, so it has discrete,
+          immutable revisions.
+      SLSA_SOURCE_LEVEL_2:
+        description: >-
+          Branch history is continuous and retained, and the SCS issues source
+          provenance for each new revision.
+      SLSA_SOURCE_LEVEL_3:
+        description: >-
+          The SCS enforces the organization's technical controls on protected named
+          references and provides evidence of them.
+      SLSA_SOURCE_LEVEL_4:
+        description: Two trusted persons agree to every change on protected branches.
+        comments:
+          - >-
+            Whether pair or mob programming counts as two-party review is an open
+            question (Tamanna et al., 2024, LF.2).
+    in_subset:
+      - slsa_source_track
+
+  SlsaReviewType:
+    description: >-
+      The forms of review that may approve a revision, including the contested forms the
+      adoption study records.
+    see_also:
+      - https://arxiv.org/abs/2409.05014
+    annotations:
+      study_theme: LF.2
+    permissible_values:
+      TWO_PARTY:
+        description: >-
+          A reviewer distinct from the author approved the change, both being trusted
+          persons.
+      PAIR_PROGRAMMING:
+        description: >-
+          Two developers wrote the change together at one workstation or screen; whether
+          this counts as two-party review is open.
+      MOB_PROGRAMMING:
+        description: >-
+          A group wrote the change together; whether this counts as two-party review is
+          open.
+      AUTOMATED:
+        description: >-
+          A tool or bot reviewed the change with no second person, which does not meet
+          Source L4.
+    in_subset:
+      - slsa_source_track
+      - slsa_adoption_study

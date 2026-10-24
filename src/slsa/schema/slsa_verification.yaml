@@ -1,0 +1,186 @@
+---
+id: https://w3id.org/lmodel/slsa/slsa_verification
+name: slsa_verification
+title: SLSA verification summary
+description: >-
+  The Verification Summary Attestation predicate
+  (https://slsa.dev/verification_summary/v1): a trusted verifier's statement of
+  the SLSA levels an artifact was verified at.
+license: Apache-2.0
+see_also:
+  - https://slsa.dev/spec/v1.2/verification_summary
+
+default_prefix: slsa
+default_range: string
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  slsa: https://w3id.org/lmodel/slsa/
+
+imports:
+  - linkml:types
+  - ./slsa_core
+
+classes:
+  SlsaVerificationSummary:
+    is_a: SlsaPredicate
+    description: >-
+      The predicate in which a verifier records that it evaluated artifacts
+      against a policy and the SLSA levels they met, so consumers can rely on
+      the verifier instead of reading every underlying attestation.
+    see_also:
+      - https://slsa.dev/spec/v1.2/verification_summary
+      - https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation
+    comments:
+      - >-
+        The statement that carries it has predicate_type
+        https://slsa.dev/verification_summary/v1.
+      - >-
+        A Source VSA is this predicate with the repository as resource_uri and the
+        revision id in the subject's digest.
+      - >-
+        Verification tooling and the places attestations are stored were an adoption
+        difficulty practitioners reported (Tamanna et al., 2024, LF.1).
+    slots:
+      - resource_uri
+    slot_usage:
+      resource_uri:
+        description: >-
+          The URI consumers fetch the artifact from, which the verifier verified it as.
+        required: true
+    attributes:
+      verifier:
+        description: The verifier that made this determination.
+        range: SlsaVerifier
+        required: true
+        inlined: true
+      time_verified:
+        description: When the verification happened.
+        range: datetime
+      policy:
+        description: >-
+          The policy the subject was verified against, by URI and preferably by digest
+          too.
+        range: InTotoResourceDescriptor
+        required: true
+        inlined: true
+      input_attestations:
+        description: >-
+          Every attestation the verifier consulted, each with a digest; complete when
+          present.
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      verification_result:
+        description: Whether the subject passed the policy.
+        range: SlsaVerificationResult
+        required: true
+      verified_levels:
+        description: >-
+          The highest level verified in each track, and any verified property; a level
+          implies the levels below it.
+        range: SlsaResult
+        multivalued: true
+        required: true
+      organization_properties:
+        description: >-
+          Properties an organization defines for its own consumers, each prefixed
+          ORG_SOURCE_.
+        multivalued: true
+        pattern: "^ORG_SOURCE_"
+        in_subset:
+          - slsa_source_track
+      dependency_levels:
+        description: >-
+          How many transitive dependencies were verified at each level; absent when the
+          verifier makes no claim about dependencies.
+        range: SlsaDependencyLevelCount
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      slsa_version:
+        description: >-
+          The SLSA specification version the verifier applied, as MAJOR.MINOR.
+        pattern: "^[0-9]+\\.[0-9]+$"
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  SlsaDependencyLevelCount:
+    description: >-
+      The number of an artifact's transitive dependencies verified at one level, each
+      counted once per track at its highest level.
+    attributes:
+      verified_level:
+        description: The level the dependencies were verified at.
+        range: SlsaResult
+        required: true
+      dependency_count:
+        description: How many dependencies were verified at that level.
+        range: integer
+        minimum_value: 0
+        required: true
+    in_subset:
+      - slsa_build_track
+
+enums:
+  SlsaVerificationResult:
+    description: The outcome of verifying an artifact against a policy.
+    permissible_values:
+      PASSED:
+        description: The artifact met the policy.
+      FAILED:
+        description: The artifact did not meet the policy.
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  SlsaResult:
+    description: >-
+      A result of evaluating an artifact against SLSA: a track level, a
+      verified property, or a failure. A level implies the levels below it in
+      the same track.
+    see_also:
+      - https://slsa.dev/spec/v1.2/verification_summary#slsaresult
+      - https://slsa.dev/spec/draft/verified-properties
+    comments:
+      - >-
+        Issuers may add values of their own, but none that start with SLSA_; this enum
+        lists the SLSA-defined values.
+    permissible_values:
+      SLSA_BUILD_LEVEL_UNEVALUATED:
+        description: The issuer makes no claim about the Build track level.
+      SLSA_BUILD_LEVEL_0:
+        description: No Build track guarantees were verified.
+      SLSA_BUILD_LEVEL_1:
+        description: Build level 1 was verified.
+      SLSA_BUILD_LEVEL_2:
+        description: Build level 2 was verified.
+      SLSA_BUILD_LEVEL_3:
+        description: Build level 3 was verified.
+      SLSA_SOURCE_LEVEL_UNEVALUATED:
+        description: The issuer makes no claim about the Source track level.
+      SLSA_SOURCE_LEVEL_0:
+        description: No Source track guarantees were verified.
+      SLSA_SOURCE_LEVEL_1:
+        description: Source level 1 was verified.
+      SLSA_SOURCE_LEVEL_2:
+        description: Source level 2 was verified.
+      SLSA_SOURCE_LEVEL_3:
+        description: Source level 3 was verified.
+      SLSA_SOURCE_LEVEL_4:
+        description: Source level 4 was verified.
+      SLSA_SOURCE_TWO_PARTY_REVIEWED:
+        description: >-
+          The verified property that two trusted persons reviewed the source, at
+          whatever source level.
+      SLSA_BUILD_REPRODUCED:
+        description: >-
+          The verified property that two or more independent build platforms reproduced
+          the artifact.
+      FAILED:
+        description: Policy evaluation failed.
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track

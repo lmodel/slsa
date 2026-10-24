@@ -1,0 +1,14 @@
+# Source provenance an SCS issued for a revision, in this schema's own shape.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - resource_uri: git+https://github.com/example/myapp@refs/heads/main
+    digest:
+      git_commit: da39a3ee5e6b4b0d3255bfef95601890afd80709
+predicate_type: https://example.com/source_provenance/v1
+predicate:
+  predicate_kind: SlsaSourceProvenance
+  revision: da39a3ee5e6b4b0d3255bfef95601890afd80709
+  controls_enforced:
+    - two-party review
+    - branch protection
+    - status checks

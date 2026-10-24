@@ -1,0 +1,34 @@
+# A statement carrying Build L2 provenance from a Tekton Chains pipeline, the
+# Secure Software Factory shape.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - resource_uri: pkg:oci/myapp@sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890?repository_url=gcr.io/example-project/myapp
+    digest:
+      sha256: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+predicate_type: https://slsa.dev/provenance/v1
+signing_tool: https://github.com/sigstore/cosign
+transparency_log_entry: https://rekor.sigstore.dev/api/v1/log/entries/abc123def456
+predicate:
+  predicate_kind: SlsaBuildProvenance
+  build_definition:
+    build_type: https://tekton.dev/chains/v2/tekton
+    external_parameters:
+      - parameter_name: pipelineRun
+        parameter_value: build-pipeline-run-20240115-001
+      - parameter_name: gitUrl
+        parameter_value: https://github.com/example/myapp
+      - parameter_name: gitRevision
+        parameter_value: da39a3ee5e6b4b0d3255bfef95601890afd80709
+    resolved_dependencies:
+      - resource_uri: git+https://github.com/example/myapp
+        digest:
+          git_commit: da39a3ee5e6b4b0d3255bfef95601890afd80709
+    provenance_generation_tool: https://github.com/tektoncd/chains
+    pipeline_orchestrator: https://tekton.dev
+  run_details:
+    builder:
+      builder_id: https://tekton.dev/chains/v2
+    build_metadata:
+      invocation_id: build-pipeline-run-20240115-001
+      started_on: "2024-01-15T09:00:00Z"
+      finished_on: "2024-01-15T09:12:00Z"

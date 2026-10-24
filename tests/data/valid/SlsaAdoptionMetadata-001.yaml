@@ -1,0 +1,7 @@
+# The adoption challenges a deployment met and the strategies it applied.
+challenges:
+  - COMPLEX_IMPLEMENTATION
+  - UNCLEAR_COMMUNICATION
+strategies:
+  - STREAMLINE_PROVENANCE_GENERATION
+  - PROVIDE_DETAILED_DOCUMENTATION

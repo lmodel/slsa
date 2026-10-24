@@ -1,833 +1,1271 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix slsa: <https://w3id.org/lmodel/slsa/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-slsa:BuildEnvironmentAttestation a sh:NodeShape ;
-    rdfs:comment "An attestation describing the integrity of a build environment at the time a specific build was dispatched and executed. Used to verify that a build ran in the expected, untampered environment." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:description "The SLSA Build Environment Level supported or represented, reflecting the strength of the integrity guarantees provided." ;
-            sh:in ( "SLSA_BUILD_ENV_LEVEL_0" "SLSA_BUILD_ENV_LEVEL_1" "SLSA_BUILD_ENV_LEVEL_2" "SLSA_BUILD_ENV_LEVEL_3" ) ;
-            sh:maxCount 1 ;
-            sh:order 3 ;
-            sh:path slsa:buildEnvLevel ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., \"https://github.com/sigstore/cosign\", \"https://github.com/notaryproject/notation\"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 9 ;
-            sh:path slsa:signingTool ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "The set of software artifacts to which a predicate applies. Each entry MUST contain a digest." ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 5 ;
-            sh:path slsa:subject ],
-        [ sh:datatype xsd:string ;
-            sh:description "Cryptographic measurements (hashes) of build environment components captured during boot and initialization, used to verify integrity against known-good reference values." ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:measurements ],
-        [ sh:datatype xsd:string ;
-            sh:description "An immutable identifier uniquely assigned to a build execution (e.g., a UUID). Links a BuildEnvironmentAttestation to the corresponding build provenance." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:buildId ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 8 ;
-            sh:path slsa:attestationStorageUri ],
-        [ sh:datatype xsd:string ;
-            sh:description "Always \"https://in-toto.io/Statement/v1\". Identifies the in-toto statement schema version and namespace." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 4 ;
-            sh:path slsa:_type ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation)." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 6 ;
-            sh:path slsa:predicateType ],
-        [ sh:class slsa:BuildImage ;
-            sh:description "The build image from which the build environment was instantiated." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:buildImage ],
-        [ sh:datatype xsd:string ;
-            sh:description "The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 7 ;
-            sh:path slsa:predicate ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., \"https://rekor.sigstore.dev/api/v1/log/entries/24296fb...\"). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 10 ;
-            sh:path slsa:sigstoreLogEntry ] ;
-    sh:targetClass slsa:BuildEnvironmentAttestation .
-
-slsa:BuildPlatform a sh:NodeShape ;
-    rdfs:comment "The infrastructure (software, hardware, people, and organizations) used to transform source code into package artifacts. Responsible for provenance generation and isolation between tenant builds. Often a hosted, multi-tenant build service." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:boolean ;
-            sh:description "True if this is a hosted (multi-tenant) platform running on shared or dedicated infrastructure, rather than an individual's workstation. Required for SLSA Build L2+." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:isHosted ],
-        [ sh:datatype xsd:string ;
-            sh:description "A URI uniquely identifying an entity (build platform, verifier, build image, or source repository). The primary trust anchor for consumers." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:id ],
-        [ sh:description "The SLSA Build Level this platform is capable of producing, as determined by its provenance generation and isolation guarantees." ;
-            sh:in ( "SLSA_BUILD_LEVEL_0" "SLSA_BUILD_LEVEL_1" "SLSA_BUILD_LEVEL_2" "SLSA_BUILD_LEVEL_3" ) ;
-            sh:maxCount 1 ;
-            sh:order 1 ;
-            sh:path slsa:buildLevel ] ;
-    sh:targetClass slsa:BuildPlatform .
-
-slsa:Consumer a sh:NodeShape ;
-    rdfs:comment "A party who uses software provided by a producer. May verify provenance directly or delegate that responsibility to a separate verifier." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:targetClass slsa:Consumer .
-
-slsa:ControlPlane a sh:NodeShape ;
-    rdfs:comment "The build platform component that orchestrates each independent build execution and generates provenance. Managed by an admin and trusted to be outside of tenant control. Responsible for generating and signing provenance at SLSA Build L2+." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:targetClass slsa:ControlPlane .
-
-slsa:DependencyInventory a sh:NodeShape ;
-    rdfs:comment "A comprehensive inventory of all third-party build dependencies for an artifact, capturing direct and transitive dependencies. Supports vulnerability management and incident response." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:class slsa:ResourceDescriptor ;
-            sh:description "All third-party build dependencies (direct and transitive) for an artifact version, identified by URI and digest." ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:dependencies ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "A specific immutable package artifact or the artifact whose dependency inventory is recorded." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 0 ;
-            sh:path slsa:artifact ],
-        [ sh:description "The SLSA Dependency Level that this inventory and associated triage process supports." ;
-            sh:in ( "SLSA_DEPENDENCY_LEVEL_0" "SLSA_DEPENDENCY_LEVEL_1" "SLSA_DEPENDENCY_LEVEL_2" "SLSA_DEPENDENCY_LEVEL_3" "SLSA_DEPENDENCY_LEVEL_4" ) ;
-            sh:maxCount 1 ;
-            sh:order 2 ;
-            sh:path slsa:dependencyLevel ] ;
-    sh:targetClass slsa:DependencyInventory .
-
-slsa:InfrastructureProvider a sh:NodeShape ;
-    rdfs:comment "A party who provides software or services to other roles in the supply chain, such as a package registry maintainer or build platform operator." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:targetClass slsa:InfrastructureProvider .
-
-slsa:Package a sh:NodeShape ;
-    rdfs:comment "An identifiable unit of software intended for distribution. In the SLSA model, a package is always the output of a build process (which may be a no-op). The package name is the primary security boundary within a package ecosystem." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:class slsa:ResourceDescriptor ;
-            sh:description "A specific immutable package artifact or the artifact whose dependency inventory is recorded." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 3 ;
-            sh:path slsa:artifact ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI of the package registry where a package is published and from which consumers resolve the package name to an artifact." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:registry ],
-        [ sh:datatype xsd:string ;
-            sh:description "A local name for a resource within the context of an attestation, or the name of a package, producer, or party." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:name ],
-        [ sh:datatype xsd:string ;
-            sh:description "The package ecosystem (e.g., \"PyPA\", \"npm\", \"OCI\", \"cargo\") governing distribution conventions for this package." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 1 ;
-            sh:path slsa:ecosystem ] ;
-    sh:targetClass slsa:Package .
-
-slsa:Producer a sh:NodeShape ;
-    rdfs:comment "A party who creates software and provides it to others. Responsible for choosing an appropriate build platform, following a consistent build process, and distributing provenance to consumers." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "URI of the build platform chosen to produce artifacts." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 1 ;
-            sh:path slsa:buildPlatformId ],
-        [ sh:datatype xsd:string ;
-            sh:description "A local name for a resource within the context of an attestation, or the name of a package, producer, or party." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:name ] ;
-    sh:targetClass slsa:Producer .
-
+@prefix slsa: <https://w3id.org/lmodel/slsa/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+slsa:InTotoAnnotation a sh:NodeShape ;
+	rdfs:comment "One vendor-specific annotation on a resource descriptor, with a key and one or more values." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n140 ;
+	sh:property _:c14n142 , _:c14n184 ;
+	sh:targetClass slsa:InTotoAnnotation .
+slsa:InTotoDigestSet a sh:NodeShape ;
+	rdfs:comment "A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n181 ;
+	sh:property _:c14n119 , _:c14n131 , _:c14n175 , _:c14n217 , _:c14n67 ;
+	sh:targetClass slsa:InTotoDigestSet .
+slsa:InTotoResourceDescriptor a sh:NodeShape ;
+	rdfs:comment "A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n70 ;
+	sh:property _:c14n115 , _:c14n128 , _:c14n145 , _:c14n152 , _:c14n16 , _:c14n167 ;
+	sh:targetClass slsa:InTotoResourceDescriptor .
+slsa:InTotoStatement a sh:NodeShape ;
+	rdfs:comment "The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n201 ;
+	sh:property _:c14n102 , _:c14n141 , _:c14n144 , _:c14n170 , _:c14n172 , _:c14n50 , _:c14n7 ;
+	sh:targetClass slsa:InTotoStatement .
+slsa:SlsaAdoptionMetadata a sh:NodeShape ;
+	rdfs:comment "The adoption challenges a deployment meets and the strategies it applies, from the study's taxonomy." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n12 ;
+	sh:property _:c14n20 , _:c14n52 ;
+	sh:targetClass slsa:SlsaAdoptionMetadata .
+slsa:SlsaBranch a sh:NodeShape ;
+	rdfs:comment "A named reference that moves to track a line of development." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n69 ;
+	sh:property _:c14n10 , _:c14n138 , _:c14n22 , _:c14n8 , _:c14n86 ;
+	sh:targetClass slsa:SlsaBranch .
+slsa:SlsaBuildDefinition a sh:NodeShape ;
+	rdfs:comment "The inputs to a build, in enough detail to initialize it and begin execution; the builder vouches for their accuracy." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n33 ;
+	sh:property _:c14n150 , _:c14n182 , _:c14n202 , _:c14n28 , _:c14n4 , _:c14n88 , _:c14n89 ;
+	sh:targetClass slsa:SlsaBuildDefinition .
+slsa:SlsaBuildEnvironmentAttestation a sh:NodeShape ;
+	rdfs:comment "Evidence of the state of a build environment when a build was dispatched to it: the image it came from and the measurements taken at boot." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n111 ;
+	sh:property _:c14n121 , _:c14n136 , _:c14n164 , _:c14n80 , _:c14n83 ;
+	sh:targetClass slsa:SlsaBuildEnvironmentAttestation .
+slsa:SlsaBuildImage a sh:NodeShape ;
+	rdfs:comment "The template a build environment is instantiated from, such as a VM or container image: root filesystem, guest OS and packages, build executor and build agent." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n190 ;
+	sh:property _:c14n139 , _:c14n212 , _:c14n213 , _:c14n6 ;
+	sh:targetClass slsa:SlsaBuildImage .
+slsa:SlsaBuildImageProducer a sh:NodeShape ;
+	rdfs:comment "The party that creates and distributes build images; the hosted build platform itself, or a third party in a bring-your-own-image setting." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n60 ;
+	sh:property _:c14n122 , _:c14n94 ;
+	sh:targetClass slsa:SlsaBuildImageProducer .
+slsa:SlsaBuildMetadata a sh:NodeShape ;
+	rdfs:comment "Metadata about one execution of a build: its identifier and when it started and finished." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n109 ;
+	sh:property _:c14n171 , _:c14n210 , _:c14n78 ;
+	sh:targetClass slsa:SlsaBuildMetadata .
+slsa:SlsaBuildParameter a sh:NodeShape ;
+	rdfs:comment "One named input to a build, with a string value." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n185 ;
+	sh:property _:c14n211 , _:c14n25 ;
+	sh:targetClass slsa:SlsaBuildParameter .
+slsa:SlsaBuildPlatform a sh:NodeShape ;
+	rdfs:comment "The system that runs builds and records their provenance: the transitive closure of software, hardware, people and organizations trusted to do so. Provenance names it as the builder." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n36 ;
+	sh:property _:c14n165 , _:c14n29 , _:c14n30 , _:c14n9 , _:c14n90 ;
+	sh:targetClass slsa:SlsaBuildPlatform .
+slsa:SlsaBuildProvenance a sh:NodeShape ;
+	rdfs:comment "The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build met their expectations and others can rebuild it." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n154 ;
+	sh:property _:c14n15 , _:c14n200 , _:c14n95 ;
+	sh:targetClass slsa:SlsaBuildProvenance .
+slsa:SlsaComponentVersion a sh:NodeShape ;
+	rdfs:comment "The version of one named component of a platform." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n107 ;
+	sh:property _:c14n126 , _:c14n191 ;
+	sh:targetClass slsa:SlsaComponentVersion .
+slsa:SlsaConsumer a sh:NodeShape ;
+	rdfs:comment "A party that uses software a producer provides, verifying its provenance itself or through a verifier." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n59 ;
+	sh:property _:c14n143 , _:c14n73 ;
+	sh:targetClass slsa:SlsaConsumer .
+slsa:SlsaControlPlane a sh:NodeShape ;
+	rdfs:comment "The component of a build platform that orchestrates each build and generates its provenance, outside the tenant's control." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n51 ;
+	sh:property _:c14n55 ;
+	sh:targetClass slsa:SlsaControlPlane .
+slsa:SlsaDependencyInventory a sh:NodeShape ;
+	rdfs:comment "The inventory of every third-party build dependency, direct and transitive, of one artifact version." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n24 ;
+	sh:property _:c14n13 , _:c14n160 , _:c14n187 ;
+	sh:targetClass slsa:SlsaDependencyInventory .
+slsa:SlsaDependencyLevelCount a sh:NodeShape ;
+	rdfs:comment "The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n23 ;
+	sh:property _:c14n166 , _:c14n58 ;
+	sh:targetClass slsa:SlsaDependencyLevelCount .
 slsa:SlsaDocument a sh:NodeShape ;
-    rdfs:comment "Root wrapper for any SLSA attestation payload. Acts as the entry point for schema validation and tools." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:class slsa:AdoptionMetadata ;
-            sh:description "Optional structured metadata recording the SLSA adoption challenges and mitigation strategies relevant to this attestation context. Derived from empirical analysis of SLSA-related GitHub issues (Tamanna et al., 2024, arXiv:2409.05014). Intended for use by framework authors, practitioners, and tooling that tracks adoption progress alongside attestation payloads." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 5 ;
-            sh:path slsa:adoptionMetadata ],
-        [ sh:description "Whether the artifact passed or failed policy verification." ;
-            sh:in ( "PASSED" "FAILED" ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:order 3 ;
-            sh:path slsa:verificationResult ],
-        [ sh:class slsa:RunDetails ;
-            sh:description "Details specific to this particular execution of the build, including builder identity and metadata. REQUIRED at SLSA Build L1." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:runDetails ],
-        [ sh:description "The highest verified SLSA level for each applicable track (not including transitive dependencies). At most one level per track. Implies all levels below it within the same track." ;
-            sh:in ( "SLSA_BUILD_LEVEL_0" "SLSA_BUILD_LEVEL_1" "SLSA_BUILD_LEVEL_2" "SLSA_BUILD_LEVEL_3" "SLSA_SOURCE_LEVEL_1" "SLSA_SOURCE_LEVEL_2" "SLSA_SOURCE_LEVEL_3" "SLSA_SOURCE_LEVEL_4" ) ;
-            sh:minCount 1 ;
-            sh:order 4 ;
-            sh:path slsa:verifiedLevels ],
-        [ sh:class slsa:Verifier ;
-            sh:description "Identifies the entity that performed the verification." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 2 ;
-            sh:path slsa:verifier ],
-        [ sh:class slsa:BuildDefinition ;
-            sh:description "All inputs to the build, sufficient to initialise and reproduce it. REQUIRED at SLSA Build L1." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 0 ;
-            sh:path slsa:buildDefinition ] ;
-    sh:targetClass slsa:SlsaDocument .
-
-slsa:SourceProvenanceAttestation a sh:NodeShape ;
-    rdfs:comment "An attestation describing how a source revision came to exist: where it was hosted, when it was generated, what process was used, who the contributors were, and which technical controls were enforced by the Source Control System." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., \"https://rekor.sigstore.dev/api/v1/log/entries/24296fb...\"). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 9 ;
-            sh:path slsa:sigstoreLogEntry ],
-        [ sh:description "The SLSA Source Level achieved or verified for a source repository or revision." ;
-            sh:in ( "SLSA_SOURCE_LEVEL_1" "SLSA_SOURCE_LEVEL_2" "SLSA_SOURCE_LEVEL_3" "SLSA_SOURCE_LEVEL_4" ) ;
-            sh:maxCount 1 ;
-            sh:order 1 ;
-            sh:path slsa:sourceLevel ],
-        [ sh:datatype xsd:string ;
-            sh:description "The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 6 ;
-            sh:path slsa:predicate ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., \"https://github.com/sigstore/cosign\", \"https://github.com/notaryproject/notation\"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 8 ;
-            sh:path slsa:signingTool ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 7 ;
-            sh:path slsa:attestationStorageUri ],
-        [ sh:class slsa:SourceRevision ;
-            sh:description "The source revision that this attestation describes." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 0 ;
-            sh:path slsa:revision ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "The set of software artifacts to which a predicate applies. Each entry MUST contain a digest." ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 4 ;
-            sh:path slsa:subject ],
-        [ sh:datatype xsd:string ;
-            sh:description "Technical controls actively enforced by the Source Control System when this revision was created (e.g., \"two-party review\", \"branch protection\", \"status checks\")." ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:controlsEnforced ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation)." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 5 ;
-            sh:path slsa:predicateType ],
-        [ sh:datatype xsd:string ;
-            sh:description "Always \"https://in-toto.io/Statement/v1\". Identifies the in-toto statement schema version and namespace." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 3 ;
-            sh:path slsa:_type ] ;
-    sh:targetClass slsa:SourceProvenanceAttestation .
-
-slsa:Statement a sh:NodeShape ;
-    rdfs:comment "The middle layer of an in-toto software attestation (Statement v1). Binds an authenticated predicate to one or more subject artifacts, allowing predicate-agnostic processing and storage." ;
-    sh:closed false ;
-    sh:ignoredProperties ( slsa:buildDefinition slsa:verifier slsa:buildImage slsa:resourceUri rdf:type slsa:dependencyLevels slsa:slsaVersion slsa:runDetails slsa:controlsEnforced slsa:verificationResult slsa:measurements slsa:buildId slsa:inputAttestations slsa:revision slsa:sourceLevel slsa:buildEnvLevel slsa:verifiedLevels slsa:timeVerified slsa:policy ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 4 ;
-            sh:path slsa:attestationStorageUri ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., \"https://rekor.sigstore.dev/api/v1/log/entries/24296fb...\"). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 6 ;
-            sh:path slsa:sigstoreLogEntry ],
-        [ sh:datatype xsd:string ;
-            sh:description "Always \"https://in-toto.io/Statement/v1\". Identifies the in-toto statement schema version and namespace." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:_type ],
-        [ sh:datatype xsd:string ;
-            sh:description "The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 3 ;
-            sh:path slsa:predicate ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation)." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:predicateType ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., \"https://github.com/sigstore/cosign\", \"https://github.com/notaryproject/notation\"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 5 ;
-            sh:path slsa:signingTool ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "The set of software artifacts to which a predicate applies. Each entry MUST contain a digest." ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:subject ] ;
-    sh:targetClass slsa:Statement .
-
-slsa:VerificationSummaryAttestation a sh:NodeShape ;
-    rdfs:comment "An attestation predicate (predicateType \"https://slsa.dev/verification_summary/v1\") issued by a trusted verifier stating that one or more artifacts were evaluated against a policy and the SLSA level at which they were verified. Allows consumers to trust the verifier's determination without needing access to all underlying provenance." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:description "The highest verified SLSA level for each applicable track (not including transitive dependencies). At most one level per track. Implies all levels below it within the same track." ;
-            sh:in ( "SLSA_BUILD_LEVEL_0" "SLSA_BUILD_LEVEL_1" "SLSA_BUILD_LEVEL_2" "SLSA_BUILD_LEVEL_3" "SLSA_SOURCE_LEVEL_1" "SLSA_SOURCE_LEVEL_2" "SLSA_SOURCE_LEVEL_3" "SLSA_SOURCE_LEVEL_4" ) ;
-            sh:minCount 1 ;
-            sh:order 6 ;
-            sh:path slsa:verifiedLevels ],
-        [ sh:datatype xsd:string ;
-            sh:description "The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 12 ;
-            sh:path slsa:predicate ],
-        [ sh:datatype xsd:string ;
-            sh:description "Map from SlsaResult to count of transitive dependencies verified at that level (JSON object string). Allows policy engines to enforce minimum levels on the full dependency graph." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 7 ;
-            sh:path slsa:dependencyLevels ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "All attestations consulted during verification. If non-empty, MUST be complete — it MUST list every attestation used. Each entry MUST contain a digest; SHOULD contain a URI." ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 4 ;
-            sh:path slsa:inputAttestations ],
-        [ sh:class slsa:Verifier ;
-            sh:description "Identifies the entity that performed the verification." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 0 ;
-            sh:path slsa:verifier ],
-        [ sh:datatype xsd:string ;
-            sh:description "Always \"https://in-toto.io/Statement/v1\". Identifies the in-toto statement schema version and namespace." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 9 ;
-            sh:path slsa:_type ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 13 ;
-            sh:path slsa:attestationStorageUri ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI identifying the resource associated with the artifact being verified. SHOULD be the URI from which the consumer fetches the artifact." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:resourceUri ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "The set of software artifacts to which a predicate applies. Each entry MUST contain a digest." ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 10 ;
-            sh:path slsa:subject ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., \"https://github.com/sigstore/cosign\", \"https://github.com/notaryproject/notation\"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 14 ;
-            sh:path slsa:signingTool ],
-        [ sh:description "Whether the artifact passed or failed policy verification." ;
-            sh:in ( "PASSED" "FAILED" ) ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:order 5 ;
-            sh:path slsa:verificationResult ],
-        [ sh:datatype xsd:string ;
-            sh:description "Timestamp (RFC 3339) indicating when the verification occurred." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 1 ;
-            sh:path slsa:timeVerified ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation)." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 11 ;
-            sh:path slsa:predicateType ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., \"https://rekor.sigstore.dev/api/v1/log/entries/24296fb...\"). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 15 ;
-            sh:path slsa:sigstoreLogEntry ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "The policy the subject was verified against. MUST contain a URI; SHOULD contain a digest identifying the exact policy version." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 3 ;
-            sh:path slsa:policy ],
-        [ sh:datatype xsd:string ;
-            sh:description "Version of the SLSA specification used during verification, in MAJOR.MINOR format (e.g., \"1.0\")." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 8 ;
-            sh:path slsa:slsaVersion ] ;
-    sh:targetClass slsa:VerificationSummaryAttestation .
-
-slsa:AdoptionMetadata a sh:NodeShape ;
-    rdfs:comment "Optional structured metadata capturing the SLSA adoption challenges and mitigation strategies relevant to a given attestation or deployment context. Derived from empirical analysis of 1,523 SLSA-related GitHub issues across 233 repositories (Tamanna et al., 2024, arXiv:2409.05014). Use this class to document which challenge themes apply to the current deployment and which strategies are being employed or recommended. Attach via the adoptionMetadata slot on SlsaDocument." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:description "The mitigation strategies being employed or recommended in this attestation or deployment context, drawn from the empirically identified strategy taxonomy (Tamanna et al., 2024, arXiv:2409.05014)." ;
-            sh:in ( "ENHANCE_ALIGNMENT_FLEXIBILITY" "PROVIDE_DETAILED_DOCUMENTATION" "STREAMLINE_PROVENANCE_GENERATION" "IMPROVE_VERIFICATION_PROCESS" "COLLABORATE_WITH_COMMUNITY" ) ;
-            sh:order 1 ;
-            sh:path slsa:strategies ],
-        [ sh:description "The adoption challenge themes that apply to this attestation or deployment context, drawn from the empirically identified challenge taxonomy (Tamanna et al., 2024, arXiv:2409.05014)." ;
-            sh:in ( "COMPLEX_IMPLEMENTATION" "UNCLEAR_COMMUNICATION" "LIMITED_FEASIBILITY" "UNCLEAR_RELEVANCE" ) ;
-            sh:order 0 ;
-            sh:path slsa:challenges ] ;
-    sh:targetClass slsa:AdoptionMetadata .
-
-slsa:BuildImage a sh:NodeShape ;
-    rdfs:comment "The template for a build environment, such as a VM or container image. Comprises the root filesystem, pre-installed guest OS and packages, the build executor, and the build agent. Created by a build image producer and consumed by the hosted build platform." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:class slsa:BuildProvenance ;
-            sh:description "SLSA Build Provenance for a build image, describing how the image itself was produced. Required for SLSA Build Environment L1+." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:provenance ],
-        [ sh:description "The SLSA Build Environment Level supported or represented, reflecting the strength of the integrity guarantees provided." ;
-            sh:in ( "SLSA_BUILD_ENV_LEVEL_0" "SLSA_BUILD_ENV_LEVEL_1" "SLSA_BUILD_ENV_LEVEL_2" "SLSA_BUILD_ENV_LEVEL_3" ) ;
-            sh:maxCount 1 ;
-            sh:order 2 ;
-            sh:path slsa:buildEnvLevel ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI uniquely identifying this build image version (e.g., an OCI image reference with digest)." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:id ] ;
-    sh:targetClass slsa:BuildImage .
-
-slsa:BuildMetadata a sh:NodeShape ;
-    rdfs:comment "Metadata about a specific invocation of the build, including timing information and a unique build identifier for log correlation." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "A globally unique identifier for a build invocation, useful for finding associated logs. Format defined by builder.id; treated as opaque and case-sensitive. The value SHOULD be globally unique." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:invocationId ],
-        [ sh:datatype xsd:string ;
-            sh:description "Timestamp (RFC 3339) of when the build started." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 1 ;
-            sh:path slsa:startedOn ],
-        [ sh:datatype xsd:string ;
-            sh:description "Timestamp (RFC 3339) of when the build completed." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:finishedOn ] ;
-    sh:targetClass slsa:BuildMetadata .
-
-slsa:BuildProvenance a sh:NodeShape ;
-    rdfs:comment "An attestation predicate (predicateType \"https://slsa.dev/provenance/v1\") that describes how a set of output artifacts was produced by a build platform. Consumers use this to verify artifact authenticity and trace artifacts back through the supply chain." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "The attestation payload — an arbitrary JSON object whose schema is fully determined by predicateType." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 5 ;
-            sh:path slsa:predicate ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI indicating where this signed attestation is publicly stored or retrievable. No universal standard for attestation storage location was established in SLSA v1.0; Sigstore and VCS-embedded storage are two common approaches. Explicitly recording this URI addresses the storage ambiguity identified as a significant adoption barrier: practitioners reported uncertainty about where generated attestations should be stored (Tamanna et al., 2024, LF.1)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 6 ;
-            sh:path slsa:attestationStorageUri ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI identifying the schema and semantics of the predicate field. Used to distinguish different attestation types (e.g., SLSA Provenance vs. Verification Summary Attestation)." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 4 ;
-            sh:path slsa:predicateType ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI or name of the tool used to cryptographically sign the artifact or attestation (e.g., \"https://github.com/sigstore/cosign\", \"https://github.com/notaryproject/notation\"). In the SSF reference architecture the Signing Service layer is distinct from the Build Service; recording the signing tool enables verifiers to select the matching verification workflow. For Sigstore keyless signing the value should be the Cosign release URI." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 7 ;
-            sh:path slsa:signingTool ],
-        [ sh:datatype xsd:string ;
-            sh:description "Always \"https://in-toto.io/Statement/v1\". Identifies the in-toto statement schema version and namespace." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:_type ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI of the Rekor transparency log entry recording this attestation or artifact signature (e.g., \"https://rekor.sigstore.dev/api/v1/log/entries/24296fb...\"). The Rekor log provides an immutable, auditable record of signing events that underpins Sigstore keyless signing. Verifiers can fetch this entry to confirm the cryptographic signature was recorded in the public-good log and obtain the signing certificate chain issued by Fulcio. Recording this URI enables offline and third-party verification without requiring direct access to the original signing key." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 8 ;
-            sh:path slsa:sigstoreLogEntry ],
-        [ sh:class slsa:BuildDefinition ;
-            sh:description "All inputs to the build, sufficient to initialise and reproduce it. REQUIRED at SLSA Build L1." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 0 ;
-            sh:path slsa:buildDefinition ],
-        [ sh:class slsa:RunDetails ;
-            sh:description "Details specific to this particular execution of the build, including builder identity and metadata. REQUIRED at SLSA Build L1." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:runDetails ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "The set of software artifacts to which a predicate applies. Each entry MUST contain a digest." ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 3 ;
-            sh:path slsa:subject ] ;
-    sh:targetClass slsa:BuildProvenance .
-
-slsa:Builder a sh:NodeShape ;
-    rdfs:comment "Represents the transitive closure of all software, hardware, and entities trusted to faithfully execute the build and record provenance. The builder.id is the primary basis for determining SLSA Build Level." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:class slsa:ResourceDescriptor ;
-            sh:description "Dependencies used by the control plane orchestrator that are not run within the build workload but may affect provenance generation or security guarantees." ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:builderDependencies ],
-        [ sh:datatype xsd:string ;
-            sh:description "A URI uniquely identifying an entity (build platform, verifier, build image, or source repository). The primary trust anchor for consumers." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:id ],
-        [ sh:datatype xsd:string ;
-            sh:description "A semantic version tag (e.g., \"v1.2.3\") assigned to the builder or the produced artifact at the time of the build. Practitioners recommended implementing versioning tagging early in SLSA framework deployment to facilitate progress tracking, reduce maintenance confusion from breaking changes, and enable more straightforward verification (Tamanna et al., 2024, S4.2)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 3 ;
-            sh:path slsa:versionTag ],
-        [ sh:datatype xsd:string ;
-            sh:description "Map of component names to their version strings, represented as a JSON object (string → string)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:version ] ;
-    sh:targetClass slsa:Builder .
-
-slsa:DigestSet a sh:NodeShape ;
-    rdfs:comment "A set of cryptographic digests for an artifact, keyed by algorithm name (e.g., \"sha256\", \"gitCommit\"). Provides enough information for consumers to verify artifact integrity using their preferred algorithm." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "Lowercase hex-encoded SHA-512 digest of the artifact." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 1 ;
-            sh:path slsa:sha512 ],
-        [ sh:datatype xsd:string ;
-            sh:description "Git commit SHA identifying a source-backed artifact." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:gitCommit ],
-        [ sh:datatype xsd:string ;
-            sh:description "Lowercase hex-encoded SHA-256 digest of the artifact." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:sha256 ] ;
-    sh:targetClass slsa:DigestSet .
-
-slsa:SourceRepository a sh:NodeShape ;
-    rdfs:comment "A self-contained unit that holds the content and complete revision history for a set of files, along with metadata such as branches and tags. Hosted and governed by a Source Control System." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "Canonical URI that uniquely identifies this source repository." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:id ],
-        [ sh:description "The SLSA Source Level achieved or verified for a source repository or revision." ;
-            sh:in ( "SLSA_SOURCE_LEVEL_1" "SLSA_SOURCE_LEVEL_2" "SLSA_SOURCE_LEVEL_3" "SLSA_SOURCE_LEVEL_4" ) ;
-            sh:maxCount 1 ;
-            sh:order 2 ;
-            sh:path slsa:sourceLevel ],
-        [ sh:datatype xsd:string ;
-            sh:description "Human-readable description of a repository's purpose or a resource." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 1 ;
-            sh:path slsa:description ] ;
-    sh:targetClass slsa:SourceRepository .
-
-slsa:SourceRevision a sh:NodeShape ;
-    rdfs:comment "A specific, logically immutable snapshot of a source repository's tracked files. Uniquely identified by a revision identifier such as a cryptographic hash (e.g., git commit SHA) or a path-qualified sequential number (e.g., SVN)." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:class slsa:SourceRepository ;
-            sh:description "The source repository that contains this revision." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:repository ],
-        [ sh:datatype xsd:string ;
-            sh:description "Timestamp (RFC 3339) of when this source revision was created." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 3 ;
-            sh:path slsa:timestamp ],
-        [ sh:datatype xsd:string ;
-            sh:description "Identity of the person or automation that authored this revision (e.g., an email address or platform username)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:author ],
-        [ sh:datatype xsd:string ;
-            sh:description "Immutable identifier for a source revision (e.g., git commit SHA, path-qualified sequential number)." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:revisionId ],
-        [ sh:description "The type of human or automated review process used to approve this source revision. Captures the contested forms of two-party review — including pair programming and mob programming — whose security equivalence to standard asynchronous two-party review is an open question identified in practitioner community discussions (Tamanna et al., 2024, LF.2). See ReviewTypeEnum for defined values." ;
-            sh:in ( "TWO_PARTY" "PAIR_PROGRAMMING" "MOB_PROGRAMMING" "AUTOMATED" ) ;
-            sh:maxCount 1 ;
-            sh:order 5 ;
-            sh:path slsa:reviewType ],
-        [ sh:datatype xsd:string ;
-            sh:description "Revision IDs of the parent revision(s), forming the directed acyclic graph of change history." ;
-            sh:nodeKind sh:Literal ;
-            sh:order 4 ;
-            sh:path slsa:parentRevisions ] ;
-    sh:targetClass slsa:SourceRevision .
-
-slsa:BuildDefinition a sh:NodeShape ;
-    rdfs:comment "Describes all inputs to the build in enough detail to initialise and reproduce the build. The accuracy and completeness are implied by the builder identified in runDetails." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "Top-level, independent inputs under external (tenant or user) control. MUST be complete at SLSA Build L3. Stored as a JSON object. Verifiers SHOULD reject unrecognized fields." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 1 ;
-            sh:path slsa:externalParameters ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI or name of the CI/CD pipeline orchestration system that coordinated this build (e.g., \"https://tekton.dev\", \"https://github.com/features/actions\", \"https://jenkins.io\"). In the SSF reference architecture this is the Build Service layer that feeds the Artifact Registry. Providing this field helps distinguish the orchestrator from the provenance-generating builder identity (builder.id) in complex deployments where they differ (e.g., a Tekton Pipeline running on Google Cloud Pipelines)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 6 ;
-            sh:path slsa:pipelineOrchestrator ],
-        [ sh:datatype xsd:boolean ;
-            sh:description "Whether all build inputs are fully isolated to the dependencies declared in resolvedDependencies, with no network access or filesystem references outside the explicit build graph. Hermetic builds are a stated requirement for SLSA Build L3; practitioners identified this as one of the most commonly cited implementation barriers, with over 50% of surveyed practitioners finding hermetic build requirements difficult to implement (Tamanna et al., 2024, CI.1)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 4 ;
-            sh:path slsa:hermeticBuild ],
-        [ sh:datatype xsd:string ;
-            sh:description "Parameters set internally by the build platform. Intended for debugging, incident response, and enabling reproducible builds. Stored as a JSON object; need not be verified by consumers." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:internalParameters ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI or name of the tool used to generate provenance for this build (e.g., \"https://github.com/slsa-framework/slsa-github-generator\"). Standardizing this field across builds reduces confusion, supports reproducibility verification, and aligns with the recommended strategy of simplifying and standardizing provenance generation processes (Tamanna et al., 2024, S3.1)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 5 ;
-            sh:path slsa:provenanceGenerationTool ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "Unordered collection of artifacts needed at build time (config files, source, build tools). Completeness is best effort through SLSA Build L3." ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 3 ;
-            sh:path slsa:resolvedDependencies ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI identifying the template for how to perform the build and how to interpret the parameters and dependencies. SHOULD resolve to a human-readable specification. REQUIRED at SLSA Build L1." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:buildType ] ;
-    sh:targetClass slsa:BuildDefinition .
-
-slsa:RunDetails a sh:NodeShape ;
-    rdfs:comment "Details specific to this particular execution of the build, including the trusted builder and optional run-level metadata." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:class slsa:BuildMetadata ;
-            sh:description "Metadata about this particular build execution." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:buildMetadata ],
-        [ sh:class slsa:ResourceDescriptor ;
-            sh:description "Additional artifacts produced during the build that are NOT the primary output but may be useful for debugging or incident response (e.g., build logs, intermediate artifacts)." ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 2 ;
-            sh:path slsa:byproducts ],
-        [ sh:class slsa:Builder ;
-            sh:description "Identifies the build platform that executed the build and is trusted to have correctly generated this provenance. REQUIRED at SLSA Build L1." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 0 ;
-            sh:path slsa:builder ] ;
-    sh:targetClass slsa:RunDetails .
-
-slsa:Verifier a sh:NodeShape ;
-    rdfs:comment "The entity that performed verification of an artifact and issued a Verification Summary Attestation. Consumers MUST accept only specific (signer, verifier) pairs." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "Map of component names to their version strings, represented as a JSON object (string → string)." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 1 ;
-            sh:path slsa:version ],
-        [ sh:datatype xsd:string ;
-            sh:description "A URI uniquely identifying an entity (build platform, verifier, build image, or source repository). The primary trust anchor for consumers." ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:id ] ;
-    sh:targetClass slsa:Verifier .
-
-slsa:ResourceDescriptor a sh:NodeShape ;
-    rdfs:comment "A reference to a software artifact including its location, digest, and optional metadata. Used throughout SLSA to describe inputs, outputs, and dependencies in provenance attestations." ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type ) ;
-    sh:property [ sh:datatype xsd:string ;
-            sh:description "A URI uniquely identifying a resource, such as a package URL (purl), git repository URL, or OCI image reference." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 0 ;
-            sh:path slsa:uri ],
-        [ sh:datatype xsd:string ;
-            sh:description "URI from which a resource can be downloaded, if different from its identifying URI." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 3 ;
-            sh:path slsa:downloadLocation ],
-        [ sh:datatype xsd:string ;
-            sh:description "IANA media type of a resource's content (e.g., \"application/octet-stream\", \"application/vnd.oci.image.manifest.v1+json\")." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 4 ;
-            sh:path slsa:mediaType ],
-        [ sh:datatype xsd:string ;
-            sh:description "A local name for a resource within the context of an attestation, or the name of a package, producer, or party." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:Literal ;
-            sh:order 2 ;
-            sh:path slsa:name ],
-        [ sh:datatype xsd:string ;
-            sh:description "Arbitrary vendor-specific key-value annotations." ;
-            sh:nodeKind sh:Literal ;
-            sh:order 5 ;
-            sh:path slsa:annotations ],
-        [ sh:class slsa:DigestSet ;
-            sh:description "Set of cryptographic digests of a resource's content used for integrity verification." ;
-            sh:maxCount 1 ;
-            sh:nodeKind sh:BlankNodeOrIRI ;
-            sh:order 1 ;
-            sh:path slsa:digest ] ;
-    sh:targetClass slsa:ResourceDescriptor .
-
+	rdfs:comment "A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n68 ;
+	sh:property _:c14n0 , _:c14n100 , _:c14n153 , _:c14n159 , _:c14n161 , _:c14n169 , _:c14n17 , _:c14n204 , _:c14n208 , _:c14n48 , _:c14n63 , _:c14n98 ;
+	sh:targetClass slsa:SlsaDocument .
+slsa:SlsaInfrastructureProvider a sh:NodeShape ;
+	rdfs:comment "A party that provides software or services to the other roles, such as a package registry's or a build platform's maintainers." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n193 ;
+	sh:property _:c14n189 , _:c14n3 ;
+	sh:targetClass slsa:SlsaInfrastructureProvider .
+slsa:SlsaMeasurement a sh:NodeShape ;
+	rdfs:comment "The digest of one component or state of a build environment, to compare with its reference value." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n11 ;
+	sh:property _:c14n149 , _:c14n35 ;
+	sh:targetClass slsa:SlsaMeasurement .
+slsa:SlsaNamedReference a sh:NodeShape ;
+	rdfs:comment "A user-friendly name for a revision in a repository, such as main or v1.2.3; reference_type says whether it is a branch or a tag." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n124 ;
+	sh:property _:c14n101 , _:c14n176 , _:c14n177 , _:c14n61 , _:c14n97 ;
+	sh:targetClass slsa:SlsaNamedReference .
+slsa:SlsaPackage a sh:NodeShape ;
+	rdfs:comment "A unit of software distributed under a package name, which is the primary security boundary SLSA protects. Its artifacts are the outputs of builds." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n27 ;
+	sh:property _:c14n137 , _:c14n148 , _:c14n174 , _:c14n197 , _:c14n34 , _:c14n76 ;
+	sh:targetClass slsa:SlsaPackage .
+slsa:SlsaPackageRegistry a sh:NodeShape ;
+	rdfs:comment "A distribution platform that resolves package names to immutable package artifacts within an ecosystem." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n133 ;
+	sh:property _:c14n57 , _:c14n82 ;
+	sh:targetClass slsa:SlsaPackageRegistry .
+slsa:SlsaParty a sh:NodeShape ;
+	rdfs:comment "A person or organization that takes part in a software supply chain, in one of the roles SLSA names." ;
+	sh:closed false ;
+	sh:ignoredProperties _:c14n45 ;
+	sh:property _:c14n130 , _:c14n192 ;
+	sh:targetClass slsa:SlsaParty .
+slsa:SlsaPredicate a sh:NodeShape ;
+	rdfs:comment "The base of every predicate this schema models; predicate_kind names the concrete kind." ;
+	sh:closed false ;
+	sh:ignoredProperties _:c14n84 ;
+	sh:property _:c14n65 ;
+	sh:targetClass slsa:SlsaPredicate .
+slsa:SlsaProducer a sh:NodeShape ;
+	rdfs:comment "A party that creates software and provides it to others, choosing a build platform and distributing provenance." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n77 ;
+	sh:property _:c14n194 , _:c14n56 , _:c14n64 ;
+	sh:targetClass slsa:SlsaProducer .
+slsa:SlsaRunDetails a sh:NodeShape ;
+	rdfs:comment "What is specific to one execution of a build: the platform that ran it, metadata about the run and its by-products." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n114 ;
+	sh:property _:c14n116 , _:c14n146 , _:c14n215 ;
+	sh:targetClass slsa:SlsaRunDetails .
+slsa:SlsaSourceControlSystem a sh:NodeShape ;
+	rdfs:comment "The platform or services that host a source repository and enforce its organization's policies on authentication, authorization and change management." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n37 ;
+	sh:property _:c14n19 ;
+	sh:targetClass slsa:SlsaSourceControlSystem .
+slsa:SlsaSourceProvenance a sh:NodeShape ;
+	rdfs:comment "Evidence from an SCS of how a revision came to exist and which technical controls were enforced when it did." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n96 ;
+	sh:property _:c14n113 , _:c14n47 , _:c14n91 ;
+	sh:targetClass slsa:SlsaSourceProvenance .
+slsa:SlsaSourceRepository a sh:NodeShape ;
+	rdfs:comment "A self-contained unit that holds a set of files, their revision history and metadata such as branches and tags." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n134 ;
+	sh:property _:c14n125 , _:c14n183 ;
+	sh:targetClass slsa:SlsaSourceRepository .
+slsa:SlsaSourceRevision a sh:NodeShape ;
+	rdfs:comment "A logically immutable snapshot of a repository's tracked files, with its version-control metadata: author, time and parent revisions." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n163 ;
+	sh:property _:c14n129 , _:c14n21 , _:c14n214 , _:c14n218 , _:c14n41 , _:c14n62 , _:c14n74 ;
+	sh:targetClass slsa:SlsaSourceRevision .
+slsa:SlsaTag a sh:NodeShape ;
+	rdfs:comment "A named reference meant never to move once created." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n2 ;
+	sh:property _:c14n1 , _:c14n179 , _:c14n207 , _:c14n44 , _:c14n85 ;
+	sh:targetClass slsa:SlsaTag .
+slsa:SlsaVerificationSummary a sh:NodeShape ;
+	rdfs:comment "The predicate in which a verifier records that it evaluated artifacts against a policy and the SLSA levels they met, so consumers can rely on the verifier instead of reading every underlying attestation." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n79 ;
+	sh:property _:c14n104 , _:c14n112 , _:c14n120 , _:c14n14 , _:c14n162 , _:c14n188 , _:c14n31 , _:c14n40 , _:c14n46 , _:c14n72 , _:c14n92 ;
+	sh:targetClass slsa:SlsaVerificationSummary .
+slsa:SlsaVerifier a sh:NodeShape ;
+	rdfs:comment "A party that inspects provenance or other attestations and decides whether an artifact is authentic." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n157 ;
+	sh:property _:c14n110 , _:c14n117 , _:c14n135 , _:c14n38 ;
+	sh:targetClass slsa:SlsaVerifier .
+_:c14n0 sh:class slsa:SlsaBuildPlatform ;
+	sh:description "The build platforms." ;
+	sh:nodeKind sh:IRI ;
+	sh:order 2 ;
+	sh:path slsa:build_platforms .
+_:c14n1 sh:datatype xsd:boolean ;
+	sh:description "Whether the organization has the SCS enforce its technical controls on this reference." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path slsa:protected .
+_:c14n10 sh:class slsa:SlsaSourceRepository ;
+	sh:description "The source repository this belongs to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:repository .
+_:c14n100 sh:class slsa:SlsaNamedReference ;
+	sh:description "The branches and tags." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 8 ;
+	sh:path slsa:named_references .
+_:c14n101 sh:class slsa:SlsaSourceRepository ;
+	sh:description "The source repository this belongs to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:repository .
+_:c14n102 sh:description "Where the signed attestation is stored or can be fetched." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 4 ;
+	sh:path slsa:attestation_storage_uri .
+_:c14n103 rdf:first "STREAMLINE_PROVENANCE_GENERATION" ;
+	rdf:rest _:c14n42 .
+_:c14n104 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 10 ;
+	sh:path slsa:predicate_kind .
+_:c14n105 rdf:first "PASSED" ;
+	rdf:rest _:c14n247 .
+_:c14n106 rdf:first slsa:run_details ;
+	rdf:rest _:c14n71 .
+_:c14n107 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n108 rdf:first "COMPLEX_IMPLEMENTATION" ;
+	rdf:rest _:c14n53 .
+_:c14n109 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n11 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n110 sh:description "The URI that identifies the verifier." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path slsa:verifier_id .
+_:c14n111 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n112 sh:datatype xsd:dateTime ;
+	sh:description "When the verification happened." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:time_verified .
+_:c14n113 sh:class slsa:SlsaSourceRevision ;
+	sh:description "The source revision this refers to." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:revision .
+_:c14n114 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n115 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 3 ;
+	sh:path slsa:download_location .
+_:c14n116 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "Artifacts the build produced beside its outputs that may help debugging or incident response, such as logs." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 2 ;
+	sh:path slsa:byproducts .
+_:c14n117 sh:datatype xsd:string ;
+	sh:description "The role the party acts in, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:party_type .
+_:c14n118 rdf:first "ENHANCE_ALIGNMENT_FLEXIBILITY" ;
+	rdf:rest _:c14n147 .
+_:c14n119 sh:datatype xsd:string ;
+	sh:description "The SHA-512 digest of the artifact." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:sha512 ;
+	sh:pattern "^[a-f0-9]{128}$" .
+_:c14n12 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n120 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "Every attestation the verifier consulted, each with a digest; complete when present." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 4 ;
+	sh:path slsa:input_attestations .
+_:c14n121 sh:description "The SLSA Build Environment level this meets." ;
+	sh:in _:c14n255 ;
+	sh:maxCount 1 ;
+	sh:order 0 ;
+	sh:path slsa:build_env_level .
+_:c14n122 sh:datatype xsd:string ;
+	sh:description "The role the party acts in, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:party_type .
+_:c14n123 rdf:first "SLSA_SOURCE_LEVEL_4" ;
+	rdf:rest rdf:nil .
+_:c14n124 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n125 sh:description "The stable locator the SCS gives the repository." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:repository_uri .
+_:c14n126 sh:datatype xsd:string ;
+	sh:description "The component's version string." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:component_version .
+_:c14n127 rdf:first slsa:build_platform ;
+	rdf:rest _:c14n93 .
+_:c14n128 sh:class slsa:InTotoDigestSet ;
+	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:digest .
+_:c14n129 sh:class slsa:SlsaSourceRevision ;
+	sh:description "The revisions this one descends from, which together form the change history." ;
+	sh:nodeKind sh:IRI ;
+	sh:order 4 ;
+	sh:path slsa:parent_revisions .
+_:c14n13 sh:description "The SLSA Dependency level the producer's process meets for this artifact." ;
+	sh:in _:c14n66 ;
+	sh:maxCount 1 ;
+	sh:order 2 ;
+	sh:path slsa:dependency_level .
+_:c14n130 sh:datatype xsd:string ;
+	sh:description "The party's name." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:party_name .
+_:c14n131 sh:datatype xsd:string ;
+	sh:description "The git commit id of a source revision." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:git_commit ;
+	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n132 rdf:first "AUTOMATED" ;
+	rdf:rest rdf:nil .
+_:c14n133 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n134 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n135 sh:class slsa:SlsaComponentVersion ;
+	sh:description "The version of each named component of a platform." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:component_versions .
+_:c14n136 sh:class slsa:SlsaBuildImage ;
+	sh:description "The image the environment was instantiated from." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 2 ;
+	sh:path slsa:build_image .
+_:c14n137 sh:datatype xsd:string ;
+	sh:description "The name consumers use to obtain the package within its ecosystem and registry." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:package_name .
+_:c14n138 sh:datatype xsd:boolean ;
+	sh:description "Whether the organization has the SCS enforce its technical controls on this reference." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path slsa:protected .
+_:c14n139 sh:description "The SLSA Build Environment level this meets." ;
+	sh:in _:c14n251 ;
+	sh:maxCount 1 ;
+	sh:order 0 ;
+	sh:path slsa:build_env_level .
+_:c14n14 sh:description "The highest level verified in each track, and any verified property; a level implies the levels below it." ;
+	sh:in _:c14n232 ;
+	sh:minCount 1 ;
+	sh:order 6 ;
+	sh:path slsa:verified_levels .
+_:c14n140 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n141 sh:class slsa:SlsaPredicate ;
+	sh:description "The predicate, one of the kinds this schema models; predicate_kind names which." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path slsa:predicate .
+_:c14n142 sh:datatype xsd:string ;
+	sh:description "The annotation's key." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:annotation_key .
+_:c14n143 sh:datatype xsd:string ;
+	sh:description "The role the party acts in, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:party_type .
+_:c14n144 sh:description "The in-toto statement type, always https://in-toto.io/Statement/v1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:statement_type ;
+	sh:pattern "^https://in-toto\\.io/Statement/v1$" .
+_:c14n145 sh:datatype xsd:string ;
+	sh:description "The IANA media type of the resource's content." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path slsa:media_type .
+_:c14n146 sh:class slsa:SlsaBuildMetadata ;
+	sh:description "Metadata about this execution of the build." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:build_metadata .
+_:c14n147 rdf:first "PROVIDE_DETAILED_DOCUMENTATION" ;
+	rdf:rest _:c14n103 .
+_:c14n148 sh:class slsa:SlsaPackageRegistry ;
+	sh:description "The registry the package is published to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 2 ;
+	sh:path slsa:registry .
+_:c14n149 sh:class slsa:InTotoDigestSet ;
+	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:digest .
+_:c14n15 sh:class slsa:SlsaRunDetails ;
+	sh:description "What is specific to this execution of the build; required at Build L1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:run_details .
+_:c14n150 sh:class slsa:SlsaBuildParameter ;
+	sh:description "The inputs under the tenant's control; complete at Build L3 and verified by consumers." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:external_parameters .
+_:c14n151 rdf:first slsa:time_verified ;
+	rdf:rest _:c14n156 .
+_:c14n152 sh:datatype xsd:string ;
+	sh:description "A name for the resource within the attestation that carries it." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:resource_name .
+_:c14n153 sh:class slsa:SlsaSourceRevision ;
+	sh:description "The source revisions." ;
+	sh:nodeKind sh:IRI ;
+	sh:order 7 ;
+	sh:path slsa:source_revisions .
+_:c14n154 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n155 rdf:first slsa:verifier_id ;
+	rdf:rest rdf:nil .
+_:c14n156 rdf:first slsa:verification_result ;
+	rdf:rest _:c14n203 .
+_:c14n157 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n158 rdf:first "SLSA_SOURCE_LEVEL_0" ;
+	rdf:rest _:c14n256 .
+_:c14n159 sh:class slsa:SlsaBuildImage ;
+	sh:description "The build images." ;
+	sh:nodeKind sh:IRI ;
+	sh:order 9 ;
+	sh:path slsa:build_images .
+_:c14n16 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:resource_uri .
+_:c14n160 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "The dependencies, each identified by URI and digest." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:dependencies .
+_:c14n161 sh:class slsa:SlsaDependencyInventory ;
+	sh:description "The dependency inventories." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 10 ;
+	sh:path slsa:dependency_inventories .
+_:c14n162 sh:datatype xsd:string ;
+	sh:description "Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_." ;
+	sh:nodeKind sh:Literal ;
+	sh:order 7 ;
+	sh:path slsa:organization_properties ;
+	sh:pattern "^ORG_SOURCE_" .
+_:c14n163 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n164 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path slsa:predicate_kind .
+_:c14n165 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 4 ;
+	sh:path slsa:builder_dependencies .
+_:c14n166 sh:datatype xsd:integer ;
+	sh:description "How many dependencies were verified at that level." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:minInclusive 0 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:dependency_count .
+_:c14n167 sh:class slsa:InTotoAnnotation ;
+	sh:description "Vendor-specific annotations on the resource, such as the source references a Source VSA records." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 5 ;
+	sh:path slsa:annotations .
+_:c14n168 rdf:first slsa:revision ;
+	rdf:rest _:c14n106 .
+_:c14n169 sh:class slsa:SlsaPackageRegistry ;
+	sh:description "The package registries." ;
+	sh:nodeKind sh:IRI ;
+	sh:order 4 ;
+	sh:path slsa:package_registries .
+_:c14n17 sh:class slsa:SlsaParty ;
+	sh:description "The parties, each in its role." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:parties .
+_:c14n170 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "The artifacts the predicate is about; each carries a digest." ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:subject .
+_:c14n171 sh:datatype xsd:dateTime ;
+	sh:description "When the build finished." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:finished_on .
+_:c14n172 sh:description "The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 2 ;
+	sh:path slsa:predicate_type .
+_:c14n173 rdf:first slsa:build_id ;
+	rdf:rest _:c14n75 .
+_:c14n174 sh:datatype xsd:string ;
+	sh:description "The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:ecosystem .
+_:c14n175 sh:datatype xsd:string ;
+	sh:description "The SHA-256 digest of the artifact." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:sha256 ;
+	sh:pattern "^[a-f0-9]{64}$" .
+_:c14n176 sh:datatype xsd:string ;
+	sh:description "The kind of named reference, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:reference_type .
+_:c14n177 sh:datatype xsd:string ;
+	sh:description "The reference's name, fully qualified in git, such as refs/heads/main." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:reference_name .
+_:c14n178 rdf:first "PAIR_PROGRAMMING" ;
+	rdf:rest _:c14n195 .
+_:c14n179 sh:class slsa:SlsaSourceRevision ;
+	sh:description "The source revision this refers to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path slsa:revision .
+_:c14n18 rdf:first "TWO_PARTY" ;
+	rdf:rest _:c14n178 .
+_:c14n180 rdf:first slsa:organization_properties ;
+	rdf:rest _:c14n209 .
+_:c14n181 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n182 sh:description "The CI/CD system that coordinated the build, named by URI, where it differs from the builder." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 6 ;
+	sh:path slsa:pipeline_orchestrator .
+_:c14n183 sh:class slsa:SlsaSourceControlSystem ;
+	sh:description "The source control system that hosts the repository." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path slsa:hosted_by .
+_:c14n184 sh:datatype xsd:string ;
+	sh:description "The annotation's values." ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:annotation_values .
+_:c14n185 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n186 rdf:first "SLSA_DEPENDENCY_LEVEL_3" ;
+	rdf:rest _:c14n5 .
+_:c14n187 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "The artifact whose dependencies are inventoried." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:artifact .
+_:c14n188 sh:datatype xsd:string ;
+	sh:description "The SLSA specification version the verifier applied, as MAJOR.MINOR." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 9 ;
+	sh:path slsa:slsa_version ;
+	sh:pattern "^[0-9]+\\.[0-9]+$" .
+_:c14n189 sh:datatype xsd:string ;
+	sh:description "The party's name." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:party_name .
+_:c14n19 sh:description "The URI that identifies the source control system." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:scs_uri .
+_:c14n190 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n191 sh:datatype xsd:string ;
+	sh:description "The component's name." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:component .
+_:c14n192 sh:datatype xsd:string ;
+	sh:description "The role the party acts in, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:party_type .
+_:c14n193 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n194 sh:datatype xsd:string ;
+	sh:description "The party's name." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:party_name .
+_:c14n195 rdf:first "MOB_PROGRAMMING" ;
+	rdf:rest _:c14n132 .
+_:c14n196 rdf:first slsa:controls_enforced ;
+	rdf:rest _:c14n87 .
+_:c14n197 sh:description "Where a GUAC instance answers queries about the package's dependency and provenance graph." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 4 ;
+	sh:path slsa:guac_uri .
+_:c14n198 rdf:first slsa:verifier ;
+	rdf:rest rdf:nil .
+_:c14n199 rdf:first "SLSA_DEPENDENCY_LEVEL_1" ;
+	rdf:rest _:c14n216 .
+_:c14n2 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n20 sh:description "The challenge themes that apply." ;
+	sh:in _:c14n108 ;
+	sh:order 0 ;
+	sh:path slsa:challenges .
+_:c14n200 sh:class slsa:SlsaBuildDefinition ;
+	sh:description "The inputs to the build; required at Build L1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:build_definition .
+_:c14n201 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n202 sh:class slsa:SlsaBuildParameter ;
+	sh:description "The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 2 ;
+	sh:path slsa:internal_parameters .
+_:c14n203 rdf:first slsa:verified_levels ;
+	rdf:rest _:c14n198 .
+_:c14n204 sh:class slsa:SlsaSourceRepository ;
+	sh:description "The source repositories." ;
+	sh:nodeKind sh:IRI ;
+	sh:order 6 ;
+	sh:path slsa:source_repositories .
+_:c14n205 rdf:first "UNCLEAR_RELEVANCE" ;
+	rdf:rest rdf:nil .
+_:c14n206 rdf:first "SLSA_BUILD_LEVEL_3" ;
+	rdf:rest rdf:nil .
+_:c14n207 sh:class slsa:SlsaSourceRepository ;
+	sh:description "The source repository this belongs to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:repository .
+_:c14n208 sh:class slsa:SlsaSourceControlSystem ;
+	sh:description "The source control systems." ;
+	sh:nodeKind sh:IRI ;
+	sh:order 5 ;
+	sh:path slsa:source_control_systems .
+_:c14n209 rdf:first slsa:policy ;
+	rdf:rest _:c14n81 .
+_:c14n21 sh:datatype xsd:string ;
+	sh:description "The identity of the person or automation that authored the revision." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:authored_by .
+_:c14n210 sh:datatype xsd:dateTime ;
+	sh:description "When the build started." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:started_on .
+_:c14n211 sh:datatype xsd:string ;
+	sh:description "The parameter's name." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:parameter_name .
+_:c14n212 sh:class slsa:SlsaBuildImageProducer ;
+	sh:description "The party that created and distributes the image." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path slsa:produced_by .
+_:c14n213 sh:description "The URI that identifies the image version, such as an OCI reference with its digest." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path slsa:image_uri .
+_:c14n214 sh:description "The SLSA Source level the SCS asserts for the revision." ;
+	sh:in _:c14n158 ;
+	sh:maxCount 1 ;
+	sh:order 5 ;
+	sh:path slsa:source_level .
+_:c14n215 sh:class slsa:SlsaBuildPlatform ;
+	sh:description "The build platform that ran the build and is trusted to have written this provenance; required at Build L1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:builder .
+_:c14n216 rdf:first "SLSA_DEPENDENCY_LEVEL_2" ;
+	rdf:rest _:c14n186 .
+_:c14n217 sh:datatype xsd:string ;
+	sh:description "A digest over a directory's content, as the in-toto framework defines it." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path slsa:dir_hash .
+_:c14n218 sh:description "The form of review that approved the revision." ;
+	sh:in _:c14n18 ;
+	sh:maxCount 1 ;
+	sh:order 6 ;
+	sh:path slsa:review_type .
+_:c14n219 rdf:first "SLSA_SOURCE_LEVEL_4" ;
+	rdf:rest _:c14n220 .
+_:c14n22 sh:datatype xsd:string ;
+	sh:description "The reference's name, fully qualified in git, such as refs/heads/main." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:reference_name .
+_:c14n220 rdf:first "SLSA_SOURCE_TWO_PARTY_REVIEWED" ;
+	rdf:rest _:c14n221 .
+_:c14n221 rdf:first "SLSA_BUILD_REPRODUCED" ;
+	rdf:rest _:c14n222 .
+_:c14n222 rdf:first "FAILED" ;
+	rdf:rest rdf:nil .
+_:c14n223 rdf:first "SLSA_SOURCE_LEVEL_3" ;
+	rdf:rest _:c14n219 .
+_:c14n224 rdf:first "SLSA_SOURCE_LEVEL_2" ;
+	rdf:rest _:c14n223 .
+_:c14n225 rdf:first "SLSA_SOURCE_LEVEL_1" ;
+	rdf:rest _:c14n224 .
+_:c14n226 rdf:first "SLSA_SOURCE_LEVEL_0" ;
+	rdf:rest _:c14n225 .
+_:c14n227 rdf:first "SLSA_SOURCE_LEVEL_UNEVALUATED" ;
+	rdf:rest _:c14n226 .
+_:c14n228 rdf:first "SLSA_BUILD_LEVEL_3" ;
+	rdf:rest _:c14n227 .
+_:c14n229 rdf:first "SLSA_BUILD_LEVEL_2" ;
+	rdf:rest _:c14n228 .
+_:c14n23 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n230 rdf:first "SLSA_BUILD_LEVEL_1" ;
+	rdf:rest _:c14n229 .
+_:c14n231 rdf:first "SLSA_BUILD_LEVEL_0" ;
+	rdf:rest _:c14n230 .
+_:c14n232 rdf:first "SLSA_BUILD_LEVEL_UNEVALUATED" ;
+	rdf:rest _:c14n231 .
+_:c14n233 rdf:first "SLSA_SOURCE_LEVEL_4" ;
+	rdf:rest _:c14n234 .
+_:c14n234 rdf:first "SLSA_SOURCE_TWO_PARTY_REVIEWED" ;
+	rdf:rest _:c14n235 .
+_:c14n235 rdf:first "SLSA_BUILD_REPRODUCED" ;
+	rdf:rest _:c14n236 .
+_:c14n236 rdf:first "FAILED" ;
+	rdf:rest rdf:nil .
+_:c14n237 rdf:first "SLSA_SOURCE_LEVEL_3" ;
+	rdf:rest _:c14n233 .
+_:c14n238 rdf:first "SLSA_SOURCE_LEVEL_2" ;
+	rdf:rest _:c14n237 .
+_:c14n239 rdf:first "SLSA_SOURCE_LEVEL_1" ;
+	rdf:rest _:c14n238 .
+_:c14n24 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n240 rdf:first "SLSA_SOURCE_LEVEL_0" ;
+	rdf:rest _:c14n239 .
+_:c14n241 rdf:first "SLSA_SOURCE_LEVEL_UNEVALUATED" ;
+	rdf:rest _:c14n240 .
+_:c14n242 rdf:first "SLSA_BUILD_LEVEL_3" ;
+	rdf:rest _:c14n241 .
+_:c14n243 rdf:first "SLSA_BUILD_LEVEL_2" ;
+	rdf:rest _:c14n242 .
+_:c14n244 rdf:first "SLSA_BUILD_LEVEL_1" ;
+	rdf:rest _:c14n243 .
+_:c14n245 rdf:first "SLSA_BUILD_LEVEL_0" ;
+	rdf:rest _:c14n244 .
+_:c14n246 rdf:first "SLSA_BUILD_LEVEL_UNEVALUATED" ;
+	rdf:rest _:c14n245 .
+_:c14n247 rdf:first "FAILED" ;
+	rdf:rest rdf:nil .
+_:c14n248 rdf:first "SLSA_BUILD_ENV_LEVEL_2" ;
+	rdf:rest _:c14n249 .
+_:c14n249 rdf:first "SLSA_BUILD_ENV_LEVEL_3" ;
+	rdf:rest rdf:nil .
+_:c14n25 sh:datatype xsd:string ;
+	sh:description "The parameter's value." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:parameter_value .
+_:c14n250 rdf:first "SLSA_BUILD_ENV_LEVEL_1" ;
+	rdf:rest _:c14n248 .
+_:c14n251 rdf:first "SLSA_BUILD_ENV_LEVEL_0" ;
+	rdf:rest _:c14n250 .
+_:c14n252 rdf:first "SLSA_BUILD_ENV_LEVEL_2" ;
+	rdf:rest _:c14n253 .
+_:c14n253 rdf:first "SLSA_BUILD_ENV_LEVEL_3" ;
+	rdf:rest rdf:nil .
+_:c14n254 rdf:first "SLSA_BUILD_ENV_LEVEL_1" ;
+	rdf:rest _:c14n252 .
+_:c14n255 rdf:first "SLSA_BUILD_ENV_LEVEL_0" ;
+	rdf:rest _:c14n254 .
+_:c14n256 rdf:first "SLSA_SOURCE_LEVEL_1" ;
+	rdf:rest _:c14n257 .
+_:c14n257 rdf:first "SLSA_SOURCE_LEVEL_2" ;
+	rdf:rest _:c14n258 .
+_:c14n258 rdf:first "SLSA_SOURCE_LEVEL_3" ;
+	rdf:rest _:c14n123 .
+_:c14n259 rdf:first "SLSA_BUILD_LEVEL_1" ;
+	rdf:rest _:c14n260 .
+_:c14n26 rdf:first slsa:build_definition ;
+	rdf:rest _:c14n39 .
+_:c14n260 rdf:first "SLSA_BUILD_LEVEL_2" ;
+	rdf:rest _:c14n206 .
+_:c14n27 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n28 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path slsa:resolved_dependencies .
+_:c14n29 sh:class slsa:SlsaComponentVersion ;
+	sh:description "The version of each named component of a platform." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:component_versions .
+_:c14n3 sh:datatype xsd:string ;
+	sh:description "The role the party acts in, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:party_type .
+_:c14n30 sh:description "The highest SLSA Build level the platform's provenance can meet." ;
+	sh:in _:c14n54 ;
+	sh:maxCount 1 ;
+	sh:order 2 ;
+	sh:path slsa:build_level .
+_:c14n31 sh:description "The URI consumers fetch the artifact from, which the verifier verified it as." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:resource_uri .
+_:c14n32 rdf:first slsa:measurements ;
+	rdf:rest _:c14n180 .
+_:c14n33 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n34 sh:description "The SECURITY-INSIGHTS.yml file of the project that produces the package." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 5 ;
+	sh:path slsa:security_insights_uri .
+_:c14n35 sh:datatype xsd:string ;
+	sh:description "The component or state that was measured, such as the bootloader, guest kernel, build agent or root filesystem." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:measured_component .
+_:c14n36 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n37 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n38 sh:datatype xsd:string ;
+	sh:description "The party's name." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:party_name .
+_:c14n39 rdf:first slsa:build_env_level ;
+	rdf:rest _:c14n173 .
+_:c14n4 sh:description "The tool that generated this provenance, named by URI." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 5 ;
+	sh:path slsa:provenance_generation_tool .
+_:c14n40 sh:description "Whether the subject passed the policy." ;
+	sh:in _:c14n105 ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:order 5 ;
+	sh:path slsa:verification_result .
+_:c14n41 sh:class slsa:SlsaSourceRepository ;
+	sh:description "The source repository this belongs to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:repository .
+_:c14n42 rdf:first "IMPROVE_VERIFICATION_PROCESS" ;
+	rdf:rest _:c14n99 .
+_:c14n43 rdf:first slsa:input_attestations ;
+	rdf:rest _:c14n32 .
+_:c14n44 sh:datatype xsd:string ;
+	sh:description "The reference's name, fully qualified in git, such as refs/heads/main." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:reference_name .
+_:c14n45 rdf:first rdf:type ;
+	rdf:rest _:c14n127 .
+_:c14n46 sh:class slsa:SlsaVerifier ;
+	sh:description "The verifier that made this determination." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:verifier .
+_:c14n47 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:predicate_kind .
+_:c14n48 sh:class slsa:InTotoStatement ;
+	sh:description "The attestations, as in-toto statements." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:attestations .
+_:c14n49 rdf:first "LIMITED_FEASIBILITY" ;
+	rdf:rest _:c14n205 .
+_:c14n5 rdf:first "SLSA_DEPENDENCY_LEVEL_4" ;
+	rdf:rest rdf:nil .
+_:c14n50 sh:description "The transparency log entry that records the signature, such as a Rekor entry." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 6 ;
+	sh:path slsa:transparency_log_entry .
+_:c14n51 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n52 sh:description "The strategy themes applied or recommended." ;
+	sh:in _:c14n118 ;
+	sh:order 1 ;
+	sh:path slsa:strategies .
+_:c14n53 rdf:first "UNCLEAR_COMMUNICATION" ;
+	rdf:rest _:c14n49 .
+_:c14n54 rdf:first "SLSA_BUILD_LEVEL_0" ;
+	rdf:rest _:c14n259 .
+_:c14n55 sh:class slsa:SlsaBuildPlatform ;
+	sh:description "The build platform this party or component belongs to or uses." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:build_platform .
+_:c14n56 sh:datatype xsd:string ;
+	sh:description "The role the party acts in, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:party_type .
+_:c14n57 sh:description "The URI that identifies the registry." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path slsa:registry_uri .
+_:c14n58 sh:description "The level the dependencies were verified at." ;
+	sh:in _:c14n246 ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:order 0 ;
+	sh:path slsa:verified_level .
+_:c14n59 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n6 sh:class slsa:SlsaBuildProvenance ;
+	sh:description "The build provenance of the image itself, required at Build Environment L1." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 2 ;
+	sh:path slsa:provenance .
+_:c14n60 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n61 sh:datatype xsd:boolean ;
+	sh:description "Whether the organization has the SCS enforce its technical controls on this reference." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path slsa:protected .
+_:c14n62 sh:datatype xsd:dateTime ;
+	sh:description "When the revision was created." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:authored_at .
+_:c14n63 sh:class slsa:SlsaAdoptionMetadata ;
+	sh:description "How the deployment the document describes fares against the adoption study's themes." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 11 ;
+	sh:path slsa:adoption_metadata .
+_:c14n64 sh:class slsa:SlsaBuildPlatform ;
+	sh:description "The build platform this party or component belongs to or uses." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:build_platform .
+_:c14n65 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:predicate_kind .
+_:c14n66 rdf:first "SLSA_DEPENDENCY_LEVEL_0" ;
+	rdf:rest _:c14n199 .
+_:c14n67 sh:datatype xsd:string ;
+	sh:description "The git tree id of a source revision's content." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:git_tree ;
+	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n68 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n69 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n7 sh:description "The tool that signed the attestation, named by URI, such as Cosign or Notation." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 5 ;
+	sh:path slsa:signing_tool .
+_:c14n70 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n71 rdf:first slsa:slsa_version ;
+	rdf:rest _:c14n151 .
+_:c14n72 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "The policy the subject was verified against, by URI and preferably by digest too." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path slsa:policy .
+_:c14n73 sh:datatype xsd:string ;
+	sh:description "The party's name." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:party_name .
+_:c14n74 sh:datatype xsd:string ;
+	sh:description "The revision identifier the SCS assigns, such as a git commit id or a path- qualified sequence number." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:revision_id .
+_:c14n75 rdf:first slsa:build_image ;
+	rdf:rest _:c14n196 .
+_:c14n76 sh:class slsa:InTotoResourceDescriptor ;
+	sh:description "The immutable artifacts the package name has resolved to." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path slsa:package_artifacts .
+_:c14n77 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n78 sh:datatype xsd:string ;
+	sh:description "An identifier for this build invocation, in a format the builder defines; useful for finding its logs." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:invocation_id .
+_:c14n79 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n8 sh:datatype xsd:string ;
+	sh:description "The kind of named reference, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:reference_type .
+_:c14n80 sh:datatype xsd:string ;
+	sh:description "The immutable identifier of the build execution the environment was assigned to." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:build_id .
+_:c14n81 rdf:first slsa:resource_uri ;
+	rdf:rest _:c14n168 .
+_:c14n82 sh:datatype xsd:string ;
+	sh:description "The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path slsa:ecosystem .
+_:c14n83 sh:class slsa:SlsaMeasurement ;
+	sh:description "The measurements of the environment's components taken during boot." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path slsa:measurements .
+_:c14n84 rdf:first rdf:type ;
+	rdf:rest _:c14n26 .
+_:c14n85 sh:datatype xsd:string ;
+	sh:description "The kind of named reference, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:reference_type .
+_:c14n86 sh:class slsa:SlsaSourceRevision ;
+	sh:description "The source revision this refers to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path slsa:revision .
+_:c14n87 rdf:first slsa:dependency_levels ;
+	rdf:rest _:c14n43 .
+_:c14n88 sh:description "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:build_type .
+_:c14n89 sh:datatype xsd:boolean ;
+	sh:description "Whether the build could reach only the dependencies it declared, with no other network or filesystem access." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path slsa:hermetic .
+_:c14n9 sh:description "The URI that identifies the platform and determines its SLSA Build level." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path slsa:builder_id .
+_:c14n90 sh:datatype xsd:boolean ;
+	sh:description "Whether the platform is a hosted service on shared or dedicated infrastructure rather than an individual's workstation." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:hosted .
+_:c14n91 sh:datatype xsd:string ;
+	sh:description "The technical controls the SCS enforced when the revision was created, as the organization documents them." ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:controls_enforced .
+_:c14n92 sh:class slsa:SlsaDependencyLevelCount ;
+	sh:description "How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 8 ;
+	sh:path slsa:dependency_levels .
+_:c14n93 rdf:first slsa:component_versions ;
+	rdf:rest _:c14n155 .
+_:c14n94 sh:datatype xsd:string ;
+	sh:description "The party's name." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:party_name .
+_:c14n95 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:predicate_kind .
+_:c14n96 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n97 sh:class slsa:SlsaSourceRevision ;
+	sh:description "The source revision this refers to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path slsa:revision .
+_:c14n98 sh:class slsa:SlsaPackage ;
+	sh:description "The packages." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path slsa:packages .
+_:c14n99 rdf:first "COLLABORATE_WITH_COMMUNITY" ;
+	rdf:rest rdf:nil .
