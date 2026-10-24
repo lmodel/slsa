@@ -3,22 +3,22 @@ type: Service
 id: https://w3id.org/lmodel/slsa/knowledge/services/documentation-site
 genre: reference
 title: slsa documentation site
-description: The MkDocs site at `https://lmodel.github.io/slsa`, generated from the slsa schema and deployed to GitHub Pages on every push to main, with a preview built for each pull request from a branch of this repository.
-resource: mkdocs.yml
-endpoint: https://lmodel.github.io/slsa
-documentation: https://lmodel.github.io/slsa
+description: The Astro Starlight site in `website/`, built from the README, `docs/`, the schema's gen-doc pages and the knowledge bundle by the Knowledge website workflow, which publishes it at `https://lmodel.github.io/slsa/` once `KNOWLEDGE_WEBSITE_ENABLED` is true. It keeps the addresses of the retired mkdocs site.
+resource: website/site.config.mjs
+endpoint: https://lmodel.github.io/slsa/
+documentation: https://lmodel.github.io/slsa/
 sources:
-  - resource: .github/workflows/deploy-docs.yaml
-    title: the deploy workflow
-  - resource: .github/workflows/test_pages_build.yaml
-    title: the pull request preview workflow
+  - resource: .github/workflows/knowledge-website.yaml
+    title: the build and deploy workflow
+  - resource: website/README.md
+    title: what each page is built from, and how to preview the site
   - resource: docs/
     title: the site's hand-written pages
 dependsOn:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T22:17:38Z"
+  at: "2026-10-23T23:25:14Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -27,8 +27,18 @@ verified:
 
 # Documentation site
 
-`.github/workflows/deploy-docs.yaml` runs on every push to `main` and by hand. It runs `just gen-doc`, which writes the per-element pages into the git-ignored `docs/elements/` and the merged schema into `docs/schema/`, and then `mkdocs gh-deploy`, which publishes the site to the `gh-pages` branch.
+`website/` holds an Astro Starlight site that the ktl-website skill laid down. `website/README.md` says what each page is built from:
 
-`.github/workflows/test_pages_build.yaml` builds the site with `mkdocs build` for each opened, reopened or updated pull request from a branch of this repository, and publishes a preview with `rossjrw/pr-preview-action`. It skips a pull request from a fork, whose token cannot push the preview to `gh-pages`.
+- the README is the home page;
+- each page under `docs/` is a page under `docs/`;
+- each concept in `.lokf/knowledge/` is a page under `knowledge/`, with its trust label;
+- `CHANGELOG.md` is a page per release;
+- the schema's `gen-doc` pages are pages under `schema/`.
 
-The hand-written pages are `docs/index.md` and `docs/about.md`. The home page links the generated element pages, the about page, and the two schema files the site serves: `schema/slsa.yaml`, and `schema/slsa_merged.yaml`, the same with no imports, for vendoring or loading offline. The about page links `docs/Secure_Software_Factory_Whitepaper.pdf`. `just testdoc` builds the site and serves it locally.
+The site also serves the four files `lokf export` writes under `knowledge/`.
+
+`.github/workflows/knowledge-website.yaml` builds the site, with a check of every link between its pages, on each push and pull request that touches its inputs, and every Monday. It deploys the default branch's build to GitHub Pages only once the repository variable `KNOWLEDGE_WEBSITE_ENABLED` is `true`, and deploys nothing for a pull request.
+
+`website/site.config.mjs` keeps four settings of the retired mkdocs site under `MKDOCS`: its docs folder, its nav, its `exclude_docs` and its `site_url`. The nav orders the docs pages, so `docs/index.md` opens the Guide at `docs/` as its Overview and `docs/about.md` follows. `exclude_docs` keeps `docs/templates-linkml/` off the site. The files mkdocs served from `docs/` are served at the same addresses: `schema/slsa.yaml`, `schema/slsa_merged.yaml`, the same schema with no imports, and `Secure_Software_Factory_Whitepaper.pdf`. Each address mkdocs gave a page, such as `elements/<name>/`, sends the browser on to the page's new address, such as `schema/<name>/`.
+
+To preview the site, run `npm ci --ignore-scripts` and then `npm run dev` in `website/`. It needs Node.js 22.12 or later and uv.

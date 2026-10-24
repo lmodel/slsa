@@ -11,8 +11,8 @@ distribution:
   - name: slsa.yaml
     access_url: https://github.com/lmodel/slsa/blob/main/src/slsa/schema/slsa.yaml
     media_type: application/yaml
-  - name: Documentation site
-    access_url: https://lmodel.github.io/slsa
+  - name: Schema pages
+    access_url: https://lmodel.github.io/slsa/schema/
     media_type: text/html
 derivedFrom:
   - https://w3id.org/lmodel/slsa/knowledge/references/slsa-specification
@@ -22,7 +22,7 @@ relatedTo:
   - https://w3id.org/lmodel/slsa/knowledge/references/openssf-supply-chain
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T22:17:38Z"
+  at: "2026-10-23T23:24:55Z"
 status: draft
 verified:
   - by: process:ktl-librarian

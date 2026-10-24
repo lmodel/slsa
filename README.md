@@ -14,7 +14,7 @@ Supply-chain Levels for Software Artifacts (LinkML)
 
 ## Repository Structure
 
-* [docs/](docs/): mkdocs-managed documentation
+* [docs/](docs/): the documentation pages the website shows
   * [elements/](docs/elements/): generated schema documentation
 * [examples/](examples/): examples of using the schema
 * [project/](project/): project files (these files are auto-generated, do not edit)
@@ -26,6 +26,7 @@ Supply-chain Levels for Software Artifacts (LinkML)
       Python datamodel
 * [tests/](tests/): Python tests
   * [data/](tests/data): example data
+* [website/](website/): the documentation website, an Astro Starlight site built from the README, `docs/`, the schema's pages and the knowledge bundle
 
 ## Developer Tools
 
