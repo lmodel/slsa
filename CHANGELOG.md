@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-24
+
 ### Changed
 
 - **The knowledge site replaces the mkdocs site at the same address.** It is built from `website/` by the Knowledge website workflow, and the old `/elements/` pages redirect to `/schema/`.
