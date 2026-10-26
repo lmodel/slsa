@@ -7,7 +7,7 @@ verification summaries.
 
 - [Schema documentation](elements/index.md), generated from the schema
 - [About](about.md): what the model renders and where its elements come from
-- [`slsa.yaml`](schema/slsa.yaml): the schema as the site serves it, and
+- [`slsa.yaml`](schema/slsa.yaml): the schema with its modules' elements folded in, and
   [`slsa_merged.yaml`](schema/slsa_merged.yaml): the same with no imports, for
   vendoring or loading offline
 
