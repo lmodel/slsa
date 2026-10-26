@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-26
+
 ### Fixed
 
 - **The old mkdocs addresses still reach their pages once the website is at Knowledge Trust Ladder v0.56.0.** `site.config.mjs` names them in `REDIRECTS` and keeps `docs/templates-linkml/` off the site with `DOCS.exclude`, since v0.56.0 no longer reads `MKDOCS`. The two schema files and the whitepaper are linked on GitHub, not served by the site.
