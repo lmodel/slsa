@@ -34,9 +34,12 @@ function required(name) {
 export const REPO = required("REPO");
 export const REPO_URL = `https://github.com/${REPO}`;
 export const CUSTOM_DOMAIN = given.CUSTOM_DOMAIN ?? null;
-// A custom domain serves the site at its root; a project site lives under
-// the owner's Pages domain at /<repository>/.
-export const SITE = CUSTOM_DOMAIN ? `https://${CUSTOM_DOMAIN}` : required("SITE").replace(/\/$/, "");
+// A custom domain serves the site at its root. A project site is served
+// under the owner's Pages domain at /<repository>/. The host is lowercased,
+// as Astro writes it in every canonical and social card address, so an owner
+// spelt with capitals (BretFisher) still matches the links the build checks.
+const lowerHost = (url) => url.replace(/^(https?:\/\/)([^/]+)/i, (_, scheme, host) => scheme + host.toLowerCase());
+export const SITE = lowerHost(CUSTOM_DOMAIN ? `https://${CUSTOM_DOMAIN}` : required("SITE").replace(/\/$/, ""));
 export const BASE = CUSTOM_DOMAIN ? "" : required("BASE").replace(/\/$/, "");
 export const SITE_URL = SITE + BASE;
 export const TITLE = required("TITLE");
@@ -44,7 +47,7 @@ export const DESCRIPTION = required("DESCRIPTION");
 export const BRANCH = given.BRANCH ?? "main";
 
 // Links to repository files name the commit the site was built from, so a
-// reader lands on the text the page was rendered from.
+// reader opens the text the page was rendered from.
 export const REF = (() => {
   if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA;
   try {
@@ -105,185 +108,33 @@ export const FAVICON = LOGO?.favicon ? `/favicon${extname(LOGO.favicon)}` : "/fa
 // which asks for the list while this module is still loading.
 let docsPagesRead = null;
 
-// The mkdocs site this one replaces: four of mkdocs.yml's settings, in its
-// own keys. "auto" reads them from mkdocs.yml at the root, and an object
-// gives them here once mkdocs.yml is gone. They settle "auto" DOCS (the
-// folder, the order of the pages, the pages left out), the files served
-// beside the pages, and the redirects that keep mkdocs' addresses.
-export const MKDOCS = (() => {
-  const value = given.MKDOCS === undefined ? "auto" : given.MKDOCS;
-  if (value === null) return null;
-  let settings;
-  if (value === "auto") {
-    if (!isFile("mkdocs.yml")) return null;
-    settings = readMkdocsYml(readFileSync(resolve(REPO_ROOT, "mkdocs.yml"), "utf8"));
-  } else if (typeof value === "object" && !Array.isArray(value)) settings = value;
-  else fail('MKDOCS must be "auto", null, or mkdocs.yml\'s settings as { docs_dir, nav, exclude_docs, site_url }');
-  const docs_dir = (settings.docs_dir ?? "docs").replace(/\/$/, "");
-  if (!isDir(docs_dir)) {
-    if (value === "auto") return null;
-    fail(`MKDOCS names docs_dir ${docs_dir}, which is not a folder in the repository`);
-  }
-  if (settings.nav !== undefined && !Array.isArray(settings.nav)) fail("MKDOCS.nav must be a list, as in mkdocs.yml");
-  if (settings.exclude_docs !== undefined && typeof settings.exclude_docs !== "string") fail("MKDOCS.exclude_docs must be a string, as in mkdocs.yml");
-  return {
-    docs_dir,
-    nav: settings.nav ?? [],
-    exclude_docs: settings.exclude_docs ?? "",
-    site_url: typeof settings.site_url === "string" ? settings.site_url.replace(/\/$/, "") : null,
-    // mkdocs gives a page a folder address unless this is false, and only
-    // folder addresses are kept.
-    use_directory_urls: settings.use_directory_urls !== false,
-  };
-})();
-
-/**
- * The four settings the site takes from mkdocs.yml, read from its block
- * YAML with no YAML parser, so that config.mjs runs before npm ci. A value
- * is a plain or quoted scalar, a block scalar (| or >), or, for nav, a list
- * whose entries are a file, `Title: file`, or `Title:` over a list of its
- * own. Every other key is passed over, with the Python tags mkdocs.yml can
- * hold. A nav in flow style, [a, b], stops with a pointer to MKDOCS.
- */
-function readMkdocsYml(text) {
-  const lines = text.split(/\r?\n/);
-  const indent = (line) => line.match(/^ */)[0].length;
-  const blank = (line) => /^\s*(?:#.*)?$/.test(line);
-  const scalar = (raw) => {
-    const s = raw.trim();
-    if (/^'.*'$/.test(s)) return s.slice(1, -1).replaceAll("''", "'");
-    if (/^".*"$/.test(s)) return s.slice(1, -1).replace(/\\(["\\])/g, "$1").replaceAll("\\n", "\n");
-    return s.replace(/\s+#.*$/, "");
-  };
-  const list = (block) => {
-    const items = [];
-    const at = indent(block[0]);
-    for (let i = 0; i < block.length; ) {
-      const line = block[i];
-      if (indent(line) !== at || !/^-(?:\s|$)/.test(line.slice(at))) fail(`mkdocs.yml's nav has a line this reader cannot place: "${line.trim()}"; give MKDOCS its settings in site.config.mjs`);
-      let j = i + 1;
-      while (j < block.length && indent(block[j]) > at) j++;
-      const entry = line.slice(at + 1).trim();
-      const pair = entry.match(/^("[^"]*"|'[^']*'|[^"':#][^:#]*?):(?:\s+(.*))?$/);
-      if (!pair) items.push(scalar(entry));
-      else if (pair[2] !== undefined && scalar(pair[2]) !== "") items.push({ [scalar(pair[1])]: scalar(pair[2]) });
-      else items.push({ [scalar(pair[1])]: j > i + 1 ? list(block.slice(i + 1, j)) : null });
-      i = j;
-    }
-    return items;
-  };
-  const settings = {};
-  for (let i = 0; i < lines.length; i++) {
-    const m = lines[i].match(/^(docs_dir|site_url|use_directory_urls|exclude_docs|nav):(?:\s+(.*?))?\s*$/);
-    if (!m) continue;
-    const [, key, inline = ""] = m;
-    // The value's own lines: those indented under the key, and for nav a
-    // list at the key's own indent, which YAML allows too.
-    let j = i + 1;
-    while (j < lines.length && (blank(lines[j]) || indent(lines[j]) > 0 || (key === "nav" && /^-(?:\s|$)/.test(lines[j])))) j++;
-    const block = lines.slice(i + 1, j);
-    i = j - 1;
-    if (/^[|>]/.test(inline)) {
-      const body = block.slice(0, block.findLastIndex((line) => line.trim() !== "") + 1);
-      const at = Math.min(...body.filter((line) => line.trim() !== "").map(indent));
-      const kept = body.map((line) => line.slice(at));
-      settings[key] = inline.startsWith("|") ? kept.join("\n") + "\n" : kept.join(" ") + "\n";
-    } else if (key === "nav") {
-      if (inline.startsWith("[")) fail("mkdocs.yml's nav is in flow style, which this reader does not read; give MKDOCS its settings in site.config.mjs");
-      const items = block.filter((line) => !blank(line));
-      settings.nav = items.length ? list(items) : [];
-    } else if (key === "use_directory_urls") {
-      settings[key] = !/^(?:false|no|off)$/i.test(scalar(inline));
-    } else {
-      settings[key] = scalar(inline);
-    }
-  }
-  return settings;
-}
-
-/** A gitignore pattern, as exclude_docs writes one, as a regular expression over a path. */
-function gitignorePattern(pattern) {
-  const anchored = pattern.startsWith("/") || pattern.slice(0, -1).includes("/");
-  const body = pattern
-    .replace(/^\//, "")
-    .split(/(\*\*\/|\/\*\*|\*\*|\*|\?|\[[^\]]*\])/)
-    .map((part) => {
-      if (part === "**/") return "(?:.*/)?";
-      if (part === "/**") return "(?:/.*)?";
-      if (part === "**") return ".*";
-      if (part === "*") return "[^/]*";
-      if (part === "?") return "[^/]";
-      if (/^\[[^\]]*\]$/.test(part)) return part.replace(/^\[!/, "[^");
-      return part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    })
-    .join("");
-  return new RegExp(`${anchored ? "^" : "^(?:.*/)?"}${body}$`);
-}
-
-// The pages mkdocs leaves out: a file or folder whose name starts with a dot
-// and the templates/ folder, which mkdocs leaves out unasked, then each line
-// of exclude_docs, the last that matches deciding.
-const MKDOCS_EXCLUDE = MKDOCS
-  ? [".*", "/templates/", ...MKDOCS.exclude_docs.split("\n")]
-      .map((line) => line.trim())
-      .filter((line) => line && !line.startsWith("#"))
-      .map((line) => {
-        const negated = line.startsWith("!");
-        const pattern = negated ? line.slice(1) : line;
-        return { negated, folder: pattern.endsWith("/"), re: gitignorePattern(pattern.replace(/\/$/, "")) };
-      })
-  : [];
-
-/** Whether mkdocs leaves out a path under its docs folder: the file itself, or a folder it sits in. */
-export function mkdocsExcludes(path) {
-  const parts = path.split("/");
-  let excluded = false;
-  for (const rule of MKDOCS_EXCLUDE) {
-    const hit = parts.some((_, i) => (i < parts.length - 1 || !rule.folder) && rule.re.test(parts.slice(0, i + 1).join("/")));
-    if (hit) excluded = !rule.negated;
-  }
-  return excluded;
-}
-
-/** mkdocs' nav as a list of { title, file }, sections opened in order; a link that leaves the site is skipped. */
-function mkdocsNav(items = MKDOCS?.nav ?? []) {
-  return items.flatMap((item) => {
-    if (typeof item === "string") return /^[a-z]+:/i.test(item) ? [] : [{ title: null, file: item }];
-    if (!item || typeof item !== "object") return [];
-    return Object.entries(item).flatMap(([title, entry]) =>
-      Array.isArray(entry) ? mkdocsNav(entry) : typeof entry === "string" && !/^[a-z]+:/i.test(entry) ? [{ title, file: entry }] : [],
-    );
-  });
-}
-
 export const DOCS = (() => {
   const value = given.DOCS === undefined ? "auto" : given.DOCS;
   if (value === null) return null;
   const docs =
     value === "auto"
-      ? { dir: MKDOCS?.docs_dir ?? "docs" }
+      ? { dir: "docs" }
       : typeof value === "string"
         ? { dir: value }
-        : { dir: value.dir ?? "docs", groups: value.groups };
+        : { dir: value.dir ?? "docs", groups: value.groups, exclude: value.exclude };
   if (!isDir(docs.dir)) {
     if (value === "auto") return null;
     fail(`DOCS names ${docs.dir}, which is not a folder in the repository`);
   }
-  // "auto" over an mkdocs site takes its nav as the pages' order and their
-  // labels. A page the nav does not list follows by title, as in mkdocs.
-  const nav =
-    value === "auto" && MKDOCS
-      ? mkdocsNav()
-          .filter((entry) => entry.file.endsWith(".md"))
-          .map((entry) => ({ name: posix.normalize(entry.file).slice(0, -3), label: entry.title }))
-      : null;
-  return { dir: docs.dir, groups: docs.groups ?? null, nav };
+  // The paths under the folder that are not pages of the site, each a file
+  // or a folder. A path that names no file or folder is a typo, and stops
+  // the build here.
+  const exclude = (docs.exclude ?? []).map((path) => (typeof path === "string" ? path.replace(/^\/+|\/+$/g, "") : path));
+  for (const path of exclude) {
+    if (typeof path !== "string" || !has(`${docs.dir}/${path}`)) fail(`DOCS.exclude names ${path}, which is not in ${docs.dir}/`);
+  }
+  return { dir: docs.dir, groups: docs.groups ?? null, exclude };
 })();
 
 /**
  * A docs page's address under the site's base, as Starlight gives it: each
  * folder and the file name in lower case, with the characters
- * github-slugger drops dropped, and an index page at its folder's address.
+ * github-slugger drops left out, and an index page at its folder's address.
  */
 export function docsRoute(name) {
   const slug = name
@@ -502,10 +353,10 @@ export function conceptIds() {
  * pages are the files git sees there, tracked or untracked but never
  * ignored, so a folder a generator writes stays out. Where there is no git,
  * they are the files a walk of the folder finds.
- * A file PAGES names has a page of its own and is left out here, and so is
- * the schema's folder, which has a topic of its own, and a page mkdocs
- * leaves out of the folder it reads. The list is read once per process,
- * since the home page's buttons, the links and the sync all ask for it.
+ * A file PAGES names has a page of its own and is left out here, and so are
+ * the schema's folder, which has a topic of its own, and each path
+ * DOCS.exclude names. The list is read once per process, since the home
+ * page's buttons, the links and the sync all ask for it.
  */
 export function docsPages() {
   if (docsPagesRead) return docsPagesRead;
@@ -513,62 +364,30 @@ export function docsPages() {
   const dir = DOCS.dir;
   const extra = new Set(PAGES.map((p) => p.source));
   const schema = SCHEMA ? `${SCHEMA.dir}/` : null;
-  const mkdocs = MKDOCS && MKDOCS.docs_dir === dir;
-  return (docsPagesRead = Object.freeze(
-    filesIn(dir)
-      .filter((f) => f.endsWith(".md") && !extra.has(f) && !(schema && f.startsWith(schema)) && isFile(f))
-      .map((f) => f.slice(dir.length + 1, -3))
-      .filter((name) => !(mkdocs && mkdocsExcludes(`${name}.md`)))
-      .sort(),
-  ));
-}
-
-/** The files git sees under a folder, tracked or untracked but never ignored, or the files a walk finds where there is no git. */
-function filesIn(dir) {
+  let files;
   const ls = spawnSync("git", ["-C", REPO_ROOT, "ls-files", "--cached", "--others", "--exclude-standard", "--", dir], {
     encoding: "utf8",
   });
-  if (ls.status === 0) return ls.stdout.split("\n").filter((f) => f.startsWith(dir + "/"));
-  const files = [];
-  const walk = (d, prefix) => {
-    for (const name of readdirSync(d).sort()) {
-      const full = resolve(d, name);
-      if (statSync(full).isDirectory()) walk(full, prefix + name + "/");
-      else files.push(prefix + name);
-    }
-  };
-  walk(resolve(REPO_ROOT, dir), dir + "/");
-  return files;
-}
-
-// The site's own top folders and files, which an mkdocs file or address may
-// not take. The schema's folder is shared: its pages are folders, and a
-// file such as schema/<name>.yaml sits beside them.
-const OWN_FOLDERS = new Set(["_astro", "assets", "browse", "changelog", "docs", "graph", "health", "knowledge", "og", "pagefind", "workspace"]);
-const OWN_FILES = new Set(["CNAME", "index.md", "llms.txt", "llms-full.txt", "favicon.svg", "favicon.png", "favicon.ico"]);
-
-/**
- * The files mkdocs copied from its docs folder into its site, which this site
- * serves at the same addresses: each file git sees there that is not a page,
- * outside js/ and css/, which held mkdocs' own scripts and styles, outside
- * the schema's folder, and not left out by exclude_docs. A file whose
- * address the site already takes is skipped, with the reason.
- */
-export function mkdocsFiles() {
-  if (!MKDOCS) return { served: [], skipped: [] };
-  const dir = MKDOCS.docs_dir;
-  const schema = SCHEMA ? `${SCHEMA.dir}/` : null;
-  const served = [];
-  const skipped = [];
-  for (const file of filesIn(dir)) {
-    const path = file.slice(dir.length + 1);
-    if (file.endsWith(".md") || /^(?:js|css)\//.test(path) || (schema && file.startsWith(schema)) || mkdocsExcludes(path) || !isFile(file)) continue;
-    const top = path.split("/")[0];
-    if (top === path ? OWN_FILES.has(path) : OWN_FOLDERS.has(top)) skipped.push({ file, why: `the site writes its own /${top === path ? path : `${top}/`}` });
-    else if (path === "index.html" || path.endsWith("/index.html")) skipped.push({ file, why: "a page of the site takes its address" });
-    else served.push({ file, path });
+  if (ls.status === 0) {
+    files = ls.stdout.split("\n").filter(Boolean);
+  } else {
+    files = [];
+    const walk = (d, prefix) => {
+      for (const name of readdirSync(d).sort()) {
+        const full = resolve(d, name);
+        if (statSync(full).isDirectory()) walk(full, prefix + name + "/");
+        else files.push(prefix + name);
+      }
+    };
+    walk(resolve(REPO_ROOT, dir), dir + "/");
   }
-  return { served, skipped };
+  return (docsPagesRead = Object.freeze(
+    files
+      .filter((f) => f.startsWith(dir + "/") && f.endsWith(".md") && !extra.has(f) && !(schema && f.startsWith(schema)) && isFile(f))
+      .map((f) => f.slice(dir.length + 1, -3))
+      .filter((name) => !DOCS.exclude.some((path) => `${name}.md` === path || name === path || name.startsWith(`${path}/`)))
+      .sort(),
+  ));
 }
 
 // The kinds of page gen-doc writes, by the word that opens its title
@@ -615,41 +434,25 @@ export function schemaPages() {
 }
 
 /**
- * The addresses mkdocs gave the pages, each sent on to the page's address
- * here, so a link or an IRI that names an mkdocs page still reaches it: the
- * schema's pages, which a w3id rule may name, and each docs page. mkdocs
- * served a page at its path under the docs folder, an index or README page
- * at its folder. Astro writes a page per entry that sends the browser on.
- * An address the site takes itself is skipped, with the reason.
+ * The old addresses REDIRECTS names, each redirected to a page of the site
+ * under its base, as a map for astro.config.mjs. An entry whose key and value
+ * both end in [...slug] stands for one redirect per schema page, so the
+ * redirects follow the schema as it grows. The schema's folder is read once
+ * the sync has built it.
  */
-export function mkdocsRedirects() {
-  if (!MKDOCS || !MKDOCS.use_directory_urls) return { redirects: [], skipped: [] };
-  const redirects = [];
-  const skipped = [];
-  const slugs = new Set(PAGES.map((p) => p.slug));
-  const add = (from, to) => {
-    const top = from.split("/")[0];
-    if (from === "") return;
-    if (OWN_FOLDERS.has(top) || top === "schema" || slugs.has(top)) skipped.push({ from: `/${from}/`, why: `the site serves its own /${top}/` });
-    else redirects.push({ from: `/${from}`, to: `${BASE}${to}` });
-  };
-  const docsDir = `${MKDOCS.docs_dir}/`;
-  if (SCHEMA && SCHEMA.dir.startsWith(docsDir) && schemaPages().length > 0) {
-    const folder = SCHEMA.dir.slice(docsDir.length);
-    if (folder !== "schema") {
-      add(folder, "/schema/");
-      for (const page of schemaPages()) add(`${folder}/${page.name}`, `/schema/${page.name}/`);
-    }
+export function redirects() {
+  const value = given.REDIRECTS ?? {};
+  if (typeof value !== "object" || Array.isArray(value)) fail("REDIRECTS must be an object, each old address to a page of the site");
+  const map = {};
+  for (const [from, to] of Object.entries(value)) {
+    if (typeof to !== "string" || !from.startsWith("/") || !to.startsWith("/")) fail(`REDIRECTS: ${from} and ${to} must each be an address that starts with /`);
+    const slug = from.endsWith("/[...slug]");
+    if (slug !== to.endsWith("/[...slug]")) fail(`REDIRECTS: ${from} to ${to}; both ends close with /[...slug], or neither does`);
+    if (slug && !SCHEMA) fail(`REDIRECTS: ${from} stands for the schema's pages, and the site shows no schema`);
+    if (!slug) map[from] = BASE + to;
+    else for (const page of schemaPages()) map[from.replace("[...slug]", page.name)] = `${BASE}${to.replace("[...slug]", page.name)}/`;
   }
-  if (DOCS && DOCS.dir === MKDOCS.docs_dir) {
-    const names = new Set(docsPages());
-    for (const name of names) {
-      const at = name.replace(/(?:^|\/)(?:index|README)$/, "");
-      if (at !== name && name.endsWith("README") && names.has(name.replace(/README$/, "index"))) continue;
-      add(at, docsRoute(name));
-    }
-  }
-  return { redirects, skipped };
+  return map;
 }
 
 const DATABASE = /\.(?:sqlite3?|db)$/;
@@ -687,7 +490,6 @@ export function browseFiles() {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const settled = { REPO, SITE, BASE, TITLE, DESCRIPTION, BRANCH, CUSTOM_DOMAIN, REF, LOGO, ASSETS, DOCS, CHANGELOG, RELEASE_TAG, PAGES, HOME, SCHEMA, BROWSE, WORKSPACE, MKDOCS };
-  const mkdocs = MKDOCS ? { mkdocsFiles: mkdocsFiles(), mkdocsRedirects: mkdocsRedirects() } : {};
-  console.log(JSON.stringify({ ...settled, docsPages: docsPages(), bundleGroups: bundleGroups(), workspace: workspaceLinks(), ...mkdocs }, null, 2));
+  const settled = { REPO, SITE, BASE, TITLE, DESCRIPTION, BRANCH, CUSTOM_DOMAIN, REF, LOGO, ASSETS, DOCS, CHANGELOG, RELEASE_TAG, PAGES, HOME, SCHEMA, BROWSE, WORKSPACE };
+  console.log(JSON.stringify({ ...settled, docsPages: docsPages(), bundleGroups: bundleGroups(), workspace: workspaceLinks(), redirects: redirects() }, null, 2));
 }
