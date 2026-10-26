@@ -41,29 +41,23 @@ export const LOGO = "auto";
 // /assets/. "auto" takes .assets/ when there is one.
 export const ASSETS = "auto";
 
-// The docs pages: a folder, and the sidebar groups its pages sit in, each
-// page named by its path under the folder without .md. With no groups, every
-// page sits in one Guides group, by title. With groups, the sync stops with
-// an error when a group names a missing page or a page has no group, so a new
-// page cannot go missing from the sidebar. "auto" takes docs/ when there is
-// one; null shows no docs pages.
-//   export const DOCS = { dir: "docs", groups: [{ label: "Guides", pages: ["install", "usage"] }] };
-export const DOCS = "auto";
+// The docs pages: a folder, the sidebar groups its pages sit in (each page
+// named by its path under the folder, without .md), and the paths under the
+// folder that are not pages of the site, each a file or a folder. With no
+// groups, every page sits in one Guides group, by title, with the folder's
+// index.md first as its Overview. With groups, the sync stops with an error
+// when a group names a missing page or a page has no group, so a new page
+// cannot go missing from the sidebar. "auto" takes docs/ when there is one;
+// null shows no docs pages.
+//   export const DOCS = { dir: "docs", groups: [{ label: "Guides", pages: ["install", "usage"] }], exclude: ["templates-linkml"] };
+export const DOCS = { dir: "docs", exclude: ["templates-linkml"] };
 
-// The mkdocs site this one replaces, as four of mkdocs.yml's settings. "auto"
-// reads them from mkdocs.yml at the root, when there is one: "auto" DOCS then
-// takes mkdocs' docs folder, its nav's order and labels, and its exclude_docs;
-// the files mkdocs served from that folder are served at the same addresses;
-// and each page's mkdocs address sends the browser on to its page here. Once
-// mkdocs.yml is retired, give its settings here, in its own keys; null reads
-// none.
-//   export const MKDOCS = { docs_dir: "docs", nav: [{ Home: "index.md" }, { About: "about.md" }], exclude_docs: "/templates-linkml/\n", site_url: "https://acme.github.io/acme-platform" };
-export const MKDOCS = {
-  docs_dir: "docs",
-  nav: [{ Home: "index.md" }, { Schema: "elements/index.md" }, { About: "about.md" }],
-  exclude_docs: "/templates-linkml/\n",
-  site_url: "https://lmodel.github.io/slsa",
-};
+// Old addresses under BASE, each redirected to a page of the site, such as
+// the addresses a retired mkdocs site gave its pages and a w3id rule still
+// names. An entry whose key and value both end in /[...slug] stands for one
+// redirect per schema page.
+//   export const REDIRECTS = { "/elements": "/schema/", "/elements/[...slug]": "/schema/[...slug]", "/about": "/docs/about/" };
+export const REDIRECTS = { "/elements": "/schema/", "/elements/[...slug]": "/schema/[...slug]", "/about": "/docs/about/" };
 
 // A Keep a Changelog file, read as a page per release. "auto" takes
 // CHANGELOG.md when it holds a released version.
