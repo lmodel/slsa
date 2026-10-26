@@ -1,11 +1,11 @@
-// Runs after `astro build`: every link and image from one page of the site
-// to another must reach a file in dist/, and a link to a heading must reach
-// an element with that id, and a page's social card, named by its full
-// address, must be a file too. The generated text files, llms.txt,
+// This script runs after `astro build`. Every link and image from one page
+// of the site to another must reach a file in dist/, and a link to a heading
+// must reach an element with that id. A page's social card, named by its
+// full address, must be a file too. The generated text files, llms.txt,
 // llms-full.txt and the bundle log's feed, name the site's pages by their
-// full addresses, and those must reach a file as well. A page that keeps an
-// mkdocs address sends the browser on, and where it sends it must be a page.
-// A link that leaves the site is not checked here; validate.yml's lychee run checks the
+// full addresses, and those must reach a file as well. Each redirect page
+// that REDIRECTS writes must point at a page. This script does not check a
+// link that leaves the site. validate.yml's lychee run checks the
 // repository's own Markdown.
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";

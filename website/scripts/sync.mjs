@@ -1,5 +1,5 @@
 // Writes the site's generated sources from the repository before every
-// build, so that no page is written twice. Nothing it writes is committed;
+// build, so that no page is written twice. Nothing it writes is committed.
 // website/.gitignore lists each place:
 //
 //   src/content/docs/  a page for the README, each docs/ page, each concept,
@@ -9,8 +9,7 @@
 //                      changelogs.ts, the releases collection or none; and
 //                      CHANGELOG.md, which the releases section reads
 //   public/            the figures, llms.txt, llms-full.txt, the favicon,
-//                      the files an mkdocs site served from its docs
-//                      folder, the databases under browse/, the home page, each
+//                      the databases under browse/, the home page, each
 //                      docs page and each extra page as Markdown beside its
 //                      page, and under knowledge/ the four files `lokf
 //                      export` writes, every bundle file as it is in the
@@ -40,7 +39,6 @@ import {
   HOME,
   LOGO,
   LOGO_FILES,
-  MKDOCS,
   PAGES,
   REF,
   RELEASE_TAG,
@@ -57,8 +55,6 @@ import {
   docsPages,
   docsRoute,
   groupLabel,
-  mkdocsFiles,
-  mkdocsRedirects,
   schemaPages,
   workspaceLinks,
 } from "./config.mjs";
@@ -70,7 +66,7 @@ const GENERATED = resolve(SITE_DIR, "src", "generated");
 const PUBLIC = resolve(SITE_DIR, "public");
 const PUBLIC_KNOWLEDGE = resolve(PUBLIC, "knowledge");
 const REPORT = resolve(REPO_ROOT, ".lokf", "scripts", "knowledge-report.sh");
-// The bundle log's feed holds the log's newest days, a day to an entry; the
+// The bundle log's feed holds the log's newest days, a day to an entry. The
 // log page holds them all.
 const FEED_DAYS = 20;
 
@@ -89,7 +85,7 @@ const MERMAID = /^[ \t>]*(`{3,}|~{3,})[ \t]*mermaid(?=\s|$)/m;
 // JSON is YAML, so the frontmatter needs no YAML writer. A page with a
 // mermaid diagram is marked, and only such a page loads the script that draws
 // it (src/components/Mermaid.astro). Only on such a page does the Markdown
-// plugin leave a diagram for that script; elsewhere it stays code.
+// plugin leave a diagram for that script. Elsewhere it stays code.
 function page(path, frontmatter, body) {
   const marked = MERMAID.test(body) ? { ...frontmatter, ktlMermaid: true } : frontmatter;
   write(path, `---\n${JSON.stringify(marked, null, 2)}\n---\n\n${body.trim()}\n`);
@@ -323,7 +319,7 @@ function toneOf(label) {
   if (label.startsWith("checked by automation")) return "automation";
   return "nobody";
 }
-// The ladder, top first; src/trust.ts words each state in the same order.
+// The ladder, top first. src/trust.ts words each state in the same order.
 const TONE_ORDER = ["person", "edited", "automation", "nobody", "retired"];
 
 /**
@@ -342,10 +338,56 @@ function audienceOf(data) {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-/** A relation slot's name as words, so derivedFrom reads "Derived from". */
-function slotName(slot) {
-  const words = slot.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/_/g, " ").toLowerCase();
-  return words.charAt(0).toUpperCase() + words.slice(1);
+// How the bundle's prose spells a word with a capital past its first letter,
+// such as SLSA or GitHub, by the word in lower case. A name gives no sign
+// that Slsa is an acronym, so the prose decides. The spellings are found
+// before any name is worded.
+let spellings = new Map();
+
+/**
+ * The spellings the bundle's titles, descriptions, definitions and bodies
+ * use, leaving out code, links and addresses. A spelling counts only where it
+ * is at least as common as the word in lower case, so "it" never reads "IT".
+ */
+function findSpellings(concepts) {
+  const counts = new Map();
+  for (const c of concepts) {
+    const prose = [c.data.title, c.data.description, c.data.definition, c.body]
+      .filter(Boolean)
+      .join("\n")
+      .replace(/^(`{3,}|~{3,})[^]*?^\1/gm, "")
+      .replace(/`[^`]*`/g, "")
+      .replace(/\]\([^)]*\)/g, "]")
+      .replace(/<?https?:\/\/\S+/g, "");
+    for (const word of prose.match(/[A-Za-z][A-Za-z0-9]*/g) ?? []) {
+      const key = word.toLowerCase();
+      if (!counts.has(key)) counts.set(key, new Map());
+      counts.get(key).set(word, (counts.get(key).get(word) ?? 0) + 1);
+    }
+  }
+  const found = new Map();
+  for (const [key, forms] of counts) {
+    const [best, n] = [...forms].filter(([w]) => /^.+[A-Z]/.test(w)).sort((a, b) => b[1] - a[1])[0] ?? [];
+    if (best && n >= (forms.get(key) ?? 0)) found.set(key, best);
+  }
+  return found;
+}
+
+/**
+ * A class or slot name as words, so derivedFrom reads "Derived from" and
+ * SlsaSourceControlSystem "SLSA source control system": a word the name
+ * writes in capitals keeps them, and so does one the prose spells with them.
+ * Within a sentence, the first word takes no capital of its own.
+ */
+function slotName(slot, { inSentence = false } = {}) {
+  const words = slot
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .split(/[\s_]+/)
+    .filter(Boolean)
+    .map((w) => spellings.get(w.toLowerCase()) ?? (/^[A-Z0-9]{2,}$/.test(w) ? w : w.toLowerCase()));
+  const text = words.join(" ");
+  return !inSentence && words[0] === words[0]?.toLowerCase() ? text.charAt(0).toUpperCase() + text.slice(1) : text;
 }
 
 function githubFile(repoPath) {
@@ -379,7 +421,7 @@ const licenceMd = (value) => {
 };
 
 // The page head carries the concept as JSON-LD. Escaping <, > and & keeps a
-// field value such as "</script>" from ending the block; \uXXXX is still JSON.
+// field value such as "</script>" from ending the block, and \uXXXX is still JSON.
 const scriptSafe = (doc) =>
   JSON.stringify(doc).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026");
 
@@ -398,6 +440,7 @@ function buildConcepts(exported, labels) {
     const label = labels.get(id) ?? "nobody has checked this yet";
     return { id, iri, data, body, text, label, tone: toneOf(label), title: String(data.title ?? id) };
   });
+  spellings = findSpellings(concepts);
   const byIri = new Map(concepts.map((c) => [c.iri, c]));
   const linkTo = (iri) => {
     const c = byIri.get(iri);
@@ -427,6 +470,8 @@ function buildConcepts(exported, labels) {
       id: c.id,
       iri: c.iri,
       type: String(c.data.type ?? "Concept"),
+      typeName: slotName(String(c.data.type ?? "Concept")),
+      ...(c.data.genre ? { genre: String(c.data.genre) } : {}),
       group: c.id.includes("/") ? c.id.split("/")[0] : "",
       ...(c.data.status ? { status: String(c.data.status) } : {}),
       label: c.label,
@@ -452,10 +497,10 @@ function buildConcepts(exported, labels) {
       })),
       incoming: edges
         .filter((e) => e.target === c.iri && byIri.has(e.source))
-        .map((e) => ({ name: slotName(e.slot ?? e.predicate).toLowerCase(), from: linkTo(e.source) }))
+        .map((e) => ({ name: slotName(e.slot ?? e.predicate, { inSentence: true }), from: linkTo(e.source) }))
         .sort((a, b) => a.from.text.localeCompare(b.from.text)),
       ...(licence ? { licence: licenceOf(licence) } : {}),
-      // The graph explorer opened on this concept; the id keeps its slashes.
+      // The graph explorer opened on this concept. The id keeps its slashes.
       graph: `${BASE}/graph/?concept=${encodeURIComponent(c.id).replace(/%2F/g, "/")}`,
       files: {
         markdown: `${BASE}/knowledge/${c.id}.md`,
@@ -569,9 +614,10 @@ const labelSpan = (c) => `<span class="ktl-label ktl-label--${c.tone}">${c.label
 
 /**
  * What a link to a concept shows before the reader follows it: the title,
- * the type, the trust label and the definition, by concept id, for
+ * the type and genre, the trust label and the definition, by concept id, for
  * src/components/ConceptPreviews.astro to read. The definition keeps its
- * code spans, as the card shows them; the description stands in without one.
+ * code spans, as the card shows them. A concept with no definition shows its
+ * description instead.
  */
 function writePreviews(concepts) {
   const previews = Object.fromEntries(
@@ -583,7 +629,8 @@ function writePreviews(concepts) {
           c.id,
           {
             title: c.title,
-            type: slotName(c.record.type),
+            type: c.record.typeName,
+            ...(c.record.genre ? { genre: c.record.genre } : {}),
             label: c.label,
             tone: c.tone,
             ...(definition ? { definition: String(definition) } : {}),
@@ -648,7 +695,7 @@ function writeOverview(root, concepts, health) {
     `- [datasets.jsonld](${k}/datasets.jsonld): a schema.org Dataset description for each Dataset or Table concept.`,
     `- [index.md](${k}/index.md): the bundle's root file, which declares the header above.`,
     `- [log.xml](${k}/log.xml): the [bundle log](${k}/log/) as an Atom feed, its newest ${FEED_DAYS} days.`,
-    `- [previews.json](${k}/previews.json): each concept's title, type, trust label and definition, which a link to the concept shows before it is followed.`,
+    `- [previews.json](${k}/previews.json): each concept's title, type, genre, trust label and definition, which a link to the concept shows before it is followed.`,
     `- Each concept page links the concept's own Markdown file and its JSON-LD, at the concept's path with \`.md\` or \`.jsonld\` added.`,
     ...(existsSync(resolve(REPO_ROOT, ".github", "workflows", "knowledge-release.yaml"))
       ? [`- The bundle as it stood at each release is a zip on the [releases page](${REPO_URL}/releases).`]
@@ -710,7 +757,7 @@ function logLineTimes() {
       stdio: ["ignore", "pipe", "ignore"],
       maxBuffer: 256 * 1024 * 1024,
     });
-    // Each line opens with its commit and its number; the commit's details
+    // Each line opens with its commit and its number. The commit's details
     // follow the first line it owns, and a tab opens the line's own text.
     const bySha = new Map();
     let sha = null;
@@ -835,7 +882,7 @@ async function writeLogFeed(root) {
 }
 
 // The health page is an Astro page, src/pages/health.astro, which charts
-// these numbers; the sync only gathers them.
+// these numbers. The sync only gathers them.
 function writeHealth(concepts, health, full) {
   const count = (list) => Object.fromEntries(TONE_ORDER.map((t) => [t, list.filter((c) => c.tone === t).length]));
   const groups = bundleGroups().map((group) => {
@@ -883,17 +930,14 @@ function writeDocs() {
     const { title, body } = takeTitle(repoFile(source));
     return { name, source, title: title ?? name, description: describe(body), body, route: docsRoute(name) };
   });
-  // Grouped pages keep their group's order. Ungrouped ones sit by title, the
-  // folder's index first, as its overview, and each one's sidebar entry says
-  // where. An mkdocs nav puts the pages it lists first, in its order and
-  // under its labels.
+  // Grouped pages keep their group's order. Ungrouped ones sit by title, with
+  // the folder's index first as its overview, and each one's sidebar entry
+  // says where.
   const order = groups ? groups.flatMap((g) => g.pages) : null;
-  const nav = new Map((DOCS.nav ?? []).map((entry, i) => [entry.name, { ...entry, at: i }]));
-  const rank = (d) => (d.name === "index" ? -1 : nav.has(d.name) ? nav.get(d.name).at : nav.size);
+  const rank = (d) => (d.name === "index" ? 0 : 1);
   docs.sort((a, b) => (order ? order.indexOf(a.name) - order.indexOf(b.name) : rank(a) - rank(b) || a.title.localeCompare(b.title)));
   docs.forEach((d, i) => {
     d.markdown = writeMarkdown(d.source, d.route);
-    const label = d.name === "index" ? "Overview" : nav.get(d.name)?.label;
     page(
       resolve(CONTENT, "docs", `${d.name}.md`),
       {
@@ -902,7 +946,7 @@ function writeDocs() {
         // A page named after its sidebar group opens the group, labelled as
         // each bundle group's index is.
         ...(groups && groups.some((g) => g.label.toLowerCase() === d.name) ? { sidebar: { label: "Overview" } } : {}),
-        ...(groups ? {} : { sidebar: { order: i + 1, ...(label ? { label } : {}) } }),
+        ...(groups ? {} : { sidebar: { order: i + 1, ...(d.name === "index" ? { label: "Overview" } : {}) } }),
         ktlSource: d.source,
         editUrl: `${REPO_URL}/edit/${BRANCH}/${d.source}`,
         head: [markdownAlternate(d.markdown)],
@@ -967,9 +1011,9 @@ function writeHome() {
   // The home page: the source from its title down, under a hero. The logo
   // above a README's title is for GitHub, and the hero shows the logo itself.
   // A line that links this site's home page is left out, since here it would
-  // link to the page it is on: the README keeps that link, and the pointers
-  // the site gives as buttons, on a line of their own. Each step passes over
-  // fenced code, and a source with no title stops the build. With no source,
+  // link to the page it is on. The README keeps that link on a line of its
+  // own, together with the pointers the site gives as buttons. Each step
+  // passes over fenced code, and a source with no title stops the build. With no source,
   // the page opens with the bundle's own introduction, the text its overview
   // page opens with.
   const home = [`](${SITE_URL})`, `](${SITE_URL}/)`, `<${SITE_URL}>`, `<${SITE_URL}/>`];
@@ -1163,7 +1207,7 @@ function writeLlmsFullTxt(concepts, root) {
       `## ${c.title}`,
       "",
       `- Label: ${c.label}`,
-      `- Type: ${slotName(c.record.type)}`,
+      `- Type: ${c.record.typeName}`,
       `- Address: ${c.iri}`,
       `- Page: ${page}`,
       `- Markdown: ${SITE_URL}/knowledge/${c.id}.md`,
@@ -1308,29 +1352,6 @@ function writeChangelog() {
   write(resolve(GENERATED, "CHANGELOG.md"), text);
 }
 
-/**
- * The files an mkdocs site served from its docs folder, such as a schema's
- * YAML or a PDF, at the addresses mkdocs gave them, so the links to them
- * keep working. It returns how many it served.
- */
-function copyMkdocsFiles() {
-  const { served, skipped } = mkdocsFiles();
-  for (const { file, path } of served) copyFromRepository(resolve(REPO_ROOT, file), resolve(PUBLIC, path));
-  for (const { file, why } of skipped) console.warn(`sync: left out ${file}, which mkdocs served: ${why}`);
-  return served.length;
-}
-
-/** The redirects that keep mkdocs' addresses, which astro.config.mjs writes; the sync names each one it skips and counts the rest. */
-function mkdocsAddresses() {
-  if (MKDOCS?.site_url && MKDOCS.site_url !== SITE_URL) {
-    console.warn(`sync: mkdocs' site_url is ${MKDOCS.site_url}, not this site's ${SITE_URL}, so its old addresses are kept under ${SITE_URL}`);
-  }
-  if (MKDOCS && !MKDOCS.use_directory_urls) console.warn("sync: mkdocs' use_directory_urls is false, so its .html addresses are not kept");
-  const { redirects, skipped } = mkdocsRedirects();
-  for (const { from, why } of skipped) console.warn(`sync: mkdocs' address ${from} is not kept: ${why}`);
-  return redirects.length;
-}
-
 function copyAssets() {
   if (ASSETS) copyFromRepository(resolve(REPO_ROOT, ASSETS), resolve(PUBLIC, "assets"));
   mkdirSync(GENERATED, { recursive: true });
@@ -1378,9 +1399,8 @@ function buildFolder(name, part, isBuilt) {
  * each line that opens a <details> or holds its <summary>, and before each
  * that closes it, so the YAML inside is a code block, not raw HTML. The
  * mermaid diagrams stay as written: the Markdown plugin leaves them for the
- * browser to draw, and their
- * links, such as ../Action/, resolve because each page's address keeps its
- * element's name.
+ * browser to draw, and their links, such as ../Action/, resolve because each
+ * page's address keeps its element's name.
  */
 function fromGenDoc(text) {
   let wrapped = false;
@@ -1496,7 +1516,7 @@ function withoutPlugins(metadata) {
 /**
  * The data: each database in BROWSE's folder, served under /browse/ with its
  * Datasette metadata, and a page that opens each in Datasette Lite.
- * config.mjs's browseFiles says which files those are; the rest of the
+ * config.mjs's browseFiles says which files those are. The rest of the
  * folder is never copied. The metadata is published as metadata.json, which
  * Datasette reads as readily as YAML, without its plugins' settings.
  */
@@ -1568,8 +1588,6 @@ readingLevels = findReadingLevels(concepts);
 
 copyAssets();
 copyBundleFiles();
-const mkdocsServed = copyMkdocsFiles();
-const mkdocsKept = mkdocsAddresses();
 const byGroup = writeConceptPages(concepts);
 writeGroupPages(byGroup);
 writePreviews(concepts);
@@ -1591,6 +1609,5 @@ console.log(
   `sync: ${concepts.length} concept pages, ${byGroup.size} groups, ${docs.length} docs pages, ` +
     (SCHEMA ? `${schemaCount} schema pages, ` : "") +
     (BROWSE ? `${databases.length} databases, ` : "") +
-    (MKDOCS ? `${mkdocsServed} mkdocs files, ${mkdocsKept} mkdocs addresses kept, ` : "") +
     `${labels.size} labels, built from ${REF.slice(0, 12)}`,
 );

@@ -2,15 +2,12 @@
 // use this, so a link means the same page wherever it is written.
 import { statSync } from "node:fs";
 import { posix, resolve } from "node:path";
-import { ASSETS, BASE, DOCS, HOME, PAGES, REF, REPO_ROOT, REPO_URL, SCHEMA, docsPages, docsRoute, mkdocsFiles, schemaPages } from "./config.mjs";
+import { ASSETS, BASE, DOCS, HOME, PAGES, REF, REPO_ROOT, REPO_URL, SCHEMA, docsPages, docsRoute, schemaPages } from "./config.mjs";
 
 const ABSOLUTE = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 // The docs pages the site renders: a link to any other file under the docs
 // folder goes to the repository.
 const DOC_PAGES = new Set(docsPages());
-// The files an mkdocs site served from its docs folder, which the sync
-// serves at the same addresses.
-const MKDOCS_FILES = new Map(mkdocsFiles().served.map((f) => [f.file, f.path]));
 // The schema's pages, read the first time a link needs them after the folder
 // exists, since the sync builds the folder after this module loads.
 let schemaNames = null;
@@ -48,7 +45,6 @@ export function route(repoPath) {
     const name = p.slice(DOCS.dir.length + 1, -3);
     if (DOC_PAGES.has(name)) return BASE + docsRoute(name);
   }
-  if (MKDOCS_FILES.has(p)) return `${BASE}/${MKDOCS_FILES.get(p)}`;
   let m = p.match(/^\.lokf\/knowledge\/(.+)\.md$/);
   if (m) {
     const id = m[1];
