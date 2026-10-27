@@ -28,30 +28,100 @@
       "ecosystem": {
          "@id": "ecosystem"
       },
+      "algorithm": {
+         "@id": "algorithm"
+      },
+      "value": {
+         "@id": "value"
+      },
       "annotation_key": {
          "@id": "annotation_key"
       },
       "annotation_values": {
          "@id": "annotation_values"
       },
+      "additional_digests": {
+         "@type": "@id",
+         "@id": "additional_digests"
+      },
+      "blake2b": {
+         "@id": "blake2b"
+      },
+      "blake2s": {
+         "@id": "blake2s"
+      },
       "dir_hash": {
          "@id": "dir_hash"
+      },
+      "git_blob": {
+         "@id": "git_blob"
       },
       "git_commit": {
          "@id": "git_commit"
       },
+      "git_tag": {
+         "@id": "git_tag"
+      },
       "git_tree": {
          "@id": "git_tree"
+      },
+      "gost": {
+         "@id": "gost"
+      },
+      "md5": {
+         "@id": "md5"
+      },
+      "ripemd160": {
+         "@id": "ripemd160"
+      },
+      "sha1": {
+         "@id": "sha1"
+      },
+      "sha224": {
+         "@id": "sha224"
       },
       "sha256": {
          "@id": "sha256"
       },
+      "sha384": {
+         "@id": "sha384"
+      },
+      "sha3_224": {
+         "@id": "sha3_224"
+      },
+      "sha3_256": {
+         "@id": "sha3_256"
+      },
+      "sha3_384": {
+         "@id": "sha3_384"
+      },
+      "sha3_512": {
+         "@id": "sha3_512"
+      },
       "sha512": {
          "@id": "sha512"
+      },
+      "sha512_224": {
+         "@id": "sha512_224"
+      },
+      "sha512_256": {
+         "@id": "sha512_256"
+      },
+      "shake128": {
+         "@id": "shake128"
+      },
+      "shake256": {
+         "@id": "shake256"
+      },
+      "sm3": {
+         "@id": "sm3"
       },
       "annotations": {
          "@type": "@id",
          "@id": "annotations"
+      },
+      "content": {
+         "@id": "content"
       },
       "download_location": {
          "@type": "xsd:anyURI",
@@ -236,11 +306,6 @@
          "@id": "dependency_count"
       },
       "verified_level": {
-         "@context": {
-            "text": "skos:notation",
-            "description": "skos:prefLabel",
-            "meaning": "@id"
-         },
          "@id": "verified_level"
       },
       "adoption_metadata": {
@@ -258,6 +323,10 @@
       "build_platforms": {
          "@type": "@id",
          "@id": "build_platforms"
+      },
+      "control_planes": {
+         "@type": "@id",
+         "@id": "control_planes"
       },
       "dependency_inventories": {
          "@type": "@id",
@@ -413,11 +482,6 @@
          "@id": "verification_result"
       },
       "verified_levels": {
-         "@context": {
-            "text": "skos:notation",
-            "description": "skos:prefLabel",
-            "meaning": "@id"
-         },
          "@id": "verified_levels"
       },
       "verifier": {
@@ -427,6 +491,9 @@
       "verifier_id": {
          "@type": "xsd:anyURI",
          "@id": "verifier_id"
+      },
+      "InTotoAdditionalDigest": {
+         "@id": "InTotoAdditionalDigest"
       },
       "InTotoAnnotation": {
          "@id": "InTotoAnnotation"
@@ -439,6 +506,9 @@
       },
       "InTotoStatement": {
          "@id": "InTotoStatement"
+      },
+      "InTotoStatementSubject": {
+         "@id": "InTotoStatementSubject"
       },
       "SlsaAdoptionMetadata": {
          "@id": "SlsaAdoptionMetadata"
@@ -532,6 +602,12 @@
       },
       "SlsaVerificationSummary": {
          "@id": "SlsaVerificationSummary"
+      },
+      "SlsaVerificationSummaryInputAttestation": {
+         "@id": "SlsaVerificationSummaryInputAttestation"
+      },
+      "SlsaVerificationSummaryPolicy": {
+         "@id": "SlsaVerificationSummaryPolicy"
       },
       "SlsaVerifier": {
          "@id": "SlsaVerifier"

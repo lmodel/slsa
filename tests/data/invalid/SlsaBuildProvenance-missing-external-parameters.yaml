@@ -1,0 +1,6 @@
+# INVALID: build provenance records its external parameters at Build L1.
+build_definition:
+  build_type: https://actions.github.io/buildtypes/workflow/v1
+run_details:
+  builder:
+    builder_id: https://example.com/builder

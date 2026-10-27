@@ -1,0 +1,5 @@
+# INVALID: every subject of a statement carries a digest.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - resource_uri: pkg:pypi/myapp@1.0.0
+predicate_type: https://slsa.dev/provenance/v1

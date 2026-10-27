@@ -1,0 +1,5 @@
+# A descriptor that carries a small resource inline, base64-encoded, with no URI
+# or digest.
+resource_name: policy.json
+media_type: application/json
+content: eyJhbGxvdyI6IHRydWV9

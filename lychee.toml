@@ -26,6 +26,11 @@ exclude = [
   # 200 elsewhere; not dead links. Drop an exclusion if CI reaches it again.
   '^https://www\.conventionalcommits\.org/',
   '^https://slsa\.dev/',
+  # A Zenodo DOI, such as the copier template's in the README's credits,
+  # resolves through zenodo.org, which timed out for a CI runner on every
+  # retry. It answers elsewhere in about 14 seconds, close to lychee's
+  # 20-second timeout. Drop this if CI reaches it again.
+  '^https://doi\.org/10\.5281/zenodo\.',
 ]
 
 # knowledge_bundle is a symlink to .lokf/knowledge (the Obsidian vault entry

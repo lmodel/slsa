@@ -16,32 +16,48 @@
 	rdfs:seeAlso <https://github.com/slsa-framework/slsa> , <https://lmodel.github.io/slsa> , <https://slsa.dev/spec/v1.2/> ;
 	skos:definition "A LinkML model of the SLSA specification: its tracks and levels, the roles and systems in a software supply chain, and the in-toto attestations that carry build provenance and verification summaries." ;
 	skos:note "The version is the SLSA specification version the model renders. The Dependency and Build Environment tracks follow the working draft at that version, which the release does not include." , "slsa_core imports only the LinkML types, each track module imports the core, and this file adds only the document root, so an importer can take one module." .
+slsa:InTotoAdditionalDigest a owl:Class ;
+	rdfs:label "InTotoAdditionalDigest" ;
+	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md> , <https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation> ;
+	rdfs:subClassOf _:c14n128 , _:c14n158 , _:c14n194 , _:c14n480 , _:c14n57 , _:c14n78 ;
+	skos:definition "One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type." ;
+	skos:inScheme slsa:slsa_core ;
+	skos:note "An SCS that does not use cryptographic digests defines a canonical revision type of its own that includes the repository, such as svn_revision_id." , "Each algorithm appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this." , "In the attestation's JSON the algorithm is a key of the digest set beside the named ones, and an algorithm the framework does not define documents how its value is encoded." .
 slsa:InTotoAnnotation a owl:Class ;
 	rdfs:label "InTotoAnnotation" ;
-	rdfs:subClassOf _:c14n14 , _:c14n193 , _:c14n238 , _:c14n338 , _:c14n372 ;
-	skos:definition "One vendor-specific annotation on a resource descriptor, with a key and one or more values." ;
-	skos:inScheme slsa:slsa_core .
+	rdfs:subClassOf _:c14n23 , _:c14n272 , _:c14n335 , _:c14n472 , _:c14n518 ;
+	skos:definition "One vendor-specific annotation on a resource descriptor: a key and its values." ;
+	skos:inScheme slsa:slsa_core ;
+	skos:note "Each key appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this." , "The attestation's JSON allows any JSON value. A string becomes one value and an array one value per item; any other value or item is written as its JSON text, so one value cannot tell a string from a one-item array." .
 slsa:InTotoDigestSet a owl:Class ;
 	rdfs:label "InTotoDigestSet" ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md> ;
-	rdfs:subClassOf _:c14n109 , _:c14n110 , _:c14n155 , _:c14n189 , _:c14n213 , _:c14n283 , _:c14n29 , _:c14n300 , _:c14n302 , _:c14n315 , _:c14n339 , _:c14n377 , _:c14n39 , _:c14n68 , _:c14n78 ;
-	skos:definition "A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts." ;
+	rdfs:subClassOf _:c14n100 , _:c14n106 , _:c14n11 , _:c14n113 , _:c14n131 , _:c14n135 , _:c14n15 , _:c14n151 , _:c14n152 , _:c14n162 , _:c14n166 , _:c14n181 , _:c14n185 , _:c14n197 , _:c14n201 , _:c14n21 , _:c14n213 , _:c14n214 , _:c14n230 , _:c14n24 , _:c14n244 , _:c14n246 , _:c14n248 , _:c14n252 , _:c14n266 , _:c14n278 , _:c14n280 , _:c14n285 , _:c14n287 , _:c14n299 , _:c14n301 , _:c14n303 , _:c14n310 , _:c14n322 , _:c14n332 , _:c14n336 , _:c14n346 , _:c14n347 , _:c14n377 , _:c14n391 , _:c14n395 , _:c14n397 , _:c14n414 , _:c14n418 , _:c14n421 , _:c14n422 , _:c14n439 , _:c14n44 , _:c14n440 , _:c14n447 , _:c14n45 , _:c14n450 , _:c14n455 , _:c14n459 , _:c14n46 , _:c14n462 , _:c14n466 , _:c14n468 , _:c14n470 , _:c14n473 , _:c14n496 , _:c14n516 , _:c14n524 , _:c14n537 , _:c14n543 , _:c14n545 , _:c14n58 , _:c14n59 , _:c14n61 , _:c14n70 , _:c14n72 , _:c14n74 , _:c14n84 , _:c14n86 , _:c14n93 ;
+	skos:definition "A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts." ;
+	skos:editorialNote "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present." ;
 	skos:inScheme slsa:slsa_core ;
-	skos:note "Digests are lowercase hexadecimal. The in-toto framework defines more algorithms than the five modelled here." .
+	skos:note "A consumer accepts only the algorithms it considers secure and ignores the rest, and two sets match when any accepted algorithm matches." , "SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least 32 bytes, since a shorter digest resists collisions too weakly to identify an artifact." , "The named algorithms take lowercase hexadecimal, and additional_digests holds any other algorithm, such as an SCS's own revision type." .
 slsa:InTotoResourceDescriptor a owl:Class ;
 	rdfs:label "InTotoResourceDescriptor" ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/main/spec/v1/resource_descriptor.md> ;
-	rdfs:subClassOf _:c14n157 , _:c14n170 , _:c14n231 , _:c14n236 , _:c14n248 , _:c14n253 , _:c14n264 , _:c14n269 , _:c14n303 , _:c14n318 , _:c14n319 , _:c14n348 , _:c14n365 , _:c14n382 , _:c14n61 , _:c14n64 , _:c14n73 ;
-	skos:definition "A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata." ;
+	rdfs:subClassOf _:c14n105 , _:c14n225 , _:c14n241 , _:c14n29 , _:c14n319 , _:c14n326 , _:c14n333 , _:c14n353 , _:c14n359 , _:c14n370 , _:c14n376 , _:c14n423 , _:c14n443 , _:c14n444 , _:c14n486 , _:c14n505 , _:c14n526 , _:c14n532 , _:c14n538 , _:c14n92 , _:c14n96 ;
+	skos:definition "A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata." ;
+	skos:editorialNote "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present." ;
 	skos:inScheme slsa:slsa_core ;
-	skos:note "A descriptor needs a URI, a digest or both; which one a field requires is said on that field." .
+	skos:note "A descriptor carries at least one of a URI, a digest or its content; a field that needs a particular one says so." .
 slsa:InTotoStatement a owl:Class ;
 	rdfs:label "InTotoStatement" ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md> , <https://slsa.dev/spec/v1.2/attestation-model> ;
-	rdfs:subClassOf _:c14n104 , _:c14n121 , _:c14n123 , _:c14n133 , _:c14n171 , _:c14n178 , _:c14n203 , _:c14n214 , _:c14n258 , _:c14n305 , _:c14n308 , _:c14n32 , _:c14n325 , _:c14n334 , _:c14n342 , _:c14n54 , _:c14n63 , _:c14n74 , _:c14n77 , _:c14n84 ;
+	rdfs:subClassOf _:c14n107 , _:c14n111 , _:c14n119 , _:c14n144 , _:c14n174 , _:c14n177 , _:c14n189 , _:c14n242 , _:c14n251 , _:c14n289 , _:c14n304 , _:c14n339 , _:c14n364 , _:c14n425 , _:c14n430 , _:c14n465 , _:c14n476 , _:c14n49 , _:c14n80 , _:c14n95 ;
 	skos:definition "The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself." ;
 	skos:inScheme slsa:slsa_core ;
 	skos:note "Attestation and provenance are often confused; a statement is the attestation, and build provenance is one kind of predicate it may carry (Tamanna et al., 2024, UC.1)." , "The signature envelope around a statement is outside this model." .
+slsa:InTotoStatementSubject a owl:Class ;
+	rdfs:label "InTotoStatementSubject" ;
+	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md> ;
+	rdfs:subClassOf slsa:InTotoResourceDescriptor , _:c14n156 , _:c14n157 , _:c14n216 ;
+	skos:definition "One artifact an in-toto statement is about: a resource descriptor that carries a digest." ;
+	skos:inScheme slsa:slsa_core .
 slsa:SlsaAdoptionChallenge\#COMPLEX_IMPLEMENTATION a owl:Class ;
 	rdfs:label "COMPLEX_IMPLEMENTATION" ;
 	rdfs:subClassOf slsa:SlsaAdoptionChallenge ;
@@ -52,31 +68,31 @@ slsa:SlsaAdoptionChallenge\#LIMITED_FEASIBILITY a owl:Class ;
 	rdfs:label "LIMITED_FEASIBILITY" ;
 	rdfs:subClassOf slsa:SlsaAdoptionChallenge ;
 	skos:definition "Verification tooling, attestation storage and two-party review are hard to put into practice." ;
-	skos:note "Sub-themes: verification and storage (LF.1) and two-party review for small projects (LF.2); 219 issues." ;
+	skos:note "Sub-themes: limited attestation verification, including where attestations are stored (LF.1), and two-party review requirements, which projects with one maintainer find hard to meet (LF.2); 219 issues." ;
 	slsa:study_theme "LF" .
 slsa:SlsaAdoptionChallenge\#UNCLEAR_COMMUNICATION a owl:Class ;
 	rdfs:label "UNCLEAR_COMMUNICATION" ;
 	rdfs:subClassOf slsa:SlsaAdoptionChallenge ;
 	skos:definition "SLSA's terms and its guidance for particular ecosystems are hard to understand." ;
-	skos:note "Sub-themes: unclear definitions of key terms (UC.1) and a lack of ecosystem- specific guidance (UC.2); 357 issues." ;
+	skos:note "Sub-themes: unclear definitions of key terms (UC.1) and unclear documentation, such as how to apply SLSA in an ecosystem (UC.2); 357 issues." ;
 	slsa:study_theme "UC" .
 slsa:SlsaAdoptionChallenge\#UNCLEAR_RELEVANCE a owl:Class ;
 	rdfs:label "UNCLEAR_RELEVANCE" ;
 	rdfs:subClassOf slsa:SlsaAdoptionChallenge ;
 	skos:definition "Which attacks SLSA mitigates, and how it differs from other practices, is unclear." ;
-	skos:note "Sub-theme: unclear scope and ecosystem-level inconsistencies (UR.1); 46 issues." ;
+	skos:note "Sub-theme: unclear relevance, including tools that name one package differently within an ecosystem (UR.1); 46 issues." ;
 	slsa:study_theme "UR" .
 slsa:SlsaAdoptionChallenge a owl:Class ;
 	rdfs:label "SlsaAdoptionChallenge" ;
 	rdfs:seeAlso <https://arxiv.org/abs/2409.05014> ;
-	owl:unionOf _:c14n139 ;
+	owl:unionOf _:c14n199 ;
 	skos:definition "The four themes of difficulty practitioners met when adopting SLSA." ;
 	skos:inScheme slsa:slsa_adoption ;
 	linkml:permissible_values slsa:SlsaAdoptionChallenge\#COMPLEX_IMPLEMENTATION , slsa:SlsaAdoptionChallenge\#LIMITED_FEASIBILITY , slsa:SlsaAdoptionChallenge\#UNCLEAR_COMMUNICATION , slsa:SlsaAdoptionChallenge\#UNCLEAR_RELEVANCE .
 slsa:SlsaAdoptionMetadata a owl:Class ;
 	rdfs:label "SlsaAdoptionMetadata" ;
 	rdfs:seeAlso <https://arxiv.org/abs/2409.05014> ;
-	rdfs:subClassOf _:c14n17 , _:c14n198 , _:c14n22 , _:c14n361 ;
+	rdfs:subClassOf _:c14n27 , _:c14n282 , _:c14n35 , _:c14n501 ;
 	skos:definition "The adoption challenges a deployment meets and the strategies it applies, from the study's taxonomy." ;
 	skos:editorialNote "The study analysed 1,523 SLSA-related GitHub issues from 233 repositories and derived four challenge themes and five strategy themes." ;
 	skos:inScheme slsa:slsa_adoption .
@@ -88,7 +104,7 @@ slsa:SlsaAdoptionStrategy\#COLLABORATE_WITH_COMMUNITY a owl:Class ;
 slsa:SlsaAdoptionStrategy\#ENHANCE_ALIGNMENT_FLEXIBILITY a owl:Class ;
 	rdfs:label "ENHANCE_ALIGNMENT_FLEXIBILITY" ;
 	rdfs:subClassOf slsa:SlsaAdoptionStrategy ;
-	skos:definition "Make SLSA fit more contexts, with build-system tracks, flexibility for varied organizations and alignment with OpenSSF practices." ;
+	skos:definition "Make SLSA fit more contexts, with build-system tracks, gamified levels, flexibility for varied organizations and alignment with OpenSSF practices." ;
 	slsa:study_theme "S1" .
 slsa:SlsaAdoptionStrategy\#IMPROVE_VERIFICATION_PROCESS a owl:Class ;
 	rdfs:label "IMPROVE_VERIFICATION_PROCESS" ;
@@ -108,7 +124,7 @@ slsa:SlsaAdoptionStrategy\#STREAMLINE_PROVENANCE_GENERATION a owl:Class ;
 slsa:SlsaAdoptionStrategy a owl:Class ;
 	rdfs:label "SlsaAdoptionStrategy" ;
 	rdfs:seeAlso <https://arxiv.org/abs/2409.05014> ;
-	owl:unionOf _:c14n201 ;
+	owl:unionOf _:c14n286 ;
 	skos:definition "The five themes of strategy practitioners proposed for the adoption challenges." ;
 	skos:inScheme slsa:slsa_adoption ;
 	linkml:permissible_values slsa:SlsaAdoptionStrategy\#COLLABORATE_WITH_COMMUNITY , slsa:SlsaAdoptionStrategy\#ENHANCE_ALIGNMENT_FLEXIBILITY , slsa:SlsaAdoptionStrategy\#IMPROVE_VERIFICATION_PROCESS , slsa:SlsaAdoptionStrategy\#PROVIDE_DETAILED_DOCUMENTATION , slsa:SlsaAdoptionStrategy\#STREAMLINE_PROVENANCE_GENERATION .
@@ -120,13 +136,13 @@ slsa:SlsaBranch a owl:Class ;
 slsa:SlsaBuildDefinition a owl:Class ;
 	rdfs:label "SlsaBuildDefinition" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/build-provenance#builddefinition> ;
-	rdfs:subClassOf _:c14n112 , _:c14n115 , _:c14n116 , _:c14n187 , _:c14n207 , _:c14n21 , _:c14n228 , _:c14n306 , _:c14n323 , _:c14n344 , _:c14n367 , _:c14n385 , _:c14n49 , _:c14n51 , _:c14n59 , _:c14n70 , _:c14n72 , _:c14n82 ;
+	rdfs:subClassOf _:c14n102 , _:c14n104 , _:c14n117 , _:c14n159 , _:c14n163 , _:c14n167 , _:c14n295 , _:c14n323 , _:c14n34 , _:c14n426 , _:c14n452 , _:c14n479 , _:c14n510 , _:c14n517 , _:c14n534 , _:c14n71 , _:c14n76 , _:c14n89 ;
 	skos:definition "The inputs to a build, in enough detail to initialize it and begin execution; the builder vouches for their accuracy." ;
 	skos:inScheme slsa:slsa_build .
 slsa:SlsaBuildEnvironmentAttestation a owl:Class ;
 	rdfs:label "SlsaBuildEnvironmentAttestation" ;
 	rdfs:seeAlso <https://slsa.dev/spec/draft/build-env-track-basics#buildenv-levels> ;
-	rdfs:subClassOf slsa:SlsaPredicate , _:c14n141 , _:c14n150 , _:c14n16 , _:c14n232 , _:c14n263 , _:c14n270 , _:c14n340 , _:c14n355 , _:c14n357 , _:c14n371 , _:c14n88 ;
+	rdfs:subClassOf slsa:SlsaPredicate , _:c14n123 , _:c14n202 , _:c14n219 , _:c14n26 , _:c14n327 , _:c14n369 , _:c14n378 , _:c14n474 , _:c14n494 , _:c14n497 , _:c14n515 ;
 	skos:definition "Evidence of the state of a build environment when a build was dispatched to it: the image it came from and the measurements taken at boot." ;
 	skos:inScheme slsa:slsa_build_environment ;
 	skos:note "The track names no single predicate type; platforms issue this evidence in formats such as SCAI or a VSA." .
@@ -149,14 +165,14 @@ slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_3 a owl:Class ;
 slsa:SlsaBuildEnvironmentLevel a owl:Class ;
 	rdfs:label "SlsaBuildEnvironmentLevel" ;
 	rdfs:seeAlso <https://slsa.dev/spec/draft/build-env-track-basics#track-overview> ;
-	owl:unionOf _:c14n215 ;
+	owl:unionOf _:c14n305 ;
 	skos:definition "The levels of the SLSA Build Environment track, each extending integrity further into the compute that runs builds." ;
 	skos:inScheme slsa:slsa_build_environment ;
 	linkml:permissible_values slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_0 , slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_1 , slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_2 , slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_3 .
 slsa:SlsaBuildImage a owl:Class ;
 	rdfs:label "SlsaBuildImage" ;
 	rdfs:seeAlso <https://slsa.dev/spec/draft/build-env-track-basics#build-environment-model> ;
-	rdfs:subClassOf _:c14n166 , _:c14n209 , _:c14n245 , _:c14n274 , _:c14n299 , _:c14n379 , _:c14n52 , _:c14n56 , _:c14n6 , _:c14n80 , _:c14n81 , _:c14n89 ;
+	rdfs:subClassOf _:c14n10 , _:c14n115 , _:c14n116 , _:c14n124 , _:c14n237 , _:c14n297 , _:c14n345 , _:c14n384 , _:c14n417 , _:c14n528 , _:c14n77 , _:c14n83 ;
 	skos:definition "The template a build environment is instantiated from, such as a VM or container image: root filesystem, guest OS and packages, build executor and build agent." ;
 	skos:inScheme slsa:slsa_build_environment ;
 	skos:note "The Build Environment track is a working draft and not part of the SLSA v1.2 release." .
@@ -178,50 +194,51 @@ slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_2 a owl:Class ;
 	rdfs:label "SLSA_BUILD_LEVEL_2" ;
 	rdfs:subClassOf slsa:SlsaBuildLevel ;
 	skos:definition "A hosted platform generates and signs the provenance, so tampering after the build needs an explicit attack." ;
-	skos:note "Integrating signing tools into varied CI workflows is a common adoption difficulty (Tamanna et al., 2024, CI.2)." .
+	skos:note "Keeping the provenance generator, the verifier and signing tools such as cosign working in CI workflows was a common difficulty (Tamanna et al., 2024, CI.2)." .
 slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_3 a owl:Class ;
 	rdfs:label "SLSA_BUILD_LEVEL_3" ;
 	rdfs:subClassOf slsa:SlsaBuildLevel ;
 	skos:definition "A hardened platform prevents runs from influencing one another and keeps signing material away from build steps, so forging provenance needs an exploit." ;
-	skos:note "Hermetic and isolated builds were the adoption barrier practitioners cited most (Tamanna et al., 2024, CI.1)." .
+	skos:note "Practitioners reported difficulty in generating provenance for the higher levels (Tamanna et al., 2024, CI.1)." .
 slsa:SlsaBuildLevel a owl:Class ;
 	rdfs:label "SlsaBuildLevel" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/build-track-basics> ;
-	owl:unionOf _:c14n122 ;
+	owl:unionOf _:c14n176 ;
 	skos:definition "The levels of the SLSA Build track, each adding protection against tampering with the build or its provenance." ;
 	skos:inScheme slsa:slsa_core ;
 	linkml:permissible_values slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_0 , slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_1 , slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_2 , slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_3 .
 slsa:SlsaBuildMetadata a owl:Class ;
 	rdfs:label "SlsaBuildMetadata" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/build-provenance#buildmetadata> ;
-	rdfs:subClassOf _:c14n156 , _:c14n262 , _:c14n280 , _:c14n296 , _:c14n389 , _:c14n391 , _:c14n69 , _:c14n71 , _:c14n9 ;
+	rdfs:subClassOf _:c14n101 , _:c14n103 , _:c14n16 , _:c14n224 , _:c14n368 , _:c14n392 , _:c14n411 , _:c14n540 , _:c14n542 ;
 	skos:definition "Metadata about one execution of a build: its identifier and when it started and finished." ;
 	skos:inScheme slsa:slsa_build .
 slsa:SlsaBuildParameter a owl:Class ;
 	rdfs:label "SlsaBuildParameter" ;
-	rdfs:subClassOf _:c14n106 , _:c14n118 , _:c14n127 , _:c14n223 , _:c14n234 , _:c14n384 ;
+	rdfs:subClassOf _:c14n148 , _:c14n170 , _:c14n182 , _:c14n317 , _:c14n329 , _:c14n533 ;
 	skos:definition "One named input to a build, with a string value." ;
 	skos:inScheme slsa:slsa_build ;
-	skos:note "The specification recommends string values; a structured value is written as its JSON text." .
+	skos:note "Each name appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this." , "The specification recommends string values; a structured value is written as its JSON text." .
 slsa:SlsaBuildPlatform a owl:Class ;
 	rdfs:label "SlsaBuildPlatform" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/build-provenance#builder> , <https://slsa.dev/spec/v1.2/terminology#build-model> ;
-	rdfs:subClassOf _:c14n0 , _:c14n111 , _:c14n153 , _:c14n200 , _:c14n218 , _:c14n240 , _:c14n254 , _:c14n282 , _:c14n31 , _:c14n329 , _:c14n360 , _:c14n44 , _:c14n66 ;
+	rdfs:subClassOf _:c14n0 , _:c14n155 , _:c14n222 , _:c14n284 , _:c14n309 , _:c14n338 , _:c14n360 , _:c14n394 , _:c14n460 , _:c14n48 , _:c14n500 , _:c14n65 , _:c14n98 ;
 	skos:definition "The system that runs builds and records their provenance: the transitive closure of software, hardware, people and organizations trusted to do so. Provenance names it as the builder." ;
 	skos:inScheme slsa:slsa_core ;
 	skos:note "A platform with several modes of operation at different levels has a different builder_id for each." .
 slsa:SlsaBuildProvenance a owl:Class ;
 	rdfs:label "SlsaBuildProvenance" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/build-provenance#provenance> ;
-	rdfs:subClassOf slsa:SlsaPredicate , _:c14n147 , _:c14n252 , _:c14n321 , _:c14n335 , _:c14n35 , _:c14n5 ;
+	rdfs:subClassOf slsa:SlsaPredicate , _:c14n209 , _:c14n358 , _:c14n449 , _:c14n467 , _:c14n52 , _:c14n9 ;
 	skos:definition "The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build met their expectations and others can rebuild it." ;
 	skos:inScheme slsa:slsa_build ;
-	skos:note "Generating valid provenance was the most frequent adoption difficulty practitioners reported (Tamanna et al., 2024, CI.1)." , "The statement that carries it has predicate_type https://slsa.dev/provenance/v1." .
+	skos:note "Complicated provenance generation was the challenge with the most issues in the study (Tamanna et al., 2024, CI.1)." , "The statement that carries it has predicate_type https://slsa.dev/provenance/v1." .
 slsa:SlsaComponentVersion a owl:Class ;
 	rdfs:label "SlsaComponentVersion" ;
-	rdfs:subClassOf _:c14n131 , _:c14n169 , _:c14n266 , _:c14n275 , _:c14n310 , _:c14n91 ;
+	rdfs:subClassOf _:c14n126 , _:c14n187 , _:c14n240 , _:c14n372 , _:c14n385 , _:c14n432 ;
 	skos:definition "The version of one named component of a platform." ;
-	skos:inScheme slsa:slsa_core .
+	skos:inScheme slsa:slsa_core ;
+	skos:note "Each component appears once in a list, since the attestation's JSON uses its name as a key; the validator does not check this." .
 slsa:SlsaConsumer a owl:Class ;
 	rdfs:label "SlsaConsumer" ;
 	rdfs:subClassOf slsa:SlsaParty ;
@@ -230,13 +247,13 @@ slsa:SlsaConsumer a owl:Class ;
 slsa:SlsaControlPlane a owl:Class ;
 	rdfs:label "SlsaControlPlane" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/terminology#build-model> ;
-	rdfs:subClassOf _:c14n18 , _:c14n332 , _:c14n65 ;
+	rdfs:subClassOf _:c14n30 , _:c14n464 , _:c14n97 ;
 	skos:definition "The component of a build platform that orchestrates each build and generates its provenance, outside the tenant's control." ;
 	skos:inScheme slsa:slsa_core .
 slsa:SlsaDependencyInventory a owl:Class ;
 	rdfs:label "SlsaDependencyInventory" ;
 	rdfs:seeAlso <https://slsa.dev/spec/draft/dependency-track> ;
-	rdfs:subClassOf _:c14n205 , _:c14n225 , _:c14n366 , _:c14n370 , _:c14n390 , _:c14n60 , _:c14n62 , _:c14n83 ;
+	rdfs:subClassOf _:c14n118 , _:c14n292 , _:c14n318 , _:c14n509 , _:c14n514 , _:c14n541 , _:c14n90 , _:c14n94 ;
 	skos:definition "The inventory of every third-party build dependency, direct and transitive, of one artifact version." ;
 	skos:inScheme slsa:slsa_dependency ;
 	skos:note "A build-time SBOM or a lock file with hashes is a common form of the inventory." , "The Dependency track is a working draft and not part of the SLSA v1.2 release." .
@@ -263,18 +280,19 @@ slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_4 a owl:Class ;
 slsa:SlsaDependencyLevel a owl:Class ;
 	rdfs:label "SlsaDependencyLevel" ;
 	rdfs:seeAlso <https://slsa.dev/spec/draft/dependency-track#levels> ;
-	owl:unionOf _:c14n96 ;
+	owl:unionOf _:c14n136 ;
 	skos:definition "The levels of the SLSA Dependency track, each reducing the risk third-party dependencies bring." ;
 	skos:inScheme slsa:slsa_dependency ;
 	linkml:permissible_values slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_0 , slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_1 , slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_2 , slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_3 , slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_4 .
 slsa:SlsaDependencyLevelCount a owl:Class ;
 	rdfs:label "SlsaDependencyLevelCount" ;
-	rdfs:subClassOf _:c14n168 , _:c14n224 , _:c14n256 , _:c14n314 , _:c14n350 , _:c14n369 ;
+	rdfs:subClassOf _:c14n190 , _:c14n239 , _:c14n362 , _:c14n438 , _:c14n488 , _:c14n513 ;
 	skos:definition "The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level." ;
-	skos:inScheme slsa:slsa_verification .
+	skos:inScheme slsa:slsa_verification ;
+	skos:note "Each level appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this." .
 slsa:SlsaDocument a owl:Class ;
 	rdfs:label "SlsaDocument" ;
-	rdfs:subClassOf _:c14n103 , _:c14n117 , _:c14n132 , _:c14n137 , _:c14n140 , _:c14n142 , _:c14n158 , _:c14n161 , _:c14n182 , _:c14n192 , _:c14n195 , _:c14n221 , _:c14n239 , _:c14n247 , _:c14n249 , _:c14n250 , _:c14n313 , _:c14n322 , _:c14n330 , _:c14n343 , _:c14n362 , _:c14n46 , _:c14n50 , _:c14n98 , _:c14n99 ;
+	rdfs:subClassOf _:c14n138 , _:c14n139 , _:c14n143 , _:c14n145 , _:c14n169 , _:c14n188 , _:c14n196 , _:c14n200 , _:c14n203 , _:c14n226 , _:c14n231 , _:c14n257 , _:c14n271 , _:c14n276 , _:c14n315 , _:c14n337 , _:c14n350 , _:c14n354 , _:c14n355 , _:c14n436 , _:c14n451 , _:c14n461 , _:c14n477 , _:c14n502 , _:c14n506 , _:c14n66 , _:c14n73 ;
 	skos:definition "A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern." ;
 	skos:inScheme <https://w3id.org/lmodel/slsa> .
 slsa:SlsaInfrastructureProvider a owl:Class ;
@@ -285,42 +303,42 @@ slsa:SlsaInfrastructureProvider a owl:Class ;
 slsa:SlsaMeasurement a owl:Class ;
 	rdfs:label "SlsaMeasurement" ;
 	rdfs:seeAlso <https://slsa.dev/spec/draft/build-env-track-basics#build-environment-model> ;
-	rdfs:subClassOf _:c14n148 , _:c14n175 , _:c14n291 , _:c14n297 , _:c14n363 , _:c14n87 ;
+	rdfs:subClassOf _:c14n122 , _:c14n212 , _:c14n247 , _:c14n406 , _:c14n413 , _:c14n503 ;
 	skos:definition "The digest of one component or state of a build environment, to compare with its reference value." ;
 	skos:inScheme slsa:slsa_build_environment .
 slsa:SlsaNamedReference a owl:Class ;
 	rdfs:label "SlsaNamedReference" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/source-requirements#definitions> ;
-	rdfs:subClassOf _:c14n1 , _:c14n101 , _:c14n144 , _:c14n146 , _:c14n152 , _:c14n165 , _:c14n190 , _:c14n196 , _:c14n219 , _:c14n227 , _:c14n229 , _:c14n257 , _:c14n295 , _:c14n351 , _:c14n358 ;
+	rdfs:subClassOf _:c14n141 , _:c14n2 , _:c14n205 , _:c14n208 , _:c14n221 , _:c14n235 , _:c14n268 , _:c14n277 , _:c14n313 , _:c14n321 , _:c14n324 , _:c14n363 , _:c14n410 , _:c14n490 , _:c14n498 ;
 	skos:definition "A user-friendly name for a revision in a repository, such as main or v1.2.3; reference_type says whether it is a branch or a tag." ;
 	skos:inScheme slsa:slsa_source .
 slsa:SlsaPackage a owl:Class ;
 	rdfs:label "SlsaPackage" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/terminology#distribution-model> ;
-	rdfs:subClassOf _:c14n113 , _:c14n13 , _:c14n151 , _:c14n197 , _:c14n202 , _:c14n233 , _:c14n244 , _:c14n27 , _:c14n290 , _:c14n292 , _:c14n328 , _:c14n356 , _:c14n359 , _:c14n364 , _:c14n388 , _:c14n47 , _:c14n7 ;
+	rdfs:subClassOf _:c14n13 , _:c14n160 , _:c14n22 , _:c14n220 , _:c14n279 , _:c14n288 , _:c14n328 , _:c14n343 , _:c14n40 , _:c14n404 , _:c14n407 , _:c14n458 , _:c14n495 , _:c14n499 , _:c14n504 , _:c14n539 , _:c14n68 ;
 	skos:definition "A unit of software distributed under a package name, which is the primary security boundary SLSA protects. Its artifacts are the outputs of builds." ;
 	skos:inScheme slsa:slsa_core .
 slsa:SlsaPackageRegistry a owl:Class ;
 	rdfs:label "SlsaPackageRegistry" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/terminology#distribution-model> ;
-	rdfs:subClassOf _:c14n105 , _:c14n15 , _:c14n216 , _:c14n378 , _:c14n48 , _:c14n95 ;
+	rdfs:subClassOf _:c14n134 , _:c14n147 , _:c14n25 , _:c14n306 , _:c14n525 , _:c14n69 ;
 	skos:definition "A distribution platform that resolves package names to immutable package artifacts within an ecosystem." ;
 	skos:inScheme slsa:slsa_core .
 slsa:SlsaParty a owl:Class ;
 	rdfs:label "SlsaParty" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/terminology#roles> ;
-	rdfs:subClassOf _:c14n120 , _:c14n186 , _:c14n208 , _:c14n246 , _:c14n265 , _:c14n271 , _:c14n353 ;
+	rdfs:subClassOf _:c14n173 , _:c14n263 , _:c14n296 , _:c14n349 , _:c14n371 , _:c14n379 , _:c14n492 ;
 	skos:definition "A person or organization that takes part in a software supply chain, in one of the roles SLSA names." ;
 	skos:inScheme slsa:slsa_core ;
 	skos:note "One party may act in several roles, and several parties may share one role." .
 slsa:SlsaPredicate a owl:Class ;
 	rdfs:label "SlsaPredicate" ;
-	rdfs:subClassOf _:c14n135 , _:c14n180 , _:c14n30 , _:c14n373 ;
+	rdfs:subClassOf _:c14n193 , _:c14n254 , _:c14n47 , _:c14n519 ;
 	skos:definition "The base of every predicate this schema models; predicate_kind names the concrete kind." ;
 	skos:inScheme slsa:slsa_core .
 slsa:SlsaProducer a owl:Class ;
 	rdfs:label "SlsaProducer" ;
-	rdfs:subClassOf slsa:SlsaParty , _:c14n100 , _:c14n226 , _:c14n278 ;
+	rdfs:subClassOf slsa:SlsaParty , _:c14n140 , _:c14n320 , _:c14n388 ;
 	skos:definition "A party that creates software and provides it to others, choosing a build platform and distributing provenance." ;
 	skos:inScheme slsa:slsa_core .
 slsa:SlsaResult\#FAILED a owl:Class ;
@@ -381,16 +399,19 @@ slsa:SlsaResult\#SLSA_SOURCE_TWO_PARTY_REVIEWED a owl:Class ;
 	skos:definition "The verified property that two trusted persons reviewed the source, at whatever source level." .
 slsa:SlsaResult a owl:Class ;
 	rdfs:label "SlsaResult" ;
-	rdfs:seeAlso <https://slsa.dev/spec/draft/verified-properties> , <https://slsa.dev/spec/v1.2/verification_summary#slsaresult> ;
-	owl:unionOf _:c14n10 ;
+	rdfs:seeAlso <https://slsa.dev/spec/v1.2/verification_summary#slsaresult> , <https://slsa.dev/spec/v1.2/verified-properties> ;
+	owl:unionOf _:c14n17 ;
 	skos:definition "A result of evaluating an artifact against SLSA: a track level, a verified property, or a failure. A level implies the levels below it in the same track." ;
 	skos:inScheme slsa:slsa_verification ;
-	skos:note "Issuers may add values of their own, but none that start with SLSA_; this enum lists the SLSA-defined values." ;
+	skos:note "Issuers may add values of their own, but none that start with SLSA_; this enum lists the SLSA-defined values, and slsa_result_value, which verified_levels takes, admits both." , "The working-draft Dependency and Build Environment tracks name no results yet, so none are listed for them." ;
 	linkml:permissible_values slsa:SlsaResult\#FAILED , slsa:SlsaResult\#SLSA_BUILD_LEVEL_0 , slsa:SlsaResult\#SLSA_BUILD_LEVEL_1 , slsa:SlsaResult\#SLSA_BUILD_LEVEL_2 , slsa:SlsaResult\#SLSA_BUILD_LEVEL_3 , slsa:SlsaResult\#SLSA_BUILD_LEVEL_UNEVALUATED , slsa:SlsaResult\#SLSA_BUILD_REPRODUCED , slsa:SlsaResult\#SLSA_SOURCE_LEVEL_0 , slsa:SlsaResult\#SLSA_SOURCE_LEVEL_1 , slsa:SlsaResult\#SLSA_SOURCE_LEVEL_2 , slsa:SlsaResult\#SLSA_SOURCE_LEVEL_3 , slsa:SlsaResult\#SLSA_SOURCE_LEVEL_4 , slsa:SlsaResult\#SLSA_SOURCE_LEVEL_UNEVALUATED , slsa:SlsaResult\#SLSA_SOURCE_TWO_PARTY_REVIEWED .
+slsa:SlsaResultValue a rdfs:Datatype ;
+	owl:equivalentClass _:c14n229 .
 slsa:SlsaReviewType\#AUTOMATED a owl:Class ;
 	rdfs:label "AUTOMATED" ;
 	rdfs:subClassOf slsa:SlsaReviewType ;
-	skos:definition "A tool or bot reviewed the change with no second person, which does not meet Source L4." .
+	skos:definition "A tool or bot reviewed the change with no second person, which is not two-party review." ;
+	skos:note "At Source L4 an organization may still exempt a trusted robot's own changes from two-party review." .
 slsa:SlsaReviewType\#MOB_PROGRAMMING a owl:Class ;
 	rdfs:label "MOB_PROGRAMMING" ;
 	rdfs:subClassOf slsa:SlsaReviewType ;
@@ -406,7 +427,7 @@ slsa:SlsaReviewType\#TWO_PARTY a owl:Class ;
 slsa:SlsaReviewType a owl:Class ;
 	rdfs:label "SlsaReviewType" ;
 	rdfs:seeAlso <https://arxiv.org/abs/2409.05014> ;
-	owl:unionOf _:c14n92 ;
+	owl:unionOf _:c14n127 ;
 	skos:definition "The forms of review that may approve a revision, including the contested forms the adoption study records." ;
 	skos:inScheme slsa:slsa_source ;
 	linkml:permissible_values slsa:SlsaReviewType\#AUTOMATED , slsa:SlsaReviewType\#MOB_PROGRAMMING , slsa:SlsaReviewType\#PAIR_PROGRAMMING , slsa:SlsaReviewType\#TWO_PARTY ;
@@ -414,20 +435,20 @@ slsa:SlsaReviewType a owl:Class ;
 slsa:SlsaRunDetails a owl:Class ;
 	rdfs:label "SlsaRunDetails" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/build-provenance#rundetails> ;
-	rdfs:subClassOf _:c14n124 , _:c14n143 , _:c14n177 , _:c14n19 , _:c14n194 , _:c14n324 , _:c14n346 , _:c14n368 ;
+	rdfs:subClassOf _:c14n178 , _:c14n204 , _:c14n250 , _:c14n274 , _:c14n32 , _:c14n454 , _:c14n483 , _:c14n511 ;
 	skos:definition "What is specific to one execution of a build: the platform that ran it, metadata about the run and its by-products." ;
 	skos:inScheme slsa:slsa_build .
 slsa:SlsaSourceControlSystem a owl:Class ;
 	rdfs:label "SlsaSourceControlSystem" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/source-requirements#definitions> ;
-	rdfs:subClassOf _:c14n191 , _:c14n281 , _:c14n36 ;
+	rdfs:subClassOf _:c14n270 , _:c14n393 , _:c14n53 ;
 	skos:definition "The platform or services that host a source repository and enforce its organization's policies on authentication, authorization and change management." ;
 	skos:inScheme slsa:slsa_source ;
 	skos:note "The SCS issues the Source VSAs and source provenance for the revisions it hosts." .
 slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_0 a owl:Class ;
 	rdfs:label "SLSA_SOURCE_LEVEL_0" ;
 	rdfs:subClassOf slsa:SlsaSourceLevel ;
-	skos:definition "No Source track claims; the SCS issued no VSA for the revision." .
+	skos:definition "No Source track guarantees; a revision for which the SCS issues no Source VSA is at this level." .
 slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_1 a owl:Class ;
 	rdfs:label "SLSA_SOURCE_LEVEL_1" ;
 	rdfs:subClassOf slsa:SlsaSourceLevel ;
@@ -448,27 +469,27 @@ slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_4 a owl:Class ;
 slsa:SlsaSourceLevel a owl:Class ;
 	rdfs:label "SlsaSourceLevel" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/source-requirements#basics> ;
-	owl:unionOf _:c14n268 ;
+	owl:unionOf _:c14n375 ;
 	skos:definition "The levels of the SLSA Source track, each adding trust in how a revision was created." ;
 	skos:inScheme slsa:slsa_source ;
 	linkml:permissible_values slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_0 , slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_1 , slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_2 , slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_3 , slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_4 .
 slsa:SlsaSourceProvenance a owl:Class ;
 	rdfs:label "SlsaSourceProvenance" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/source-requirements#source-provenance-attestations> ;
-	rdfs:subClassOf slsa:SlsaPredicate , _:c14n102 , _:c14n185 , _:c14n24 , _:c14n376 , _:c14n394 ;
+	rdfs:subClassOf slsa:SlsaPredicate , _:c14n142 , _:c14n262 , _:c14n37 , _:c14n523 , _:c14n547 ;
 	skos:definition "Evidence from an SCS of how a revision came to exist and which technical controls were enforced when it did." ;
 	skos:inScheme slsa:slsa_source ;
 	skos:note "SLSA leaves the format of source provenance to each SCS and defines no predicate type for it; this class holds what the specification says such provenance conveys." , "Source L2 and above require the SCS to issue it with each new revision." .
 slsa:SlsaSourceRepository a owl:Class ;
 	rdfs:label "SlsaSourceRepository" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/source-requirements#definitions> ;
-	rdfs:subClassOf _:c14n230 , _:c14n272 , _:c14n317 , _:c14n352 , _:c14n380 , _:c14n40 ;
+	rdfs:subClassOf _:c14n325 , _:c14n380 , _:c14n442 , _:c14n491 , _:c14n530 , _:c14n60 ;
 	skos:definition "A self-contained unit that holds a set of files, their revision history and metadata such as branches and tags." ;
 	skos:inScheme slsa:slsa_source .
 slsa:SlsaSourceRevision a owl:Class ;
 	rdfs:label "SlsaSourceRevision" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/source-requirements#definitions> ;
-	rdfs:subClassOf _:c14n108 , _:c14n159 , _:c14n167 , _:c14n174 , _:c14n179 , _:c14n211 , _:c14n260 , _:c14n279 , _:c14n293 , _:c14n298 , _:c14n304 , _:c14n309 , _:c14n327 , _:c14n345 , _:c14n347 , _:c14n354 , _:c14n38 , _:c14n381 , _:c14n392 , _:c14n393 ;
+	rdfs:subClassOf _:c14n150 , _:c14n227 , _:c14n238 , _:c14n245 , _:c14n253 , _:c14n300 , _:c14n366 , _:c14n390 , _:c14n408 , _:c14n416 , _:c14n424 , _:c14n431 , _:c14n457 , _:c14n482 , _:c14n485 , _:c14n493 , _:c14n531 , _:c14n544 , _:c14n546 , _:c14n56 ;
 	skos:definition "A logically immutable snapshot of a repository's tracked files, with its version-control metadata: author, time and parent revisions." ;
 	skos:inScheme slsa:slsa_source ;
 	skos:note "A revision id is unique within its repository and may recur in another; a document that holds revisions from several repositories qualifies them." .
@@ -488,28 +509,50 @@ slsa:SlsaVerificationResult\#PASSED a owl:Class ;
 	skos:definition "The artifact met the policy." .
 slsa:SlsaVerificationResult a owl:Class ;
 	rdfs:label "SlsaVerificationResult" ;
-	owl:unionOf _:c14n311 ;
+	owl:unionOf _:c14n433 ;
 	skos:definition "The outcome of verifying an artifact against a policy." ;
 	skos:inScheme slsa:slsa_verification ;
 	linkml:permissible_values slsa:SlsaVerificationResult\#FAILED , slsa:SlsaVerificationResult\#PASSED .
 slsa:SlsaVerificationSummary a owl:Class ;
 	rdfs:label "SlsaVerificationSummary" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation> , <https://slsa.dev/spec/v1.2/verification_summary> ;
-	rdfs:subClassOf slsa:SlsaPredicate , _:c14n129 , _:c14n136 , _:c14n154 , _:c14n176 , _:c14n184 , _:c14n199 , _:c14n2 , _:c14n20 , _:c14n212 , _:c14n243 , _:c14n255 , _:c14n276 , _:c14n277 , _:c14n286 , _:c14n294 , _:c14n333 , _:c14n337 , _:c14n34 , _:c14n374 , _:c14n387 , _:c14n4 , _:c14n43 , _:c14n55 , _:c14n58 , _:c14n86 , _:c14n93 ;
+	rdfs:subClassOf slsa:SlsaPredicate , _:c14n1 , _:c14n121 , _:c14n129 , _:c14n146 , _:c14n184 , _:c14n195 , _:c14n223 , _:c14n249 , _:c14n260 , _:c14n283 , _:c14n302 , _:c14n33 , _:c14n361 , _:c14n386 , _:c14n387 , _:c14n399 , _:c14n409 , _:c14n420 , _:c14n471 , _:c14n5 , _:c14n51 , _:c14n520 , _:c14n536 , _:c14n64 , _:c14n82 , _:c14n87 ;
 	skos:definition "The predicate in which a verifier records that it evaluated artifacts against a policy and the SLSA levels they met, so consumers can rely on the verifier instead of reading every underlying attestation." ;
 	skos:inScheme slsa:slsa_verification ;
 	skos:note "A Source VSA is this predicate with the repository as resource_uri and the revision id in the subject's digest." , "The statement that carries it has predicate_type https://slsa.dev/verification_summary/v1." , "Verification tooling and the places attestations are stored were an adoption difficulty practitioners reported (Tamanna et al., 2024, LF.1)." .
+slsa:SlsaVerificationSummaryInputAttestation a owl:Class ;
+	rdfs:label "SlsaVerificationSummaryInputAttestation" ;
+	rdfs:seeAlso <https://slsa.dev/spec/v1.2/verification_summary#inputAttestations> ;
+	rdfs:subClassOf slsa:InTotoResourceDescriptor , _:c14n269 , _:c14n352 , _:c14n41 , _:c14n437 , _:c14n521 , _:c14n91 ;
+	skos:definition "One attestation a verifier consulted: a resource descriptor that carries the attestation's digest." ;
+	skos:inScheme slsa:slsa_verification .
+slsa:SlsaVerificationSummaryPolicy a owl:Class ;
+	rdfs:label "SlsaVerificationSummaryPolicy" ;
+	rdfs:seeAlso <https://slsa.dev/spec/v1.2/verification_summary#policy> ;
+	rdfs:subClassOf slsa:InTotoResourceDescriptor , _:c14n19 , _:c14n281 , _:c14n31 , _:c14n405 , _:c14n67 , _:c14n7 ;
+	skos:definition "The policy a verification summary applied: a resource descriptor that names the policy by URI." ;
+	skos:inScheme slsa:slsa_verification ;
+	skos:note "A digest is recommended as well, to pin the exact version of the policy." .
 slsa:SlsaVerifier a owl:Class ;
 	rdfs:label "SlsaVerifier" ;
 	rdfs:seeAlso <https://slsa.dev/spec/v1.2/verification_summary#verifier> ;
-	rdfs:subClassOf slsa:SlsaParty , _:c14n114 , _:c14n149 , _:c14n164 , _:c14n217 , _:c14n284 ;
+	rdfs:subClassOf slsa:SlsaParty , _:c14n161 , _:c14n215 , _:c14n234 , _:c14n308 , _:c14n396 ;
 	skos:definition "A party that inspects provenance or other attestations and decides whether an artifact is authentic." ;
 	skos:inScheme slsa:slsa_core ;
 	skos:note "Consumers accept only specific signer and verifier pairs." .
+slsa:additional_digests a owl:ObjectProperty ;
+	rdfs:label "additional_digests" ;
+	skos:definition "The digests under algorithms this class does not name." ;
+	skos:inScheme slsa:slsa_core .
 slsa:adoption_metadata a owl:ObjectProperty ;
 	rdfs:label "adoption_metadata" ;
 	skos:definition "How the deployment the document describes fares against the adoption study's themes." ;
 	skos:inScheme <https://w3id.org/lmodel/slsa> .
+slsa:algorithm a owl:DatatypeProperty ;
+	rdfs:label "algorithm" ;
+	skos:definition "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id." ;
+	skos:inScheme slsa:slsa_core ;
+	skos:note "An algorithm that InTotoDigestSet names, by its JSON key or by its field name, goes in that field instead." .
 slsa:annotation_key a owl:DatatypeProperty ;
 	rdfs:label "annotation_key" ;
 	skos:definition "The annotation's key." ;
@@ -530,7 +573,7 @@ slsa:attestation_storage_uri a owl:DatatypeProperty ;
 	rdfs:label "attestation_storage_uri" ;
 	skos:definition "Where the signed attestation is stored or can be fetched." ;
 	skos:inScheme slsa:slsa_core ;
-	skos:note "SLSA names no standard place to store attestations; recording the place used helps consumers find them (Tamanna et al., 2024, LF.1)." .
+	skos:note "SLSA asks producers to publish attestations in at least one place and preferably more: beside the source repository's releases, beside the artifact in its package registry, which it prefers in the long term, or elsewhere with an entry in a transparency log." , "Where to store attestations was an open question for practitioners (Tamanna et al., 2024, LF.1)." .
 slsa:attestations a owl:ObjectProperty ;
 	rdfs:label "attestations" ;
 	skos:definition "The attestations, as in-toto statements." ;
@@ -543,6 +586,14 @@ slsa:authored_by a owl:DatatypeProperty ;
 	rdfs:label "authored_by" ;
 	skos:definition "The identity of the person or automation that authored the revision." ;
 	skos:inScheme slsa:slsa_source .
+slsa:blake2b a owl:DatatypeProperty ;
+	rdfs:label "blake2b" ;
+	skos:definition "The BLAKE2b digest of the artifact, of 32 to 64 bytes." ;
+	skos:inScheme slsa:slsa_core .
+slsa:blake2s a owl:DatatypeProperty ;
+	rdfs:label "blake2s" ;
+	skos:definition "The BLAKE2s digest of the artifact, at its full 32 bytes." ;
+	skos:inScheme slsa:slsa_core .
 slsa:build_definition a owl:ObjectProperty ;
 	rdfs:label "build_definition" ;
 	skos:definition "The inputs to the build; required at Build L1." ;
@@ -618,6 +669,15 @@ slsa:component_versions a owl:ObjectProperty ;
 	rdfs:range slsa:SlsaComponentVersion ;
 	skos:definition "The version of each named component of a platform." ;
 	skos:inScheme slsa:slsa_core .
+slsa:content a owl:DatatypeProperty ;
+	rdfs:label "content" ;
+	skos:definition "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
+	skos:inScheme slsa:slsa_core ;
+	skos:note "The in-toto framework asks for content under 1 KB, so that attestations stay small." .
+slsa:control_planes a owl:ObjectProperty ;
+	rdfs:label "control_planes" ;
+	skos:definition "The control planes of the build platforms." ;
+	skos:inScheme <https://w3id.org/lmodel/slsa> .
 slsa:controls_enforced a owl:DatatypeProperty ;
 	rdfs:label "controls_enforced" ;
 	skos:definition "The technical controls the SCS enforced when the revision was created, as the organization documents them." ;
@@ -625,7 +685,7 @@ slsa:controls_enforced a owl:DatatypeProperty ;
 	skos:note "Two-party review is a control many single-maintainer projects cannot meet (Tamanna et al., 2024, LF.2)." .
 slsa:dependencies a owl:ObjectProperty ;
 	rdfs:label "dependencies" ;
-	skos:definition "The dependencies, each identified by URI and digest." ;
+	skos:definition "The dependencies, each as a resource descriptor." ;
 	skos:inScheme slsa:slsa_dependency .
 slsa:dependency_count a owl:DatatypeProperty ;
 	rdfs:label "dependency_count" ;
@@ -642,7 +702,8 @@ slsa:dependency_level a owl:ObjectProperty ;
 slsa:dependency_levels a owl:ObjectProperty ;
 	rdfs:label "dependency_levels" ;
 	skos:definition "How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies." ;
-	skos:inScheme slsa:slsa_verification .
+	skos:inScheme slsa:slsa_verification ;
+	skos:note "The attestation's JSON tells an empty map (no dependencies) from an absent one (no claim); this list cannot, so an empty list reads as no claim." .
 slsa:digest a owl:ObjectProperty ;
 	rdfs:label "digest" ;
 	rdfs:range slsa:InTotoDigestSet ;
@@ -650,7 +711,7 @@ slsa:digest a owl:ObjectProperty ;
 	skos:inScheme slsa:slsa_core .
 slsa:dir_hash a owl:DatatypeProperty ;
 	rdfs:label "dir_hash" ;
-	skos:definition "A digest over a directory's content, as the in-toto framework defines it." ;
+	skos:definition "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64." ;
 	skos:inScheme slsa:slsa_core .
 slsa:download_location a owl:DatatypeProperty ;
 	rdfs:label "download_location" ;
@@ -660,23 +721,35 @@ slsa:ecosystem a owl:DatatypeProperty ;
 	rdfs:label "ecosystem" ;
 	skos:definition "The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI." ;
 	skos:inScheme slsa:slsa_core ;
-	skos:note "The same source can yield differently named packages in one ecosystem, so verifiers match provenance to package names with care (Tamanna et al., 2024, UR.1)." .
+	skos:note "One ecosystem's tools can name the same package differently, which the study found affects attestations and provenance, so verifiers match provenance to package names with care (Tamanna et al., 2024, UR.1)." .
 slsa:external_parameters a owl:ObjectProperty ;
 	rdfs:label "external_parameters" ;
-	skos:definition "The inputs under the tenant's control; complete at Build L3 and verified by consumers." ;
+	skos:definition "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers." ;
 	skos:inScheme slsa:slsa_build ;
 	skos:note "Verifiers reject parameters they do not recognize here." .
 slsa:finished_on a owl:DatatypeProperty ;
 	rdfs:label "finished_on" ;
 	skos:definition "When the build finished." ;
 	skos:inScheme slsa:slsa_build .
+slsa:git_blob a owl:DatatypeProperty ;
+	rdfs:label "git_blob" ;
+	skos:definition "The git blob id of a file's content." ;
+	skos:inScheme slsa:slsa_core .
 slsa:git_commit a owl:DatatypeProperty ;
 	rdfs:label "git_commit" ;
 	skos:definition "The git commit id of a source revision." ;
 	skos:inScheme slsa:slsa_core .
+slsa:git_tag a owl:DatatypeProperty ;
+	rdfs:label "git_tag" ;
+	skos:definition "The git object id of an annotated tag." ;
+	skos:inScheme slsa:slsa_core .
 slsa:git_tree a owl:DatatypeProperty ;
 	rdfs:label "git_tree" ;
-	skos:definition "The git tree id of a source revision's content." ;
+	skos:definition "The git tree id of a source revision's content, or of any file tree." ;
+	skos:inScheme slsa:slsa_core .
+slsa:gost a owl:DatatypeProperty ;
+	rdfs:label "gost" ;
+	skos:definition "The GOST R 34.11 digest of the artifact, of 256 or 512 bits." ;
 	skos:inScheme slsa:slsa_core .
 slsa:guac_uri a owl:DatatypeProperty ;
 	rdfs:label "guac_uri" ;
@@ -686,7 +759,7 @@ slsa:hermetic a owl:DatatypeProperty ;
 	rdfs:label "hermetic" ;
 	skos:definition "Whether the build could reach only the dependencies it declared, with no other network or filesystem access." ;
 	skos:inScheme slsa:slsa_build ;
-	skos:note "Hermetic builds are an isolation property Build L3 platforms aim for, and the one practitioners found hardest (Tamanna et al., 2024, CI.1)." .
+	skos:note "SLSA v1.2 does not require hermetic builds; Build L3's isolation is a different property, and hermeticity is a candidate for a future Build L4." , "The study cites a 2023 industry survey in which over half the participants found hermetic builds hard to implement, and lists \"hermetic build\" among SLSA's unclear terms (Tamanna et al., 2024, UC.1)." .
 slsa:hosted a owl:DatatypeProperty ;
 	rdfs:label "hosted" ;
 	skos:definition "Whether the platform is a hosted service on shared or dedicated infrastructure rather than an individual's workstation." ;
@@ -712,6 +785,11 @@ slsa:invocation_id a owl:DatatypeProperty ;
 	rdfs:label "invocation_id" ;
 	skos:definition "An identifier for this build invocation, in a format the builder defines; useful for finding its logs." ;
 	skos:inScheme slsa:slsa_build .
+slsa:md5 a owl:DatatypeProperty ;
+	rdfs:label "md5" ;
+	skos:definition "The MD5 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core ;
+	skos:note "MD5 lacks collision resistance, so most consumers should not accept it." .
 slsa:measured_component a owl:DatatypeProperty ;
 	rdfs:label "measured_component" ;
 	skos:definition "The component or state that was measured, such as the bootloader, guest kernel, build agent or root filesystem." ;
@@ -730,7 +808,7 @@ slsa:named_references a owl:ObjectProperty ;
 	skos:inScheme <https://w3id.org/lmodel/slsa> .
 slsa:organization_properties a owl:DatatypeProperty ;
 	rdfs:label "organization_properties" ;
-	skos:definition "Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_." ;
+	skos:definition "Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers." ;
 	skos:inScheme slsa:slsa_verification .
 slsa:package_artifacts a owl:ObjectProperty ;
 	rdfs:label "package_artifacts" ;
@@ -861,6 +939,10 @@ slsa:revision_id a owl:DatatypeProperty ;
 	rdfs:label "revision_id" ;
 	skos:definition "The revision identifier the SCS assigns, such as a git commit id or a path- qualified sequence number." ;
 	skos:inScheme slsa:slsa_source .
+slsa:ripemd160 a owl:DatatypeProperty ;
+	rdfs:label "ripemd160" ;
+	skos:definition "The RIPEMD-160 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
 slsa:run_details a owl:ObjectProperty ;
 	rdfs:label "run_details" ;
 	skos:definition "What is specific to this execution of the build; required at Build L1." ;
@@ -873,13 +955,58 @@ slsa:security_insights_uri a owl:DatatypeProperty ;
 	rdfs:label "security_insights_uri" ;
 	skos:definition "The SECURITY-INSIGHTS.yml file of the project that produces the package." ;
 	skos:inScheme slsa:slsa_core .
+slsa:sha1 a owl:DatatypeProperty ;
+	rdfs:label "sha1" ;
+	skos:definition "The SHA-1 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core ;
+	skos:note "SHA-1 lacks collision resistance, so most consumers should not rely on it." .
+slsa:sha224 a owl:DatatypeProperty ;
+	rdfs:label "sha224" ;
+	skos:definition "The SHA-224 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
 slsa:sha256 a owl:DatatypeProperty ;
 	rdfs:label "sha256" ;
 	skos:definition "The SHA-256 digest of the artifact." ;
 	skos:inScheme slsa:slsa_core .
+slsa:sha384 a owl:DatatypeProperty ;
+	rdfs:label "sha384" ;
+	skos:definition "The SHA-384 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
+slsa:sha3_224 a owl:DatatypeProperty ;
+	rdfs:label "sha3_224" ;
+	skos:definition "The SHA3-224 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
+slsa:sha3_256 a owl:DatatypeProperty ;
+	rdfs:label "sha3_256" ;
+	skos:definition "The SHA3-256 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
+slsa:sha3_384 a owl:DatatypeProperty ;
+	rdfs:label "sha3_384" ;
+	skos:definition "The SHA3-384 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
+slsa:sha3_512 a owl:DatatypeProperty ;
+	rdfs:label "sha3_512" ;
+	skos:definition "The SHA3-512 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
 slsa:sha512 a owl:DatatypeProperty ;
 	rdfs:label "sha512" ;
 	skos:definition "The SHA-512 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
+slsa:sha512_224 a owl:DatatypeProperty ;
+	rdfs:label "sha512_224" ;
+	skos:definition "The SHA-512/224 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
+slsa:sha512_256 a owl:DatatypeProperty ;
+	rdfs:label "sha512_256" ;
+	skos:definition "The SHA-512/256 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
+slsa:shake128 a owl:DatatypeProperty ;
+	rdfs:label "shake128" ;
+	skos:definition "The SHAKE128 digest of the artifact, of at least 32 bytes." ;
+	skos:inScheme slsa:slsa_core .
+slsa:shake256 a owl:DatatypeProperty ;
+	rdfs:label "shake256" ;
+	skos:definition "The SHAKE256 digest of the artifact, of at least 32 bytes." ;
 	skos:inScheme slsa:slsa_core .
 slsa:signing_tool a owl:DatatypeProperty ;
 	rdfs:label "signing_tool" ;
@@ -889,6 +1016,10 @@ slsa:slsa_version a owl:DatatypeProperty ;
 	rdfs:label "slsa_version" ;
 	skos:definition "The SLSA specification version the verifier applied, as MAJOR.MINOR." ;
 	skos:inScheme slsa:slsa_verification .
+slsa:sm3 a owl:DatatypeProperty ;
+	rdfs:label "sm3" ;
+	skos:definition "The SM3 digest of the artifact." ;
+	skos:inScheme slsa:slsa_core .
 slsa:source_control_systems a owl:ObjectProperty ;
 	rdfs:label "source_control_systems" ;
 	skos:definition "The source control systems." ;
@@ -919,7 +1050,7 @@ slsa:strategies a owl:ObjectProperty ;
 	skos:inScheme slsa:slsa_adoption .
 slsa:subject a owl:ObjectProperty ;
 	rdfs:label "subject" ;
-	skos:definition "The artifacts the predicate is about; each carries a digest." ;
+	skos:definition "The artifacts the predicate is about, each with a digest." ;
 	skos:inScheme slsa:slsa_core .
 slsa:time_verified a owl:DatatypeProperty ;
 	rdfs:label "time_verified" ;
@@ -929,18 +1060,23 @@ slsa:transparency_log_entry a owl:DatatypeProperty ;
 	rdfs:label "transparency_log_entry" ;
 	skos:definition "The transparency log entry that records the signature, such as a Rekor entry." ;
 	skos:inScheme slsa:slsa_core .
+slsa:value a owl:DatatypeProperty ;
+	rdfs:label "value" ;
+	skos:definition "The digest under that algorithm, in the encoding the algorithm documents." ;
+	skos:inScheme slsa:slsa_core .
 slsa:verification_result a owl:ObjectProperty ;
 	rdfs:label "verification_result" ;
 	skos:definition "Whether the subject passed the policy." ;
 	skos:inScheme slsa:slsa_verification .
-slsa:verified_level a owl:ObjectProperty ;
+slsa:verified_level a owl:DatatypeProperty ;
 	rdfs:label "verified_level" ;
-	skos:definition "The level the dependencies were verified at." ;
+	skos:definition "The level the dependencies were verified at, or a result of the issuer's own." ;
 	skos:inScheme slsa:slsa_verification .
-slsa:verified_levels a owl:ObjectProperty ;
+slsa:verified_levels a owl:DatatypeProperty ;
 	rdfs:label "verified_levels" ;
-	skos:definition "The highest level verified in each track, and any verified property; a level implies the levels below it." ;
-	skos:inScheme slsa:slsa_verification .
+	skos:definition "The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it." ;
+	skos:inScheme slsa:slsa_verification ;
+	skos:note "A VSA lists at most one level per track, and only FAILED when verification failed; the validator checks neither." .
 slsa:verifier a owl:ObjectProperty ;
 	rdfs:label "verifier" ;
 	skos:definition "The verifier that made this determination." ;
@@ -953,1169 +1089,1810 @@ _:c14n0 a owl:Restriction ;
 	owl:allValuesFrom slsa:SlsaBuildLevel ;
 	owl:onProperty slsa:build_level .
 _:c14n1 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:reference_type .
-_:c14n10 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_UNEVALUATED ;
-	rdf:rest _:c14n235 .
+	owl:allValuesFrom slsa:SlsaVerificationSummaryInputAttestation ;
+	owl:onProperty slsa:input_attestations .
+_:c14n10 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:provenance .
 _:c14n100 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:build_platform .
+	owl:allValuesFrom _:c14n559 ;
+	owl:onProperty slsa:git_tree .
 _:c14n101 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:revision .
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:invocation_id .
 _:c14n102 a owl:Restriction ;
 	owl:minCardinality 0 ;
-	owl:onProperty slsa:controls_enforced .
+	owl:onProperty slsa:hermetic .
 _:c14n103 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:source_control_systems .
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:started_on .
 _:c14n104 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:transparency_log_entry .
+	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
+	owl:onProperty slsa:resolved_dependencies .
 _:c14n105 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:ecosystem .
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:resource_uri .
 _:c14n106 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:parameter_value .
-_:c14n107 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_2 ;
-	rdf:rest _:c14n90 .
-_:c14n108 a owl:Restriction ;
+	owl:allValuesFrom _:c14n609 ;
+	owl:onProperty slsa:shake128 .
+_:c14n107 a owl:Restriction ;
 	owl:maxCardinality 1 ;
-	owl:onProperty slsa:authored_at .
+	owl:onProperty slsa:statement_type .
+_:c14n108 a rdfs:Datatype ;
+	owl:datatypeComplementOf _:c14n28 .
 _:c14n109 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:dir_hash .
-_:c14n11 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_4 ;
-	rdf:rest rdf:nil .
-_:c14n110 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:sha256 .
-_:c14n111 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:builder_id .
-_:c14n112 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_type .
-_:c14n113 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:security_insights_uri .
-_:c14n114 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:verifier_id .
-_:c14n115 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:hermetic .
-_:c14n116 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:provenance_generation_tool .
-_:c14n117 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:source_revisions .
-_:c14n118 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:parameter_name .
-_:c14n119 rdf:first slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_2 ;
-	rdf:rest _:c14n312 .
-_:c14n12 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaParty ;
-	owl:onProperty slsa:party_type ;
-	owl:someValuesFrom slsa:SlsaParty .
-_:c14n120 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:party_name .
-_:c14n121 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:transparency_log_entry .
-_:c14n122 rdf:first slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_0 ;
-	rdf:rest _:c14n53 .
-_:c14n123 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:signing_tool .
-_:c14n124 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:byproducts .
-_:c14n125 rdf:first slsa:SlsaBuildProvenance ;
-	rdf:rest _:c14n267 .
-_:c14n126 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaNamedReference ;
-	owl:onProperty slsa:reference_type ;
-	owl:someValuesFrom slsa:SlsaNamedReference .
-_:c14n127 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:parameter_value .
-_:c14n128 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_1 ;
-	rdf:rest _:c14n8 .
-_:c14n129 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:slsa_version .
-_:c14n13 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:guac_uri .
-_:c14n130 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_1 ;
-	rdf:rest _:c14n107 .
-_:c14n131 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:component_version .
-_:c14n132 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:named_references .
-_:c14n133 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaPredicate ;
-	owl:onProperty slsa:predicate .
-_:c14n134 rdf:first slsa:SlsaAdoptionStrategy\#STREAMLINE_PROVENANCE_GENERATION ;
-	rdf:rest _:c14n172 .
-_:c14n135 owl:unionOf _:c14n138 .
-_:c14n136 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:policy .
-_:c14n137 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:parties .
-_:c14n138 rdf:first slsa:SlsaBuildEnvironmentAttestation ;
-	rdf:rest _:c14n125 .
-_:c14n139 rdf:first slsa:SlsaAdoptionChallenge\#COMPLEX_IMPLEMENTATION ;
-	rdf:rest _:c14n85 .
-_:c14n14 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:annotation_key .
-_:c14n140 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaNamedReference ;
-	owl:onProperty slsa:named_references .
-_:c14n141 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildImage ;
-	owl:onProperty slsa:build_image .
-_:c14n142 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceRevision ;
-	owl:onProperty slsa:source_revisions .
-_:c14n143 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_metadata .
-_:c14n144 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:reference_type .
-_:c14n145 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaVerifier ;
-	owl:onProperty slsa:party_type ;
-	owl:someValuesFrom slsa:SlsaVerifier .
-_:c14n146 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:reference_name .
-_:c14n147 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_definition .
-_:c14n148 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoDigestSet ;
-	owl:onProperty slsa:digest .
-_:c14n149 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:verifier_id .
-_:c14n15 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:ecosystem .
-_:c14n150 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildEnvironmentLevel ;
-	owl:onProperty slsa:build_env_level .
-_:c14n151 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:guac_uri .
-_:c14n152 a owl:Restriction ;
-	owl:allValuesFrom xsd:boolean ;
-	owl:onProperty slsa:protected .
-_:c14n153 a owl:Restriction ;
-	owl:allValuesFrom xsd:boolean ;
-	owl:onProperty slsa:hosted .
-_:c14n154 a owl:Restriction ;
-	owl:allValuesFrom xsd:dateTime ;
-	owl:onProperty slsa:time_verified .
-_:c14n155 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:dir_hash .
-_:c14n156 a owl:Restriction ;
-	owl:allValuesFrom xsd:dateTime ;
-	owl:onProperty slsa:finished_on .
-_:c14n157 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:resource_name .
-_:c14n158 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaPackage ;
-	owl:onProperty slsa:packages .
-_:c14n159 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaReviewType ;
-	owl:onProperty slsa:review_type .
-_:c14n16 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:build_id .
-_:c14n160 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaBuildProvenance ;
-	owl:onProperty slsa:predicate_kind ;
-	owl:someValuesFrom slsa:SlsaBuildProvenance .
-_:c14n161 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoStatement ;
-	owl:onProperty slsa:attestations .
-_:c14n162 rdf:first slsa:SlsaResult\#SLSA_SOURCE_TWO_PARTY_REVIEWED ;
-	rdf:rest _:c14n57 .
-_:c14n163 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_3 ;
-	rdf:rest _:c14n23 .
-_:c14n164 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaComponentVersion ;
-	owl:onProperty slsa:component_versions .
-_:c14n165 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:reference_name .
-_:c14n166 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildImageProducer ;
-	owl:onProperty slsa:produced_by .
-_:c14n167 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:revision_id .
-_:c14n168 a owl:Restriction ;
-	owl:allValuesFrom _:c14n410 ;
-	owl:onProperty slsa:dependency_count .
-_:c14n169 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:component_version .
-_:c14n17 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:strategies .
-_:c14n170 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:digest .
-_:c14n171 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:predicate .
-_:c14n172 rdf:first slsa:SlsaAdoptionStrategy\#IMPROVE_VERIFICATION_PROCESS ;
-	rdf:rest _:c14n375 .
-_:c14n173 xsd:pattern "^[a-f0-9]{128}$" .
-_:c14n174 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:review_type .
-_:c14n175 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:digest .
-_:c14n176 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaDependencyLevelCount ;
-	owl:onProperty slsa:dependency_levels .
-_:c14n177 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:build_metadata .
-_:c14n178 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:signing_tool .
-_:c14n179 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceRevision ;
-	owl:onProperty slsa:parent_revisions .
-_:c14n18 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_platform .
-_:c14n180 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:predicate_kind .
-_:c14n181 rdf:first slsa:SlsaBuildImageProducer ;
-	rdf:rest _:c14n237 .
-_:c14n182 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:source_repositories .
-_:c14n183 rdf:first slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_3 ;
-	rdf:rest rdf:nil .
-_:c14n184 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaVerificationResult ;
-	owl:onProperty slsa:verification_result .
-_:c14n185 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:revision .
-_:c14n186 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:party_type .
-_:c14n187 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:external_parameters .
-_:c14n188 rdf:first slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_1 ;
-	rdf:rest _:c14n119 .
-_:c14n189 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:sha512 .
-_:c14n19 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:builder .
-_:c14n190 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceRepository ;
-	owl:onProperty slsa:repository .
-_:c14n191 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:scs_uri .
-_:c14n192 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:dependency_inventories .
-_:c14n193 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:annotation_values .
-_:c14n194 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:builder .
-_:c14n195 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceRepository ;
-	owl:onProperty slsa:source_repositories .
-_:c14n196 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceRevision ;
-	owl:onProperty slsa:revision .
-_:c14n197 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:package_name .
-_:c14n198 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaAdoptionChallenge ;
-	owl:onProperty slsa:challenges .
-_:c14n199 a owl:Restriction ;
-	owl:allValuesFrom _:c14n403 ;
-	owl:onProperty slsa:organization_properties .
-_:c14n2 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:organization_properties .
-_:c14n20 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:verified_levels .
-_:c14n200 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_level .
-_:c14n201 rdf:first slsa:SlsaAdoptionStrategy\#ENHANCE_ALIGNMENT_FLEXIBILITY ;
-	rdf:rest _:c14n301 .
-_:c14n202 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:security_insights_uri .
-_:c14n203 a owl:Restriction ;
-	owl:allValuesFrom _:c14n409 ;
-	owl:onProperty slsa:statement_type .
-_:c14n204 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_3 ;
-	rdf:rest _:c14n67 .
-_:c14n205 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaDependencyLevel ;
-	owl:onProperty slsa:dependency_level .
-_:c14n206 rdf:first slsa:SlsaAdoptionChallenge\#UNCLEAR_RELEVANCE ;
-	rdf:rest rdf:nil .
-_:c14n207 a owl:Restriction ;
-	owl:allValuesFrom xsd:boolean ;
-	owl:onProperty slsa:hermetic .
-_:c14n208 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:party_type .
-_:c14n209 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildEnvironmentLevel ;
-	owl:onProperty slsa:build_env_level .
-_:c14n21 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:build_type .
-_:c14n210 rdf:first slsa:SlsaVerificationSummary ;
-	rdf:rest rdf:nil .
-_:c14n211 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:authored_by .
-_:c14n212 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaVerifier ;
-	owl:onProperty slsa:verifier .
-_:c14n213 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:git_tree .
-_:c14n214 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:attestation_storage_uri .
-_:c14n215 rdf:first slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_0 ;
-	rdf:rest _:c14n188 .
-_:c14n216 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:registry_uri .
-_:c14n217 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:component_versions .
-_:c14n218 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:hosted .
-_:c14n219 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:repository .
-_:c14n22 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:challenges .
-_:c14n220 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_3 ;
-	rdf:rest _:c14n11 .
-_:c14n221 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildPlatform ;
-	owl:onProperty slsa:build_platforms .
-_:c14n222 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaPredicate ;
-	owl:onProperty slsa:predicate_kind ;
-	owl:someValuesFrom slsa:SlsaPredicate .
-_:c14n223 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:parameter_name .
-_:c14n224 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaResult ;
-	owl:onProperty slsa:verified_level .
-_:c14n225 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:dependencies .
-_:c14n226 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_platform .
-_:c14n227 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:repository .
-_:c14n228 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:internal_parameters .
-_:c14n229 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:revision .
-_:c14n23 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_UNEVALUATED ;
-	rdf:rest _:c14n259 .
-_:c14n230 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:hosted_by .
-_:c14n231 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:digest .
-_:c14n232 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:build_image .
-_:c14n233 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:registry .
-_:c14n234 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:parameter_value .
-_:c14n235 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_0 ;
-	rdf:rest _:c14n79 .
-_:c14n236 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:resource_name .
-_:c14n237 rdf:first slsa:SlsaConsumer ;
-	rdf:rest _:c14n331 .
-_:c14n238 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:annotation_key .
-_:c14n239 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildImage ;
-	owl:onProperty slsa:build_images .
-_:c14n24 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:controls_enforced .
-_:c14n240 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:hosted .
-_:c14n241 rdf:first slsa:SlsaReviewType\#PAIR_PROGRAMMING ;
-	rdf:rest _:c14n341 .
-_:c14n242 rdf:first slsa:SlsaResult\#FAILED ;
-	rdf:rest rdf:nil .
-_:c14n243 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:input_attestations .
-_:c14n244 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:ecosystem .
-_:c14n245 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:image_uri .
-_:c14n246 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:party_name .
-_:c14n247 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaPackageRegistry ;
-	owl:onProperty slsa:package_registries .
-_:c14n248 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:annotations .
-_:c14n249 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:attestations .
-_:c14n25 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaBuildImageProducer ;
-	owl:onProperty slsa:party_type ;
-	owl:someValuesFrom slsa:SlsaBuildImageProducer .
-_:c14n250 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaParty ;
-	owl:onProperty slsa:parties .
-_:c14n251 rdf:first slsa:SlsaProducer ;
-	rdf:rest _:c14n33 .
-_:c14n252 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:run_details .
-_:c14n253 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:download_location .
-_:c14n254 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:build_level .
-_:c14n255 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:verifier .
-_:c14n256 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:verified_level .
-_:c14n257 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:reference_type .
-_:c14n258 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:transparency_log_entry .
-_:c14n259 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_0 ;
-	rdf:rest _:c14n130 .
-_:c14n26 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaTag ;
-	owl:onProperty slsa:reference_type ;
-	owl:someValuesFrom slsa:SlsaTag .
-_:c14n260 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:parent_revisions .
-_:c14n261 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaBuildEnvironmentAttestation ;
-	owl:onProperty slsa:predicate_kind ;
-	owl:someValuesFrom slsa:SlsaBuildEnvironmentAttestation .
-_:c14n262 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:invocation_id .
-_:c14n263 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:build_id .
-_:c14n264 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoAnnotation ;
-	owl:onProperty slsa:annotations .
-_:c14n265 owl:unionOf _:c14n181 .
-_:c14n266 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:component .
-_:c14n267 rdf:first slsa:SlsaSourceProvenance ;
-	rdf:rest _:c14n210 .
-_:c14n268 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_0 ;
-	rdf:rest _:c14n128 .
-_:c14n269 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:download_location .
-_:c14n27 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:guac_uri .
-_:c14n270 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_image .
-_:c14n271 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:party_type .
-_:c14n272 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:repository_uri .
-_:c14n273 rdf:first xsd:anyURI ;
-	rdf:rest _:c14n411 .
-_:c14n274 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_env_level .
-_:c14n275 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:component_version .
-_:c14n276 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:time_verified .
-_:c14n277 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:resource_uri .
-_:c14n278 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildPlatform ;
-	owl:onProperty slsa:build_platform .
-_:c14n279 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:review_type .
-_:c14n28 xsd:pattern "^https://in-toto\\.io/Statement/v1$" .
-_:c14n280 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:started_on .
-_:c14n281 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:scs_uri .
-_:c14n282 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaComponentVersion ;
-	owl:onProperty slsa:component_versions .
-_:c14n283 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:dir_hash .
-_:c14n284 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:verifier_id .
-_:c14n285 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaConsumer ;
-	owl:onProperty slsa:party_type ;
-	owl:someValuesFrom slsa:SlsaConsumer .
-_:c14n286 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:resource_uri .
-_:c14n287 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_2 ;
-	rdf:rest _:c14n163 .
-_:c14n288 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaSourceProvenance ;
-	owl:onProperty slsa:predicate_kind ;
-	owl:someValuesFrom slsa:SlsaSourceProvenance .
-_:c14n289 xsd:pattern "^[0-9]+\\.[0-9]+$" .
-_:c14n29 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:git_commit .
-_:c14n290 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:ecosystem .
-_:c14n291 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:measured_component .
-_:c14n292 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:ecosystem .
-_:c14n293 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:authored_by .
-_:c14n294 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:verification_result .
-_:c14n295 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:protected .
-_:c14n296 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:finished_on .
-_:c14n297 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:measured_component .
-_:c14n298 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:repository .
-_:c14n299 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:produced_by .
-_:c14n3 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaBranch ;
-	owl:onProperty slsa:reference_type ;
-	owl:someValuesFrom slsa:SlsaBranch .
-_:c14n30 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:predicate_kind .
-_:c14n300 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:git_tree .
-_:c14n301 rdf:first slsa:SlsaAdoptionStrategy\#PROVIDE_DETAILED_DOCUMENTATION ;
-	rdf:rest _:c14n134 .
-_:c14n302 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:sha256 .
-_:c14n303 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:download_location .
-_:c14n304 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:repository .
-_:c14n305 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:statement_type .
-_:c14n306 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:pipeline_orchestrator .
-_:c14n307 rdf:first xsd:integer ;
-	rdf:rest _:c14n412 .
-_:c14n308 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:attestation_storage_uri .
-_:c14n309 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:revision_id .
-_:c14n31 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:builder_id .
-_:c14n310 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:component .
-_:c14n311 rdf:first slsa:SlsaVerificationResult\#PASSED ;
-	rdf:rest _:c14n76 .
-_:c14n312 rdf:first slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_3 ;
-	rdf:rest rdf:nil .
-_:c14n313 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:build_images .
-_:c14n314 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:dependency_count .
-_:c14n315 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:git_commit .
-_:c14n316 xsd:minInclusive 0 .
-_:c14n317 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceControlSystem ;
-	owl:onProperty slsa:hosted_by .
-_:c14n318 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:media_type .
-_:c14n319 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:resource_name .
-_:c14n32 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:predicate_type .
-_:c14n320 xsd:pattern "^ORG_SOURCE_" .
-_:c14n321 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:build_definition .
-_:c14n322 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:build_platforms .
-_:c14n323 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:provenance_generation_tool .
-_:c14n324 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:byproducts .
-_:c14n325 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:subject .
-_:c14n326 rdf:first slsa:SlsaAdoptionChallenge\#LIMITED_FEASIBILITY ;
-	rdf:rest _:c14n206 .
-_:c14n327 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:source_level .
-_:c14n328 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:security_insights_uri .
-_:c14n329 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:builder_id .
-_:c14n33 rdf:first slsa:SlsaVerifier ;
-	rdf:rest rdf:nil .
-_:c14n330 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:adoption_metadata .
-_:c14n331 rdf:first slsa:SlsaInfrastructureProvider ;
-	rdf:rest _:c14n251 .
-_:c14n332 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:build_platform .
-_:c14n333 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:policy .
-_:c14n334 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:signing_tool .
-_:c14n335 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:run_details .
-_:c14n336 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaInfrastructureProvider ;
-	owl:onProperty slsa:party_type ;
-	owl:someValuesFrom slsa:SlsaInfrastructureProvider .
-_:c14n337 a owl:Restriction ;
-	owl:allValuesFrom _:c14n407 ;
-	owl:onProperty slsa:slsa_version .
-_:c14n338 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:annotation_key .
-_:c14n339 a owl:Restriction ;
-	owl:allValuesFrom _:c14n401 ;
-	owl:onProperty slsa:sha256 .
-_:c14n34 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:verifier .
-_:c14n340 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaMeasurement ;
-	owl:onProperty slsa:measurements .
-_:c14n341 rdf:first slsa:SlsaReviewType\#MOB_PROGRAMMING ;
-	rdf:rest _:c14n37 .
-_:c14n342 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:predicate_type .
-_:c14n343 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:package_registries .
-_:c14n344 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:resolved_dependencies .
-_:c14n345 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceLevel ;
-	owl:onProperty slsa:source_level .
-_:c14n346 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildMetadata ;
-	owl:onProperty slsa:build_metadata .
-_:c14n347 a owl:Restriction ;
-	owl:allValuesFrom xsd:dateTime ;
-	owl:onProperty slsa:authored_at .
-_:c14n348 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:media_type .
-_:c14n349 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_4 ;
-	rdf:rest _:c14n162 .
-_:c14n35 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaRunDetails ;
-	owl:onProperty slsa:run_details .
-_:c14n350 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:verified_level .
-_:c14n351 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:protected .
-_:c14n352 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:repository_uri .
-_:c14n353 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:party_name .
-_:c14n354 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:revision_id .
-_:c14n355 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:measurements .
-_:c14n356 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:package_artifacts .
-_:c14n357 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_id .
-_:c14n358 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:reference_name .
-_:c14n359 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:package_name .
-_:c14n36 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:scs_uri .
-_:c14n360 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:builder_dependencies .
-_:c14n361 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaAdoptionStrategy ;
-	owl:onProperty slsa:strategies .
-_:c14n362 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaAdoptionMetadata ;
-	owl:onProperty slsa:adoption_metadata .
-_:c14n363 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:digest .
-_:c14n364 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:package_artifacts .
-_:c14n365 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:resource_uri .
-_:c14n366 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:dependencies .
-_:c14n367 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:pipeline_orchestrator .
-_:c14n368 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildPlatform ;
-	owl:onProperty slsa:builder .
-_:c14n369 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:dependency_count .
-_:c14n37 rdf:first slsa:SlsaReviewType\#AUTOMATED ;
-	rdf:rest rdf:nil .
-_:c14n370 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:artifact .
-_:c14n371 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:build_env_level .
-_:c14n372 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:annotation_values .
-_:c14n373 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:predicate_kind .
-_:c14n374 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:verification_result .
-_:c14n375 rdf:first slsa:SlsaAdoptionStrategy\#COLLABORATE_WITH_COMMUNITY ;
-	rdf:rest rdf:nil .
-_:c14n376 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceRevision ;
-	owl:onProperty slsa:revision .
-_:c14n377 a owl:Restriction ;
-	owl:allValuesFrom _:c14n405 ;
-	owl:onProperty slsa:sha512 .
-_:c14n378 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:ecosystem .
-_:c14n379 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:produced_by .
-_:c14n38 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaSourceRepository ;
-	owl:onProperty slsa:repository .
-_:c14n380 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:repository_uri .
-_:c14n381 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:source_level .
-_:c14n382 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoDigestSet ;
-	owl:onProperty slsa:digest .
-_:c14n383 xsd:pattern "^[a-f0-9]{64}$" .
-_:c14n384 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:parameter_name .
-_:c14n385 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:build_type .
-_:c14n386 rdf:first slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_2 ;
-	rdf:rest _:c14n183 .
-_:c14n387 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:policy .
-_:c14n388 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:registry .
-_:c14n389 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:invocation_id .
-_:c14n39 a owl:Restriction ;
-	owl:allValuesFrom _:c14n400 ;
-	owl:onProperty slsa:git_commit .
-_:c14n390 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:dependency_level .
-_:c14n391 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:finished_on .
-_:c14n392 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:authored_at .
-_:c14n393 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:authored_by .
-_:c14n394 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:revision .
-_:c14n395 xsd:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
-_:c14n396 rdf:first _:c14n395 ;
-	rdf:rest rdf:nil .
-_:c14n397 a rdfs:Datatype ;
-	owl:onDatatype xsd:string ;
-	owl:withRestrictions _:c14n396 .
-_:c14n398 xsd:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
-_:c14n399 rdf:first _:c14n398 ;
-	rdf:rest rdf:nil .
-_:c14n4 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaResult ;
-	owl:onProperty slsa:verified_levels .
-_:c14n40 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:hosted_by .
-_:c14n400 a rdfs:Datatype ;
-	owl:onDatatype xsd:string ;
-	owl:withRestrictions _:c14n399 .
-_:c14n401 a rdfs:Datatype ;
-	owl:onDatatype xsd:string ;
-	owl:withRestrictions _:c14n402 .
-_:c14n402 rdf:first _:c14n383 ;
-	rdf:rest rdf:nil .
-_:c14n403 a rdfs:Datatype ;
-	owl:onDatatype xsd:string ;
-	owl:withRestrictions _:c14n404 .
-_:c14n404 rdf:first _:c14n320 ;
-	rdf:rest rdf:nil .
-_:c14n405 a rdfs:Datatype ;
-	owl:onDatatype xsd:string ;
-	owl:withRestrictions _:c14n406 .
-_:c14n406 rdf:first _:c14n173 ;
-	rdf:rest rdf:nil .
-_:c14n407 a rdfs:Datatype ;
-	owl:onDatatype xsd:string ;
-	owl:withRestrictions _:c14n408 .
-_:c14n408 rdf:first _:c14n289 ;
-	rdf:rest rdf:nil .
-_:c14n409 a rdfs:Datatype ;
-	owl:intersectionOf _:c14n273 .
-_:c14n41 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_2 ;
-	rdf:rest _:c14n220 .
-_:c14n410 a rdfs:Datatype ;
-	owl:intersectionOf _:c14n307 .
-_:c14n411 rdf:first _:c14n45 ;
-	rdf:rest rdf:nil .
-_:c14n412 rdf:first _:c14n94 ;
-	rdf:rest rdf:nil .
-_:c14n413 rdf:first _:c14n28 ;
-	rdf:rest rdf:nil .
-_:c14n414 rdf:first _:c14n316 ;
-	rdf:rest rdf:nil .
-_:c14n42 a owl:Restriction ;
-	rdfs:subClassOf slsa:SlsaVerificationSummary ;
-	owl:onProperty slsa:predicate_kind ;
-	owl:someValuesFrom slsa:SlsaVerificationSummary .
-_:c14n43 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:slsa_version .
-_:c14n44 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:builder_dependencies .
-_:c14n45 a rdfs:Datatype ;
-	owl:onDatatype xsd:string ;
-	owl:withRestrictions _:c14n413 .
-_:c14n46 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:packages .
-_:c14n47 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaPackageRegistry ;
-	owl:onProperty slsa:registry .
-_:c14n48 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:registry_uri .
-_:c14n49 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildParameter ;
-	owl:onProperty slsa:internal_parameters .
-_:c14n5 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildDefinition ;
-	owl:onProperty slsa:build_definition .
-_:c14n50 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaDependencyInventory ;
-	owl:onProperty slsa:dependency_inventories .
-_:c14n51 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:pipeline_orchestrator .
-_:c14n52 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:provenance .
-_:c14n53 rdf:first slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_1 ;
-	rdf:rest _:c14n386 .
-_:c14n54 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:predicate .
-_:c14n55 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:resource_uri .
-_:c14n56 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:build_env_level .
-_:c14n57 rdf:first slsa:SlsaResult\#SLSA_BUILD_REPRODUCED ;
-	rdf:rest _:c14n242 .
-_:c14n58 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:time_verified .
-_:c14n59 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:provenance_generation_tool .
-_:c14n6 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:provenance .
-_:c14n60 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:dependency_level .
-_:c14n61 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:media_type .
-_:c14n62 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:artifact .
-_:c14n63 a owl:Restriction ;
-	owl:minCardinality 1 ;
-	owl:onProperty slsa:subject .
-_:c14n64 a owl:Restriction ;
-	owl:allValuesFrom xsd:anyURI ;
-	owl:onProperty slsa:resource_uri .
-_:c14n65 a owl:Restriction ;
-	owl:allValuesFrom slsa:SlsaBuildPlatform ;
-	owl:onProperty slsa:build_platform .
-_:c14n66 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:component_versions .
-_:c14n67 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_4 ;
-	rdf:rest rdf:nil .
-_:c14n68 a owl:Restriction ;
-	owl:allValuesFrom _:c14n397 ;
-	owl:onProperty slsa:git_tree .
-_:c14n69 a owl:Restriction ;
-	owl:allValuesFrom xsd:string ;
-	owl:onProperty slsa:invocation_id .
-_:c14n7 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:package_name .
-_:c14n70 a owl:Restriction ;
-	owl:minCardinality 0 ;
-	owl:onProperty slsa:hermetic .
-_:c14n71 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:started_on .
-_:c14n72 a owl:Restriction ;
-	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
-	owl:onProperty slsa:resolved_dependencies .
-_:c14n73 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:resource_uri .
-_:c14n74 a owl:Restriction ;
-	owl:maxCardinality 1 ;
-	owl:onProperty slsa:statement_type .
-_:c14n75 a owl:Restriction ;
 	rdfs:subClassOf slsa:SlsaProducer ;
 	owl:onProperty slsa:party_type ;
 	owl:someValuesFrom slsa:SlsaProducer .
-_:c14n76 rdf:first slsa:SlsaVerificationResult\#FAILED ;
+_:c14n11 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoAdditionalDigest ;
+	owl:onProperty slsa:additional_digests .
+_:c14n110 rdf:first slsa:SlsaVerificationResult\#FAILED ;
 	rdf:rest rdf:nil .
-_:c14n77 a owl:Restriction ;
+_:c14n111 a owl:Restriction ;
 	owl:maxCardinality 1 ;
 	owl:onProperty slsa:predicate_type .
-_:c14n78 a owl:Restriction ;
+_:c14n112 rdf:first "sha3_224" ;
+	rdf:rest _:c14n259 .
+_:c14n113 a owl:Restriction ;
 	owl:minCardinality 0 ;
 	owl:onProperty slsa:sha512 .
-_:c14n79 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_1 ;
-	rdf:rest _:c14n287 .
-_:c14n8 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_2 ;
-	rdf:rest _:c14n204 .
-_:c14n80 a owl:Restriction ;
+_:c14n114 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_1 ;
+	rdf:rest _:c14n400 .
+_:c14n115 a owl:Restriction ;
 	owl:allValuesFrom xsd:anyURI ;
 	owl:onProperty slsa:image_uri .
-_:c14n81 a owl:Restriction ;
+_:c14n116 a owl:Restriction ;
 	owl:minCardinality 1 ;
 	owl:onProperty slsa:image_uri .
-_:c14n82 a owl:Restriction ;
+_:c14n117 a owl:Restriction ;
 	owl:allValuesFrom slsa:SlsaBuildParameter ;
 	owl:onProperty slsa:external_parameters .
-_:c14n83 a owl:Restriction ;
+_:c14n118 a owl:Restriction ;
 	owl:minCardinality 1 ;
 	owl:onProperty slsa:artifact .
-_:c14n84 a owl:Restriction ;
+_:c14n119 a owl:Restriction ;
 	owl:minCardinality 0 ;
 	owl:onProperty slsa:attestation_storage_uri .
-_:c14n85 rdf:first slsa:SlsaAdoptionChallenge\#UNCLEAR_COMMUNICATION ;
-	rdf:rest _:c14n326 .
-_:c14n86 a owl:Restriction ;
+_:c14n12 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha3_384 .
+_:c14n120 rdf:first slsa:SlsaAdoptionChallenge\#UNCLEAR_COMMUNICATION ;
+	rdf:rest _:c14n456 .
+_:c14n121 a owl:Restriction ;
 	owl:minCardinality 0 ;
 	owl:onProperty slsa:input_attestations .
-_:c14n87 a owl:Restriction ;
+_:c14n122 a owl:Restriction ;
 	owl:allValuesFrom xsd:string ;
 	owl:onProperty slsa:measured_component .
-_:c14n88 a owl:Restriction ;
+_:c14n123 a owl:Restriction ;
 	owl:minCardinality 0 ;
 	owl:onProperty slsa:build_env_level .
-_:c14n89 a owl:Restriction ;
+_:c14n124 a owl:Restriction ;
 	owl:allValuesFrom slsa:SlsaBuildProvenance ;
 	owl:onProperty slsa:provenance .
-_:c14n9 a owl:Restriction ;
-	owl:allValuesFrom xsd:dateTime ;
-	owl:onProperty slsa:started_on .
-_:c14n90 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_3 ;
-	rdf:rest _:c14n349 .
-_:c14n91 a owl:Restriction ;
+_:c14n125 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_3 ;
+	rdf:rest _:c14n487 .
+_:c14n126 a owl:Restriction ;
 	owl:maxCardinality 1 ;
 	owl:onProperty slsa:component .
-_:c14n92 rdf:first slsa:SlsaReviewType\#TWO_PARTY ;
-	rdf:rest _:c14n241 .
-_:c14n93 a owl:Restriction ;
+_:c14n127 rdf:first slsa:SlsaReviewType\#TWO_PARTY ;
+	rdf:rest _:c14n340 .
+_:c14n128 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:algorithm .
+_:c14n129 a owl:Restriction ;
 	owl:minCardinality 0 ;
 	owl:onProperty slsa:dependency_levels .
-_:c14n94 a rdfs:Datatype ;
+_:c14n13 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:package_name .
+_:c14n130 rdf:first "gitTag" ;
+	rdf:rest _:c14n171 .
+_:c14n131 a owl:Restriction ;
+	owl:allValuesFrom _:c14n556 ;
+	owl:onProperty slsa:git_tag .
+_:c14n132 a rdfs:Datatype ;
 	owl:onDatatype xsd:integer ;
-	owl:withRestrictions _:c14n414 .
-_:c14n95 a owl:Restriction ;
+	owl:withRestrictions _:c14n679 .
+_:c14n133 rdf:first "sha224" ;
+	rdf:rest _:c14n512 .
+_:c14n134 a owl:Restriction ;
 	owl:minCardinality 1 ;
 	owl:onProperty slsa:registry_uri .
-_:c14n96 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_0 ;
-	rdf:rest _:c14n97 .
-_:c14n97 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_1 ;
-	rdf:rest _:c14n41 .
-_:c14n98 a owl:Restriction ;
+_:c14n135 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:ripemd160 .
+_:c14n136 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_0 ;
+	rdf:rest _:c14n137 .
+_:c14n137 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_1 ;
+	rdf:rest _:c14n62 .
+_:c14n138 a owl:Restriction ;
 	owl:allValuesFrom slsa:SlsaSourceControlSystem ;
 	owl:onProperty slsa:source_control_systems .
-_:c14n99 a owl:Restriction ;
+_:c14n139 a owl:Restriction ;
 	owl:maxCardinality 1 ;
 	owl:onProperty slsa:adoption_metadata .
+_:c14n14 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_2 ;
+	rdf:rest _:c14n291 .
+_:c14n140 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:build_platform .
+_:c14n141 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:revision .
+_:c14n142 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:controls_enforced .
+_:c14n143 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:source_control_systems .
+_:c14n144 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:transparency_log_entry .
+_:c14n145 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:control_planes .
+_:c14n146 a owl:Restriction ;
+	owl:allValuesFrom _:c14n567 ;
+	owl:onProperty slsa:verified_levels .
+_:c14n147 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:ecosystem .
+_:c14n148 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:parameter_value .
+_:c14n149 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_2 ;
+	rdf:rest _:c14n125 .
+_:c14n15 a owl:Restriction ;
+	owl:allValuesFrom _:c14n612 ;
+	owl:onProperty slsa:sha224 .
+_:c14n150 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:authored_at .
+_:c14n151 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:dir_hash .
+_:c14n152 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha256 .
+_:c14n153 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:dir_hash .
+_:c14n154 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoDigestSet ;
+	owl:onProperty slsa:digest .
+_:c14n155 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:builder_id .
+_:c14n156 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:digest .
+_:c14n157 a owl:Restriction ;
+	owl:allValuesFrom owl:Thing ;
+	owl:onProperty slsa:digest .
+_:c14n158 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:value .
+_:c14n159 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_type .
+_:c14n16 a owl:Restriction ;
+	owl:allValuesFrom xsd:dateTime ;
+	owl:onProperty slsa:started_on .
+_:c14n160 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:security_insights_uri .
+_:c14n161 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:verifier_id .
+_:c14n162 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:gost .
+_:c14n163 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:hermetic .
+_:c14n164 xsd:pattern "^\\S+$" .
+_:c14n165 rdf:first xsd:string ;
+	rdf:rest _:c14n382 .
+_:c14n166 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha512_224 .
+_:c14n167 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:provenance_generation_tool .
+_:c14n168 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha512_224 .
+_:c14n169 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:source_revisions .
+_:c14n17 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_UNEVALUATED ;
+	rdf:rest _:c14n331 .
+_:c14n170 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:parameter_name .
+_:c14n171 rdf:first "dir_hash" ;
+	rdf:rest _:c14n88 .
+_:c14n172 rdf:first slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_2 ;
+	rdf:rest _:c14n434 .
+_:c14n173 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:party_name .
+_:c14n174 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:transparency_log_entry .
+_:c14n175 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha256 .
+_:c14n176 rdf:first slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_0 ;
+	rdf:rest _:c14n79 .
+_:c14n177 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:signing_tool .
+_:c14n178 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:byproducts .
+_:c14n179 rdf:first slsa:SlsaBuildProvenance ;
+	rdf:rest _:c14n373 .
+_:c14n18 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_4 ;
+	rdf:rest rdf:nil .
+_:c14n180 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaNamedReference ;
+	owl:onProperty slsa:reference_type ;
+	owl:someValuesFrom slsa:SlsaNamedReference .
+_:c14n181 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:ripemd160 .
+_:c14n182 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:parameter_value .
+_:c14n183 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_1 ;
+	rdf:rest _:c14n14 .
+_:c14n184 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:slsa_version .
+_:c14n185 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:shake256 .
+_:c14n186 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_1 ;
+	rdf:rest _:c14n149 .
+_:c14n187 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:component_version .
+_:c14n188 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:named_references .
+_:c14n189 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaPredicate ;
+	owl:onProperty slsa:predicate .
+_:c14n19 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:digest .
+_:c14n190 a owl:Restriction ;
+	owl:allValuesFrom _:c14n573 ;
+	owl:onProperty slsa:verified_level .
+_:c14n191 rdf:first slsa:SlsaAdoptionStrategy\#STREAMLINE_PROVENANCE_GENERATION ;
+	rdf:rest _:c14n243 .
+_:c14n192 rdf:first "gitCommit" ;
+	rdf:rest _:c14n43 .
+_:c14n193 owl:unionOf _:c14n198 .
+_:c14n194 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:algorithm .
+_:c14n195 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:policy .
+_:c14n196 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:parties .
+_:c14n197 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:blake2s .
+_:c14n198 rdf:first slsa:SlsaBuildEnvironmentAttestation ;
+	rdf:rest _:c14n179 .
+_:c14n199 rdf:first slsa:SlsaAdoptionChallenge\#COMPLEX_IMPLEMENTATION ;
+	rdf:rest _:c14n120 .
+_:c14n2 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:reference_type .
+_:c14n20 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaParty ;
+	owl:onProperty slsa:party_type ;
+	owl:someValuesFrom slsa:SlsaParty .
+_:c14n200 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaNamedReference ;
+	owl:onProperty slsa:named_references .
+_:c14n201 owl:unionOf _:c14n650 .
+_:c14n202 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildImage ;
+	owl:onProperty slsa:build_image .
+_:c14n203 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceRevision ;
+	owl:onProperty slsa:source_revisions .
+_:c14n204 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_metadata .
+_:c14n205 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:reference_type .
+_:c14n206 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaVerifier ;
+	owl:onProperty slsa:party_type ;
+	owl:someValuesFrom slsa:SlsaVerifier .
+_:c14n207 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:ripemd160 .
+_:c14n208 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:reference_name .
+_:c14n209 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_definition .
+_:c14n21 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:additional_digests .
+_:c14n210 rdf:first "sha512" ;
+	rdf:rest _:c14n275 .
+_:c14n211 rdf:first _:c14n108 ;
+	rdf:rest _:c14n577 .
+_:c14n212 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoDigestSet ;
+	owl:onProperty slsa:digest .
+_:c14n213 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha512_224 .
+_:c14n214 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha224 .
+_:c14n215 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:verifier_id .
+_:c14n216 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:digest .
+_:c14n217 xsd:pattern "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$" .
+_:c14n218 rdf:first "shake128" ;
+	rdf:rest _:c14n402 .
+_:c14n219 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildEnvironmentLevel ;
+	owl:onProperty slsa:build_env_level .
+_:c14n22 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:guac_uri .
+_:c14n220 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:guac_uri .
+_:c14n221 a owl:Restriction ;
+	owl:allValuesFrom xsd:boolean ;
+	owl:onProperty slsa:protected .
+_:c14n222 a owl:Restriction ;
+	owl:allValuesFrom xsd:boolean ;
+	owl:onProperty slsa:hosted .
+_:c14n223 a owl:Restriction ;
+	owl:allValuesFrom xsd:dateTime ;
+	owl:onProperty slsa:time_verified .
+_:c14n224 a owl:Restriction ;
+	owl:allValuesFrom xsd:dateTime ;
+	owl:onProperty slsa:finished_on .
+_:c14n225 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:resource_name .
+_:c14n226 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaPackage ;
+	owl:onProperty slsa:packages .
+_:c14n227 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaReviewType ;
+	owl:onProperty slsa:review_type .
+_:c14n228 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaBuildProvenance ;
+	owl:onProperty slsa:predicate_kind ;
+	owl:someValuesFrom slsa:SlsaBuildProvenance .
+_:c14n229 a rdfs:Datatype ;
+	owl:intersectionOf _:c14n165 .
+_:c14n23 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:annotation_key .
+_:c14n230 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha384 .
+_:c14n231 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoStatement ;
+	owl:onProperty slsa:attestations .
+_:c14n232 rdf:first slsa:SlsaResult\#SLSA_SOURCE_TWO_PARTY_REVIEWED ;
+	rdf:rest _:c14n85 .
+_:c14n233 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_3 ;
+	rdf:rest _:c14n36 .
+_:c14n234 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaComponentVersion ;
+	owl:onProperty slsa:component_versions .
+_:c14n235 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:reference_name .
+_:c14n236 rdf:first "git_blob" ;
+	rdf:rest _:c14n344 .
+_:c14n237 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildImageProducer ;
+	owl:onProperty slsa:produced_by .
+_:c14n238 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:revision_id .
+_:c14n239 a owl:Restriction ;
+	owl:allValuesFrom _:c14n675 ;
+	owl:onProperty slsa:dependency_count .
+_:c14n24 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha1 .
+_:c14n240 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:component_version .
+_:c14n241 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:digest .
+_:c14n242 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:predicate .
+_:c14n243 rdf:first slsa:SlsaAdoptionStrategy\#IMPROVE_VERIFICATION_PROCESS ;
+	rdf:rest _:c14n522 .
+_:c14n244 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:blake2b .
+_:c14n245 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:review_type .
+_:c14n246 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha3_384 .
+_:c14n247 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:digest .
+_:c14n248 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:shake128 .
+_:c14n249 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaDependencyLevelCount ;
+	owl:onProperty slsa:dependency_levels .
+_:c14n25 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:ecosystem .
+_:c14n250 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:build_metadata .
+_:c14n251 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:signing_tool .
+_:c14n252 a owl:Restriction ;
+	owl:allValuesFrom _:c14n606 ;
+	owl:onProperty slsa:sha3_224 .
+_:c14n253 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceRevision ;
+	owl:onProperty slsa:parent_revisions .
+_:c14n254 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:predicate_kind .
+_:c14n255 rdf:first slsa:SlsaBuildImageProducer ;
+	rdf:rest _:c14n334 .
+_:c14n256 xsd:pattern "^[a-f0-9]{32}$" .
+_:c14n257 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:source_repositories .
+_:c14n258 rdf:first slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_3 ;
+	rdf:rest rdf:nil .
+_:c14n259 rdf:first "sha3_256" ;
+	rdf:rest _:c14n264 .
+_:c14n26 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:build_id .
+_:c14n260 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaVerificationResult ;
+	owl:onProperty slsa:verification_result .
+_:c14n261 rdf:first "blake2b" ;
+	rdf:rest _:c14n429 .
+_:c14n262 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:revision .
+_:c14n263 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:party_type .
+_:c14n264 rdf:first "sha3_384" ;
+	rdf:rest _:c14n527 .
+_:c14n265 rdf:first slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_1 ;
+	rdf:rest _:c14n172 .
+_:c14n266 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha512 .
+_:c14n267 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:shake128 .
+_:c14n268 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceRepository ;
+	owl:onProperty slsa:repository .
+_:c14n269 a owl:Restriction ;
+	owl:allValuesFrom owl:Thing ;
+	owl:onProperty slsa:digest .
+_:c14n27 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:strategies .
+_:c14n270 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:scs_uri .
+_:c14n271 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:dependency_inventories .
+_:c14n272 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:annotation_values .
+_:c14n273 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:blake2s .
+_:c14n274 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:builder .
+_:c14n275 rdf:first "sha512_224" ;
+	rdf:rest _:c14n484 .
+_:c14n276 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceRepository ;
+	owl:onProperty slsa:source_repositories .
+_:c14n277 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceRevision ;
+	owl:onProperty slsa:revision .
+_:c14n278 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:blake2b .
+_:c14n279 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:package_name .
+_:c14n28 a rdfs:Datatype ;
+	owl:oneOf _:c14n312 .
+_:c14n280 a owl:Restriction ;
+	owl:allValuesFrom _:c14n631 ;
+	owl:onProperty slsa:sm3 .
+_:c14n281 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:resource_uri .
+_:c14n282 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaAdoptionChallenge ;
+	owl:onProperty slsa:challenges .
+_:c14n283 a owl:Restriction ;
+	owl:allValuesFrom _:c14n637 ;
+	owl:onProperty slsa:organization_properties .
+_:c14n284 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_level .
+_:c14n285 a owl:Restriction ;
+	owl:allValuesFrom _:c14n550 ;
+	owl:onProperty slsa:git_blob .
+_:c14n286 rdf:first slsa:SlsaAdoptionStrategy\#ENHANCE_ALIGNMENT_FLEXIBILITY ;
+	rdf:rest _:c14n419 .
+_:c14n287 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:md5 .
+_:c14n288 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:security_insights_uri .
+_:c14n289 a owl:Restriction ;
+	owl:allValuesFrom _:c14n677 ;
+	owl:onProperty slsa:statement_type .
+_:c14n29 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:content .
+_:c14n290 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:git_commit .
+_:c14n291 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_3 ;
+	rdf:rest _:c14n99 .
+_:c14n292 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaDependencyLevel ;
+	owl:onProperty slsa:dependency_level .
+_:c14n293 rdf:first slsa:SlsaAdoptionChallenge\#UNCLEAR_RELEVANCE ;
+	rdf:rest rdf:nil .
+_:c14n294 rdf:first "sm3" ;
+	rdf:rest _:c14n383 .
+_:c14n295 a owl:Restriction ;
+	owl:allValuesFrom xsd:boolean ;
+	owl:onProperty slsa:hermetic .
+_:c14n296 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:party_type .
+_:c14n297 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildEnvironmentLevel ;
+	owl:onProperty slsa:build_env_level .
+_:c14n298 rdf:first slsa:SlsaVerificationSummary ;
+	rdf:rest rdf:nil .
+_:c14n299 a owl:Restriction ;
+	owl:allValuesFrom _:c14n615 ;
+	owl:onProperty slsa:blake2b .
+_:c14n3 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:git_tag .
+_:c14n30 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_platform .
+_:c14n300 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:authored_by .
+_:c14n301 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:shake256 .
+_:c14n302 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaVerifier ;
+	owl:onProperty slsa:verifier .
+_:c14n303 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:git_tree .
+_:c14n304 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:attestation_storage_uri .
+_:c14n305 rdf:first slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_0 ;
+	rdf:rest _:c14n265 .
+_:c14n306 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:registry_uri .
+_:c14n307 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:blake2b .
+_:c14n308 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:component_versions .
+_:c14n309 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:hosted .
+_:c14n31 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:digest .
+_:c14n310 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha3_512 .
+_:c14n311 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:resource_uri .
+_:c14n312 rdf:first "sha256" ;
+	rdf:rest _:c14n133 .
+_:c14n313 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:repository .
+_:c14n314 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_3 ;
+	rdf:rest _:c14n18 .
+_:c14n315 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildPlatform ;
+	owl:onProperty slsa:build_platforms .
+_:c14n316 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaPredicate ;
+	owl:onProperty slsa:predicate_kind ;
+	owl:someValuesFrom slsa:SlsaPredicate .
+_:c14n317 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:parameter_name .
+_:c14n318 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:dependencies .
+_:c14n319 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:content .
+_:c14n32 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:builder .
+_:c14n320 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_platform .
+_:c14n321 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:repository .
+_:c14n322 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha224 .
+_:c14n323 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:internal_parameters .
+_:c14n324 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:revision .
+_:c14n325 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:hosted_by .
+_:c14n326 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:digest .
+_:c14n327 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:build_image .
+_:c14n328 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:registry .
+_:c14n329 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:parameter_value .
+_:c14n33 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:verified_levels .
+_:c14n330 rdf:first "ripemd160" ;
+	rdf:rest _:c14n294 .
+_:c14n331 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_0 ;
+	rdf:rest _:c14n114 .
+_:c14n332 a owl:Restriction ;
+	owl:allValuesFrom _:c14n587 ;
+	owl:onProperty slsa:sha1 .
+_:c14n333 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:resource_name .
+_:c14n334 rdf:first slsa:SlsaConsumer ;
+	rdf:rest _:c14n463 .
+_:c14n335 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:annotation_key .
+_:c14n336 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:git_tag .
+_:c14n337 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildImage ;
+	owl:onProperty slsa:build_images .
+_:c14n338 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:hosted .
+_:c14n339 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoStatementSubject ;
+	owl:onProperty slsa:subject .
+_:c14n34 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:build_type .
+_:c14n340 rdf:first slsa:SlsaReviewType\#PAIR_PROGRAMMING ;
+	rdf:rest _:c14n475 .
+_:c14n341 rdf:first slsa:SlsaResult\#FAILED ;
+	rdf:rest rdf:nil .
+_:c14n342 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha1 .
+_:c14n343 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:ecosystem .
+_:c14n344 rdf:first "git_tag" ;
+	rdf:rest rdf:nil .
+_:c14n345 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:image_uri .
+_:c14n346 a owl:Restriction ;
+	owl:allValuesFrom _:c14n584 ;
+	owl:onProperty slsa:ripemd160 .
+_:c14n347 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sm3 .
+_:c14n348 xsd:pattern "^[a-z][A-Za-z0-9_]*$" .
+_:c14n349 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:party_name .
+_:c14n35 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:challenges .
+_:c14n350 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaPackageRegistry ;
+	owl:onProperty slsa:package_registries .
+_:c14n351 xsd:pattern "^[a-f0-9]{64}([a-f0-9]{64})?$" .
+_:c14n352 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:digest .
+_:c14n353 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:annotations .
+_:c14n354 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:attestations .
+_:c14n355 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaParty ;
+	owl:onProperty slsa:parties .
+_:c14n356 rdf:first slsa:SlsaProducer ;
+	rdf:rest _:c14n50 .
+_:c14n357 rdf:first "gitBlob" ;
+	rdf:rest _:c14n130 .
+_:c14n358 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:run_details .
+_:c14n359 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:download_location .
+_:c14n36 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_UNEVALUATED ;
+	rdf:rest _:c14n365 .
+_:c14n360 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:build_level .
+_:c14n361 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:verifier .
+_:c14n362 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:verified_level .
+_:c14n363 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:reference_type .
+_:c14n364 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:transparency_log_entry .
+_:c14n365 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_0 ;
+	rdf:rest _:c14n186 .
+_:c14n366 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:parent_revisions .
+_:c14n367 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaBuildEnvironmentAttestation ;
+	owl:onProperty slsa:predicate_kind ;
+	owl:someValuesFrom slsa:SlsaBuildEnvironmentAttestation .
+_:c14n368 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:invocation_id .
+_:c14n369 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:build_id .
+_:c14n37 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:controls_enforced .
+_:c14n370 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoAnnotation ;
+	owl:onProperty slsa:annotations .
+_:c14n371 owl:unionOf _:c14n255 .
+_:c14n372 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:component .
+_:c14n373 rdf:first slsa:SlsaSourceProvenance ;
+	rdf:rest _:c14n298 .
+_:c14n374 xsd:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
+_:c14n375 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_0 ;
+	rdf:rest _:c14n183 .
+_:c14n376 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:download_location .
+_:c14n377 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha3_512 .
+_:c14n378 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_image .
+_:c14n379 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:party_type .
+_:c14n38 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaBuildImageProducer ;
+	owl:onProperty slsa:party_type ;
+	owl:someValuesFrom slsa:SlsaBuildImageProducer .
+_:c14n380 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:repository_uri .
+_:c14n381 rdf:first xsd:anyURI ;
+	rdf:rest _:c14n580 .
+_:c14n382 rdf:first xsd:string ;
+	rdf:rest _:c14n561 .
+_:c14n383 rdf:first "gost" ;
+	rdf:rest _:c14n508 .
+_:c14n384 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_env_level .
+_:c14n385 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:component_version .
+_:c14n386 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:time_verified .
+_:c14n387 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:resource_uri .
+_:c14n388 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildPlatform ;
+	owl:onProperty slsa:build_platform .
+_:c14n389 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha224 .
+_:c14n39 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaTag ;
+	owl:onProperty slsa:reference_type ;
+	owl:someValuesFrom slsa:SlsaTag .
+_:c14n390 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:review_type .
+_:c14n391 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha3_256 .
+_:c14n392 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:started_on .
+_:c14n393 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:scs_uri .
+_:c14n394 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaComponentVersion ;
+	owl:onProperty slsa:component_versions .
+_:c14n395 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:dir_hash .
+_:c14n396 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:verifier_id .
+_:c14n397 a owl:Restriction ;
+	owl:allValuesFrom _:c14n644 ;
+	owl:onProperty slsa:sha3_256 .
+_:c14n398 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaConsumer ;
+	owl:onProperty slsa:party_type ;
+	owl:someValuesFrom slsa:SlsaConsumer .
+_:c14n399 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:resource_uri .
+_:c14n4 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:git_blob .
+_:c14n40 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:guac_uri .
+_:c14n400 rdf:first slsa:SlsaResult\#SLSA_BUILD_LEVEL_2 ;
+	rdf:rest _:c14n233 .
+_:c14n401 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaSourceProvenance ;
+	owl:onProperty slsa:predicate_kind ;
+	owl:someValuesFrom slsa:SlsaSourceProvenance .
+_:c14n402 rdf:first "shake256" ;
+	rdf:rest _:c14n261 .
+_:c14n403 xsd:pattern "^[0-9]+\\.[0-9]+$" .
+_:c14n404 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:ecosystem .
+_:c14n405 a owl:Restriction ;
+	owl:allValuesFrom owl:Thing ;
+	owl:onProperty slsa:digest .
+_:c14n406 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:measured_component .
+_:c14n407 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:ecosystem .
+_:c14n408 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:authored_by .
+_:c14n409 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:verification_result .
+_:c14n41 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:resource_uri .
+_:c14n410 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:protected .
+_:c14n411 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:finished_on .
+_:c14n412 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha512 .
+_:c14n413 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:measured_component .
+_:c14n414 a owl:Restriction ;
+	owl:allValuesFrom _:c14n634 ;
+	owl:onProperty slsa:sha512_224 .
+_:c14n415 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha3_224 .
+_:c14n416 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:repository .
+_:c14n417 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:produced_by .
+_:c14n418 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:git_tree .
+_:c14n419 rdf:first slsa:SlsaAdoptionStrategy\#PROVIDE_DETAILED_DOCUMENTATION ;
+	rdf:rest _:c14n191 .
+_:c14n42 xsd:pattern "^https://in-toto\\.io/Statement/v1$" .
+_:c14n420 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaVerificationSummaryPolicy ;
+	owl:onProperty slsa:policy .
+_:c14n421 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha3_224 .
+_:c14n422 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha256 .
+_:c14n423 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:download_location .
+_:c14n424 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:repository .
+_:c14n425 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:statement_type .
+_:c14n426 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:pipeline_orchestrator .
+_:c14n427 rdf:first xsd:integer ;
+	rdf:rest _:c14n678 .
+_:c14n428 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha384 .
+_:c14n429 rdf:first "blake2s" ;
+	rdf:rest _:c14n330 .
+_:c14n43 rdf:first "gitTree" ;
+	rdf:rest _:c14n357 .
+_:c14n430 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:attestation_storage_uri .
+_:c14n431 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:revision_id .
+_:c14n432 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:component .
+_:c14n433 rdf:first slsa:SlsaVerificationResult\#PASSED ;
+	rdf:rest _:c14n110 .
+_:c14n434 rdf:first slsa:SlsaBuildEnvironmentLevel\#SLSA_BUILD_ENV_LEVEL_3 ;
+	rdf:rest rdf:nil .
+_:c14n435 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha512_256 .
+_:c14n436 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:build_images .
+_:c14n437 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:resource_uri .
+_:c14n438 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:dependency_count .
+_:c14n439 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:git_commit .
+_:c14n44 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha512_256 .
+_:c14n440 a owl:Restriction ;
+	owl:allValuesFrom _:c14n598 ;
+	owl:onProperty slsa:dir_hash .
+_:c14n441 xsd:minInclusive 0 .
+_:c14n442 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceControlSystem ;
+	owl:onProperty slsa:hosted_by .
+_:c14n443 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:media_type .
+_:c14n444 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:resource_name .
+_:c14n445 xsd:pattern "^ORG_SOURCE_" .
+_:c14n446 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:md5 .
+_:c14n447 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:gost .
+_:c14n448 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:git_tree .
+_:c14n449 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:build_definition .
+_:c14n45 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha384 .
+_:c14n450 a owl:Restriction ;
+	owl:allValuesFrom _:c14n617 ;
+	owl:onProperty slsa:sha3_384 .
+_:c14n451 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:build_platforms .
+_:c14n452 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:provenance_generation_tool .
+_:c14n453 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:content .
+_:c14n454 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
+	owl:onProperty slsa:byproducts .
+_:c14n455 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha512_256 .
+_:c14n456 rdf:first slsa:SlsaAdoptionChallenge\#LIMITED_FEASIBILITY ;
+	rdf:rest _:c14n293 .
+_:c14n457 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:source_level .
+_:c14n458 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:security_insights_uri .
+_:c14n459 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:md5 .
+_:c14n46 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:git_commit .
+_:c14n460 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:builder_id .
+_:c14n461 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:adoption_metadata .
+_:c14n462 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sm3 .
+_:c14n463 rdf:first slsa:SlsaInfrastructureProvider ;
+	rdf:rest _:c14n356 .
+_:c14n464 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:build_platform .
+_:c14n465 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:signing_tool .
+_:c14n466 a owl:Restriction ;
+	owl:allValuesFrom _:c14n642 ;
+	owl:onProperty slsa:gost .
+_:c14n467 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:run_details .
+_:c14n468 a owl:Restriction ;
+	owl:allValuesFrom _:c14n595 ;
+	owl:onProperty slsa:blake2s .
+_:c14n469 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaInfrastructureProvider ;
+	owl:onProperty slsa:party_type ;
+	owl:someValuesFrom slsa:SlsaInfrastructureProvider .
+_:c14n47 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:predicate_kind .
+_:c14n470 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:git_blob .
+_:c14n471 a owl:Restriction ;
+	owl:allValuesFrom _:c14n623 ;
+	owl:onProperty slsa:slsa_version .
+_:c14n472 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:annotation_key .
+_:c14n473 a owl:Restriction ;
+	owl:allValuesFrom _:c14n639 ;
+	owl:onProperty slsa:sha256 .
+_:c14n474 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaMeasurement ;
+	owl:onProperty slsa:measurements .
+_:c14n475 rdf:first slsa:SlsaReviewType\#MOB_PROGRAMMING ;
+	rdf:rest _:c14n54 .
+_:c14n476 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:predicate_type .
+_:c14n477 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:package_registries .
+_:c14n478 rdf:first "dirHash" ;
+	rdf:rest _:c14n192 .
+_:c14n479 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:resolved_dependencies .
+_:c14n48 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:builder_id .
+_:c14n480 a owl:Restriction ;
+	owl:allValuesFrom _:c14n676 ;
+	owl:onProperty slsa:algorithm .
+_:c14n481 rdf:first "md5" ;
+	rdf:rest _:c14n478 .
+_:c14n482 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceLevel ;
+	owl:onProperty slsa:source_level .
+_:c14n483 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildMetadata ;
+	owl:onProperty slsa:build_metadata .
+_:c14n484 rdf:first "sha512_256" ;
+	rdf:rest _:c14n112 .
+_:c14n485 a owl:Restriction ;
+	owl:allValuesFrom xsd:dateTime ;
+	owl:onProperty slsa:authored_at .
+_:c14n486 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:media_type .
+_:c14n487 rdf:first slsa:SlsaResult\#SLSA_SOURCE_LEVEL_4 ;
+	rdf:rest _:c14n232 .
+_:c14n488 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:verified_level .
+_:c14n489 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:shake256 .
+_:c14n49 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:predicate_type .
+_:c14n490 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:protected .
+_:c14n491 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:repository_uri .
+_:c14n492 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:party_name .
+_:c14n493 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:revision_id .
+_:c14n494 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:measurements .
+_:c14n495 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:package_artifacts .
+_:c14n496 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:git_blob .
+_:c14n497 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_id .
+_:c14n498 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:reference_name .
+_:c14n499 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:package_name .
+_:c14n5 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:organization_properties .
+_:c14n50 rdf:first slsa:SlsaVerifier ;
+	rdf:rest rdf:nil .
+_:c14n500 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
+	owl:onProperty slsa:builder_dependencies .
+_:c14n501 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaAdoptionStrategy ;
+	owl:onProperty slsa:strategies .
+_:c14n502 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaAdoptionMetadata ;
+	owl:onProperty slsa:adoption_metadata .
+_:c14n503 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:digest .
+_:c14n504 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
+	owl:onProperty slsa:package_artifacts .
+_:c14n505 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:resource_uri .
+_:c14n506 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaControlPlane ;
+	owl:onProperty slsa:control_planes .
+_:c14n507 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha3_256 .
+_:c14n508 rdf:first "sha1" ;
+	rdf:rest _:c14n481 .
+_:c14n509 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
+	owl:onProperty slsa:dependencies .
+_:c14n51 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:verifier .
+_:c14n510 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:pipeline_orchestrator .
+_:c14n511 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildPlatform ;
+	owl:onProperty slsa:builder .
+_:c14n512 rdf:first "sha384" ;
+	rdf:rest _:c14n210 .
+_:c14n513 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:dependency_count .
+_:c14n514 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoResourceDescriptor ;
+	owl:onProperty slsa:artifact .
+_:c14n515 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:build_env_level .
+_:c14n516 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha3_224 .
+_:c14n517 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:external_parameters .
+_:c14n518 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:annotation_values .
+_:c14n519 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:predicate_kind .
+_:c14n52 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaRunDetails ;
+	owl:onProperty slsa:run_details .
+_:c14n520 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:verification_result .
+_:c14n521 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:resource_uri .
+_:c14n522 rdf:first slsa:SlsaAdoptionStrategy\#COLLABORATE_WITH_COMMUNITY ;
+	rdf:rest rdf:nil .
+_:c14n523 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceRevision ;
+	owl:onProperty slsa:revision .
+_:c14n524 a owl:Restriction ;
+	owl:allValuesFrom _:c14n601 ;
+	owl:onProperty slsa:sha512 .
+_:c14n525 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:ecosystem .
+_:c14n526 a owl:Restriction ;
+	owl:allValuesFrom _:c14n588 ;
+	owl:onProperty slsa:content .
+_:c14n527 rdf:first "sha3_512" ;
+	rdf:rest _:c14n218 .
+_:c14n528 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:produced_by .
+_:c14n529 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:gost .
+_:c14n53 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:scs_uri .
+_:c14n530 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:repository_uri .
+_:c14n531 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:source_level .
+_:c14n532 a owl:Restriction ;
+	owl:allValuesFrom slsa:InTotoDigestSet ;
+	owl:onProperty slsa:digest .
+_:c14n533 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:parameter_name .
+_:c14n534 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:build_type .
+_:c14n535 rdf:first slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_2 ;
+	rdf:rest _:c14n258 .
+_:c14n536 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:policy .
+_:c14n537 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:git_tag .
+_:c14n538 owl:unionOf _:c14n647 .
+_:c14n539 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:registry .
+_:c14n54 rdf:first slsa:SlsaReviewType\#AUTOMATED ;
+	rdf:rest rdf:nil .
+_:c14n540 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:invocation_id .
+_:c14n541 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:dependency_level .
+_:c14n542 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:finished_on .
+_:c14n543 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:sha1 .
+_:c14n544 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:authored_at .
+_:c14n545 a owl:Restriction ;
+	owl:allValuesFrom _:c14n620 ;
+	owl:onProperty slsa:sha3_512 .
+_:c14n546 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:authored_by .
+_:c14n547 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:revision .
+_:c14n548 xsd:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n549 rdf:first _:c14n548 ;
+	rdf:rest rdf:nil .
+_:c14n55 a owl:Restriction ;
+	owl:allValuesFrom owl:Thing ;
+	owl:onProperty slsa:additional_digests .
+_:c14n550 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n549 .
+_:c14n551 xsd:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n552 rdf:first _:c14n551 ;
+	rdf:rest rdf:nil .
+_:c14n553 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n552 .
+_:c14n554 xsd:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n555 rdf:first _:c14n554 ;
+	rdf:rest rdf:nil .
+_:c14n556 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n555 .
+_:c14n557 xsd:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n558 rdf:first _:c14n557 ;
+	rdf:rest rdf:nil .
+_:c14n559 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n558 .
+_:c14n56 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaSourceRepository ;
+	owl:onProperty slsa:repository .
+_:c14n560 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n562 .
+_:c14n561 rdf:first _:c14n560 ;
+	rdf:rest rdf:nil .
+_:c14n562 rdf:first _:c14n563 ;
+	rdf:rest rdf:nil .
+_:c14n563 xsd:pattern "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$" .
+_:c14n564 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n568 .
+_:c14n565 rdf:first _:c14n564 ;
+	rdf:rest rdf:nil .
+_:c14n566 rdf:first slsa:SlsaResultValue ;
+	rdf:rest _:c14n565 .
+_:c14n567 a rdfs:Datatype ;
+	owl:intersectionOf _:c14n566 .
+_:c14n568 rdf:first _:c14n569 ;
+	rdf:rest rdf:nil .
+_:c14n569 xsd:pattern "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$" .
+_:c14n57 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:value .
+_:c14n570 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n574 .
+_:c14n571 rdf:first _:c14n570 ;
+	rdf:rest rdf:nil .
+_:c14n572 rdf:first slsa:SlsaResultValue ;
+	rdf:rest _:c14n571 .
+_:c14n573 a rdfs:Datatype ;
+	owl:intersectionOf _:c14n572 .
+_:c14n574 rdf:first _:c14n575 ;
+	rdf:rest rdf:nil .
+_:c14n575 xsd:pattern "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$" .
+_:c14n576 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n578 .
+_:c14n577 rdf:first _:c14n576 ;
+	rdf:rest rdf:nil .
+_:c14n578 rdf:first _:c14n348 ;
+	rdf:rest rdf:nil .
+_:c14n579 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n581 .
+_:c14n58 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:blake2s .
+_:c14n580 rdf:first _:c14n579 ;
+	rdf:rest rdf:nil .
+_:c14n581 rdf:first _:c14n42 ;
+	rdf:rest rdf:nil .
+_:c14n582 xsd:pattern "^[a-f0-9]{40}$" .
+_:c14n583 rdf:first _:c14n582 ;
+	rdf:rest rdf:nil .
+_:c14n584 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n583 .
+_:c14n585 xsd:pattern "^[a-f0-9]{40}$" .
+_:c14n586 rdf:first _:c14n585 ;
+	rdf:rest rdf:nil .
+_:c14n587 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n586 .
+_:c14n588 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n589 .
+_:c14n589 rdf:first _:c14n374 ;
+	rdf:rest rdf:nil .
+_:c14n59 a owl:Restriction ;
+	owl:allValuesFrom _:c14n553 ;
+	owl:onProperty slsa:git_commit .
+_:c14n590 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n591 .
+_:c14n591 rdf:first _:c14n164 ;
+	rdf:rest rdf:nil .
+_:c14n592 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n593 .
+_:c14n593 rdf:first _:c14n594 ;
+	rdf:rest rdf:nil .
+_:c14n594 xsd:pattern "^[a-f0-9]{64}$" .
+_:c14n595 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n596 .
+_:c14n596 rdf:first _:c14n597 ;
+	rdf:rest rdf:nil .
+_:c14n597 xsd:pattern "^[a-f0-9]{64}$" .
+_:c14n598 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n599 .
+_:c14n599 rdf:first _:c14n600 ;
+	rdf:rest rdf:nil .
+_:c14n6 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaBranch ;
+	owl:onProperty slsa:reference_type ;
+	owl:someValuesFrom slsa:SlsaBranch .
+_:c14n60 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:hosted_by .
+_:c14n600 xsd:pattern "^[a-f0-9]{64}$" .
+_:c14n601 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n602 .
+_:c14n602 rdf:first _:c14n603 ;
+	rdf:rest rdf:nil .
+_:c14n603 xsd:pattern "^[a-f0-9]{128}$" .
+_:c14n604 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n605 .
+_:c14n605 rdf:first _:c14n256 ;
+	rdf:rest rdf:nil .
+_:c14n606 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n607 .
+_:c14n607 rdf:first _:c14n608 ;
+	rdf:rest rdf:nil .
+_:c14n608 xsd:pattern "^[a-f0-9]{56}$" .
+_:c14n609 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n610 .
+_:c14n61 a owl:Restriction ;
+	owl:allValuesFrom _:c14n592 ;
+	owl:onProperty slsa:sha512_256 .
+_:c14n610 rdf:first _:c14n611 ;
+	rdf:rest rdf:nil .
+_:c14n611 xsd:pattern "^[a-f0-9]{64}([a-f0-9]{2})*$" .
+_:c14n612 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n613 .
+_:c14n613 rdf:first _:c14n614 ;
+	rdf:rest rdf:nil .
+_:c14n614 xsd:pattern "^[a-f0-9]{56}$" .
+_:c14n615 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n616 .
+_:c14n616 rdf:first _:c14n217 ;
+	rdf:rest rdf:nil .
+_:c14n617 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n618 .
+_:c14n618 rdf:first _:c14n619 ;
+	rdf:rest rdf:nil .
+_:c14n619 xsd:pattern "^[a-f0-9]{96}$" .
+_:c14n62 rdf:first slsa:SlsaDependencyLevel\#SLSA_DEPENDENCY_LEVEL_2 ;
+	rdf:rest _:c14n314 .
+_:c14n620 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n621 .
+_:c14n621 rdf:first _:c14n622 ;
+	rdf:rest rdf:nil .
+_:c14n622 xsd:pattern "^[a-f0-9]{128}$" .
+_:c14n623 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n624 .
+_:c14n624 rdf:first _:c14n403 ;
+	rdf:rest rdf:nil .
+_:c14n625 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n626 .
+_:c14n626 rdf:first _:c14n627 ;
+	rdf:rest rdf:nil .
+_:c14n627 xsd:pattern "^[a-f0-9]{64}([a-f0-9]{2})*$" .
+_:c14n628 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n629 .
+_:c14n629 rdf:first _:c14n630 ;
+	rdf:rest rdf:nil .
+_:c14n63 a owl:Restriction ;
+	rdfs:subClassOf slsa:SlsaVerificationSummary ;
+	owl:onProperty slsa:predicate_kind ;
+	owl:someValuesFrom slsa:SlsaVerificationSummary .
+_:c14n630 xsd:pattern "^[a-f0-9]{96}$" .
+_:c14n631 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n632 .
+_:c14n632 rdf:first _:c14n633 ;
+	rdf:rest rdf:nil .
+_:c14n633 xsd:pattern "^[a-f0-9]{64}$" .
+_:c14n634 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n635 .
+_:c14n635 rdf:first _:c14n636 ;
+	rdf:rest rdf:nil .
+_:c14n636 xsd:pattern "^[a-f0-9]{56}$" .
+_:c14n637 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n638 .
+_:c14n638 rdf:first _:c14n445 ;
+	rdf:rest rdf:nil .
+_:c14n639 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n640 .
+_:c14n64 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:slsa_version .
+_:c14n640 rdf:first _:c14n641 ;
+	rdf:rest rdf:nil .
+_:c14n641 xsd:pattern "^[a-f0-9]{64}$" .
+_:c14n642 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n643 .
+_:c14n643 rdf:first _:c14n351 ;
+	rdf:rest rdf:nil .
+_:c14n644 a rdfs:Datatype ;
+	owl:onDatatype xsd:string ;
+	owl:withRestrictions _:c14n645 .
+_:c14n645 rdf:first _:c14n646 ;
+	rdf:rest rdf:nil .
+_:c14n646 xsd:pattern "^[a-f0-9]{64}$" .
+_:c14n647 rdf:first _:c14n311 ;
+	rdf:rest _:c14n648 .
+_:c14n648 rdf:first _:c14n154 ;
+	rdf:rest _:c14n649 .
+_:c14n649 rdf:first _:c14n453 ;
+	rdf:rest rdf:nil .
+_:c14n65 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:builder_dependencies .
+_:c14n650 rdf:first _:c14n175 ;
+	rdf:rest _:c14n651 .
+_:c14n651 rdf:first _:c14n389 ;
+	rdf:rest _:c14n652 .
+_:c14n652 rdf:first _:c14n428 ;
+	rdf:rest _:c14n653 .
+_:c14n653 rdf:first _:c14n412 ;
+	rdf:rest _:c14n654 .
+_:c14n654 rdf:first _:c14n168 ;
+	rdf:rest _:c14n655 .
+_:c14n655 rdf:first _:c14n435 ;
+	rdf:rest _:c14n656 .
+_:c14n656 rdf:first _:c14n415 ;
+	rdf:rest _:c14n657 .
+_:c14n657 rdf:first _:c14n507 ;
+	rdf:rest _:c14n658 .
+_:c14n658 rdf:first _:c14n12 ;
+	rdf:rest _:c14n659 .
+_:c14n659 rdf:first _:c14n81 ;
+	rdf:rest _:c14n660 .
+_:c14n66 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:packages .
+_:c14n660 rdf:first _:c14n267 ;
+	rdf:rest _:c14n661 .
+_:c14n661 rdf:first _:c14n489 ;
+	rdf:rest _:c14n662 .
+_:c14n662 rdf:first _:c14n307 ;
+	rdf:rest _:c14n663 .
+_:c14n663 rdf:first _:c14n273 ;
+	rdf:rest _:c14n664 .
+_:c14n664 rdf:first _:c14n207 ;
+	rdf:rest _:c14n665 .
+_:c14n665 rdf:first _:c14n75 ;
+	rdf:rest _:c14n666 .
+_:c14n666 rdf:first _:c14n529 ;
+	rdf:rest _:c14n667 .
+_:c14n667 rdf:first _:c14n342 ;
+	rdf:rest _:c14n668 .
+_:c14n668 rdf:first _:c14n446 ;
+	rdf:rest _:c14n669 .
+_:c14n669 rdf:first _:c14n153 ;
+	rdf:rest _:c14n670 .
+_:c14n67 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:resource_uri .
+_:c14n670 rdf:first _:c14n290 ;
+	rdf:rest _:c14n671 .
+_:c14n671 rdf:first _:c14n448 ;
+	rdf:rest _:c14n672 .
+_:c14n672 rdf:first _:c14n4 ;
+	rdf:rest _:c14n673 .
+_:c14n673 rdf:first _:c14n3 ;
+	rdf:rest _:c14n674 .
+_:c14n674 rdf:first _:c14n55 ;
+	rdf:rest rdf:nil .
+_:c14n675 a rdfs:Datatype ;
+	owl:intersectionOf _:c14n427 .
+_:c14n676 a rdfs:Datatype ;
+	owl:intersectionOf _:c14n211 .
+_:c14n677 a rdfs:Datatype ;
+	owl:intersectionOf _:c14n381 .
+_:c14n678 rdf:first _:c14n132 ;
+	rdf:rest rdf:nil .
+_:c14n679 rdf:first _:c14n441 ;
+	rdf:rest rdf:nil .
+_:c14n68 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaPackageRegistry ;
+	owl:onProperty slsa:registry .
+_:c14n69 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:registry_uri .
+_:c14n7 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:resource_uri .
+_:c14n70 a owl:Restriction ;
+	owl:allValuesFrom _:c14n604 ;
+	owl:onProperty slsa:md5 .
+_:c14n71 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildParameter ;
+	owl:onProperty slsa:internal_parameters .
+_:c14n72 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha3_256 .
+_:c14n73 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaDependencyInventory ;
+	owl:onProperty slsa:dependency_inventories .
+_:c14n74 a owl:Restriction ;
+	owl:allValuesFrom _:c14n625 ;
+	owl:onProperty slsa:shake256 .
+_:c14n75 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sm3 .
+_:c14n76 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:pipeline_orchestrator .
+_:c14n77 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:provenance .
+_:c14n78 a owl:Restriction ;
+	owl:allValuesFrom _:c14n590 ;
+	owl:onProperty slsa:value .
+_:c14n79 rdf:first slsa:SlsaBuildLevel\#SLSA_BUILD_LEVEL_1 ;
+	rdf:rest _:c14n535 .
+_:c14n8 rdf:first "git_tree" ;
+	rdf:rest _:c14n236 .
+_:c14n80 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:predicate .
+_:c14n81 a owl:Restriction ;
+	owl:allValuesFrom xsd:string ;
+	owl:onProperty slsa:sha3_512 .
+_:c14n82 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:resource_uri .
+_:c14n83 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:build_env_level .
+_:c14n84 a owl:Restriction ;
+	owl:allValuesFrom _:c14n628 ;
+	owl:onProperty slsa:sha384 .
+_:c14n85 rdf:first slsa:SlsaResult\#SLSA_BUILD_REPRODUCED ;
+	rdf:rest _:c14n341 .
+_:c14n86 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:shake128 .
+_:c14n87 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:time_verified .
+_:c14n88 rdf:first "git_commit" ;
+	rdf:rest _:c14n8 .
+_:c14n89 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:provenance_generation_tool .
+_:c14n9 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildDefinition ;
+	owl:onProperty slsa:build_definition .
+_:c14n90 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:dependency_level .
+_:c14n91 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:digest .
+_:c14n92 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:media_type .
+_:c14n93 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:sha3_384 .
+_:c14n94 a owl:Restriction ;
+	owl:maxCardinality 1 ;
+	owl:onProperty slsa:artifact .
+_:c14n95 a owl:Restriction ;
+	owl:minCardinality 1 ;
+	owl:onProperty slsa:subject .
+_:c14n96 a owl:Restriction ;
+	owl:allValuesFrom xsd:anyURI ;
+	owl:onProperty slsa:resource_uri .
+_:c14n97 a owl:Restriction ;
+	owl:allValuesFrom slsa:SlsaBuildPlatform ;
+	owl:onProperty slsa:build_platform .
+_:c14n98 a owl:Restriction ;
+	owl:minCardinality 0 ;
+	owl:onProperty slsa:component_versions .
+_:c14n99 rdf:first slsa:SlsaSourceLevel\#SLSA_SOURCE_LEVEL_4 ;
+	rdf:rest rdf:nil .
 

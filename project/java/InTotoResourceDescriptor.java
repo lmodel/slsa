@@ -10,7 +10,7 @@ import java.util.List;
 import lombok.*;
 
 /**
-  A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata.
+  A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
 **/
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -21,6 +21,7 @@ public class InTotoResourceDescriptor  {
   private String resourceName;
   private URI downloadLocation;
   private String mediaType;
+  private String content;
   private List<InTotoAnnotation> annotations;
 
 

@@ -1,0 +1,11 @@
+# INVALID: each input attestation carries its digest.
+verifier:
+  verifier_id: https://example.com/publication_verifier
+resource_uri: https://example.com/example-1.2.3.tar.gz
+policy:
+  resource_uri: https://example.com/example_tarball.policy
+input_attestations:
+  - resource_uri: https://example.com/provenances/example-1.2.3.tar.gz.intoto.jsonl
+verification_result: PASSED
+verified_levels:
+  - SLSA_BUILD_LEVEL_2

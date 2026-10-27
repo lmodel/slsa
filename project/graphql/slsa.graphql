@@ -83,6 +83,12 @@ enum SlsaVerificationResult
     FAILED
   }
 
+type InTotoAdditionalDigest
+  {
+    algorithm: String!
+    value: String!
+  }
+
 type InTotoAnnotation
   {
     annotationKey: String!
@@ -92,10 +98,30 @@ type InTotoAnnotation
 type InTotoDigestSet
   {
     sha256: String
+    sha224: String
+    sha384: String
     sha512: String
+    sha512224: String
+    sha512256: String
+    sha3224: String
+    sha3256: String
+    sha3384: String
+    sha3512: String
+    shake128: String
+    shake256: String
+    blake2b: String
+    blake2s: String
+    ripemd160: String
+    sm3: String
+    gost: String
+    sha1: String
+    md5: String
+    dirHash: String
     gitCommit: String
     gitTree: String
-    dirHash: String
+    gitBlob: String
+    gitTag: String
+    additionalDigests: [InTotoAdditionalDigest]
   }
 
 type InTotoResourceDescriptor
@@ -105,18 +131,30 @@ type InTotoResourceDescriptor
     resourceName: String
     downloadLocation: String
     mediaType: String
+    content: String
     annotations: [InTotoAnnotation]
   }
 
 type InTotoStatement
   {
     statementType: String!
-    subject: [InTotoResourceDescriptor]!
+    subject: [InTotoStatementSubject]!
     predicateType: String!
     predicate: SlsaPredicate
     attestationStorageUri: String
     signingTool: String
     transparencyLogEntry: String
+  }
+
+type InTotoStatementSubject
+  {
+    resourceUri: String
+    resourceName: String
+    downloadLocation: String
+    mediaType: String
+    content: String
+    annotations: [InTotoAnnotation]
+    digest: InTotoDigestSet!
   }
 
 type SlsaAdoptionMetadata
@@ -137,7 +175,7 @@ type SlsaBranch
 type SlsaBuildDefinition
   {
     buildType: String!
-    externalParameters: [SlsaBuildParameter]
+    externalParameters: [SlsaBuildParameter]!
     internalParameters: [SlsaBuildParameter]
     resolvedDependencies: [InTotoResourceDescriptor]
     hermetic: Boolean
@@ -223,7 +261,7 @@ type SlsaDependencyInventory
 
 type SlsaDependencyLevelCount
   {
-    verifiedLevel: SlsaResult!
+    verifiedLevel: SlsaResultValue!
     dependencyCount: Int!
   }
 
@@ -232,6 +270,7 @@ type SlsaDocument
     attestations: [InTotoStatement]
     parties: [SlsaParty]
     buildPlatforms: [SlsaBuildPlatform]
+    controlPlanes: [SlsaControlPlane]
     packages: [SlsaPackage]
     packageRegistries: [SlsaPackageRegistry]
     sourceControlSystems: [SlsaSourceControlSystem]
@@ -349,13 +388,35 @@ type SlsaVerificationSummary
     resourceUri: String!
     verifier: SlsaVerifier!
     timeVerified: String
-    policy: InTotoResourceDescriptor!
-    inputAttestations: [InTotoResourceDescriptor]
+    policy: SlsaVerificationSummaryPolicy!
+    inputAttestations: [SlsaVerificationSummaryInputAttestation]
     verificationResult: SlsaVerificationResult!
-    verifiedLevels: [SlsaResult]!
+    verifiedLevels: [SlsaResultValue]!
     organizationProperties: [String]
     dependencyLevels: [SlsaDependencyLevelCount]
     slsaVersion: String
+  }
+
+type SlsaVerificationSummaryInputAttestation
+  {
+    resourceName: String
+    downloadLocation: String
+    mediaType: String
+    content: String
+    annotations: [InTotoAnnotation]
+    digest: InTotoDigestSet!
+    resourceUri: String
+  }
+
+type SlsaVerificationSummaryPolicy
+  {
+    resourceName: String
+    downloadLocation: String
+    mediaType: String
+    content: String
+    annotations: [InTotoAnnotation]
+    resourceUri: String!
+    digest: InTotoDigestSet
   }
 
 type SlsaVerifier

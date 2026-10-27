@@ -37,7 +37,7 @@ classes:
         required: true
         inlined: true
       dependencies:
-        description: The dependencies, each identified by URI and digest.
+        description: The dependencies, each as a resource descriptor.
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true

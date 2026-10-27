@@ -22,7 +22,7 @@ generated:
 status: draft
 verified:
   - by: process:ktl-librarian
-    at: "2026-10-23T22:17:38Z"
+    at: "2026-10-27T12:57:54Z"
 ---
 
 # Release the slsa package

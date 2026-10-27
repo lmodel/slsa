@@ -67,8 +67,8 @@ enums:
           study_theme: UC
         comments:
           - >-
-            Sub-themes: unclear definitions of key terms (UC.1) and a lack of ecosystem-
-            specific guidance (UC.2); 357 issues.
+            Sub-themes: unclear definitions of key terms (UC.1) and unclear
+            documentation, such as how to apply SLSA in an ecosystem (UC.2); 357 issues.
       LIMITED_FEASIBILITY:
         description: >-
           Verification tooling, attestation storage and two-party review are hard to put
@@ -77,8 +77,9 @@ enums:
           study_theme: LF
         comments:
           - >-
-            Sub-themes: verification and storage (LF.1) and two-party review for small
-            projects (LF.2); 219 issues.
+            Sub-themes: limited attestation verification, including where attestations
+            are stored (LF.1), and two-party review requirements, which projects with
+            one maintainer find hard to meet (LF.2); 219 issues.
       UNCLEAR_RELEVANCE:
         description: >-
           Which attacks SLSA mitigates, and how it differs from other practices, is
@@ -87,8 +88,8 @@ enums:
           study_theme: UR
         comments:
           - >-
-            Sub-theme: unclear scope and ecosystem-level inconsistencies (UR.1); 46
-            issues.
+            Sub-theme: unclear relevance, including tools that name one package
+            differently within an ecosystem (UR.1); 46 issues.
     in_subset:
       - slsa_adoption_study
 
@@ -100,8 +101,8 @@ enums:
     permissible_values:
       ENHANCE_ALIGNMENT_FLEXIBILITY:
         description: >-
-          Make SLSA fit more contexts, with build-system tracks, flexibility for varied
-          organizations and alignment with OpenSSF practices.
+          Make SLSA fit more contexts, with build-system tracks, gamified levels,
+          flexibility for varied organizations and alignment with OpenSSF practices.
         annotations:
           study_theme: S1
       PROVIDE_DETAILED_DOCUMENTATION:

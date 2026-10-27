@@ -10,14 +10,12 @@ import java.util.List;
 import lombok.*;
 
 /**
-  The entity that performed verification of an artifact and issued a Verification Summary Attestation. Consumers MUST accept only specific (signer, verifier) pairs.
+  The policy a verification summary applied: a resource descriptor that names the policy by URI.
 **/
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class Verifier  {
+public class SlsaVerificationSummaryPolicy extends InTotoResourceDescriptor {
 
-  private String id;
-  private String version;
 
 
 }

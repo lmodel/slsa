@@ -1,0 +1,2 @@
+# INVALID: content, when present, is non-empty base64.
+content: ""

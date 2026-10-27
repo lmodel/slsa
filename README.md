@@ -36,13 +36,13 @@ Several pre-defined command-recipes are available using [just](https://github.co
 
 `.lokf/` holds this project's [KTL](https://w3id.org/ktl/) knowledge bundle. Its domain schema is `.lokf/slsa.yaml`, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy.
 
-`just lokf-adapt` rewrites the copy and `just lokf-adapt-check` says when it is stale; `project.justfile` says which classes the copy roots on `Concept`. A concept may name any of them, or a subclass, as its `type`. Obsidian users of KTL Registrar and KTL Curator plugins, should add them to the *Known LOKF types* setting:
+`just lokf-adapt` rewrites the copy and `just lokf-adapt-check` says when it is stale; `project.justfile` says which classes the copy roots on `Concept`. A concept may name any of them, or a subclass, as its `type`. Obsidian users of the KTL Registrar and KTL Curator plugins should add them to the *Known LOKF types* setting:
 
 ```text
 SlsaProducer, SlsaConsumer, SlsaVerifier, SlsaInfrastructureProvider, SlsaBuildImageProducer, SlsaBuildPlatform, SlsaControlPlane, SlsaPackage, SlsaPackageRegistry, SlsaSourceControlSystem, SlsaSourceRepository, SlsaSourceRevision, SlsaBuildImage
 ```
 
-In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. No SLSA key shares a name with a LOKF key, so none is renamed.
+In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. Every other key keeps its SLSA name, because no top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. `lokf adapt` does not compare class attributes, so `media_type` and `predicate` keep the names they share with LOKF slots.
 
 ## License
 

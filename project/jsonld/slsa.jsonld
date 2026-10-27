@@ -389,6 +389,32 @@
       "uri": "http://www.w3.org/2001/XMLSchema#string",
       "repr": "str",
       "@type": "TypeDefinition"
+    },
+    {
+      "name": "slsa_result_value",
+      "definition_uri": "https://w3id.org/lmodel/slsa/SlsaResultValue",
+      "description": "A result as a VSA writes it: one of the SLSA-defined results SlsaResult lists, or one of the issuer's own, which never starts with SLSA_.",
+      "notes": [
+        "The pattern lists the values of SlsaResult that start with SLSA_ and then admits any other value that does not, written without a lookahead, which SHACL's regular expressions lack. One type in place of any_of over the enum and a pattern keeps the OWL output valid, since gen-owl makes the enum a class.",
+        "verified_levels and verified_level repeat the pattern through a YAML anchor, because gen-pydantic checks a slot's pattern but not its type's.",
+        "tests/test_schema_rules.py checks the pattern against SlsaResult."
+      ],
+      "comments": [
+        "An issuer's own result, such as an organization's ORG_SOURCE_ property, is printable ASCII with no spaces and does not start with SLSA_ in any letter case, so that it cannot pass for an SLSA result."
+      ],
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "see_also": [
+        "https://slsa.dev/spec/v1.2/verification_summary#slsaresult"
+      ],
+      "typeof": "string",
+      "base": "str",
+      "uri": "http://www.w3.org/2001/XMLSchema#string",
+      "pattern": "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$",
+      "@type": "TypeDefinition"
     }
   ],
   "enums": [
@@ -416,14 +442,14 @@
           "text": "SLSA_BUILD_LEVEL_2",
           "description": "A hosted platform generates and signs the provenance, so tampering after the build needs an explicit attack.",
           "comments": [
-            "Integrating signing tools into varied CI workflows is a common adoption difficulty (Tamanna et al., 2024, CI.2)."
+            "Keeping the provenance generator, the verifier and signing tools such as cosign working in CI workflows was a common difficulty (Tamanna et al., 2024, CI.2)."
           ]
         },
         {
           "text": "SLSA_BUILD_LEVEL_3",
           "description": "A hardened platform prevents runs from influencing one another and keeps signing material away from build steps, so forging provenance needs an exploit.",
           "comments": [
-            "Hermetic and isolated builds were the adoption barrier practitioners cited most (Tamanna et al., 2024, CI.1)."
+            "Practitioners reported difficulty in generating provenance for the higher levels (Tamanna et al., 2024, CI.1)."
           ]
         }
       ]
@@ -453,7 +479,8 @@
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaResult",
       "description": "A result of evaluating an artifact against SLSA: a track level, a verified property, or a failure. A level implies the levels below it in the same track.",
       "comments": [
-        "Issuers may add values of their own, but none that start with SLSA_; this enum lists the SLSA-defined values."
+        "Issuers may add values of their own, but none that start with SLSA_; this enum lists the SLSA-defined values, and slsa_result_value, which verified_levels takes, admits both.",
+        "The working-draft Dependency and Build Environment tracks name no results yet, so none are listed for them."
       ],
       "in_subset": [
         "slsa_build_track",
@@ -462,7 +489,7 @@
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
       "see_also": [
         "https://slsa.dev/spec/v1.2/verification_summary#slsaresult",
-        "https://slsa.dev/spec/draft/verified-properties"
+        "https://slsa.dev/spec/v1.2/verified-properties"
       ],
       "permissible_values": [
         {
@@ -537,7 +564,7 @@
       "permissible_values": [
         {
           "text": "SLSA_SOURCE_LEVEL_0",
-          "description": "No Source track claims; the SCS issued no VSA for the revision."
+          "description": "No Source track guarantees; a revision for which the SCS issues no Source VSA is at this level."
         },
         {
           "text": "SLSA_SOURCE_LEVEL_1",
@@ -593,7 +620,10 @@
         },
         {
           "text": "AUTOMATED",
-          "description": "A tool or bot reviewed the change with no second person, which does not meet Source L4."
+          "description": "A tool or bot reviewed the change with no second person, which is not two-party review.",
+          "comments": [
+            "At Source L4 an organization may still exempt a trusted robot's own changes from two-party review."
+          ]
         }
       ]
     },
@@ -696,7 +726,7 @@
             }
           ],
           "comments": [
-            "Sub-themes: unclear definitions of key terms (UC.1) and a lack of ecosystem- specific guidance (UC.2); 357 issues."
+            "Sub-themes: unclear definitions of key terms (UC.1) and unclear documentation, such as how to apply SLSA in an ecosystem (UC.2); 357 issues."
           ]
         },
         {
@@ -709,7 +739,7 @@
             }
           ],
           "comments": [
-            "Sub-themes: verification and storage (LF.1) and two-party review for small projects (LF.2); 219 issues."
+            "Sub-themes: limited attestation verification, including where attestations are stored (LF.1), and two-party review requirements, which projects with one maintainer find hard to meet (LF.2); 219 issues."
           ]
         },
         {
@@ -722,7 +752,7 @@
             }
           ],
           "comments": [
-            "Sub-theme: unclear scope and ecosystem-level inconsistencies (UR.1); 46 issues."
+            "Sub-theme: unclear relevance, including tools that name one package differently within an ecosystem (UR.1); 46 issues."
           ]
         }
       ]
@@ -741,7 +771,7 @@
       "permissible_values": [
         {
           "text": "ENHANCE_ALIGNMENT_FLEXIBILITY",
-          "description": "Make SLSA fit more contexts, with build-system tracks, flexibility for varied organizations and alignment with OpenSSF practices.",
+          "description": "Make SLSA fit more contexts, with build-system tracks, gamified levels, flexibility for varied organizations and alignment with OpenSSF practices.",
           "annotations": [
             {
               "tag": "study_theme",
@@ -865,7 +895,7 @@
       "definition_uri": "https://w3id.org/lmodel/slsa/ecosystem",
       "description": "The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI.",
       "comments": [
-        "The same source can yield differently named packages in one ecosystem, so verifiers match provenance to package names with care (Tamanna et al., 2024, UR.1)."
+        "One ecosystem's tools can name the same package differently, which the study found affects attestations and provenance, so verifiers match provenance to package names with care (Tamanna et al., 2024, UR.1)."
       ],
       "in_subset": [
         "slsa_build_track",
@@ -1007,6 +1037,22 @@
         "SlsaDocument"
       ],
       "range": "SlsaBuildPlatform",
+      "multivalued": true,
+      "inlined": true,
+      "inlined_as_list": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "slsaDocument__control_planes",
+      "description": "The control planes of the build platforms.",
+      "from_schema": "https://w3id.org/lmodel/slsa",
+      "slot_uri": "https://w3id.org/lmodel/slsa/control_planes",
+      "alias": "control_planes",
+      "owner": "SlsaDocument",
+      "domain_of": [
+        "SlsaDocument"
+      ],
+      "range": "SlsaControlPlane",
       "multivalued": true,
       "inlined": true,
       "inlined_as_list": true,
@@ -1170,6 +1216,34 @@
       "@type": "SlotDefinition"
     },
     {
+      "name": "inTotoDigestSet__sha224",
+      "description": "The SHA-224 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha224",
+      "alias": "sha224",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{56}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha384",
+      "description": "The SHA-384 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha384",
+      "alias": "sha384",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{96}$",
+      "@type": "SlotDefinition"
+    },
+    {
       "name": "inTotoDigestSet__sha512",
       "description": "The SHA-512 digest of the artifact.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
@@ -1181,6 +1255,236 @@
       ],
       "range": "string",
       "pattern": "^[a-f0-9]{128}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha512_224",
+      "description": "The SHA-512/224 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha512_224",
+      "alias": "sha512_224",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{56}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha512_256",
+      "description": "The SHA-512/256 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha512_256",
+      "alias": "sha512_256",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha3_224",
+      "description": "The SHA3-224 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha3_224",
+      "alias": "sha3_224",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{56}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha3_256",
+      "description": "The SHA3-256 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha3_256",
+      "alias": "sha3_256",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha3_384",
+      "description": "The SHA3-384 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha3_384",
+      "alias": "sha3_384",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{96}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha3_512",
+      "description": "The SHA3-512 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha3_512",
+      "alias": "sha3_512",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{128}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__shake128",
+      "description": "The SHAKE128 digest of the artifact, of at least 32 bytes.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/shake128",
+      "alias": "shake128",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__shake256",
+      "description": "The SHAKE256 digest of the artifact, of at least 32 bytes.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/shake256",
+      "alias": "shake256",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__blake2b",
+      "description": "The BLAKE2b digest of the artifact, of 32 to 64 bytes.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/blake2b",
+      "alias": "blake2b",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__blake2s",
+      "description": "The BLAKE2s digest of the artifact, at its full 32 bytes.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/blake2s",
+      "alias": "blake2s",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__ripemd160",
+      "description": "The RIPEMD-160 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/ripemd160",
+      "alias": "ripemd160",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sm3",
+      "description": "The SM3 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sm3",
+      "alias": "sm3",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__gost",
+      "description": "The GOST R 34.11 digest of the artifact, of 256 or 512 bits.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/gost",
+      "alias": "gost",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}([a-f0-9]{64})?$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha1",
+      "description": "The SHA-1 digest of the artifact.",
+      "comments": [
+        "SHA-1 lacks collision resistance, so most consumers should not rely on it."
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/sha1",
+      "alias": "sha1",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__md5",
+      "description": "The MD5 digest of the artifact.",
+      "comments": [
+        "MD5 lacks collision resistance, so most consumers should not accept it."
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/md5",
+      "alias": "md5",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{32}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__dir_hash",
+      "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/dir_hash",
+      "alias": "dir_hash",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
       "@type": "SlotDefinition"
     },
     {
@@ -1199,7 +1503,7 @@
     },
     {
       "name": "inTotoDigestSet__git_tree",
-      "description": "The git tree id of a source revision's content.",
+      "description": "The git tree id of a source revision's content, or of any file tree.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "slot_uri": "https://w3id.org/lmodel/slsa/git_tree",
       "alias": "git_tree",
@@ -1212,16 +1516,117 @@
       "@type": "SlotDefinition"
     },
     {
-      "name": "inTotoDigestSet__dir_hash",
-      "description": "A digest over a directory's content, as the in-toto framework defines it.",
+      "name": "inTotoDigestSet__git_blob",
+      "description": "The git blob id of a file's content.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/dir_hash",
-      "alias": "dir_hash",
+      "slot_uri": "https://w3id.org/lmodel/slsa/git_blob",
+      "alias": "git_blob",
       "owner": "InTotoDigestSet",
       "domain_of": [
         "InTotoDigestSet"
       ],
       "range": "string",
+      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__git_tag",
+      "description": "The git object id of an annotated tag.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/git_tag",
+      "alias": "git_tag",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__additional_digests",
+      "description": "The digests under algorithms this class does not name.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/additional_digests",
+      "alias": "additional_digests",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "InTotoAdditionalDigest",
+      "multivalued": true,
+      "inlined": true,
+      "inlined_as_list": true,
+      "minimum_cardinality": 1,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoAdditionalDigest__algorithm",
+      "description": "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.",
+      "comments": [
+        "An algorithm that InTotoDigestSet names, by its JSON key or by its field name, goes in that field instead."
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/algorithm",
+      "alias": "algorithm",
+      "owner": "InTotoAdditionalDigest",
+      "domain_of": [
+        "InTotoAdditionalDigest"
+      ],
+      "range": "string",
+      "required": true,
+      "pattern": "^[a-z][A-Za-z0-9_]*$",
+      "none_of": [
+        {
+          "equals_string_in": [
+            "sha256",
+            "sha224",
+            "sha384",
+            "sha512",
+            "sha512_224",
+            "sha512_256",
+            "sha3_224",
+            "sha3_256",
+            "sha3_384",
+            "sha3_512",
+            "shake128",
+            "shake256",
+            "blake2b",
+            "blake2s",
+            "ripemd160",
+            "sm3",
+            "gost",
+            "sha1",
+            "md5",
+            "dirHash",
+            "gitCommit",
+            "gitTree",
+            "gitBlob",
+            "gitTag",
+            "dir_hash",
+            "git_commit",
+            "git_tree",
+            "git_blob",
+            "git_tag"
+          ],
+          "@type": "AnonymousSlotExpression"
+        }
+      ],
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoAdditionalDigest__value",
+      "description": "The digest under that algorithm, in the encoding the algorithm documents.",
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/value",
+      "alias": "value",
+      "owner": "InTotoAdditionalDigest",
+      "domain_of": [
+        "InTotoAdditionalDigest"
+      ],
+      "range": "string",
+      "required": true,
+      "pattern": "^\\S+$",
       "@type": "SlotDefinition"
     },
     {
@@ -1292,6 +1697,23 @@
       "@type": "SlotDefinition"
     },
     {
+      "name": "inTotoResourceDescriptor__content",
+      "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
+      "comments": [
+        "The in-toto framework asks for content under 1 KB, so that attestations stay small."
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "slot_uri": "https://w3id.org/lmodel/slsa/content",
+      "alias": "content",
+      "owner": "InTotoResourceDescriptor",
+      "domain_of": [
+        "InTotoResourceDescriptor"
+      ],
+      "range": "string",
+      "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
+      "@type": "SlotDefinition"
+    },
+    {
       "name": "inTotoResourceDescriptor__annotations",
       "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
@@ -1324,7 +1746,7 @@
     },
     {
       "name": "inTotoStatement__subject",
-      "description": "The artifacts the predicate is about; each carries a digest.",
+      "description": "The artifacts the predicate is about, each with a digest.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "slot_uri": "https://w3id.org/lmodel/slsa/subject",
       "alias": "subject",
@@ -1332,11 +1754,12 @@
       "domain_of": [
         "InTotoStatement"
       ],
-      "range": "InTotoResourceDescriptor",
+      "range": "InTotoStatementSubject",
       "required": true,
       "multivalued": true,
       "inlined": true,
       "inlined_as_list": true,
+      "minimum_cardinality": 1,
       "@type": "SlotDefinition"
     },
     {
@@ -1372,7 +1795,8 @@
       "name": "inTotoStatement__attestation_storage_uri",
       "description": "Where the signed attestation is stored or can be fetched.",
       "comments": [
-        "SLSA names no standard place to store attestations; recording the place used helps consumers find them (Tamanna et al., 2024, LF.1)."
+        "SLSA asks producers to publish attestations in at least one place and preferably more: beside the source repository's releases, beside the artifact in its package registry, which it prefers in the long term, or elsewhere with an entry in a transparency log.",
+        "Where to store attestations was an open question for practitioners (Tamanna et al., 2024, LF.1)."
       ],
       "in_subset": [
         "slsa_adoption_study"
@@ -1699,7 +2123,7 @@
     },
     {
       "name": "slsaBuildDefinition__external_parameters",
-      "description": "The inputs under the tenant's control; complete at Build L3 and verified by consumers.",
+      "description": "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.",
       "comments": [
         "Verifiers reject parameters they do not recognize here."
       ],
@@ -1711,9 +2135,11 @@
         "SlsaBuildDefinition"
       ],
       "range": "SlsaBuildParameter",
+      "required": true,
       "multivalued": true,
       "inlined": true,
       "inlined_as_list": true,
+      "minimum_cardinality": 1,
       "@type": "SlotDefinition"
     },
     {
@@ -1752,7 +2178,8 @@
       "name": "slsaBuildDefinition__hermetic",
       "description": "Whether the build could reach only the dependencies it declared, with no other network or filesystem access.",
       "comments": [
-        "Hermetic builds are an isolation property Build L3 platforms aim for, and the one practitioners found hardest (Tamanna et al., 2024, CI.1)."
+        "SLSA v1.2 does not require hermetic builds; Build L3's isolation is a different property, and hermeticity is a candidate for a future Build L4.",
+        "The study cites a 2023 industry survey in which over half the participants found hermetic builds hard to implement, and lists \"hermetic build\" among SLSA's unclear terms (Tamanna et al., 2024, UC.1)."
       ],
       "in_subset": [
         "slsa_adoption_study"
@@ -1956,7 +2383,7 @@
       "domain_of": [
         "SlsaVerificationSummary"
       ],
-      "range": "InTotoResourceDescriptor",
+      "range": "SlsaVerificationSummaryPolicy",
       "required": true,
       "inlined": true,
       "inlined_as_list": true,
@@ -1972,7 +2399,7 @@
       "domain_of": [
         "SlsaVerificationSummary"
       ],
-      "range": "InTotoResourceDescriptor",
+      "range": "SlsaVerificationSummaryInputAttestation",
       "multivalued": true,
       "inlined": true,
       "inlined_as_list": true,
@@ -1994,7 +2421,10 @@
     },
     {
       "name": "slsaVerificationSummary__verified_levels",
-      "description": "The highest level verified in each track, and any verified property; a level implies the levels below it.",
+      "description": "The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.",
+      "comments": [
+        "A VSA lists at most one level per track, and only FAILED when verification failed; the validator checks neither."
+      ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
       "slot_uri": "https://w3id.org/lmodel/slsa/verified_levels",
       "alias": "verified_levels",
@@ -2002,18 +2432,22 @@
       "domain_of": [
         "SlsaVerificationSummary"
       ],
-      "range": "SlsaResult",
+      "range": "slsa_result_value",
       "required": true,
       "multivalued": true,
+      "pattern": "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$",
+      "minimum_cardinality": 1,
       "@type": "SlotDefinition"
     },
     {
       "name": "slsaVerificationSummary__organization_properties",
-      "description": "Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_.",
+      "description": "Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.",
+      "deprecated": "Write these properties in verified_levels, where the attestation's JSON puts them; this field goes in a later release.",
       "in_subset": [
         "slsa_source_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "deprecated_element_has_possible_replacement": "slsa:verified_levels",
       "slot_uri": "https://w3id.org/lmodel/slsa/organization_properties",
       "alias": "organization_properties",
       "owner": "SlsaVerificationSummary",
@@ -2028,6 +2462,9 @@
     {
       "name": "slsaVerificationSummary__dependency_levels",
       "description": "How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.",
+      "comments": [
+        "The attestation's JSON tells an empty map (no dependencies) from an absent one (no claim); this list cannot, so an empty list reads as no claim."
+      ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
       "slot_uri": "https://w3id.org/lmodel/slsa/dependency_levels",
       "alias": "dependency_levels",
@@ -2057,7 +2494,7 @@
     },
     {
       "name": "slsaDependencyLevelCount__verified_level",
-      "description": "The level the dependencies were verified at.",
+      "description": "The level the dependencies were verified at, or a result of the issuer's own.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
       "slot_uri": "https://w3id.org/lmodel/slsa/verified_level",
       "alias": "verified_level",
@@ -2065,8 +2502,9 @@
       "domain_of": [
         "SlsaDependencyLevelCount"
       ],
-      "range": "SlsaResult",
+      "range": "slsa_result_value",
       "required": true,
+      "pattern": "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$",
       "@type": "SlotDefinition"
     },
     {
@@ -2287,7 +2725,7 @@
     },
     {
       "name": "slsaDependencyInventory__dependencies",
-      "description": "The dependencies, each identified by URI and digest.",
+      "description": "The dependencies, each as a resource descriptor.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_dependency",
       "slot_uri": "https://w3id.org/lmodel/slsa/dependencies",
       "alias": "dependencies",
@@ -2445,6 +2883,34 @@
       "@type": "SlotDefinition"
     },
     {
+      "name": "InTotoStatementSubject_digest",
+      "definition_uri": "https://w3id.org/lmodel/slsa/digest",
+      "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "mappings": [
+        "https://w3id.org/lmodel/slsa/digest"
+      ],
+      "is_a": "digest",
+      "domain": "InTotoStatementSubject",
+      "slot_uri": "https://w3id.org/lmodel/slsa/digest",
+      "alias": "digest",
+      "owner": "InTotoStatementSubject",
+      "domain_of": [
+        "InTotoStatementSubject"
+      ],
+      "is_usage_slot": true,
+      "usage_slot_name": "digest",
+      "range": "InTotoDigestSet",
+      "required": true,
+      "inlined": true,
+      "inlined_as_list": true,
+      "@type": "SlotDefinition"
+    },
+    {
       "name": "SlsaVerificationSummary_resource_uri",
       "definition_uri": "https://w3id.org/lmodel/slsa/resource_uri",
       "description": "The URI consumers fetch the artifact from, which the verifier verified it as.",
@@ -2468,6 +2934,114 @@
       "usage_slot_name": "resource_uri",
       "range": "uri",
       "required": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "SlsaVerificationSummaryPolicy_resource_uri",
+      "definition_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "mappings": [
+        "https://w3id.org/lmodel/slsa/resource_uri"
+      ],
+      "is_a": "resource_uri",
+      "domain": "SlsaVerificationSummaryPolicy",
+      "slot_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "alias": "resource_uri",
+      "owner": "SlsaVerificationSummaryPolicy",
+      "domain_of": [
+        "SlsaVerificationSummaryPolicy"
+      ],
+      "is_usage_slot": true,
+      "usage_slot_name": "resource_uri",
+      "range": "uri",
+      "required": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "SlsaVerificationSummaryPolicy_digest",
+      "definition_uri": "https://w3id.org/lmodel/slsa/digest",
+      "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "mappings": [
+        "https://w3id.org/lmodel/slsa/digest"
+      ],
+      "is_a": "digest",
+      "domain": "SlsaVerificationSummaryPolicy",
+      "slot_uri": "https://w3id.org/lmodel/slsa/digest",
+      "alias": "digest",
+      "owner": "SlsaVerificationSummaryPolicy",
+      "domain_of": [
+        "SlsaVerificationSummaryPolicy"
+      ],
+      "is_usage_slot": true,
+      "usage_slot_name": "digest",
+      "range": "InTotoDigestSet",
+      "recommended": true,
+      "inlined": true,
+      "inlined_as_list": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "SlsaVerificationSummaryInputAttestation_digest",
+      "definition_uri": "https://w3id.org/lmodel/slsa/digest",
+      "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "mappings": [
+        "https://w3id.org/lmodel/slsa/digest"
+      ],
+      "is_a": "digest",
+      "domain": "SlsaVerificationSummaryInputAttestation",
+      "slot_uri": "https://w3id.org/lmodel/slsa/digest",
+      "alias": "digest",
+      "owner": "SlsaVerificationSummaryInputAttestation",
+      "domain_of": [
+        "SlsaVerificationSummaryInputAttestation"
+      ],
+      "is_usage_slot": true,
+      "usage_slot_name": "digest",
+      "range": "InTotoDigestSet",
+      "required": true,
+      "inlined": true,
+      "inlined_as_list": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "SlsaVerificationSummaryInputAttestation_resource_uri",
+      "definition_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "mappings": [
+        "https://w3id.org/lmodel/slsa/resource_uri"
+      ],
+      "is_a": "resource_uri",
+      "domain": "SlsaVerificationSummaryInputAttestation",
+      "slot_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "alias": "resource_uri",
+      "owner": "SlsaVerificationSummaryInputAttestation",
+      "domain_of": [
+        "SlsaVerificationSummaryInputAttestation"
+      ],
+      "is_usage_slot": true,
+      "usage_slot_name": "resource_uri",
+      "range": "uri",
+      "recommended": true,
       "@type": "SlotDefinition"
     },
     {
@@ -2506,6 +3080,7 @@
         "slsaDocument__attestations",
         "slsaDocument__parties",
         "slsaDocument__build_platforms",
+        "slsaDocument__control_planes",
         "slsaDocument__packages",
         "slsaDocument__package_registries",
         "slsaDocument__source_control_systems",
@@ -2540,6 +3115,15 @@
           "name": "build_platforms",
           "description": "The build platforms.",
           "range": "SlsaBuildPlatform",
+          "multivalued": true,
+          "inlined": true,
+          "inlined_as_list": true,
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "control_planes",
+          "description": "The control planes of the build platforms.",
+          "range": "SlsaControlPlane",
           "multivalued": true,
           "inlined": true,
           "inlined_as_list": true,
@@ -2632,9 +3216,14 @@
     {
       "name": "InTotoDigestSet",
       "definition_uri": "https://w3id.org/lmodel/slsa/InTotoDigestSet",
-      "description": "A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.",
+      "description": "A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.",
+      "notes": [
+        "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present."
+      ],
       "comments": [
-        "Digests are lowercase hexadecimal. The in-toto framework defines more algorithms than the five modelled here."
+        "The named algorithms take lowercase hexadecimal, and additional_digests holds any other algorithm, such as an SCS's own revision type.",
+        "A consumer accepts only the algorithms it considers secure and ignores the rest, and two sets match when any accepted algorithm matches.",
+        "SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least 32 bytes, since a shorter digest resists collisions too weakly to identify an artifact."
       ],
       "in_subset": [
         "slsa_build_track",
@@ -2646,10 +3235,30 @@
       ],
       "slots": [
         "inTotoDigestSet__sha256",
+        "inTotoDigestSet__sha224",
+        "inTotoDigestSet__sha384",
         "inTotoDigestSet__sha512",
+        "inTotoDigestSet__sha512_224",
+        "inTotoDigestSet__sha512_256",
+        "inTotoDigestSet__sha3_224",
+        "inTotoDigestSet__sha3_256",
+        "inTotoDigestSet__sha3_384",
+        "inTotoDigestSet__sha3_512",
+        "inTotoDigestSet__shake128",
+        "inTotoDigestSet__shake256",
+        "inTotoDigestSet__blake2b",
+        "inTotoDigestSet__blake2s",
+        "inTotoDigestSet__ripemd160",
+        "inTotoDigestSet__sm3",
+        "inTotoDigestSet__gost",
+        "inTotoDigestSet__sha1",
+        "inTotoDigestSet__md5",
+        "inTotoDigestSet__dir_hash",
         "inTotoDigestSet__git_commit",
         "inTotoDigestSet__git_tree",
-        "inTotoDigestSet__dir_hash"
+        "inTotoDigestSet__git_blob",
+        "inTotoDigestSet__git_tag",
+        "inTotoDigestSet__additional_digests"
       ],
       "slot_usage": {},
       "attributes": [
@@ -2660,9 +3269,123 @@
           "@type": "SlotDefinition"
         },
         {
+          "name": "sha224",
+          "description": "The SHA-224 digest of the artifact.",
+          "pattern": "^[a-f0-9]{56}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha384",
+          "description": "The SHA-384 digest of the artifact.",
+          "pattern": "^[a-f0-9]{96}$",
+          "@type": "SlotDefinition"
+        },
+        {
           "name": "sha512",
           "description": "The SHA-512 digest of the artifact.",
           "pattern": "^[a-f0-9]{128}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha512_224",
+          "description": "The SHA-512/224 digest of the artifact.",
+          "pattern": "^[a-f0-9]{56}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha512_256",
+          "description": "The SHA-512/256 digest of the artifact.",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha3_224",
+          "description": "The SHA3-224 digest of the artifact.",
+          "pattern": "^[a-f0-9]{56}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha3_256",
+          "description": "The SHA3-256 digest of the artifact.",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha3_384",
+          "description": "The SHA3-384 digest of the artifact.",
+          "pattern": "^[a-f0-9]{96}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha3_512",
+          "description": "The SHA3-512 digest of the artifact.",
+          "pattern": "^[a-f0-9]{128}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "shake128",
+          "description": "The SHAKE128 digest of the artifact, of at least 32 bytes.",
+          "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "shake256",
+          "description": "The SHAKE256 digest of the artifact, of at least 32 bytes.",
+          "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "blake2b",
+          "description": "The BLAKE2b digest of the artifact, of 32 to 64 bytes.",
+          "pattern": "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "blake2s",
+          "description": "The BLAKE2s digest of the artifact, at its full 32 bytes.",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "ripemd160",
+          "description": "The RIPEMD-160 digest of the artifact.",
+          "pattern": "^[a-f0-9]{40}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sm3",
+          "description": "The SM3 digest of the artifact.",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "gost",
+          "description": "The GOST R 34.11 digest of the artifact, of 256 or 512 bits.",
+          "pattern": "^[a-f0-9]{64}([a-f0-9]{64})?$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha1",
+          "description": "The SHA-1 digest of the artifact.",
+          "comments": [
+            "SHA-1 lacks collision resistance, so most consumers should not rely on it."
+          ],
+          "pattern": "^[a-f0-9]{40}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "md5",
+          "description": "The MD5 digest of the artifact.",
+          "comments": [
+            "MD5 lacks collision resistance, so most consumers should not accept it."
+          ],
+          "pattern": "^[a-f0-9]{32}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "dir_hash",
+          "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
+          "pattern": "^[a-f0-9]{64}$",
           "@type": "SlotDefinition"
         },
         {
@@ -2673,23 +3396,522 @@
         },
         {
           "name": "git_tree",
-          "description": "The git tree id of a source revision's content.",
+          "description": "The git tree id of a source revision's content, or of any file tree.",
           "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
           "@type": "SlotDefinition"
         },
         {
-          "name": "dir_hash",
-          "description": "A digest over a directory's content, as the in-toto framework defines it.",
+          "name": "git_blob",
+          "description": "The git blob id of a file's content.",
+          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "git_tag",
+          "description": "The git object id of an annotated tag.",
+          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "additional_digests",
+          "description": "The digests under algorithms this class does not name.",
+          "range": "InTotoAdditionalDigest",
+          "multivalued": true,
+          "inlined": true,
+          "inlined_as_list": true,
+          "minimum_cardinality": 1,
           "@type": "SlotDefinition"
         }
       ],
       "class_uri": "https://w3id.org/lmodel/slsa/InTotoDigestSet",
+      "any_of": [
+        {
+          "slot_conditions": [
+            {
+              "name": "sha256",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha224",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha384",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha512",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha512_224",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha512_256",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha3_224",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha3_256",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha3_384",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha3_512",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "shake128",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "shake256",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "blake2b",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "blake2s",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "ripemd160",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sm3",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "gost",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha1",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "md5",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "dir_hash",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "git_commit",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "git_tree",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "git_blob",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "git_tag",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "additional_digests",
+              "required": true,
+              "multivalued": true,
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        }
+      ],
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoAdditionalDigest",
+      "definition_uri": "https://w3id.org/lmodel/slsa/InTotoAdditionalDigest",
+      "description": "One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.",
+      "comments": [
+        "In the attestation's JSON the algorithm is a key of the digest set beside the named ones, and an algorithm the framework does not define documents how its value is encoded.",
+        "An SCS that does not use cryptographic digests defines a canonical revision type of its own that includes the repository, such as svn_revision_id.",
+        "Each algorithm appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
+      ],
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md",
+        "https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation"
+      ],
+      "slots": [
+        "inTotoAdditionalDigest__algorithm",
+        "inTotoAdditionalDigest__value"
+      ],
+      "slot_usage": {},
+      "attributes": [
+        {
+          "name": "algorithm",
+          "description": "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.",
+          "comments": [
+            "An algorithm that InTotoDigestSet names, by its JSON key or by its field name, goes in that field instead."
+          ],
+          "required": true,
+          "pattern": "^[a-z][A-Za-z0-9_]*$",
+          "none_of": [
+            {
+              "equals_string_in": [
+                "sha256",
+                "sha224",
+                "sha384",
+                "sha512",
+                "sha512_224",
+                "sha512_256",
+                "sha3_224",
+                "sha3_256",
+                "sha3_384",
+                "sha3_512",
+                "shake128",
+                "shake256",
+                "blake2b",
+                "blake2s",
+                "ripemd160",
+                "sm3",
+                "gost",
+                "sha1",
+                "md5",
+                "dirHash",
+                "gitCommit",
+                "gitTree",
+                "gitBlob",
+                "gitTag",
+                "dir_hash",
+                "git_commit",
+                "git_tree",
+                "git_blob",
+                "git_tag"
+              ],
+              "@type": "AnonymousSlotExpression"
+            }
+          ],
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "value",
+          "description": "The digest under that algorithm, in the encoding the algorithm documents.",
+          "required": true,
+          "pattern": "^\\S+$",
+          "@type": "SlotDefinition"
+        }
+      ],
+      "class_uri": "https://w3id.org/lmodel/slsa/InTotoAdditionalDigest",
       "@type": "ClassDefinition"
     },
     {
       "name": "InTotoAnnotation",
       "definition_uri": "https://w3id.org/lmodel/slsa/InTotoAnnotation",
-      "description": "One vendor-specific annotation on a resource descriptor, with a key and one or more values.",
+      "description": "One vendor-specific annotation on a resource descriptor: a key and its values.",
+      "comments": [
+        "The attestation's JSON allows any JSON value. A string becomes one value and an array one value per item; any other value or item is written as its JSON text, so one value cannot tell a string from a one-item array.",
+        "Each key appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
+      ],
       "in_subset": [
         "slsa_build_track",
         "slsa_source_track"
@@ -2720,9 +3942,12 @@
     {
       "name": "InTotoResourceDescriptor",
       "definition_uri": "https://w3id.org/lmodel/slsa/InTotoResourceDescriptor",
-      "description": "A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata.",
+      "description": "A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.",
+      "notes": [
+        "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present."
+      ],
       "comments": [
-        "A descriptor needs a URI, a digest or both; which one a field requires is said on that field."
+        "A descriptor carries at least one of a URI, a digest or its content; a field that needs a particular one says so."
       ],
       "in_subset": [
         "slsa_build_track",
@@ -2740,6 +3965,7 @@
         "inTotoResourceDescriptor__resource_name",
         "inTotoResourceDescriptor__download_location",
         "inTotoResourceDescriptor__media_type",
+        "inTotoResourceDescriptor__content",
         "inTotoResourceDescriptor__annotations"
       ],
       "slot_usage": {},
@@ -2761,6 +3987,15 @@
           "@type": "SlotDefinition"
         },
         {
+          "name": "content",
+          "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
+          "comments": [
+            "The in-toto framework asks for content under 1 KB, so that attestations stay small."
+          ],
+          "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
+          "@type": "SlotDefinition"
+        },
+        {
           "name": "annotations",
           "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
           "range": "InTotoAnnotation",
@@ -2771,6 +4006,83 @@
         }
       ],
       "class_uri": "https://w3id.org/lmodel/slsa/InTotoResourceDescriptor",
+      "any_of": [
+        {
+          "slot_conditions": [
+            {
+              "name": "resource_uri",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "uri",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "digest",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "InTotoDigestSet",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "content",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        }
+      ],
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoStatementSubject",
+      "definition_uri": "https://w3id.org/lmodel/slsa/InTotoStatementSubject",
+      "description": "One artifact an in-toto statement is about: a resource descriptor that carries a digest.",
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track",
+        "slsa_build_environment_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md"
+      ],
+      "is_a": "InTotoResourceDescriptor",
+      "slots": [
+        "resource_uri",
+        "inTotoResourceDescriptor__resource_name",
+        "inTotoResourceDescriptor__download_location",
+        "inTotoResourceDescriptor__media_type",
+        "inTotoResourceDescriptor__content",
+        "inTotoResourceDescriptor__annotations",
+        "InTotoStatementSubject_digest"
+      ],
+      "slot_usage": {},
+      "class_uri": "https://w3id.org/lmodel/slsa/InTotoStatementSubject",
       "@type": "ClassDefinition"
     },
     {
@@ -2812,12 +4124,13 @@
         },
         {
           "name": "subject",
-          "description": "The artifacts the predicate is about; each carries a digest.",
-          "range": "InTotoResourceDescriptor",
+          "description": "The artifacts the predicate is about, each with a digest.",
+          "range": "InTotoStatementSubject",
           "required": true,
           "multivalued": true,
           "inlined": true,
           "inlined_as_list": true,
+          "minimum_cardinality": 1,
           "@type": "SlotDefinition"
         },
         {
@@ -2838,7 +4151,8 @@
           "name": "attestation_storage_uri",
           "description": "Where the signed attestation is stored or can be fetched.",
           "comments": [
-            "SLSA names no standard place to store attestations; recording the place used helps consumers find them (Tamanna et al., 2024, LF.1)."
+            "SLSA asks producers to publish attestations in at least one place and preferably more: beside the source repository's releases, beside the artifact in its package registry, which it prefers in the long term, or elsewhere with an entry in a transparency log.",
+            "Where to store attestations was an open question for practitioners (Tamanna et al., 2024, LF.1)."
           ],
           "in_subset": [
             "slsa_adoption_study"
@@ -3103,6 +4417,9 @@
       "name": "SlsaComponentVersion",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaComponentVersion",
       "description": "The version of one named component of a platform.",
+      "comments": [
+        "Each component appears once in a list, since the attestation's JSON uses its name as a key; the validator does not check this."
+      ],
       "in_subset": [
         "slsa_build_track"
       ],
@@ -3228,7 +4545,7 @@
       "description": "The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build met their expectations and others can rebuild it.",
       "comments": [
         "The statement that carries it has predicate_type https://slsa.dev/provenance/v1.",
-        "Generating valid provenance was the most frequent adoption difficulty practitioners reported (Tamanna et al., 2024, CI.1)."
+        "Complicated provenance generation was the challenge with the most issues in the study (Tamanna et al., 2024, CI.1)."
       ],
       "in_subset": [
         "slsa_build_track"
@@ -3296,14 +4613,16 @@
         },
         {
           "name": "external_parameters",
-          "description": "The inputs under the tenant's control; complete at Build L3 and verified by consumers.",
+          "description": "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.",
           "comments": [
             "Verifiers reject parameters they do not recognize here."
           ],
           "range": "SlsaBuildParameter",
+          "required": true,
           "multivalued": true,
           "inlined": true,
           "inlined_as_list": true,
+          "minimum_cardinality": 1,
           "@type": "SlotDefinition"
         },
         {
@@ -3328,7 +4647,8 @@
           "name": "hermetic",
           "description": "Whether the build could reach only the dependencies it declared, with no other network or filesystem access.",
           "comments": [
-            "Hermetic builds are an isolation property Build L3 platforms aim for, and the one practitioners found hardest (Tamanna et al., 2024, CI.1)."
+            "SLSA v1.2 does not require hermetic builds; Build L3's isolation is a different property, and hermeticity is a candidate for a future Build L4.",
+            "The study cites a 2023 industry survey in which over half the participants found hermetic builds hard to implement, and lists \"hermetic build\" among SLSA's unclear terms (Tamanna et al., 2024, UC.1)."
           ],
           "in_subset": [
             "slsa_adoption_study"
@@ -3369,7 +4689,8 @@
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaBuildParameter",
       "description": "One named input to a build, with a string value.",
       "comments": [
-        "The specification recommends string values; a structured value is written as its JSON text."
+        "The specification recommends string values; a structured value is written as its JSON text.",
+        "Each name appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
       ],
       "in_subset": [
         "slsa_build_track"
@@ -3532,7 +4853,7 @@
         {
           "name": "policy",
           "description": "The policy the subject was verified against, by URI and preferably by digest too.",
-          "range": "InTotoResourceDescriptor",
+          "range": "SlsaVerificationSummaryPolicy",
           "required": true,
           "inlined": true,
           "@type": "SlotDefinition"
@@ -3540,7 +4861,7 @@
         {
           "name": "input_attestations",
           "description": "Every attestation the verifier consulted, each with a digest; complete when present.",
-          "range": "InTotoResourceDescriptor",
+          "range": "SlsaVerificationSummaryInputAttestation",
           "multivalued": true,
           "inlined": true,
           "inlined_as_list": true,
@@ -3555,18 +4876,25 @@
         },
         {
           "name": "verified_levels",
-          "description": "The highest level verified in each track, and any verified property; a level implies the levels below it.",
-          "range": "SlsaResult",
+          "description": "The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.",
+          "comments": [
+            "A VSA lists at most one level per track, and only FAILED when verification failed; the validator checks neither."
+          ],
+          "range": "slsa_result_value",
           "required": true,
           "multivalued": true,
+          "pattern": "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$",
+          "minimum_cardinality": 1,
           "@type": "SlotDefinition"
         },
         {
           "name": "organization_properties",
-          "description": "Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_.",
+          "description": "Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.",
+          "deprecated": "Write these properties in verified_levels, where the attestation's JSON puts them; this field goes in a later release.",
           "in_subset": [
             "slsa_source_track"
           ],
+          "deprecated_element_has_possible_replacement": "slsa:verified_levels",
           "multivalued": true,
           "pattern": "^ORG_SOURCE_",
           "@type": "SlotDefinition"
@@ -3574,6 +4902,9 @@
         {
           "name": "dependency_levels",
           "description": "How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.",
+          "comments": [
+            "The attestation's JSON tells an empty map (no dependencies) from an absent one (no claim); this list cannot, so an empty list reads as no claim."
+          ],
           "range": "SlsaDependencyLevelCount",
           "multivalued": true,
           "inlined": true,
@@ -3594,6 +4925,9 @@
       "name": "SlsaDependencyLevelCount",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaDependencyLevelCount",
       "description": "The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level.",
+      "comments": [
+        "Each level appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
+      ],
       "in_subset": [
         "slsa_build_track"
       ],
@@ -3606,9 +4940,10 @@
       "attributes": [
         {
           "name": "verified_level",
-          "description": "The level the dependencies were verified at.",
-          "range": "SlsaResult",
+          "description": "The level the dependencies were verified at, or a result of the issuer's own.",
+          "range": "slsa_result_value",
           "required": true,
+          "pattern": "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$",
           "@type": "SlotDefinition"
         },
         {
@@ -3621,6 +4956,61 @@
         }
       ],
       "class_uri": "https://w3id.org/lmodel/slsa/SlsaDependencyLevelCount",
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "SlsaVerificationSummaryPolicy",
+      "definition_uri": "https://w3id.org/lmodel/slsa/SlsaVerificationSummaryPolicy",
+      "description": "The policy a verification summary applied: a resource descriptor that names the policy by URI.",
+      "comments": [
+        "A digest is recommended as well, to pin the exact version of the policy."
+      ],
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "see_also": [
+        "https://slsa.dev/spec/v1.2/verification_summary#policy"
+      ],
+      "is_a": "InTotoResourceDescriptor",
+      "slots": [
+        "inTotoResourceDescriptor__resource_name",
+        "inTotoResourceDescriptor__download_location",
+        "inTotoResourceDescriptor__media_type",
+        "inTotoResourceDescriptor__content",
+        "inTotoResourceDescriptor__annotations",
+        "SlsaVerificationSummaryPolicy_resource_uri",
+        "SlsaVerificationSummaryPolicy_digest"
+      ],
+      "slot_usage": {},
+      "class_uri": "https://w3id.org/lmodel/slsa/SlsaVerificationSummaryPolicy",
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "SlsaVerificationSummaryInputAttestation",
+      "definition_uri": "https://w3id.org/lmodel/slsa/SlsaVerificationSummaryInputAttestation",
+      "description": "One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.",
+      "in_subset": [
+        "slsa_build_track",
+        "slsa_source_track"
+      ],
+      "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "see_also": [
+        "https://slsa.dev/spec/v1.2/verification_summary#inputAttestations"
+      ],
+      "is_a": "InTotoResourceDescriptor",
+      "slots": [
+        "inTotoResourceDescriptor__resource_name",
+        "inTotoResourceDescriptor__download_location",
+        "inTotoResourceDescriptor__media_type",
+        "inTotoResourceDescriptor__content",
+        "inTotoResourceDescriptor__annotations",
+        "SlsaVerificationSummaryInputAttestation_digest",
+        "SlsaVerificationSummaryInputAttestation_resource_uri"
+      ],
+      "slot_usage": {},
+      "class_uri": "https://w3id.org/lmodel/slsa/SlsaVerificationSummaryInputAttestation",
       "@type": "ClassDefinition"
     },
     {
@@ -3909,7 +5299,7 @@
         },
         {
           "name": "dependencies",
-          "description": "The dependencies, each identified by URI and digest.",
+          "description": "The dependencies, each as a resource descriptor.",
           "range": "InTotoResourceDescriptor",
           "multivalued": true,
           "inlined": true,
@@ -4110,8 +5500,8 @@
   ],
   "metamodel_version": "1.12.0",
   "source_file": "slsa.yaml",
-  "source_file_date": "2026-10-23T21:57:38",
-  "source_file_size": 3608,
+  "source_file_date": "2026-10-27T11:08:32",
+  "source_file_size": 3804,
   "@type": "SchemaDefinition",
   "@context": [
     "project/jsonld/slsa.context.jsonld",

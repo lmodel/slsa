@@ -14,7 +14,7 @@ sources:
     title: the arXiv record's title, authors and abstract
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T22:22:59Z"
+  at: "2026-10-27T12:57:54Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -30,3 +30,10 @@ The current version is titled "Analyzing Challenges in Deployment of the SLSA Fr
 `docs/about.md` cites the study as Tamanna et al. (2024), *Analyzing Challenges in Deployment of the SLSA Framework for Software Supply Chain Security*, the arXiv record's current title. It says that the `slsa_adoption` module encodes the four challenge themes and five strategy themes as enums on `SlsaAdoptionMetadata`. The slots `hermetic`, `provenance_generation_tool`, `attestation_storage_uri` and `review_type` record the practices the study discusses, and a comment on the element concerned cites the study's theme.
 
 In the schema, `SlsaAdoptionChallenge` holds `COMPLEX_IMPLEMENTATION`, `UNCLEAR_COMMUNICATION`, `LIMITED_FEASIBILITY` and `UNCLEAR_RELEVANCE`. `SlsaAdoptionStrategy` holds `ENHANCE_ALIGNMENT_FLEXIBILITY`, `PROVIDE_DETAILED_DOCUMENTATION`, `STREAMLINE_PROVENANCE_GENERATION`, `IMPROVE_VERIFICATION_PROCESS` and `COLLABORATE_WITH_COMMUNITY`.
+
+Comments in `slsa_adoption.yaml` give each challenge theme's sub-themes and issue count:
+
+- complex implementation: complicated provenance generation and intricate tool maintenance, 901 issues;
+- unclear communication: unclear definitions of key terms and unclear documentation, 357 issues;
+- limited feasibility: limited attestation verification and two-party review requirements, 219 issues;
+- unclear relevance: one sub-theme of the same name, 46 issues.

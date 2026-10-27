@@ -6,6 +6,28 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+### Added
+
+- **The digest set names every algorithm in-toto defines, and `additional_digests` holds any other, such as an SCS's own `svn_revision_id`.** A resource descriptor can also carry its `content`, base64-encoded, and `SlsaDocument` holds `control_planes`, the one class its root could not reach.
+- **`verified_levels` and the dependency counts take an issuer's own results beside SLSA's, through the `slsa_result_value` type.** An issuer's own result is printable ASCII and never starts with `SLSA_`, in any letter case.
+- **`docs/index.md` says what each validator checks, and a test keeps the rules the schema states twice in step.**
+
+### Changed
+
+- **Validation enforces the in-toto and SLSA rules the descriptions stated, and data that breaks them no longer validates.** A descriptor needs a URI, a digest or its content, a digest set at least one digest, each statement subject and input attestation a digest, a VSA's policy a URI, and build provenance its `external_parameters`; a null value counts as absent.
+- **A required list may not be empty, and a digest has its algorithm's length.** `dir_hash` takes 64 hexadecimal digits, and a SHAKE or BLAKE2 digest at least 32 bytes.
+
+### Deprecated
+
+- **`organization_properties`: its `ORG_SOURCE_` values go in `verified_levels`, where the attestation's JSON puts them.**
+
+### Fixed
+
+- **Descriptions and comments match the v1.2 specification and the adoption study.** Hermetic builds are not a Build L3 aim, an automated review is not two-party review, the storage comment names SLSA's preferred places, and the study's claims and sub-theme names follow the paper.
+- **`project/java/` drops the 23 classes left over from the names used before 0.4.0.**
+- **The README's KTL section gives the right reason the copy renames no key.**
+- **codespell and typos accept `gost` and `intoto`, and skip the KTL scripts and `website/package-lock.json`.**
+
 ## [0.5.3] - 2026-10-27
 
 ### Security

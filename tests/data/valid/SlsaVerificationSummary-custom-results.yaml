@@ -1,0 +1,23 @@
+# A VSA whose verified levels and dependency counts include a result the
+# issuer defines for itself, beside the SLSA-defined ones.
+verifier:
+  verifier_id: https://example.com/publication_verifier
+resource_uri: https://example.com/example-1.2.3.tar.gz
+policy:
+  resource_uri: https://example.com/example_tarball.policy
+  digest:
+    sha256: 185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969
+input_attestations:
+  - resource_uri: https://example.com/provenances/example-1.2.3.tar.gz.intoto.jsonl
+    digest:
+      sha256: 8b7ca7d27d9fc55fa30abfe515b3afb24e3fe89fdd02e2ac92bca2c96680642e
+verification_result: PASSED
+verified_levels:
+  - SLSA_BUILD_LEVEL_3
+  - SLSA_BUILD_REPRODUCED
+  - ACME_FIPS_140_VALIDATED
+dependency_levels:
+  - verified_level: SLSA_BUILD_LEVEL_3
+    dependency_count: 4
+  - verified_level: ACME_FIPS_140_VALIDATED
+    dependency_count: 2

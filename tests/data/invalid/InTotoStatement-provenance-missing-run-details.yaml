@@ -8,3 +8,6 @@ predicate:
   predicate_kind: SlsaBuildProvenance
   build_definition:
     build_type: https://actions.github.io/buildtypes/workflow/v1
+    external_parameters:
+      - parameter_name: workflow
+        parameter_value: .github/workflows/build.yml

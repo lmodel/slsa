@@ -1,0 +1,9 @@
+# Several digests of the five bytes "Hello", for algorithm agility: a consumer
+# picks the one it trusts. The last uses an algorithm the set does not name.
+sha256: 185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969
+sha3_256: 8ca66ee6b2fe4bb928a8e3cd2f508de4119c0895f22e011117e22cf9b13de7ef
+blake2b: ef15eaf92d5e335345a3e1d977bc7d8797c3d275717cc1b10af79c93cda01aeb2a0c59bc02e2bdf9380fd1b54eb9e1669026930ccc24bd49748e65f9a6b2ee68
+git_blob: 5ab2f8a4323abafb10abb68657d9d39f1a775057
+additional_digests:
+  - algorithm: somecoolhash
+    value: abcd

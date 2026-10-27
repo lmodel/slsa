@@ -10,7 +10,7 @@ import java.util.List;
 import lombok.*;
 
 /**
-  One vendor-specific annotation on a resource descriptor, with a key and one or more values.
+  One vendor-specific annotation on a resource descriptor: a key and its values.
 **/
 @Data
 @EqualsAndHashCode(callSuper=false)

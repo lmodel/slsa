@@ -32,7 +32,7 @@ sources:
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-27T01:29:08Z"
+  at: "2026-10-27T12:57:54Z"
 status: draft
 ---
 
@@ -44,13 +44,13 @@ Each concept derived from a file or folder of this repository names it by its pa
 
 | Source | Yields | Re-check by |
 |--------|--------|-------------|
-| `README.md`, `pyproject.toml`, `.copier-answers.yml`, `docs/about.md` | bundle metadata, the four `references/` | diff the manifest name, description and authors; re-read each section of `docs/about.md` |
-| `src/slsa/schema/slsa.yaml`, the seven `src/slsa/schema/slsa_*.yaml` modules, `src/slsa/schema/README.md`, `.linkmllint.yaml` | `datasets/slsa-linkml-schema`, `explanations/schema-subsets`, the level enums in `glossary/slsa-level` | load `slsa.yaml` with SchemaView and recount classes, enums and subsets per module; re-read the header's `version`, `source`, `see_also` and comments, and the subset descriptions in `slsa_core.yaml` |
+| `README.md`, `pyproject.toml`, `.copier-answers.yml`, `docs/about.md` | bundle metadata, four of the five `references/` | diff the manifest name, description and authors; re-read each section of `docs/about.md` |
+| `src/slsa/schema/slsa.yaml`, the seven `src/slsa/schema/slsa_*.yaml` modules, `src/slsa/schema/README.md`, `.linkmllint.yaml`, the Validating data section of `docs/index.md` | `datasets/slsa-linkml-schema`, `explanations/schema-subsets`, the level enums in `glossary/slsa-level` | load `slsa.yaml` with SchemaView and recount classes, enums, types and subsets per module; re-read the header's `version`, `source`, `see_also` and comments, and the subset descriptions in `slsa_core.yaml` |
 | `src/slsa/schema/spec/` | `datasets/slsa-spec-copy`, the two `glossary/` terms | re-read `index.md`'s version line; re-list the pages; re-read `about.md`, `tracks.md`, `build-track-basics.md`, `source-requirements.md`, `dependency-track.md` and `build-env-track-basics.md` |
 | `docs/Secure_Software_Factory_Whitepaper.pdf` | `references/secure-software-factory` | confirm the file is still there |
 | `justfile`, `project.justfile`, `.linkml/generators.yaml`, `project/`, `src/slsa/datamodel/`, `docs/schema/` | `datasets/generated-artefacts`, `playbooks/regenerate-and-test` | re-read the `gen-project`, `gen-python`, `gen-doc`, `gen-merged`, `lokf-adapt` and `test` recipe chains; re-list `project/*/`; re-read the `excludes` in `.linkml/generators.yaml` |
 | `project.justfile`, the README's Knowledge Trust Ladder (KTL) section | the domain-schema section of `datasets/slsa-linkml-schema` | re-read the `--root` classes, the known-types list and the `LOKF_CMD` note |
-| `tests/data/`, `tests/test_data.py` | `datasets/test-data` | re-list `tests/data/`; re-read the naming rule and the test |
+| `tests/data/`, `tests/test_data.py`, `tests/test_schema_rules.py` | `datasets/test-data` | re-list `tests/data/`; re-read the naming rule and the two tests |
 | `website/site.config.mjs`, `website/scripts/routes.mjs`, `website/README.md`, `docs/index.md`, `.github/workflows/knowledge-website.yaml` | `services/documentation-site` | confirm the triggers and the deploy switch, the `DOCS` and `REDIRECTS` settings, and where a link to a file under `docs/` that is no page goes |
 | `.github/workflows/main.yaml`, `CONTRIBUTING.md` | CI facts in `playbooks/regenerate-and-test` | confirm the Python matrix, the `just test` step and the regeneration steps |
 | `.github/workflows/pypi-publish.yaml`, `.github/workflows/semantic-release.yml`, `.releaserc.json`, `.github/scripts/changelog-release.mjs`, the Releasing section of `CONTRIBUTING.md` | `playbooks/release` | re-read the triggers, the environments, the repository variables and the release rules |
@@ -61,6 +61,7 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `https://openssf.org/technical-initiatives/software-supply-chain/` | `references/openssf-supply-chain` | re-read the working group's name and the project list |
 | `https://arxiv.org/abs/2409.05014` | `references/slsa-adoption-study` | re-read the title, the authors and the abstract's numbers |
 | `https://slsa.dev/spec/v1.2/` | `references/slsa-specification` | external authority: cite on change |
+| `https://github.com/in-toto/attestation` (`spec/v1/` at commit `7aefca35a0f74a6e0cb397a8c4a76558f54de571`) | `references/in-toto-attestation` | re-read `statement.md`, `resource_descriptor.md` and `digest_set.md` at the commit the specification copy links to; when a newer SLSA release links another commit, compare the supported algorithms and the MUST rules |
 
 These are not knowledge sources, and are left out on purpose:
 

@@ -21,6 +21,34 @@ imports:
   - linkml:types
   - ./slsa_core
 
+types:
+  slsa_result_value:
+    typeof: string
+    description: >-
+      A result as a VSA writes it: one of the SLSA-defined results SlsaResult lists, or
+      one of the issuer's own, which never starts with SLSA_.
+    pattern: &slsa_result_pattern "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$"
+    see_also:
+      - https://slsa.dev/spec/v1.2/verification_summary#slsaresult
+    comments:
+      - >-
+        An issuer's own result, such as an organization's ORG_SOURCE_ property, is
+        printable ASCII with no spaces and does not start with SLSA_ in any letter
+        case, so that it cannot pass for an SLSA result.
+    notes:
+      - >-
+        The pattern lists the values of SlsaResult that start with SLSA_ and then
+        admits any other value that does not, written without a lookahead, which
+        SHACL's regular expressions lack. One type in place of any_of over the enum
+        and a pattern keeps the OWL output valid, since gen-owl makes the enum a class.
+      - >-
+        verified_levels and verified_level repeat the pattern through a YAML anchor,
+        because gen-pydantic checks a slot's pattern but not its type's.
+      - tests/test_schema_rules.py checks the pattern against SlsaResult.
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
 classes:
   SlsaVerificationSummary:
     is_a: SlsaPredicate
@@ -61,14 +89,14 @@ classes:
         description: >-
           The policy the subject was verified against, by URI and preferably by digest
           too.
-        range: InTotoResourceDescriptor
+        range: SlsaVerificationSummaryPolicy
         required: true
         inlined: true
       input_attestations:
         description: >-
           Every attestation the verifier consulted, each with a digest; complete when
           present.
-        range: InTotoResourceDescriptor
+        range: SlsaVerificationSummaryInputAttestation
         multivalued: true
         inlined: true
         inlined_as_list: true
@@ -78,17 +106,27 @@ classes:
         required: true
       verified_levels:
         description: >-
-          The highest level verified in each track, and any verified property; a level
-          implies the levels below it.
-        range: SlsaResult
+          The highest level verified in each track, any verified property, and any
+          result of the issuer's own; a level implies the levels below it.
+        range: slsa_result_value
+        pattern: *slsa_result_pattern
         multivalued: true
         required: true
+        minimum_cardinality: 1
+        comments:
+          - >-
+            A VSA lists at most one level per track, and only FAILED when verification
+            failed; the validator checks neither.
       organization_properties:
         description: >-
-          Properties an organization defines for its own consumers, each prefixed
-          ORG_SOURCE_.
+          Properties the organization defines for the revision, each prefixed
+          ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.
         multivalued: true
         pattern: "^ORG_SOURCE_"
+        deprecated: >-
+          Write these properties in verified_levels, where the attestation's JSON puts
+          them; this field goes in a later release.
+        deprecated_element_has_possible_replacement: slsa:verified_levels
         in_subset:
           - slsa_source_track
       dependency_levels:
@@ -99,6 +137,10 @@ classes:
         multivalued: true
         inlined: true
         inlined_as_list: true
+        comments:
+          - >-
+            The attestation's JSON tells an empty map (no dependencies) from an absent
+            one (no claim); this list cannot, so an empty list reads as no claim.
       slsa_version:
         description: >-
           The SLSA specification version the verifier applied, as MAJOR.MINOR.
@@ -111,10 +153,16 @@ classes:
     description: >-
       The number of an artifact's transitive dependencies verified at one level, each
       counted once per track at its highest level.
+    comments:
+      - >-
+        Each level appears once in a list, since the attestation's JSON uses it as a
+        key; the validator does not check this.
     attributes:
       verified_level:
-        description: The level the dependencies were verified at.
-        range: SlsaResult
+        description: >-
+          The level the dependencies were verified at, or a result of the issuer's own.
+        range: slsa_result_value
+        pattern: *slsa_result_pattern
         required: true
       dependency_count:
         description: How many dependencies were verified at that level.
@@ -123,6 +171,40 @@ classes:
         required: true
     in_subset:
       - slsa_build_track
+
+  SlsaVerificationSummaryPolicy:
+    is_a: InTotoResourceDescriptor
+    description: >-
+      The policy a verification summary applied: a resource descriptor that names the
+      policy by URI.
+    see_also:
+      - https://slsa.dev/spec/v1.2/verification_summary#policy
+    comments:
+      - A digest is recommended as well, to pin the exact version of the policy.
+    slot_usage:
+      resource_uri:
+        required: true
+      digest:
+        recommended: true
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
+
+  SlsaVerificationSummaryInputAttestation:
+    is_a: InTotoResourceDescriptor
+    description: >-
+      One attestation a verifier consulted: a resource descriptor that carries the
+      attestation's digest.
+    see_also:
+      - https://slsa.dev/spec/v1.2/verification_summary#inputAttestations
+    slot_usage:
+      digest:
+        required: true
+      resource_uri:
+        recommended: true
+    in_subset:
+      - slsa_build_track
+      - slsa_source_track
 
 enums:
   SlsaVerificationResult:
@@ -143,11 +225,15 @@ enums:
       the same track.
     see_also:
       - https://slsa.dev/spec/v1.2/verification_summary#slsaresult
-      - https://slsa.dev/spec/draft/verified-properties
+      - https://slsa.dev/spec/v1.2/verified-properties
     comments:
       - >-
         Issuers may add values of their own, but none that start with SLSA_; this enum
-        lists the SLSA-defined values.
+        lists the SLSA-defined values, and slsa_result_value, which verified_levels
+        takes, admits both.
+      - >-
+        The working-draft Dependency and Build Environment tracks name no results yet,
+        so none are listed for them.
     permissible_values:
       SLSA_BUILD_LEVEL_UNEVALUATED:
         description: The issuer makes no claim about the Build track level.

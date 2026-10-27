@@ -1,0 +1,8 @@
+# INVALID: a VSA names the URI the artifact was verified as.
+verifier:
+  verifier_id: https://example.com/publication_verifier
+policy:
+  resource_uri: https://example.com/example_tarball.policy
+verification_result: PASSED
+verified_levels:
+  - SLSA_BUILD_LEVEL_2

@@ -22,7 +22,7 @@ references:
   - https://w3id.org/lmodel/slsa/knowledge/org/cncf-tag-security
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T22:17:38Z"
+  at: "2026-10-27T12:57:54Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -38,7 +38,7 @@ The README says that the schema and the code are under the Apache License 2.0 (`
 - **The SLSA specification copy.** `NOTICE` says that `src/slsa/schema/spec/` holds "Supply-chain Levels for Software Artifacts", the Working Draft as of version 1.2, by the SLSA Working Group (OpenSSF), retrieved from `docs/spec/draft` at SLSA tag v1.2. Content contributed after the group adopted the Community Specification governance model is under the Community Specification License 1.0. Older portions are Apache-2.0. That license asks every derivative work to name the material, its version and its source, and `NOTICE` names all three. `NOTICE` also says that every file is identical to its counterpart at that tag (commit `19e4e2f`), and that the copy holds nothing else.
 - **The Secure Software Factory whitepaper.** `docs/Secure_Software_Factory_Whitepaper.pdf` is CNCF TAG-Security's whitepaper, copied unmodified from `cncf/tag-security`, whose documentation is under CC BY 4.0.
 - **linkml-project-copier.** `NOTICE` says that the project was generated from linkml-project-copier, and that its justfile, configuration and documentation scaffolding derive from that template. `NOTICE` carries the template's MIT License text.
-- **The knowledge bundle tooling.** `NOTICE` says that the scripts under `.lokf/scripts/` and `.lokf/m365/` and the four `knowledge-*.yaml` workflows are copies of the ktl-sidecar templates in knowledge-trust-ladder, under the Apache License 2.0.
+- **The knowledge bundle tooling.** `NOTICE` says that the scripts under `.lokf/scripts/` and `.lokf/m365/` and the knowledge-librarian, knowledge-registrar, knowledge-release and knowledge-sync workflows are copies of the ktl-sidecar templates in knowledge-trust-ladder. It says that the site under `website/` and the knowledge-website workflow derive from the ktl-website templates in the same repository, and that `website/NOTICE` lists the part adapted from the LOKF toolkit's site. All of them are under the Apache License 2.0.
 
 ## Endorsement
 

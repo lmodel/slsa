@@ -10,15 +10,14 @@ import java.util.List;
 import lombok.*;
 
 /**
-  Details specific to this particular execution of the build, including the trusted builder and optional run-level metadata.
+  One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
 **/
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class RunDetails  {
+public class InTotoAdditionalDigest  {
 
-  private Builder builder;
-  private BuildMetadata buildMetadata;
-  private List<ResourceDescriptor> byproducts;
+  private String algorithm;
+  private String value;
 
 
 }

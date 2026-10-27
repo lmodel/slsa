@@ -2,27 +2,74 @@ syntax = "proto3";
 package slsa;
 // metamodel_version: 1.12.0
 // version: 1.2.0
-// One vendor-specific annotation on a resource descriptor, with a key and one or more values.
+// One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
+message InTotoAdditionalDigest {
+  // The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.
+  string algorithm = 1;
+  // The digest under that algorithm, in the encoding the algorithm documents.
+  string value = 2;
+}
+// One vendor-specific annotation on a resource descriptor: a key and its values.
 message InTotoAnnotation {
   // The annotation's key.
   string annotation_key = 1;
   // The annotation's values.
   repeated string annotation_values = 2;
 }
-// A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+// A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
 message InTotoDigestSet {
   // The SHA-256 digest of the artifact.
   string sha256 = 1;
+  // The SHA-224 digest of the artifact.
+  string sha224 = 2;
+  // The SHA-384 digest of the artifact.
+  string sha384 = 3;
   // The SHA-512 digest of the artifact.
-  string sha512 = 2;
+  string sha512 = 4;
+  // The SHA-512/224 digest of the artifact.
+  string sha512_N224 = 5;
+  // The SHA-512/256 digest of the artifact.
+  string sha512_N256 = 6;
+  // The SHA3-224 digest of the artifact.
+  string sha3_N224 = 7;
+  // The SHA3-256 digest of the artifact.
+  string sha3_N256 = 8;
+  // The SHA3-384 digest of the artifact.
+  string sha3_N384 = 9;
+  // The SHA3-512 digest of the artifact.
+  string sha3_N512 = 10;
+  // The SHAKE128 digest of the artifact, of at least 32 bytes.
+  string shake128 = 11;
+  // The SHAKE256 digest of the artifact, of at least 32 bytes.
+  string shake256 = 12;
+  // The BLAKE2b digest of the artifact, of 32 to 64 bytes.
+  string blake2b = 13;
+  // The BLAKE2s digest of the artifact, at its full 32 bytes.
+  string blake2s = 14;
+  // The RIPEMD-160 digest of the artifact.
+  string ripemd160 = 15;
+  // The SM3 digest of the artifact.
+  string sm3 = 16;
+  // The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
+  string gost = 17;
+  // The SHA-1 digest of the artifact.
+  string sha1 = 18;
+  // The MD5 digest of the artifact.
+  string md5 = 19;
+  // A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.
+  string dir_hash = 20;
   // The git commit id of a source revision.
-  string git_commit = 3;
-  // The git tree id of a source revision's content.
-  string git_tree = 4;
-  // A digest over a directory's content, as the in-toto framework defines it.
-  string dir_hash = 5;
+  string git_commit = 21;
+  // The git tree id of a source revision's content, or of any file tree.
+  string git_tree = 22;
+  // The git blob id of a file's content.
+  string git_blob = 23;
+  // The git object id of an annotated tag.
+  string git_tag = 24;
+  // The digests under algorithms this class does not name.
+  repeated InTotoAdditionalDigest additional_digests = 25;
 }
-// A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata.
+// A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
 message InTotoResourceDescriptor {
   // The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
   string resource_uri = 1;
@@ -34,15 +81,17 @@ message InTotoResourceDescriptor {
   string download_location = 4;
   // The IANA media type of the resource's content.
   string media_type = 5;
+  // The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+  string content = 6;
   // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
-  repeated InTotoAnnotation annotations = 6;
+  repeated InTotoAnnotation annotations = 7;
 }
 // The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
 message InTotoStatement {
   // The in-toto statement type, always https://in-toto.io/Statement/v1.
   string statement_type = 1;
-  // The artifacts the predicate is about; each carries a digest.
-  repeated InTotoResourceDescriptor subject = 2;
+  // The artifacts the predicate is about, each with a digest.
+  repeated InTotoStatementSubject subject = 2;
   // The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1.
   string predicate_type = 3;
   // The predicate, one of the kinds this schema models; predicate_kind names which.
@@ -53,6 +102,23 @@ message InTotoStatement {
   string signing_tool = 6;
   // The transparency log entry that records the signature, such as a Rekor entry.
   string transparency_log_entry = 7;
+}
+// One artifact an in-toto statement is about: a resource descriptor that carries a digest.
+message InTotoStatementSubject {
+  // The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+  string resource_uri = 1;
+  // A name for the resource within the attestation that carries it.
+  string resource_name = 2;
+  // Where the resource can be fetched, when that differs from its identifying URI.
+  string download_location = 3;
+  // The IANA media type of the resource's content.
+  string media_type = 4;
+  // The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+  string content = 5;
+  // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
+  repeated InTotoAnnotation annotations = 6;
+  // The cryptographic digests of a resource's content, keyed by algorithm.
+  InTotoDigestSet digest = 7;
 }
 // The adoption challenges a deployment meets and the strategies it applies, from the study's taxonomy.
 message SlsaAdoptionMetadata {
@@ -78,7 +144,7 @@ message SlsaBranch {
 message SlsaBuildDefinition {
   // The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.
   string build_type = 1;
-  // The inputs under the tenant's control; complete at Build L3 and verified by consumers.
+  // The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.
   repeated SlsaBuildParameter external_parameters = 2;
   // The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.
   repeated SlsaBuildParameter internal_parameters = 3;
@@ -183,15 +249,15 @@ message SlsaControlPlane {
 message SlsaDependencyInventory {
   // The artifact whose dependencies are inventoried.
   InTotoResourceDescriptor artifact = 1;
-  // The dependencies, each identified by URI and digest.
+  // The dependencies, each as a resource descriptor.
   repeated InTotoResourceDescriptor dependencies = 2;
   // The SLSA Dependency level the producer's process meets for this artifact.
   SlsaDependencyLevel dependency_level = 3;
 }
 // The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level.
 message SlsaDependencyLevelCount {
-  // The level the dependencies were verified at.
-  SlsaResult verified_level = 1;
+  // The level the dependencies were verified at, or a result of the issuer's own.
+  string verified_level = 1;
   // How many dependencies were verified at that level.
   int32 dependency_count = 2;
 }
@@ -203,24 +269,26 @@ message SlsaDocument {
   repeated SlsaParty parties = 2;
   // The build platforms.
   repeated SlsaBuildPlatform build_platforms = 3;
+  // The control planes of the build platforms.
+  repeated SlsaControlPlane control_planes = 4;
   // The packages.
-  repeated SlsaPackage packages = 4;
+  repeated SlsaPackage packages = 5;
   // The package registries.
-  repeated SlsaPackageRegistry package_registries = 5;
+  repeated SlsaPackageRegistry package_registries = 6;
   // The source control systems.
-  repeated SlsaSourceControlSystem source_control_systems = 6;
+  repeated SlsaSourceControlSystem source_control_systems = 7;
   // The source repositories.
-  repeated SlsaSourceRepository source_repositories = 7;
+  repeated SlsaSourceRepository source_repositories = 8;
   // The source revisions.
-  repeated SlsaSourceRevision source_revisions = 8;
+  repeated SlsaSourceRevision source_revisions = 9;
   // The branches and tags.
-  repeated SlsaNamedReference named_references = 9;
+  repeated SlsaNamedReference named_references = 10;
   // The build images.
-  repeated SlsaBuildImage build_images = 10;
+  repeated SlsaBuildImage build_images = 11;
   // The dependency inventories.
-  repeated SlsaDependencyInventory dependency_inventories = 11;
+  repeated SlsaDependencyInventory dependency_inventories = 12;
   // How the deployment the document describes fares against the adoption study's themes.
-  SlsaAdoptionMetadata adoption_metadata = 12;
+  SlsaAdoptionMetadata adoption_metadata = 13;
 }
 // A party that provides software or services to the other roles, such as a package registry's or a build platform's maintainers.
 message SlsaInfrastructureProvider {
@@ -363,19 +431,53 @@ message SlsaVerificationSummary {
   // When the verification happened.
   string time_verified = 4;
   // The policy the subject was verified against, by URI and preferably by digest too.
-  InTotoResourceDescriptor policy = 5;
+  SlsaVerificationSummaryPolicy policy = 5;
   // Every attestation the verifier consulted, each with a digest; complete when present.
-  repeated InTotoResourceDescriptor input_attestations = 6;
+  repeated SlsaVerificationSummaryInputAttestation input_attestations = 6;
   // Whether the subject passed the policy.
   SlsaVerificationResult verification_result = 7;
-  // The highest level verified in each track, and any verified property; a level implies the levels below it.
-  repeated SlsaResult verified_levels = 8;
-  // Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_.
+  // The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.
+  repeated string verified_levels = 8;
+  // Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.
   repeated string organization_properties = 9;
   // How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.
   repeated SlsaDependencyLevelCount dependency_levels = 10;
   // The SLSA specification version the verifier applied, as MAJOR.MINOR.
   string slsa_version = 11;
+}
+// One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.
+message SlsaVerificationSummaryInputAttestation {
+  // A name for the resource within the attestation that carries it.
+  string resource_name = 1;
+  // Where the resource can be fetched, when that differs from its identifying URI.
+  string download_location = 2;
+  // The IANA media type of the resource's content.
+  string media_type = 3;
+  // The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+  string content = 4;
+  // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
+  repeated InTotoAnnotation annotations = 5;
+  // The cryptographic digests of a resource's content, keyed by algorithm.
+  InTotoDigestSet digest = 6;
+  // The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+  string resource_uri = 7;
+}
+// The policy a verification summary applied: a resource descriptor that names the policy by URI.
+message SlsaVerificationSummaryPolicy {
+  // A name for the resource within the attestation that carries it.
+  string resource_name = 1;
+  // Where the resource can be fetched, when that differs from its identifying URI.
+  string download_location = 2;
+  // The IANA media type of the resource's content.
+  string media_type = 3;
+  // The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+  string content = 4;
+  // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
+  repeated InTotoAnnotation annotations = 5;
+  // The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+  string resource_uri = 6;
+  // The cryptographic digests of a resource's content, keyed by algorithm.
+  InTotoDigestSet digest = 7;
 }
 // A party that inspects provenance or other attestations and decides whether an artifact is authentic.
 message SlsaVerifier {

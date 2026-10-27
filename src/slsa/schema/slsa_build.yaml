@@ -32,8 +32,8 @@ classes:
     comments:
       - The statement that carries it has predicate_type https://slsa.dev/provenance/v1.
       - >-
-        Generating valid provenance was the most frequent adoption difficulty
-        practitioners reported (Tamanna et al., 2024, CI.1).
+        Complicated provenance generation was the challenge with the most issues in the
+        study (Tamanna et al., 2024, CI.1).
     attributes:
       build_definition:
         description: The inputs to the build; required at Build L1.
@@ -64,10 +64,12 @@ classes:
         required: true
       external_parameters:
         description: >-
-          The inputs under the tenant's control; complete at Build L3 and verified by
-          consumers.
+          The inputs under the tenant's control; required at Build L1, complete at
+          Build L3 and verified by consumers.
         range: SlsaBuildParameter
         multivalued: true
+        required: true
+        minimum_cardinality: 1
         inlined: true
         inlined_as_list: true
         comments:
@@ -95,8 +97,12 @@ classes:
         range: boolean
         comments:
           - >-
-            Hermetic builds are an isolation property Build L3 platforms aim for, and
-            the one practitioners found hardest (Tamanna et al., 2024, CI.1).
+            SLSA v1.2 does not require hermetic builds; Build L3's isolation is a
+            different property, and hermeticity is a candidate for a future Build L4.
+          - >-
+            The study cites a 2023 industry survey in which over half the participants
+            found hermetic builds hard to implement, and lists "hermetic build" among
+            SLSA's unclear terms (Tamanna et al., 2024, UC.1).
         in_subset:
           - slsa_adoption_study
       provenance_generation_tool:
@@ -128,6 +134,9 @@ classes:
       - >-
         The specification recommends string values; a structured value is written as its
         JSON text.
+      - >-
+        Each name appears once in a list, since the attestation's JSON uses it as a
+        key; the validator does not check this.
     attributes:
       parameter_name:
         description: The parameter's name.

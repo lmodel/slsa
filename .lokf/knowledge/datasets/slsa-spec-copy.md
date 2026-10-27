@@ -22,7 +22,7 @@ sources:
     title: the SLSA specification section
 verified:
   - by: process:ktl-librarian
-    at: "2026-10-23T22:23:31Z"
+    at: "2026-10-27T12:57:54Z"
 ---
 
 # SLSA specification copy

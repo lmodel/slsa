@@ -67,7 +67,7 @@ export enum SlsaResult {
 */
 export enum SlsaSourceLevel {
     
-    /** No Source track claims; the SCS issued no VSA for the revision. */
+    /** No Source track guarantees; a revision for which the SCS issues no Source VSA is at this level. */
     SLSA_SOURCE_LEVEL_0 = "SLSA_SOURCE_LEVEL_0",
     /** The source is managed in a version control system, so it has discrete, immutable revisions. */
     SLSA_SOURCE_LEVEL_1 = "SLSA_SOURCE_LEVEL_1",
@@ -89,7 +89,7 @@ export enum SlsaReviewType {
     PAIR_PROGRAMMING = "PAIR_PROGRAMMING",
     /** A group wrote the change together; whether this counts as two-party review is open. */
     MOB_PROGRAMMING = "MOB_PROGRAMMING",
-    /** A tool or bot reviewed the change with no second person, which does not meet Source L4. */
+    /** A tool or bot reviewed the change with no second person, which is not two-party review. */
     AUTOMATED = "AUTOMATED",
 };
 /**
@@ -141,7 +141,7 @@ export enum SlsaAdoptionChallenge {
 */
 export enum SlsaAdoptionStrategy {
     
-    /** Make SLSA fit more contexts, with build-system tracks, flexibility for varied organizations and alignment with OpenSSF practices. */
+    /** Make SLSA fit more contexts, with build-system tracks, gamified levels, flexibility for varied organizations and alignment with OpenSSF practices. */
     ENHANCE_ALIGNMENT_FLEXIBILITY = "ENHANCE_ALIGNMENT_FLEXIBILITY",
     /** Give clearer definitions, standard terms, negative examples and better navigation. */
     PROVIDE_DETAILED_DOCUMENTATION = "PROVIDE_DETAILED_DOCUMENTATION",
@@ -155,24 +155,75 @@ export enum SlsaAdoptionStrategy {
 
 
 /**
- * A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+ * A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
  */
 export interface InTotoDigestSet {
     /** The SHA-256 digest of the artifact. */
     sha256?: string,
+    /** The SHA-224 digest of the artifact. */
+    sha224?: string,
+    /** The SHA-384 digest of the artifact. */
+    sha384?: string,
     /** The SHA-512 digest of the artifact. */
     sha512?: string,
+    /** The SHA-512/224 digest of the artifact. */
+    sha512_224?: string,
+    /** The SHA-512/256 digest of the artifact. */
+    sha512_256?: string,
+    /** The SHA3-224 digest of the artifact. */
+    sha3_224?: string,
+    /** The SHA3-256 digest of the artifact. */
+    sha3_256?: string,
+    /** The SHA3-384 digest of the artifact. */
+    sha3_384?: string,
+    /** The SHA3-512 digest of the artifact. */
+    sha3_512?: string,
+    /** The SHAKE128 digest of the artifact, of at least 32 bytes. */
+    shake128?: string,
+    /** The SHAKE256 digest of the artifact, of at least 32 bytes. */
+    shake256?: string,
+    /** The BLAKE2b digest of the artifact, of 32 to 64 bytes. */
+    blake2b?: string,
+    /** The BLAKE2s digest of the artifact, at its full 32 bytes. */
+    blake2s?: string,
+    /** The RIPEMD-160 digest of the artifact. */
+    ripemd160?: string,
+    /** The SM3 digest of the artifact. */
+    sm3?: string,
+    /** The GOST R 34.11 digest of the artifact, of 256 or 512 bits. */
+    gost?: string,
+    /** The SHA-1 digest of the artifact. */
+    sha1?: string,
+    /** The MD5 digest of the artifact. */
+    md5?: string,
+    /** A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64. */
+    dir_hash?: string,
     /** The git commit id of a source revision. */
     git_commit?: string,
-    /** The git tree id of a source revision's content. */
+    /** The git tree id of a source revision's content, or of any file tree. */
     git_tree?: string,
-    /** A digest over a directory's content, as the in-toto framework defines it. */
-    dir_hash?: string,
+    /** The git blob id of a file's content. */
+    git_blob?: string,
+    /** The git object id of an annotated tag. */
+    git_tag?: string,
+    /** The digests under algorithms this class does not name. */
+    additional_digests?: InTotoAdditionalDigest[],
 }
 
 
 /**
- * One vendor-specific annotation on a resource descriptor, with a key and one or more values.
+ * One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
+ */
+export interface InTotoAdditionalDigest {
+    /** The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id. */
+    algorithm: string,
+    /** The digest under that algorithm, in the encoding the algorithm documents. */
+    value: string,
+}
+
+
+/**
+ * One vendor-specific annotation on a resource descriptor: a key and its values.
  */
 export interface InTotoAnnotation {
     /** The annotation's key. */
@@ -183,7 +234,7 @@ export interface InTotoAnnotation {
 
 
 /**
- * A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata.
+ * A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
  */
 export interface InTotoResourceDescriptor {
     /** The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference. */
@@ -196,8 +247,17 @@ export interface InTotoResourceDescriptor {
     download_location?: string,
     /** The IANA media type of the resource's content. */
     media_type?: string,
+    /** The resource's content itself, base64-encoded, for a resource small enough to carry inline. */
+    content?: string,
     /** Vendor-specific annotations on the resource, such as the source references a Source VSA records. */
     annotations?: InTotoAnnotation[],
+}
+
+
+/**
+ * One artifact an in-toto statement is about: a resource descriptor that carries a digest.
+ */
+export interface InTotoStatementSubject extends InTotoResourceDescriptor {
 }
 
 
@@ -207,8 +267,8 @@ export interface InTotoResourceDescriptor {
 export interface InTotoStatement {
     /** The in-toto statement type, always https://in-toto.io/Statement/v1. */
     statement_type: string,
-    /** The artifacts the predicate is about; each carries a digest. */
-    subject: InTotoResourceDescriptor[],
+    /** The artifacts the predicate is about, each with a digest. */
+    subject: InTotoStatementSubject[],
     /** The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1. */
     predicate_type: string,
     /** The predicate, one of the kinds this schema models; predicate_kind names which. */
@@ -360,8 +420,8 @@ export interface SlsaBuildProvenance extends SlsaPredicate {
 export interface SlsaBuildDefinition {
     /** The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1. */
     build_type: string,
-    /** The inputs under the tenant's control; complete at Build L3 and verified by consumers. */
-    external_parameters?: SlsaBuildParameter[],
+    /** The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers. */
+    external_parameters: SlsaBuildParameter[],
     /** The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers. */
     internal_parameters?: SlsaBuildParameter[],
     /** The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3. */
@@ -423,14 +483,14 @@ export interface SlsaVerificationSummary extends SlsaPredicate {
     /** When the verification happened. */
     time_verified?: string,
     /** The policy the subject was verified against, by URI and preferably by digest too. */
-    policy: InTotoResourceDescriptor,
+    policy: SlsaVerificationSummaryPolicy,
     /** Every attestation the verifier consulted, each with a digest; complete when present. */
-    input_attestations?: InTotoResourceDescriptor[],
+    input_attestations?: SlsaVerificationSummaryInputAttestation[],
     /** Whether the subject passed the policy. */
     verification_result: string,
-    /** The highest level verified in each track, and any verified property; a level implies the levels below it. */
-    verified_levels: string,
-    /** Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_. */
+    /** The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it. */
+    verified_levels: string[],
+    /** Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers. */
     organization_properties?: string[],
     /** How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies. */
     dependency_levels?: SlsaDependencyLevelCount[],
@@ -443,10 +503,24 @@ export interface SlsaVerificationSummary extends SlsaPredicate {
  * The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level.
  */
 export interface SlsaDependencyLevelCount {
-    /** The level the dependencies were verified at. */
+    /** The level the dependencies were verified at, or a result of the issuer's own. */
     verified_level: string,
     /** How many dependencies were verified at that level. */
     dependency_count: number,
+}
+
+
+/**
+ * The policy a verification summary applied: a resource descriptor that names the policy by URI.
+ */
+export interface SlsaVerificationSummaryPolicy extends InTotoResourceDescriptor {
+}
+
+
+/**
+ * One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.
+ */
+export interface SlsaVerificationSummaryInputAttestation extends InTotoResourceDescriptor {
 }
 
 
@@ -539,7 +613,7 @@ export interface SlsaSourceProvenance extends SlsaPredicate {
 export interface SlsaDependencyInventory {
     /** The artifact whose dependencies are inventoried. */
     artifact: InTotoResourceDescriptor,
-    /** The dependencies, each identified by URI and digest. */
+    /** The dependencies, each as a resource descriptor. */
     dependencies?: InTotoResourceDescriptor[],
     /** The SLSA Dependency level the producer's process meets for this artifact. */
     dependency_level?: string,
@@ -615,6 +689,8 @@ export interface SlsaDocument {
     parties?: SlsaParty[],
     /** The build platforms. */
     build_platforms?: SlsaBuildPlatform[],
+    /** The control planes of the build platforms. */
+    control_planes?: SlsaControlPlane[],
     /** The packages. */
     packages?: SlsaPackage[],
     /** The package registries. */

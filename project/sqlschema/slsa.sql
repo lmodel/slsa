@@ -1,30 +1,65 @@
 -- # Class: SlsaDocument Description: A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern.
 --     * Slot: id
 --     * Slot: adoption_metadata_id Description: How the deployment the document describes fares against the adoption study's themes.
--- # Class: InTotoDigestSet Description: A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+-- # Class: InTotoDigestSet Description: A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
 --     * Slot: id
 --     * Slot: sha256 Description: The SHA-256 digest of the artifact.
+--     * Slot: sha224 Description: The SHA-224 digest of the artifact.
+--     * Slot: sha384 Description: The SHA-384 digest of the artifact.
 --     * Slot: sha512 Description: The SHA-512 digest of the artifact.
+--     * Slot: sha512_224 Description: The SHA-512/224 digest of the artifact.
+--     * Slot: sha512_256 Description: The SHA-512/256 digest of the artifact.
+--     * Slot: sha3_224 Description: The SHA3-224 digest of the artifact.
+--     * Slot: sha3_256 Description: The SHA3-256 digest of the artifact.
+--     * Slot: sha3_384 Description: The SHA3-384 digest of the artifact.
+--     * Slot: sha3_512 Description: The SHA3-512 digest of the artifact.
+--     * Slot: shake128 Description: The SHAKE128 digest of the artifact, of at least 32 bytes.
+--     * Slot: shake256 Description: The SHAKE256 digest of the artifact, of at least 32 bytes.
+--     * Slot: blake2b Description: The BLAKE2b digest of the artifact, of 32 to 64 bytes.
+--     * Slot: blake2s Description: The BLAKE2s digest of the artifact, at its full 32 bytes.
+--     * Slot: ripemd160 Description: The RIPEMD-160 digest of the artifact.
+--     * Slot: sm3 Description: The SM3 digest of the artifact.
+--     * Slot: gost Description: The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
+--     * Slot: sha1 Description: The SHA-1 digest of the artifact.
+--     * Slot: md5 Description: The MD5 digest of the artifact.
+--     * Slot: dir_hash Description: A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.
 --     * Slot: git_commit Description: The git commit id of a source revision.
---     * Slot: git_tree Description: The git tree id of a source revision's content.
---     * Slot: dir_hash Description: A digest over a directory's content, as the in-toto framework defines it.
--- # Class: InTotoAnnotation Description: One vendor-specific annotation on a resource descriptor, with a key and one or more values.
+--     * Slot: git_tree Description: The git tree id of a source revision's content, or of any file tree.
+--     * Slot: git_blob Description: The git blob id of a file's content.
+--     * Slot: git_tag Description: The git object id of an annotated tag.
+-- # Class: InTotoAdditionalDigest Description: One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
+--     * Slot: id
+--     * Slot: algorithm Description: The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.
+--     * Slot: value Description: The digest under that algorithm, in the encoding the algorithm documents.
+--     * Slot: InTotoDigestSet_id Description: Autocreated FK slot
+-- # Class: InTotoAnnotation Description: One vendor-specific annotation on a resource descriptor: a key and its values.
 --     * Slot: id
 --     * Slot: annotation_key Description: The annotation's key.
 --     * Slot: InTotoResourceDescriptor_id Description: Autocreated FK slot
--- # Class: InTotoResourceDescriptor Description: A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata.
+--     * Slot: InTotoStatementSubject_id Description: Autocreated FK slot
+--     * Slot: SlsaVerificationSummaryPolicy_id Description: Autocreated FK slot
+--     * Slot: SlsaVerificationSummaryInputAttestation_id Description: Autocreated FK slot
+-- # Class: InTotoResourceDescriptor Description: A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
 --     * Slot: id
 --     * Slot: resource_uri Description: The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
 --     * Slot: resource_name Description: A name for the resource within the attestation that carries it.
 --     * Slot: download_location Description: Where the resource can be fetched, when that differs from its identifying URI.
 --     * Slot: media_type Description: The IANA media type of the resource's content.
---     * Slot: InTotoStatement_id Description: Autocreated FK slot
+--     * Slot: content Description: The resource's content itself, base64-encoded, for a resource small enough to carry inline.
 --     * Slot: SlsaBuildPlatform_builder_id Description: Autocreated FK slot
 --     * Slot: SlsaPackage_id Description: Autocreated FK slot
 --     * Slot: SlsaBuildDefinition_id Description: Autocreated FK slot
 --     * Slot: SlsaRunDetails_id Description: Autocreated FK slot
---     * Slot: SlsaVerificationSummary_id Description: Autocreated FK slot
 --     * Slot: SlsaDependencyInventory_id Description: Autocreated FK slot
+--     * Slot: digest_id Description: The cryptographic digests of a resource's content, keyed by algorithm.
+-- # Class: InTotoStatementSubject Description: One artifact an in-toto statement is about: a resource descriptor that carries a digest.
+--     * Slot: id
+--     * Slot: resource_uri Description: The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+--     * Slot: resource_name Description: A name for the resource within the attestation that carries it.
+--     * Slot: download_location Description: Where the resource can be fetched, when that differs from its identifying URI.
+--     * Slot: media_type Description: The IANA media type of the resource's content.
+--     * Slot: content Description: The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+--     * Slot: InTotoStatement_id Description: Autocreated FK slot
 --     * Slot: digest_id Description: The cryptographic digests of a resource's content, keyed by algorithm.
 -- # Class: InTotoStatement Description: The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
 --     * Slot: id
@@ -69,6 +104,7 @@
 -- # Class: SlsaControlPlane Description: The component of a build platform that orchestrates each build and generates its provenance, outside the tenant's control.
 --     * Slot: id
 --     * Slot: build_platform Description: The build platform this party or component belongs to or uses.
+--     * Slot: SlsaDocument_id Description: Autocreated FK slot
 -- # Class: SlsaComponentVersion Description: The version of one named component of a platform.
 --     * Slot: id
 --     * Slot: component Description: The component's name.
@@ -123,9 +159,26 @@
 --     * Slot: policy_id Description: The policy the subject was verified against, by URI and preferably by digest too.
 -- # Class: SlsaDependencyLevelCount Description: The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level.
 --     * Slot: id
---     * Slot: verified_level Description: The level the dependencies were verified at.
+--     * Slot: verified_level Description: The level the dependencies were verified at, or a result of the issuer's own.
 --     * Slot: dependency_count Description: How many dependencies were verified at that level.
 --     * Slot: SlsaVerificationSummary_id Description: Autocreated FK slot
+-- # Class: SlsaVerificationSummaryPolicy Description: The policy a verification summary applied: a resource descriptor that names the policy by URI.
+--     * Slot: id
+--     * Slot: resource_uri Description: The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+--     * Slot: resource_name Description: A name for the resource within the attestation that carries it.
+--     * Slot: download_location Description: Where the resource can be fetched, when that differs from its identifying URI.
+--     * Slot: media_type Description: The IANA media type of the resource's content.
+--     * Slot: content Description: The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+--     * Slot: digest_id Description: The cryptographic digests of a resource's content, keyed by algorithm.
+-- # Class: SlsaVerificationSummaryInputAttestation Description: One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.
+--     * Slot: id
+--     * Slot: resource_uri Description: The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+--     * Slot: resource_name Description: A name for the resource within the attestation that carries it.
+--     * Slot: download_location Description: Where the resource can be fetched, when that differs from its identifying URI.
+--     * Slot: media_type Description: The IANA media type of the resource's content.
+--     * Slot: content Description: The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+--     * Slot: SlsaVerificationSummary_id Description: Autocreated FK slot
+--     * Slot: digest_id Description: The cryptographic digests of a resource's content, keyed by algorithm.
 -- # Class: SlsaSourceControlSystem Description: The platform or services that host a source repository and enforce its organization's policies on authentication, authorization and change management.
 --     * Slot: scs_uri Description: The URI that identifies the source control system.
 --     * Slot: SlsaDocument_id Description: Autocreated FK slot
@@ -200,10 +253,10 @@
 --     * Slot: annotation_values Description: The annotation's values.
 -- # Class: SlsaVerificationSummary_verified_levels
 --     * Slot: SlsaVerificationSummary_id Description: Autocreated FK slot
---     * Slot: verified_levels Description: The highest level verified in each track, and any verified property; a level implies the levels below it.
+--     * Slot: verified_levels Description: The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.
 -- # Class: SlsaVerificationSummary_organization_properties
 --     * Slot: SlsaVerificationSummary_id Description: Autocreated FK slot
---     * Slot: organization_properties Description: Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_.
+--     * Slot: organization_properties Description: Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.
 -- # Class: SlsaSourceRevision_parent_revisions
 --     * Slot: SlsaSourceRevision_revision_id Description: Autocreated FK slot
 --     * Slot: parent_revisions_revision_id Description: The revisions this one descends from, which together form the change history.
@@ -220,10 +273,29 @@
 CREATE TABLE "InTotoDigestSet" (
 	id INTEGER NOT NULL,
 	sha256 TEXT,
+	sha224 TEXT,
+	sha384 TEXT,
 	sha512 TEXT,
+	sha512_224 TEXT,
+	sha512_256 TEXT,
+	sha3_224 TEXT,
+	sha3_256 TEXT,
+	sha3_384 TEXT,
+	sha3_512 TEXT,
+	shake128 TEXT,
+	shake256 TEXT,
+	blake2b TEXT,
+	blake2s TEXT,
+	ripemd160 TEXT,
+	sm3 TEXT,
+	gost TEXT,
+	sha1 TEXT,
+	md5 TEXT,
+	dir_hash TEXT,
 	git_commit TEXT,
 	git_tree TEXT,
-	dir_hash TEXT,
+	git_blob TEXT,
+	git_tag TEXT,
 	PRIMARY KEY (id)
 );
 CREATE INDEX "ix_InTotoDigestSet_id" ON "InTotoDigestSet" (id);
@@ -234,21 +306,18 @@ CREATE TABLE "InTotoResourceDescriptor" (
 	resource_name TEXT,
 	download_location TEXT,
 	media_type TEXT,
-	"InTotoStatement_id" INTEGER,
+	content TEXT,
 	"SlsaBuildPlatform_builder_id" TEXT,
 	"SlsaPackage_id" INTEGER,
 	"SlsaBuildDefinition_id" INTEGER,
 	"SlsaRunDetails_id" INTEGER,
-	"SlsaVerificationSummary_id" INTEGER,
 	"SlsaDependencyInventory_id" INTEGER,
 	digest_id INTEGER,
 	PRIMARY KEY (id),
-	FOREIGN KEY("InTotoStatement_id") REFERENCES "InTotoStatement" (id),
 	FOREIGN KEY("SlsaBuildPlatform_builder_id") REFERENCES "SlsaBuildPlatform" (builder_id),
 	FOREIGN KEY("SlsaPackage_id") REFERENCES "SlsaPackage" (id),
 	FOREIGN KEY("SlsaBuildDefinition_id") REFERENCES "SlsaBuildDefinition" (id),
 	FOREIGN KEY("SlsaRunDetails_id") REFERENCES "SlsaRunDetails" (id),
-	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id),
 	FOREIGN KEY("SlsaDependencyInventory_id") REFERENCES "SlsaDependencyInventory" (id),
 	FOREIGN KEY(digest_id) REFERENCES "InTotoDigestSet" (id)
 );
@@ -305,21 +374,6 @@ CREATE TABLE "SlsaBuildMetadata" (
 );
 CREATE INDEX "ix_SlsaBuildMetadata_id" ON "SlsaBuildMetadata" (id);
 
-CREATE TABLE "SlsaVerificationSummary" (
-	id INTEGER NOT NULL,
-	resource_uri TEXT NOT NULL,
-	time_verified DATETIME,
-	verification_result VARCHAR(6) NOT NULL,
-	slsa_version TEXT,
-	predicate_kind TEXT,
-	verifier_id INTEGER NOT NULL,
-	policy_id INTEGER NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY(verifier_id) REFERENCES "SlsaVerifier" (id),
-	FOREIGN KEY(policy_id) REFERENCES "InTotoResourceDescriptor" (id)
-);
-CREATE INDEX "ix_SlsaVerificationSummary_id" ON "SlsaVerificationSummary" (id);
-
 CREATE TABLE "SlsaDependencyInventory" (
 	id INTEGER NOT NULL,
 	dependency_level VARCHAR(23),
@@ -353,14 +407,15 @@ CREATE TABLE "SlsaDocument" (
 );
 CREATE INDEX "ix_SlsaDocument_id" ON "SlsaDocument" (id);
 
-CREATE TABLE "InTotoAnnotation" (
+CREATE TABLE "InTotoAdditionalDigest" (
 	id INTEGER NOT NULL,
-	annotation_key TEXT NOT NULL,
-	"InTotoResourceDescriptor_id" INTEGER,
+	algorithm TEXT NOT NULL,
+	value TEXT NOT NULL,
+	"InTotoDigestSet_id" INTEGER,
 	PRIMARY KEY (id),
-	FOREIGN KEY("InTotoResourceDescriptor_id") REFERENCES "InTotoResourceDescriptor" (id)
+	FOREIGN KEY("InTotoDigestSet_id") REFERENCES "InTotoDigestSet" (id)
 );
-CREATE INDEX "ix_InTotoAnnotation_id" ON "InTotoAnnotation" (id);
+CREATE INDEX "ix_InTotoAdditionalDigest_id" ON "InTotoAdditionalDigest" (id);
 
 CREATE TABLE "SlsaBuildParameter" (
 	id INTEGER NOT NULL,
@@ -372,33 +427,18 @@ CREATE TABLE "SlsaBuildParameter" (
 );
 CREATE INDEX "ix_SlsaBuildParameter_id" ON "SlsaBuildParameter" (id);
 
-CREATE TABLE "SlsaDependencyLevelCount" (
+CREATE TABLE "SlsaVerificationSummaryPolicy" (
 	id INTEGER NOT NULL,
-	verified_level VARCHAR(30) NOT NULL,
-	dependency_count INTEGER NOT NULL,
-	"SlsaVerificationSummary_id" INTEGER,
+	resource_uri TEXT NOT NULL,
+	resource_name TEXT,
+	download_location TEXT,
+	media_type TEXT,
+	content TEXT,
+	digest_id INTEGER,
 	PRIMARY KEY (id),
-	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id)
+	FOREIGN KEY(digest_id) REFERENCES "InTotoDigestSet" (id)
 );
-CREATE INDEX "ix_SlsaDependencyLevelCount_id" ON "SlsaDependencyLevelCount" (id);
-
-CREATE TABLE "SlsaVerificationSummary_verified_levels" (
-	"SlsaVerificationSummary_id" INTEGER,
-	verified_levels VARCHAR(30) NOT NULL,
-	PRIMARY KEY ("SlsaVerificationSummary_id", verified_levels),
-	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id)
-);
-CREATE INDEX "ix_SlsaVerificationSummary_verified_levels_SlsaVerificationSummary_id" ON "SlsaVerificationSummary_verified_levels" ("SlsaVerificationSummary_id");
-CREATE INDEX "ix_SlsaVerificationSummary_verified_levels_verified_levels" ON "SlsaVerificationSummary_verified_levels" (verified_levels);
-
-CREATE TABLE "SlsaVerificationSummary_organization_properties" (
-	"SlsaVerificationSummary_id" INTEGER,
-	organization_properties TEXT,
-	PRIMARY KEY ("SlsaVerificationSummary_id", organization_properties),
-	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id)
-);
-CREATE INDEX "ix_SlsaVerificationSummary_organization_properties_organization_properties" ON "SlsaVerificationSummary_organization_properties" (organization_properties);
-CREATE INDEX "ix_SlsaVerificationSummary_organization_properties_SlsaVerificationSummary_id" ON "SlsaVerificationSummary_organization_properties" ("SlsaVerificationSummary_id");
+CREATE INDEX "ix_SlsaVerificationSummaryPolicy_id" ON "SlsaVerificationSummaryPolicy" (id);
 
 CREATE TABLE "SlsaAdoptionMetadata_challenges" (
 	"SlsaAdoptionMetadata_id" INTEGER,
@@ -415,8 +455,8 @@ CREATE TABLE "SlsaAdoptionMetadata_strategies" (
 	PRIMARY KEY ("SlsaAdoptionMetadata_id", strategies),
 	FOREIGN KEY("SlsaAdoptionMetadata_id") REFERENCES "SlsaAdoptionMetadata" (id)
 );
-CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_SlsaAdoptionMetadata_id" ON "SlsaAdoptionMetadata_strategies" ("SlsaAdoptionMetadata_id");
 CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_strategies" ON "SlsaAdoptionMetadata_strategies" (strategies);
+CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_SlsaAdoptionMetadata_id" ON "SlsaAdoptionMetadata_strategies" ("SlsaAdoptionMetadata_id");
 
 CREATE TABLE "InTotoStatement" (
 	id INTEGER NOT NULL,
@@ -462,6 +502,21 @@ CREATE TABLE "SlsaPackageRegistry" (
 );
 CREATE INDEX "ix_SlsaPackageRegistry_registry_uri" ON "SlsaPackageRegistry" (registry_uri);
 
+CREATE TABLE "SlsaVerificationSummary" (
+	id INTEGER NOT NULL,
+	resource_uri TEXT NOT NULL,
+	time_verified DATETIME,
+	verification_result VARCHAR(6) NOT NULL,
+	slsa_version TEXT,
+	predicate_kind TEXT,
+	verifier_id INTEGER NOT NULL,
+	policy_id INTEGER NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY(verifier_id) REFERENCES "SlsaVerifier" (id),
+	FOREIGN KEY(policy_id) REFERENCES "SlsaVerificationSummaryPolicy" (id)
+);
+CREATE INDEX "ix_SlsaVerificationSummary_id" ON "SlsaVerificationSummary" (id);
+
 CREATE TABLE "SlsaSourceControlSystem" (
 	scs_uri TEXT NOT NULL,
 	"SlsaDocument_id" INTEGER,
@@ -470,14 +525,20 @@ CREATE TABLE "SlsaSourceControlSystem" (
 );
 CREATE INDEX "ix_SlsaSourceControlSystem_scs_uri" ON "SlsaSourceControlSystem" (scs_uri);
 
-CREATE TABLE "InTotoAnnotation_annotation_values" (
-	"InTotoAnnotation_id" INTEGER,
-	annotation_values TEXT,
-	PRIMARY KEY ("InTotoAnnotation_id", annotation_values),
-	FOREIGN KEY("InTotoAnnotation_id") REFERENCES "InTotoAnnotation" (id)
+CREATE TABLE "InTotoStatementSubject" (
+	id INTEGER NOT NULL,
+	resource_uri TEXT,
+	resource_name TEXT,
+	download_location TEXT,
+	media_type TEXT,
+	content TEXT,
+	"InTotoStatement_id" INTEGER,
+	digest_id INTEGER NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY("InTotoStatement_id") REFERENCES "InTotoStatement" (id),
+	FOREIGN KEY(digest_id) REFERENCES "InTotoDigestSet" (id)
 );
-CREATE INDEX "ix_InTotoAnnotation_annotation_values_annotation_values" ON "InTotoAnnotation_annotation_values" (annotation_values);
-CREATE INDEX "ix_InTotoAnnotation_annotation_values_InTotoAnnotation_id" ON "InTotoAnnotation_annotation_values" ("InTotoAnnotation_id");
+CREATE INDEX "ix_InTotoStatementSubject_id" ON "InTotoStatementSubject" (id);
 
 CREATE TABLE "SlsaProducer" (
 	id INTEGER NOT NULL,
@@ -492,8 +553,10 @@ CREATE INDEX "ix_SlsaProducer_id" ON "SlsaProducer" (id);
 CREATE TABLE "SlsaControlPlane" (
 	id INTEGER NOT NULL,
 	build_platform TEXT,
+	"SlsaDocument_id" INTEGER,
 	PRIMARY KEY (id),
-	FOREIGN KEY(build_platform) REFERENCES "SlsaBuildPlatform" (builder_id)
+	FOREIGN KEY(build_platform) REFERENCES "SlsaBuildPlatform" (builder_id),
+	FOREIGN KEY("SlsaDocument_id") REFERENCES "SlsaDocument" (id)
 );
 CREATE INDEX "ix_SlsaControlPlane_id" ON "SlsaControlPlane" (id);
 
@@ -533,6 +596,31 @@ CREATE TABLE "SlsaRunDetails" (
 );
 CREATE INDEX "ix_SlsaRunDetails_id" ON "SlsaRunDetails" (id);
 
+CREATE TABLE "SlsaDependencyLevelCount" (
+	id INTEGER NOT NULL,
+	verified_level TEXT NOT NULL,
+	dependency_count INTEGER NOT NULL,
+	"SlsaVerificationSummary_id" INTEGER,
+	PRIMARY KEY (id),
+	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id)
+);
+CREATE INDEX "ix_SlsaDependencyLevelCount_id" ON "SlsaDependencyLevelCount" (id);
+
+CREATE TABLE "SlsaVerificationSummaryInputAttestation" (
+	id INTEGER NOT NULL,
+	resource_uri TEXT,
+	resource_name TEXT,
+	download_location TEXT,
+	media_type TEXT,
+	content TEXT,
+	"SlsaVerificationSummary_id" INTEGER,
+	digest_id INTEGER NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id),
+	FOREIGN KEY(digest_id) REFERENCES "InTotoDigestSet" (id)
+);
+CREATE INDEX "ix_SlsaVerificationSummaryInputAttestation_id" ON "SlsaVerificationSummaryInputAttestation" (id);
+
 CREATE TABLE "SlsaSourceRepository" (
 	repository_uri TEXT NOT NULL,
 	hosted_by TEXT,
@@ -542,6 +630,39 @@ CREATE TABLE "SlsaSourceRepository" (
 	FOREIGN KEY("SlsaDocument_id") REFERENCES "SlsaDocument" (id)
 );
 CREATE INDEX "ix_SlsaSourceRepository_repository_uri" ON "SlsaSourceRepository" (repository_uri);
+
+CREATE TABLE "SlsaVerificationSummary_verified_levels" (
+	"SlsaVerificationSummary_id" INTEGER,
+	verified_levels TEXT NOT NULL,
+	PRIMARY KEY ("SlsaVerificationSummary_id", verified_levels),
+	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id)
+);
+CREATE INDEX "ix_SlsaVerificationSummary_verified_levels_SlsaVerificationSummary_id" ON "SlsaVerificationSummary_verified_levels" ("SlsaVerificationSummary_id");
+CREATE INDEX "ix_SlsaVerificationSummary_verified_levels_verified_levels" ON "SlsaVerificationSummary_verified_levels" (verified_levels);
+
+CREATE TABLE "SlsaVerificationSummary_organization_properties" (
+	"SlsaVerificationSummary_id" INTEGER,
+	organization_properties TEXT,
+	PRIMARY KEY ("SlsaVerificationSummary_id", organization_properties),
+	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id)
+);
+CREATE INDEX "ix_SlsaVerificationSummary_organization_properties_SlsaVerificationSummary_id" ON "SlsaVerificationSummary_organization_properties" ("SlsaVerificationSummary_id");
+CREATE INDEX "ix_SlsaVerificationSummary_organization_properties_organization_properties" ON "SlsaVerificationSummary_organization_properties" (organization_properties);
+
+CREATE TABLE "InTotoAnnotation" (
+	id INTEGER NOT NULL,
+	annotation_key TEXT NOT NULL,
+	"InTotoResourceDescriptor_id" INTEGER,
+	"InTotoStatementSubject_id" INTEGER,
+	"SlsaVerificationSummaryPolicy_id" INTEGER,
+	"SlsaVerificationSummaryInputAttestation_id" INTEGER,
+	PRIMARY KEY (id),
+	FOREIGN KEY("InTotoResourceDescriptor_id") REFERENCES "InTotoResourceDescriptor" (id),
+	FOREIGN KEY("InTotoStatementSubject_id") REFERENCES "InTotoStatementSubject" (id),
+	FOREIGN KEY("SlsaVerificationSummaryPolicy_id") REFERENCES "SlsaVerificationSummaryPolicy" (id),
+	FOREIGN KEY("SlsaVerificationSummaryInputAttestation_id") REFERENCES "SlsaVerificationSummaryInputAttestation" (id)
+);
+CREATE INDEX "ix_InTotoAnnotation_id" ON "InTotoAnnotation" (id);
 
 CREATE TABLE "SlsaBuildProvenance" (
 	id INTEGER NOT NULL,
@@ -631,6 +752,15 @@ CREATE TABLE "SlsaBuildImage" (
 );
 CREATE INDEX "ix_SlsaBuildImage_image_uri" ON "SlsaBuildImage" (image_uri);
 
+CREATE TABLE "InTotoAnnotation_annotation_values" (
+	"InTotoAnnotation_id" INTEGER,
+	annotation_values TEXT,
+	PRIMARY KEY ("InTotoAnnotation_id", annotation_values),
+	FOREIGN KEY("InTotoAnnotation_id") REFERENCES "InTotoAnnotation" (id)
+);
+CREATE INDEX "ix_InTotoAnnotation_annotation_values_annotation_values" ON "InTotoAnnotation_annotation_values" (annotation_values);
+CREATE INDEX "ix_InTotoAnnotation_annotation_values_InTotoAnnotation_id" ON "InTotoAnnotation_annotation_values" ("InTotoAnnotation_id");
+
 CREATE TABLE "SlsaSourceRevision_parent_revisions" (
 	"SlsaSourceRevision_revision_id" TEXT,
 	parent_revisions_revision_id TEXT,
@@ -658,8 +788,8 @@ CREATE TABLE "SlsaSourceProvenance_controls_enforced" (
 	PRIMARY KEY ("SlsaSourceProvenance_id", controls_enforced),
 	FOREIGN KEY("SlsaSourceProvenance_id") REFERENCES "SlsaSourceProvenance" (id)
 );
-CREATE INDEX "ix_SlsaSourceProvenance_controls_enforced_controls_enforced" ON "SlsaSourceProvenance_controls_enforced" (controls_enforced);
 CREATE INDEX "ix_SlsaSourceProvenance_controls_enforced_SlsaSourceProvenance_id" ON "SlsaSourceProvenance_controls_enforced" ("SlsaSourceProvenance_id");
+CREATE INDEX "ix_SlsaSourceProvenance_controls_enforced_controls_enforced" ON "SlsaSourceProvenance_controls_enforced" (controls_enforced);
 
 CREATE TABLE "SlsaMeasurement" (
 	id INTEGER NOT NULL,
