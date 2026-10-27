@@ -32,7 +32,7 @@ sources:
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T23:24:55Z"
+  at: "2026-10-27T01:29:08Z"
 status: draft
 ---
 
@@ -51,7 +51,7 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `justfile`, `project.justfile`, `.linkml/generators.yaml`, `project/`, `src/slsa/datamodel/`, `docs/schema/` | `datasets/generated-artefacts`, `playbooks/regenerate-and-test` | re-read the `gen-project`, `gen-python`, `gen-doc`, `gen-merged`, `lokf-adapt` and `test` recipe chains; re-list `project/*/`; re-read the `excludes` in `.linkml/generators.yaml` |
 | `project.justfile`, the README's Knowledge Trust Ladder (KTL) section | the domain-schema section of `datasets/slsa-linkml-schema` | re-read the `--root` classes, the known-types list and the `LOKF_CMD` note |
 | `tests/data/`, `tests/test_data.py` | `datasets/test-data` | re-list `tests/data/`; re-read the naming rule and the test |
-| `website/site.config.mjs`, `website/README.md`, `docs/index.md`, `.github/workflows/knowledge-website.yaml` | `services/documentation-site` | confirm the triggers and the deploy switch, the `MKDOCS` settings, and the files served from `docs/` |
+| `website/site.config.mjs`, `website/scripts/routes.mjs`, `website/README.md`, `docs/index.md`, `.github/workflows/knowledge-website.yaml` | `services/documentation-site` | confirm the triggers and the deploy switch, the `DOCS` and `REDIRECTS` settings, and where a link to a file under `docs/` that is no page goes |
 | `.github/workflows/main.yaml`, `CONTRIBUTING.md` | CI facts in `playbooks/regenerate-and-test` | confirm the Python matrix, the `just test` step and the regeneration steps |
 | `.github/workflows/pypi-publish.yaml`, `.github/workflows/semantic-release.yml`, `.releaserc.json`, `.github/scripts/changelog-release.mjs`, the Releasing section of `CONTRIBUTING.md` | `playbooks/release` | re-read the triggers, the environments, the repository variables and the release rules |
 | `README.md` (License section), `NOTICE`, `LICENSE`, the License section of `CONTRIBUTING.md` | `policies/license-and-attribution` | re-read each third-party entry in `NOTICE` and the README's License section |
