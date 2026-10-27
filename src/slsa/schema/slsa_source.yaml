@@ -192,7 +192,9 @@ enums:
       - https://slsa.dev/spec/v1.2/source-requirements#basics
     permissible_values:
       SLSA_SOURCE_LEVEL_0:
-        description: No Source track claims; the SCS issued no VSA for the revision.
+        description: >-
+          No Source track guarantees; a revision for which the SCS issues no Source VSA
+          is at this level.
       SLSA_SOURCE_LEVEL_1:
         description: >-
           The source is managed in a version control system, so it has discrete,
@@ -237,8 +239,12 @@ enums:
           open.
       AUTOMATED:
         description: >-
-          A tool or bot reviewed the change with no second person, which does not meet
-          Source L4.
+          A tool or bot reviewed the change with no second person, which is not
+          two-party review.
+        comments:
+          - >-
+            At Source L4 an organization may still exempt a trusted robot's own changes
+            from two-party review.
     in_subset:
       - slsa_source_track
       - slsa_adoption_study

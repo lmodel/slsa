@@ -1,0 +1,8 @@
+# INVALID: an empty list of external parameters counts as none, which Build L1
+# does not allow.
+build_definition:
+  build_type: https://actions.github.io/buildtypes/workflow/v1
+  external_parameters: []
+run_details:
+  builder:
+    builder_id: https://example.com/builder

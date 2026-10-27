@@ -44,6 +44,16 @@ linkml:Jsonpath xsd:string
 
 linkml:Sparqlpath xsd:string
 
+<SlsaResultValue> xsd:string
+
+<InTotoAdditionalDigest> CLOSED {
+    (  $<InTotoAdditionalDigest_tes> (  <algorithm> @linkml:String ;
+          <value> @linkml:String
+       ) ;
+       rdf:type [ <InTotoAdditionalDigest> ] ?
+    )
+}
+
 <InTotoAnnotation> CLOSED {
     (  $<InTotoAnnotation_tes> (  <annotation_key> @linkml:String ;
           <annotation_values> @linkml:String *
@@ -54,30 +64,53 @@ linkml:Sparqlpath xsd:string
 
 <InTotoDigestSet> CLOSED {
     (  $<InTotoDigestSet_tes> (  <sha256> @linkml:String ? ;
+          <sha224> @linkml:String ? ;
+          <sha384> @linkml:String ? ;
           <sha512> @linkml:String ? ;
+          <sha512_224> @linkml:String ? ;
+          <sha512_256> @linkml:String ? ;
+          <sha3_224> @linkml:String ? ;
+          <sha3_256> @linkml:String ? ;
+          <sha3_384> @linkml:String ? ;
+          <sha3_512> @linkml:String ? ;
+          <shake128> @linkml:String ? ;
+          <shake256> @linkml:String ? ;
+          <blake2b> @linkml:String ? ;
+          <blake2s> @linkml:String ? ;
+          <ripemd160> @linkml:String ? ;
+          <sm3> @linkml:String ? ;
+          <gost> @linkml:String ? ;
+          <sha1> @linkml:String ? ;
+          <md5> @linkml:String ? ;
+          <dir_hash> @linkml:String ? ;
           <git_commit> @linkml:String ? ;
           <git_tree> @linkml:String ? ;
-          <dir_hash> @linkml:String ?
+          <git_blob> @linkml:String ? ;
+          <git_tag> @linkml:String ? ;
+          <additional_digests> @<InTotoAdditionalDigest> *
        ) ;
        rdf:type [ <InTotoDigestSet> ] ?
     )
 }
 
-<InTotoResourceDescriptor> CLOSED {
-    (  $<InTotoResourceDescriptor_tes> (  <resource_uri> @linkml:Uri ? ;
-          <digest> @<InTotoDigestSet> ? ;
-          <resource_name> @linkml:String ? ;
-          <download_location> @linkml:Uri ? ;
-          <media_type> @linkml:String ? ;
-          <annotations> @<InTotoAnnotation> *
-       ) ;
-       rdf:type [ <InTotoResourceDescriptor> ] ?
-    )
-}
+<InTotoResourceDescriptor>  (
+    CLOSED {
+       (  $<InTotoResourceDescriptor_tes> (  <resource_uri> @linkml:Uri ? ;
+             <digest> @<InTotoDigestSet> ? ;
+             <resource_name> @linkml:String ? ;
+             <download_location> @linkml:Uri ? ;
+             <media_type> @linkml:String ? ;
+             <content> @linkml:String ? ;
+             <annotations> @<InTotoAnnotation> *
+          ) ;
+          rdf:type [ <InTotoResourceDescriptor> ] ?
+       )
+    } OR @<InTotoStatementSubject> OR @<SlsaVerificationSummaryInputAttestation> OR @<SlsaVerificationSummaryPolicy>
+)
 
 <InTotoStatement> CLOSED {
     (  $<InTotoStatement_tes> (  <statement_type> @linkml:Uri ;
-          <subject> @<InTotoResourceDescriptor> + ;
+          <subject> @<InTotoStatementSubject> + ;
           <predicate_type> @linkml:Uri ;
           <predicate> @<SlsaPredicate> ? ;
           <attestation_storage_uri> @linkml:Uri ? ;
@@ -85,6 +118,15 @@ linkml:Sparqlpath xsd:string
           <transparency_log_entry> @linkml:Uri ?
        ) ;
        rdf:type [ <InTotoStatement> ] ?
+    )
+}
+
+<InTotoStatementSubject> CLOSED {
+    (  $<InTotoStatementSubject_tes> (  &<InTotoResourceDescriptor_tes> ;
+          rdf:type [ <InTotoResourceDescriptor> ] ? ;
+          <digest> @<InTotoDigestSet>
+       ) ;
+       rdf:type [ <InTotoStatementSubject> ] ?
     )
 }
 
@@ -113,7 +155,7 @@ linkml:Sparqlpath xsd:string
 
 <SlsaBuildDefinition> CLOSED {
     (  $<SlsaBuildDefinition_tes> (  <build_type> @linkml:Uri ;
-          <external_parameters> @<SlsaBuildParameter> * ;
+          <external_parameters> @<SlsaBuildParameter> + ;
           <internal_parameters> @<SlsaBuildParameter> * ;
           <resolved_dependencies> @<InTotoResourceDescriptor> * ;
           <hermetic> @linkml:Boolean ? ;
@@ -235,19 +277,7 @@ linkml:Sparqlpath xsd:string
 }
 
 <SlsaDependencyLevelCount> CLOSED {
-    (  $<SlsaDependencyLevelCount_tes> (  <verified_level> [ <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_UNEVALUATED>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_UNEVALUATED>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_4>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_TWO_PARTY_REVIEWED>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_REPRODUCED> <https://w3id.org/lmodel/slsa/SlsaResult#FAILED> ] ;
+    (  $<SlsaDependencyLevelCount_tes> (  <verified_level> @<SlsaResultValue> ;
           <dependency_count> @linkml:Integer
        ) ;
        rdf:type [ <SlsaDependencyLevelCount> ] ?
@@ -258,6 +288,7 @@ linkml:Sparqlpath xsd:string
     (  $<SlsaDocument_tes> (  <attestations> @<InTotoStatement> * ;
           <parties> @<SlsaParty> * ;
           <build_platforms> @<SlsaBuildPlatform> * ;
+          <control_planes> @<SlsaControlPlane> * ;
           <packages> @<SlsaPackage> * ;
           <package_registries> @<SlsaPackageRegistry> * ;
           <source_control_systems> @<SlsaSourceControlSystem> * ;
@@ -414,28 +445,36 @@ linkml:Sparqlpath xsd:string
           <resource_uri> @linkml:Uri ;
           <verifier> @<SlsaVerifier> ;
           <time_verified> @linkml:Datetime ? ;
-          <policy> @<InTotoResourceDescriptor> ;
-          <input_attestations> @<InTotoResourceDescriptor> * ;
+          <policy> @<SlsaVerificationSummaryPolicy> ;
+          <input_attestations> @<SlsaVerificationSummaryInputAttestation> * ;
           <verification_result> [ <https://w3id.org/lmodel/slsa/SlsaVerificationResult#PASSED>
              <https://w3id.org/lmodel/slsa/SlsaVerificationResult#FAILED> ] ;
-          <verified_levels> [ <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_UNEVALUATED>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_UNEVALUATED>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_0>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_1>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_2>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_3>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_LEVEL_4>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_SOURCE_TWO_PARTY_REVIEWED>
-             <https://w3id.org/lmodel/slsa/SlsaResult#SLSA_BUILD_REPRODUCED> <https://w3id.org/lmodel/slsa/SlsaResult#FAILED> ] + ;
+          <verified_levels> @<SlsaResultValue> + ;
           <organization_properties> @linkml:String * ;
           <dependency_levels> @<SlsaDependencyLevelCount> * ;
           <slsa_version> @linkml:String ?
        ) ;
        rdf:type [ <SlsaVerificationSummary> ] ?
+    )
+}
+
+<SlsaVerificationSummaryInputAttestation> CLOSED {
+    (  $<SlsaVerificationSummaryInputAttestation_tes> (  &<InTotoResourceDescriptor_tes> ;
+          rdf:type [ <InTotoResourceDescriptor> ] ? ;
+          <digest> @<InTotoDigestSet> ;
+          <resource_uri> @linkml:Uri ?
+       ) ;
+       rdf:type [ <SlsaVerificationSummaryInputAttestation> ] ?
+    )
+}
+
+<SlsaVerificationSummaryPolicy> CLOSED {
+    (  $<SlsaVerificationSummaryPolicy_tes> (  &<InTotoResourceDescriptor_tes> ;
+          rdf:type [ <InTotoResourceDescriptor> ] ? ;
+          <resource_uri> @linkml:Uri ;
+          <digest> @<InTotoDigestSet> ?
+       ) ;
+       rdf:type [ <SlsaVerificationSummaryPolicy> ] ?
     )
 }
 

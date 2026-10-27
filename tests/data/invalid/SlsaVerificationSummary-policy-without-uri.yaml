@@ -1,0 +1,10 @@
+# INVALID: a VSA names its policy by URI, not only by digest.
+verifier:
+  verifier_id: https://example.com/publication_verifier
+resource_uri: https://example.com/example-1.2.3.tar.gz
+policy:
+  digest:
+    sha256: 185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969
+verification_result: PASSED
+verified_levels:
+  - SLSA_BUILD_LEVEL_2

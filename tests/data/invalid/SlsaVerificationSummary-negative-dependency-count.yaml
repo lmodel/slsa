@@ -1,0 +1,12 @@
+# INVALID: a dependency count is never negative.
+verifier:
+  verifier_id: https://example.com/publication_verifier
+resource_uri: https://example.com/example-1.2.3.tar.gz
+policy:
+  resource_uri: https://example.com/example_tarball.policy
+verification_result: PASSED
+verified_levels:
+  - SLSA_BUILD_LEVEL_2
+dependency_levels:
+  - verified_level: SLSA_BUILD_LEVEL_2
+    dependency_count: -1

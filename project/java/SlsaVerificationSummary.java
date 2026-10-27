@@ -19,8 +19,8 @@ public class SlsaVerificationSummary extends SlsaPredicate {
   private URI resourceUri;
   private SlsaVerifier verifier;
   private ZonedDateTime timeVerified;
-  private InTotoResourceDescriptor policy;
-  private List<InTotoResourceDescriptor> inputAttestations;
+  private SlsaVerificationSummaryPolicy policy;
+  private List<SlsaVerificationSummaryInputAttestation> inputAttestations;
   private String verificationResult;
   private List<String> verifiedLevels;
   private List<String> organizationProperties;

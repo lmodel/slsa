@@ -10,11 +10,11 @@ import java.util.List;
 import lombok.*;
 
 /**
-  A party who provides software or services to other roles in the supply chain, such as a package registry maintainer or build platform operator.
+  One artifact an in-toto statement is about: a resource descriptor that carries a digest.
 **/
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class InfrastructureProvider  {
+public class InTotoStatementSubject extends InTotoResourceDescriptor {
 
 
 

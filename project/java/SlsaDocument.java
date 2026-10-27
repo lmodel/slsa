@@ -19,6 +19,7 @@ public class SlsaDocument  {
   private List<InTotoStatement> attestations;
   private List<SlsaParty> parties;
   private List<SlsaBuildPlatform> buildPlatforms;
+  private List<SlsaControlPlane> controlPlanes;
   private List<SlsaPackage> packages;
   private List<SlsaPackageRegistry> packageRegistries;
   private List<SlsaSourceControlSystem> sourceControlSystems;

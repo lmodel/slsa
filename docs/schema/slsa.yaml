@@ -342,6 +342,33 @@ types:
     base: str
     uri: xsd:string
     repr: str
+  slsa_result_value:
+    name: slsa_result_value
+    definition_uri: https://w3id.org/lmodel/slsa/SlsaResultValue
+    description: 'A result as a VSA writes it: one of the SLSA-defined results SlsaResult
+      lists, or one of the issuer''s own, which never starts with SLSA_.'
+    notes:
+    - The pattern lists the values of SlsaResult that start with SLSA_ and then admits
+      any other value that does not, written without a lookahead, which SHACL's regular
+      expressions lack. One type in place of any_of over the enum and a pattern keeps
+      the OWL output valid, since gen-owl makes the enum a class.
+    - verified_levels and verified_level repeat the pattern through a YAML anchor,
+      because gen-pydantic checks a slot's pattern but not its type's.
+    - tests/test_schema_rules.py checks the pattern against SlsaResult.
+    comments:
+    - An issuer's own result, such as an organization's ORG_SOURCE_ property, is printable
+      ASCII with no spaces and does not start with SLSA_ in any letter case, so that
+      it cannot pass for an SLSA result.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+    see_also:
+    - https://slsa.dev/spec/v1.2/verification_summary#slsaresult
+    typeof: string
+    base: str
+    uri: xsd:string
+    pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
 enums:
   SlsaBuildLevel:
     name: SlsaBuildLevel
@@ -367,16 +394,17 @@ enums:
         description: A hosted platform generates and signs the provenance, so tampering
           after the build needs an explicit attack.
         comments:
-        - Integrating signing tools into varied CI workflows is a common adoption
-          difficulty (Tamanna et al., 2024, CI.2).
+        - Keeping the provenance generator, the verifier and signing tools such as
+          cosign working in CI workflows was a common difficulty (Tamanna et al.,
+          2024, CI.2).
       SLSA_BUILD_LEVEL_3:
         text: SLSA_BUILD_LEVEL_3
         description: A hardened platform prevents runs from influencing one another
           and keeps signing material away from build steps, so forging provenance
           needs an exploit.
         comments:
-        - Hermetic and isolated builds were the adoption barrier practitioners cited
-          most (Tamanna et al., 2024, CI.1).
+        - Practitioners reported difficulty in generating provenance for the higher
+          levels (Tamanna et al., 2024, CI.1).
   SlsaVerificationResult:
     name: SlsaVerificationResult
     definition_uri: https://w3id.org/lmodel/slsa/SlsaVerificationResult
@@ -400,14 +428,17 @@ enums:
       same track.'
     comments:
     - Issuers may add values of their own, but none that start with SLSA_; this enum
-      lists the SLSA-defined values.
+      lists the SLSA-defined values, and slsa_result_value, which verified_levels
+      takes, admits both.
+    - The working-draft Dependency and Build Environment tracks name no results yet,
+      so none are listed for them.
     in_subset:
     - slsa_build_track
     - slsa_source_track
     from_schema: https://w3id.org/lmodel/slsa/slsa_verification
     see_also:
     - https://slsa.dev/spec/v1.2/verification_summary#slsaresult
-    - https://slsa.dev/spec/draft/verified-properties
+    - https://slsa.dev/spec/v1.2/verified-properties
     permissible_values:
       SLSA_BUILD_LEVEL_UNEVALUATED:
         text: SLSA_BUILD_LEVEL_UNEVALUATED
@@ -466,7 +497,8 @@ enums:
     permissible_values:
       SLSA_SOURCE_LEVEL_0:
         text: SLSA_SOURCE_LEVEL_0
-        description: No Source track claims; the SCS issued no VSA for the revision.
+        description: No Source track guarantees; a revision for which the SCS issues
+          no Source VSA is at this level.
       SLSA_SOURCE_LEVEL_1:
         text: SLSA_SOURCE_LEVEL_1
         description: The source is managed in a version control system, so it has
@@ -516,7 +548,10 @@ enums:
       AUTOMATED:
         text: AUTOMATED
         description: A tool or bot reviewed the change with no second person, which
-          does not meet Source L4.
+          is not two-party review.
+        comments:
+        - At Source L4 an organization may still exempt a trusted robot's own changes
+          from two-party review.
   SlsaDependencyLevel:
     name: SlsaDependencyLevel
     definition_uri: https://w3id.org/lmodel/slsa/SlsaDependencyLevel
@@ -602,8 +637,8 @@ enums:
             tag: study_theme
             value: UC
         comments:
-        - 'Sub-themes: unclear definitions of key terms (UC.1) and a lack of ecosystem-
-          specific guidance (UC.2); 357 issues.'
+        - 'Sub-themes: unclear definitions of key terms (UC.1) and unclear documentation,
+          such as how to apply SLSA in an ecosystem (UC.2); 357 issues.'
       LIMITED_FEASIBILITY:
         text: LIMITED_FEASIBILITY
         description: Verification tooling, attestation storage and two-party review
@@ -613,8 +648,9 @@ enums:
             tag: study_theme
             value: LF
         comments:
-        - 'Sub-themes: verification and storage (LF.1) and two-party review for small
-          projects (LF.2); 219 issues.'
+        - 'Sub-themes: limited attestation verification, including where attestations
+          are stored (LF.1), and two-party review requirements, which projects with
+          one maintainer find hard to meet (LF.2); 219 issues.'
       UNCLEAR_RELEVANCE:
         text: UNCLEAR_RELEVANCE
         description: Which attacks SLSA mitigates, and how it differs from other practices,
@@ -624,8 +660,8 @@ enums:
             tag: study_theme
             value: UR
         comments:
-        - 'Sub-theme: unclear scope and ecosystem-level inconsistencies (UR.1); 46
-          issues.'
+        - 'Sub-theme: unclear relevance, including tools that name one package differently
+          within an ecosystem (UR.1); 46 issues.'
   SlsaAdoptionStrategy:
     name: SlsaAdoptionStrategy
     definition_uri: https://w3id.org/lmodel/slsa/SlsaAdoptionStrategy
@@ -639,8 +675,9 @@ enums:
     permissible_values:
       ENHANCE_ALIGNMENT_FLEXIBILITY:
         text: ENHANCE_ALIGNMENT_FLEXIBILITY
-        description: Make SLSA fit more contexts, with build-system tracks, flexibility
-          for varied organizations and alignment with OpenSSF practices.
+        description: Make SLSA fit more contexts, with build-system tracks, gamified
+          levels, flexibility for varied organizations and alignment with OpenSSF
+          practices.
         annotations:
           study_theme:
             tag: study_theme
@@ -737,8 +774,9 @@ slots:
     description: The package ecosystem whose rules govern how a package is named and
       distributed, such as PyPA, npm or OCI.
     comments:
-    - The same source can yield differently named packages in one ecosystem, so verifiers
-      match provenance to package names with care (Tamanna et al., 2024, UR.1).
+    - One ecosystem's tools can name the same package differently, which the study
+      found affects attestations and provenance, so verifiers match provenance to
+      package names with care (Tamanna et al., 2024, UR.1).
     in_subset:
     - slsa_build_track
     - slsa_dependency_track
@@ -847,6 +885,19 @@ slots:
     domain_of:
     - SlsaDocument
     range: SlsaBuildPlatform
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  slsaDocument__control_planes:
+    name: slsaDocument__control_planes
+    description: The control planes of the build platforms.
+    from_schema: https://w3id.org/lmodel/slsa
+    slot_uri: slsa:control_planes
+    alias: control_planes
+    owner: SlsaDocument
+    domain_of:
+    - SlsaDocument
+    range: SlsaControlPlane
     multivalued: true
     inlined: true
     inlined_as_list: true
@@ -978,6 +1029,28 @@ slots:
     - InTotoDigestSet
     range: string
     pattern: ^[a-f0-9]{64}$
+  inTotoDigestSet__sha224:
+    name: inTotoDigestSet__sha224
+    description: The SHA-224 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha224
+    alias: sha224
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{56}$
+  inTotoDigestSet__sha384:
+    name: inTotoDigestSet__sha384
+    description: The SHA-384 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha384
+    alias: sha384
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{96}$
   inTotoDigestSet__sha512:
     name: inTotoDigestSet__sha512
     description: The SHA-512 digest of the artifact.
@@ -989,6 +1062,187 @@ slots:
     - InTotoDigestSet
     range: string
     pattern: ^[a-f0-9]{128}$
+  inTotoDigestSet__sha512_224:
+    name: inTotoDigestSet__sha512_224
+    description: The SHA-512/224 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha512_224
+    alias: sha512_224
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{56}$
+  inTotoDigestSet__sha512_256:
+    name: inTotoDigestSet__sha512_256
+    description: The SHA-512/256 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha512_256
+    alias: sha512_256
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}$
+  inTotoDigestSet__sha3_224:
+    name: inTotoDigestSet__sha3_224
+    description: The SHA3-224 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha3_224
+    alias: sha3_224
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{56}$
+  inTotoDigestSet__sha3_256:
+    name: inTotoDigestSet__sha3_256
+    description: The SHA3-256 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha3_256
+    alias: sha3_256
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}$
+  inTotoDigestSet__sha3_384:
+    name: inTotoDigestSet__sha3_384
+    description: The SHA3-384 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha3_384
+    alias: sha3_384
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{96}$
+  inTotoDigestSet__sha3_512:
+    name: inTotoDigestSet__sha3_512
+    description: The SHA3-512 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha3_512
+    alias: sha3_512
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{128}$
+  inTotoDigestSet__shake128:
+    name: inTotoDigestSet__shake128
+    description: The SHAKE128 digest of the artifact, of at least 32 bytes.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:shake128
+    alias: shake128
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}([a-f0-9]{2})*$
+  inTotoDigestSet__shake256:
+    name: inTotoDigestSet__shake256
+    description: The SHAKE256 digest of the artifact, of at least 32 bytes.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:shake256
+    alias: shake256
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}([a-f0-9]{2})*$
+  inTotoDigestSet__blake2b:
+    name: inTotoDigestSet__blake2b
+    description: The BLAKE2b digest of the artifact, of 32 to 64 bytes.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:blake2b
+    alias: blake2b
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}([a-f0-9]{2}){0,32}$
+  inTotoDigestSet__blake2s:
+    name: inTotoDigestSet__blake2s
+    description: The BLAKE2s digest of the artifact, at its full 32 bytes.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:blake2s
+    alias: blake2s
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}$
+  inTotoDigestSet__ripemd160:
+    name: inTotoDigestSet__ripemd160
+    description: The RIPEMD-160 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:ripemd160
+    alias: ripemd160
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{40}$
+  inTotoDigestSet__sm3:
+    name: inTotoDigestSet__sm3
+    description: The SM3 digest of the artifact.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sm3
+    alias: sm3
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}$
+  inTotoDigestSet__gost:
+    name: inTotoDigestSet__gost
+    description: The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:gost
+    alias: gost
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}([a-f0-9]{64})?$
+  inTotoDigestSet__sha1:
+    name: inTotoDigestSet__sha1
+    description: The SHA-1 digest of the artifact.
+    comments:
+    - SHA-1 lacks collision resistance, so most consumers should not rely on it.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:sha1
+    alias: sha1
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{40}$
+  inTotoDigestSet__md5:
+    name: inTotoDigestSet__md5
+    description: The MD5 digest of the artifact.
+    comments:
+    - MD5 lacks collision resistance, so most consumers should not accept it.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:md5
+    alias: md5
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{32}$
+  inTotoDigestSet__dir_hash:
+    name: inTotoDigestSet__dir_hash
+    description: A digest over a directory's content by the dirhash Hash1 function,
+      in lowercase hexadecimal rather than base64.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:dir_hash
+    alias: dir_hash
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{64}$
   inTotoDigestSet__git_commit:
     name: inTotoDigestSet__git_commit
     description: The git commit id of a source revision.
@@ -1002,7 +1256,7 @@ slots:
     pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
   inTotoDigestSet__git_tree:
     name: inTotoDigestSet__git_tree
-    description: The git tree id of a source revision's content.
+    description: The git tree id of a source revision's content, or of any file tree.
     from_schema: https://w3id.org/lmodel/slsa/slsa_core
     slot_uri: slsa:git_tree
     alias: git_tree
@@ -1011,17 +1265,101 @@ slots:
     - InTotoDigestSet
     range: string
     pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
-  inTotoDigestSet__dir_hash:
-    name: inTotoDigestSet__dir_hash
-    description: A digest over a directory's content, as the in-toto framework defines
-      it.
+  inTotoDigestSet__git_blob:
+    name: inTotoDigestSet__git_blob
+    description: The git blob id of a file's content.
     from_schema: https://w3id.org/lmodel/slsa/slsa_core
-    slot_uri: slsa:dir_hash
-    alias: dir_hash
+    slot_uri: slsa:git_blob
+    alias: git_blob
     owner: InTotoDigestSet
     domain_of:
     - InTotoDigestSet
     range: string
+    pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
+  inTotoDigestSet__git_tag:
+    name: inTotoDigestSet__git_tag
+    description: The git object id of an annotated tag.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:git_tag
+    alias: git_tag
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: string
+    pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
+  inTotoDigestSet__additional_digests:
+    name: inTotoDigestSet__additional_digests
+    description: The digests under algorithms this class does not name.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:additional_digests
+    alias: additional_digests
+    owner: InTotoDigestSet
+    domain_of:
+    - InTotoDigestSet
+    range: InTotoAdditionalDigest
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+    minimum_cardinality: 1
+  inTotoAdditionalDigest__algorithm:
+    name: inTotoAdditionalDigest__algorithm
+    description: The algorithm's name, as the key the attestation's JSON uses, such
+      as svn_revision_id.
+    comments:
+    - An algorithm that InTotoDigestSet names, by its JSON key or by its field name,
+      goes in that field instead.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:algorithm
+    alias: algorithm
+    owner: InTotoAdditionalDigest
+    domain_of:
+    - InTotoAdditionalDigest
+    range: string
+    required: true
+    pattern: ^[a-z][A-Za-z0-9_]*$
+    none_of:
+    - equals_string_in: &id001
+      - sha256
+      - sha224
+      - sha384
+      - sha512
+      - sha512_224
+      - sha512_256
+      - sha3_224
+      - sha3_256
+      - sha3_384
+      - sha3_512
+      - shake128
+      - shake256
+      - blake2b
+      - blake2s
+      - ripemd160
+      - sm3
+      - gost
+      - sha1
+      - md5
+      - dirHash
+      - gitCommit
+      - gitTree
+      - gitBlob
+      - gitTag
+      - dir_hash
+      - git_commit
+      - git_tree
+      - git_blob
+      - git_tag
+  inTotoAdditionalDigest__value:
+    name: inTotoAdditionalDigest__value
+    description: The digest under that algorithm, in the encoding the algorithm documents.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:value
+    alias: value
+    owner: InTotoAdditionalDigest
+    domain_of:
+    - InTotoAdditionalDigest
+    range: string
+    required: true
+    pattern: ^\S+$
   inTotoAnnotation__annotation_key:
     name: inTotoAnnotation__annotation_key
     description: The annotation's key.
@@ -1075,6 +1413,21 @@ slots:
     domain_of:
     - InTotoResourceDescriptor
     range: string
+  inTotoResourceDescriptor__content:
+    name: inTotoResourceDescriptor__content
+    description: The resource's content itself, base64-encoded, for a resource small
+      enough to carry inline.
+    comments:
+    - The in-toto framework asks for content under 1 KB, so that attestations stay
+      small.
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    slot_uri: slsa:content
+    alias: content
+    owner: InTotoResourceDescriptor
+    domain_of:
+    - InTotoResourceDescriptor
+    range: string
+    pattern: ^[A-Za-z0-9+/_-]+={0,2}$
   inTotoResourceDescriptor__annotations:
     name: inTotoResourceDescriptor__annotations
     description: Vendor-specific annotations on the resource, such as the source references
@@ -1103,18 +1456,19 @@ slots:
     pattern: ^https://in-toto\.io/Statement/v1$
   inTotoStatement__subject:
     name: inTotoStatement__subject
-    description: The artifacts the predicate is about; each carries a digest.
+    description: The artifacts the predicate is about, each with a digest.
     from_schema: https://w3id.org/lmodel/slsa/slsa_core
     slot_uri: slsa:subject
     alias: subject
     owner: InTotoStatement
     domain_of:
     - InTotoStatement
-    range: InTotoResourceDescriptor
+    range: InTotoStatementSubject
     required: true
     multivalued: true
     inlined: true
     inlined_as_list: true
+    minimum_cardinality: 1
   inTotoStatement__predicate_type:
     name: inTotoStatement__predicate_type
     description: The URI that names the predicate's type and so its schema, such as
@@ -1144,8 +1498,12 @@ slots:
     name: inTotoStatement__attestation_storage_uri
     description: Where the signed attestation is stored or can be fetched.
     comments:
-    - SLSA names no standard place to store attestations; recording the place used
-      helps consumers find them (Tamanna et al., 2024, LF.1).
+    - 'SLSA asks producers to publish attestations in at least one place and preferably
+      more: beside the source repository''s releases, beside the artifact in its package
+      registry, which it prefers in the long term, or elsewhere with an entry in a
+      transparency log.'
+    - Where to store attestations was an open question for practitioners (Tamanna
+      et al., 2024, LF.1).
     in_subset:
     - slsa_adoption_study
     from_schema: https://w3id.org/lmodel/slsa/slsa_core
@@ -1408,8 +1766,8 @@ slots:
     required: true
   slsaBuildDefinition__external_parameters:
     name: slsaBuildDefinition__external_parameters
-    description: The inputs under the tenant's control; complete at Build L3 and verified
-      by consumers.
+    description: The inputs under the tenant's control; required at Build L1, complete
+      at Build L3 and verified by consumers.
     comments:
     - Verifiers reject parameters they do not recognize here.
     from_schema: https://w3id.org/lmodel/slsa/slsa_build
@@ -1419,9 +1777,11 @@ slots:
     domain_of:
     - SlsaBuildDefinition
     range: SlsaBuildParameter
+    required: true
     multivalued: true
     inlined: true
     inlined_as_list: true
+    minimum_cardinality: 1
   slsaBuildDefinition__internal_parameters:
     name: slsaBuildDefinition__internal_parameters
     description: The inputs the platform sets itself; kept for debugging, incident
@@ -1455,8 +1815,11 @@ slots:
     description: Whether the build could reach only the dependencies it declared,
       with no other network or filesystem access.
     comments:
-    - Hermetic builds are an isolation property Build L3 platforms aim for, and the
-      one practitioners found hardest (Tamanna et al., 2024, CI.1).
+    - SLSA v1.2 does not require hermetic builds; Build L3's isolation is a different
+      property, and hermeticity is a candidate for a future Build L4.
+    - The study cites a 2023 industry survey in which over half the participants found
+      hermetic builds hard to implement, and lists "hermetic build" among SLSA's unclear
+      terms (Tamanna et al., 2024, UC.1).
     in_subset:
     - slsa_adoption_study
     from_schema: https://w3id.org/lmodel/slsa/slsa_build
@@ -1622,7 +1985,7 @@ slots:
     owner: SlsaVerificationSummary
     domain_of:
     - SlsaVerificationSummary
-    range: InTotoResourceDescriptor
+    range: SlsaVerificationSummaryPolicy
     required: true
     inlined: true
     inlined_as_list: true
@@ -1636,7 +1999,7 @@ slots:
     owner: SlsaVerificationSummary
     domain_of:
     - SlsaVerificationSummary
-    range: InTotoResourceDescriptor
+    range: SlsaVerificationSummaryInputAttestation
     multivalued: true
     inlined: true
     inlined_as_list: true
@@ -1653,24 +2016,32 @@ slots:
     required: true
   slsaVerificationSummary__verified_levels:
     name: slsaVerificationSummary__verified_levels
-    description: The highest level verified in each track, and any verified property;
-      a level implies the levels below it.
+    description: The highest level verified in each track, any verified property,
+      and any result of the issuer's own; a level implies the levels below it.
+    comments:
+    - A VSA lists at most one level per track, and only FAILED when verification failed;
+      the validator checks neither.
     from_schema: https://w3id.org/lmodel/slsa/slsa_verification
     slot_uri: slsa:verified_levels
     alias: verified_levels
     owner: SlsaVerificationSummary
     domain_of:
     - SlsaVerificationSummary
-    range: SlsaResult
+    range: slsa_result_value
     required: true
     multivalued: true
+    pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
+    minimum_cardinality: 1
   slsaVerificationSummary__organization_properties:
     name: slsaVerificationSummary__organization_properties
-    description: Properties an organization defines for its own consumers, each prefixed
-      ORG_SOURCE_.
+    description: Properties the organization defines for the revision, each prefixed
+      ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.
+    deprecated: Write these properties in verified_levels, where the attestation's
+      JSON puts them; this field goes in a later release.
     in_subset:
     - slsa_source_track
     from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+    deprecated_element_has_possible_replacement: slsa:verified_levels
     slot_uri: slsa:organization_properties
     alias: organization_properties
     owner: SlsaVerificationSummary
@@ -1683,6 +2054,9 @@ slots:
     name: slsaVerificationSummary__dependency_levels
     description: How many transitive dependencies were verified at each level; absent
       when the verifier makes no claim about dependencies.
+    comments:
+    - The attestation's JSON tells an empty map (no dependencies) from an absent one
+      (no claim); this list cannot, so an empty list reads as no claim.
     from_schema: https://w3id.org/lmodel/slsa/slsa_verification
     slot_uri: slsa:dependency_levels
     alias: dependency_levels
@@ -1706,15 +2080,17 @@ slots:
     pattern: ^[0-9]+\.[0-9]+$
   slsaDependencyLevelCount__verified_level:
     name: slsaDependencyLevelCount__verified_level
-    description: The level the dependencies were verified at.
+    description: The level the dependencies were verified at, or a result of the issuer's
+      own.
     from_schema: https://w3id.org/lmodel/slsa/slsa_verification
     slot_uri: slsa:verified_level
     alias: verified_level
     owner: SlsaDependencyLevelCount
     domain_of:
     - SlsaDependencyLevelCount
-    range: SlsaResult
+    range: slsa_result_value
     required: true
+    pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
   slsaDependencyLevelCount__dependency_count:
     name: slsaDependencyLevelCount__dependency_count
     description: How many dependencies were verified at that level.
@@ -1891,7 +2267,7 @@ slots:
     inlined_as_list: true
   slsaDependencyInventory__dependencies:
     name: slsaDependencyInventory__dependencies
-    description: The dependencies, each identified by URI and digest.
+    description: The dependencies, each as a resource descriptor.
     from_schema: https://w3id.org/lmodel/slsa/slsa_dependency
     slot_uri: slsa:dependencies
     alias: dependencies
@@ -2019,6 +2395,29 @@ slots:
     - SlsaAdoptionMetadata
     range: SlsaAdoptionStrategy
     multivalued: true
+  InTotoStatementSubject_digest:
+    name: InTotoStatementSubject_digest
+    definition_uri: https://w3id.org/lmodel/slsa/digest
+    description: The cryptographic digests of a resource's content, keyed by algorithm.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    mappings:
+    - slsa:digest
+    is_a: digest
+    domain: InTotoStatementSubject
+    slot_uri: slsa:digest
+    alias: digest
+    owner: InTotoStatementSubject
+    domain_of:
+    - InTotoStatementSubject
+    is_usage_slot: true
+    usage_slot_name: digest
+    range: InTotoDigestSet
+    required: true
+    inlined: true
+    inlined_as_list: true
   SlsaVerificationSummary_resource_uri:
     name: SlsaVerificationSummary_resource_uri
     definition_uri: https://w3id.org/lmodel/slsa/resource_uri
@@ -2041,6 +2440,96 @@ slots:
     usage_slot_name: resource_uri
     range: uri
     required: true
+  SlsaVerificationSummaryPolicy_resource_uri:
+    name: SlsaVerificationSummaryPolicy_resource_uri
+    definition_uri: https://w3id.org/lmodel/slsa/resource_uri
+    description: The URI that identifies a resource, such as a package URL, a git
+      repository address or an OCI image reference.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    mappings:
+    - slsa:resource_uri
+    is_a: resource_uri
+    domain: SlsaVerificationSummaryPolicy
+    slot_uri: slsa:resource_uri
+    alias: resource_uri
+    owner: SlsaVerificationSummaryPolicy
+    domain_of:
+    - SlsaVerificationSummaryPolicy
+    is_usage_slot: true
+    usage_slot_name: resource_uri
+    range: uri
+    required: true
+  SlsaVerificationSummaryPolicy_digest:
+    name: SlsaVerificationSummaryPolicy_digest
+    definition_uri: https://w3id.org/lmodel/slsa/digest
+    description: The cryptographic digests of a resource's content, keyed by algorithm.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    mappings:
+    - slsa:digest
+    is_a: digest
+    domain: SlsaVerificationSummaryPolicy
+    slot_uri: slsa:digest
+    alias: digest
+    owner: SlsaVerificationSummaryPolicy
+    domain_of:
+    - SlsaVerificationSummaryPolicy
+    is_usage_slot: true
+    usage_slot_name: digest
+    range: InTotoDigestSet
+    recommended: true
+    inlined: true
+    inlined_as_list: true
+  SlsaVerificationSummaryInputAttestation_digest:
+    name: SlsaVerificationSummaryInputAttestation_digest
+    definition_uri: https://w3id.org/lmodel/slsa/digest
+    description: The cryptographic digests of a resource's content, keyed by algorithm.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    mappings:
+    - slsa:digest
+    is_a: digest
+    domain: SlsaVerificationSummaryInputAttestation
+    slot_uri: slsa:digest
+    alias: digest
+    owner: SlsaVerificationSummaryInputAttestation
+    domain_of:
+    - SlsaVerificationSummaryInputAttestation
+    is_usage_slot: true
+    usage_slot_name: digest
+    range: InTotoDigestSet
+    required: true
+    inlined: true
+    inlined_as_list: true
+  SlsaVerificationSummaryInputAttestation_resource_uri:
+    name: SlsaVerificationSummaryInputAttestation_resource_uri
+    definition_uri: https://w3id.org/lmodel/slsa/resource_uri
+    description: The URI that identifies a resource, such as a package URL, a git
+      repository address or an OCI image reference.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    mappings:
+    - slsa:resource_uri
+    is_a: resource_uri
+    domain: SlsaVerificationSummaryInputAttestation
+    slot_uri: slsa:resource_uri
+    alias: resource_uri
+    owner: SlsaVerificationSummaryInputAttestation
+    domain_of:
+    - SlsaVerificationSummaryInputAttestation
+    is_usage_slot: true
+    usage_slot_name: resource_uri
+    range: uri
+    recommended: true
   SlsaSourceProvenance_revision:
     name: SlsaSourceProvenance_revision
     definition_uri: https://w3id.org/lmodel/slsa/revision
@@ -2072,6 +2561,7 @@ classes:
     - slsaDocument__attestations
     - slsaDocument__parties
     - slsaDocument__build_platforms
+    - slsaDocument__control_planes
     - slsaDocument__packages
     - slsaDocument__package_registries
     - slsaDocument__source_control_systems
@@ -2100,6 +2590,13 @@ classes:
         name: build_platforms
         description: The build platforms.
         range: SlsaBuildPlatform
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      control_planes:
+        name: control_planes
+        description: The control planes of the build platforms.
+        range: SlsaControlPlane
         multivalued: true
         inlined: true
         inlined_as_list: true
@@ -2170,11 +2667,20 @@ classes:
   InTotoDigestSet:
     name: InTotoDigestSet
     definition_uri: https://w3id.org/lmodel/slsa/InTotoDigestSet
-    description: A set of digests over one artifact, keyed by algorithm, from which
-      a consumer picks the algorithm it trusts.
+    description: A set of one or more digests over one artifact, keyed by algorithm,
+      from which a consumer picks the algorithm it trusts.
+    notes:
+    - Each condition in any_of names its range through a nested any_of, because the
+      JSON Schema generator leaves a condition's own range out, and a null value would
+      then count as present.
     comments:
-    - Digests are lowercase hexadecimal. The in-toto framework defines more algorithms
-      than the five modelled here.
+    - The named algorithms take lowercase hexadecimal, and additional_digests holds
+      any other algorithm, such as an SCS's own revision type.
+    - A consumer accepts only the algorithms it considers secure and ignores the rest,
+      and two sets match when any accepted algorithm matches.
+    - SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least
+      32 bytes, since a shorter digest resists collisions too weakly to identify an
+      artifact.
     in_subset:
     - slsa_build_track
     - slsa_source_track
@@ -2183,37 +2689,345 @@ classes:
     - https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md
     slots:
     - inTotoDigestSet__sha256
+    - inTotoDigestSet__sha224
+    - inTotoDigestSet__sha384
     - inTotoDigestSet__sha512
+    - inTotoDigestSet__sha512_224
+    - inTotoDigestSet__sha512_256
+    - inTotoDigestSet__sha3_224
+    - inTotoDigestSet__sha3_256
+    - inTotoDigestSet__sha3_384
+    - inTotoDigestSet__sha3_512
+    - inTotoDigestSet__shake128
+    - inTotoDigestSet__shake256
+    - inTotoDigestSet__blake2b
+    - inTotoDigestSet__blake2s
+    - inTotoDigestSet__ripemd160
+    - inTotoDigestSet__sm3
+    - inTotoDigestSet__gost
+    - inTotoDigestSet__sha1
+    - inTotoDigestSet__md5
+    - inTotoDigestSet__dir_hash
     - inTotoDigestSet__git_commit
     - inTotoDigestSet__git_tree
-    - inTotoDigestSet__dir_hash
+    - inTotoDigestSet__git_blob
+    - inTotoDigestSet__git_tag
+    - inTotoDigestSet__additional_digests
     attributes:
       sha256:
         name: sha256
         description: The SHA-256 digest of the artifact.
         pattern: ^[a-f0-9]{64}$
+      sha224:
+        name: sha224
+        description: The SHA-224 digest of the artifact.
+        pattern: ^[a-f0-9]{56}$
+      sha384:
+        name: sha384
+        description: The SHA-384 digest of the artifact.
+        pattern: ^[a-f0-9]{96}$
       sha512:
         name: sha512
         description: The SHA-512 digest of the artifact.
         pattern: ^[a-f0-9]{128}$
+      sha512_224:
+        name: sha512_224
+        description: The SHA-512/224 digest of the artifact.
+        pattern: ^[a-f0-9]{56}$
+      sha512_256:
+        name: sha512_256
+        description: The SHA-512/256 digest of the artifact.
+        pattern: ^[a-f0-9]{64}$
+      sha3_224:
+        name: sha3_224
+        description: The SHA3-224 digest of the artifact.
+        pattern: ^[a-f0-9]{56}$
+      sha3_256:
+        name: sha3_256
+        description: The SHA3-256 digest of the artifact.
+        pattern: ^[a-f0-9]{64}$
+      sha3_384:
+        name: sha3_384
+        description: The SHA3-384 digest of the artifact.
+        pattern: ^[a-f0-9]{96}$
+      sha3_512:
+        name: sha3_512
+        description: The SHA3-512 digest of the artifact.
+        pattern: ^[a-f0-9]{128}$
+      shake128:
+        name: shake128
+        description: The SHAKE128 digest of the artifact, of at least 32 bytes.
+        pattern: ^[a-f0-9]{64}([a-f0-9]{2})*$
+      shake256:
+        name: shake256
+        description: The SHAKE256 digest of the artifact, of at least 32 bytes.
+        pattern: ^[a-f0-9]{64}([a-f0-9]{2})*$
+      blake2b:
+        name: blake2b
+        description: The BLAKE2b digest of the artifact, of 32 to 64 bytes.
+        pattern: ^[a-f0-9]{64}([a-f0-9]{2}){0,32}$
+      blake2s:
+        name: blake2s
+        description: The BLAKE2s digest of the artifact, at its full 32 bytes.
+        pattern: ^[a-f0-9]{64}$
+      ripemd160:
+        name: ripemd160
+        description: The RIPEMD-160 digest of the artifact.
+        pattern: ^[a-f0-9]{40}$
+      sm3:
+        name: sm3
+        description: The SM3 digest of the artifact.
+        pattern: ^[a-f0-9]{64}$
+      gost:
+        name: gost
+        description: The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
+        pattern: ^[a-f0-9]{64}([a-f0-9]{64})?$
+      sha1:
+        name: sha1
+        description: The SHA-1 digest of the artifact.
+        comments:
+        - SHA-1 lacks collision resistance, so most consumers should not rely on it.
+        pattern: ^[a-f0-9]{40}$
+      md5:
+        name: md5
+        description: The MD5 digest of the artifact.
+        comments:
+        - MD5 lacks collision resistance, so most consumers should not accept it.
+        pattern: ^[a-f0-9]{32}$
+      dir_hash:
+        name: dir_hash
+        description: A digest over a directory's content by the dirhash Hash1 function,
+          in lowercase hexadecimal rather than base64.
+        pattern: ^[a-f0-9]{64}$
       git_commit:
         name: git_commit
         description: The git commit id of a source revision.
         pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
       git_tree:
         name: git_tree
-        description: The git tree id of a source revision's content.
+        description: The git tree id of a source revision's content, or of any file
+          tree.
         pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
-      dir_hash:
-        name: dir_hash
-        description: A digest over a directory's content, as the in-toto framework
-          defines it.
+      git_blob:
+        name: git_blob
+        description: The git blob id of a file's content.
+        pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
+      git_tag:
+        name: git_tag
+        description: The git object id of an annotated tag.
+        pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
+      additional_digests:
+        name: additional_digests
+        description: The digests under algorithms this class does not name.
+        range: InTotoAdditionalDigest
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+        minimum_cardinality: 1
     class_uri: slsa:InTotoDigestSet
+    any_of:
+    - slot_conditions:
+        sha256:
+          name: sha256
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha224:
+          name: sha224
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha384:
+          name: sha384
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha512:
+          name: sha512
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha512_224:
+          name: sha512_224
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha512_256:
+          name: sha512_256
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha3_224:
+          name: sha3_224
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha3_256:
+          name: sha3_256
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha3_384:
+          name: sha3_384
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha3_512:
+          name: sha3_512
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        shake128:
+          name: shake128
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        shake256:
+          name: shake256
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        blake2b:
+          name: blake2b
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        blake2s:
+          name: blake2s
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        ripemd160:
+          name: ripemd160
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sm3:
+          name: sm3
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        gost:
+          name: gost
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        sha1:
+          name: sha1
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        md5:
+          name: md5
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        dir_hash:
+          name: dir_hash
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        git_commit:
+          name: git_commit
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        git_tree:
+          name: git_tree
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        git_blob:
+          name: git_blob
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        git_tag:
+          name: git_tag
+          required: true
+          any_of:
+          - range: string
+    - slot_conditions:
+        additional_digests:
+          name: additional_digests
+          required: true
+          multivalued: true
+  InTotoAdditionalDigest:
+    name: InTotoAdditionalDigest
+    definition_uri: https://w3id.org/lmodel/slsa/InTotoAdditionalDigest
+    description: One digest under an algorithm that InTotoDigestSet does not name,
+      such as an SCS's own revision type.
+    comments:
+    - In the attestation's JSON the algorithm is a key of the digest set beside the
+      named ones, and an algorithm the framework does not define documents how its
+      value is encoded.
+    - An SCS that does not use cryptographic digests defines a canonical revision
+      type of its own that includes the repository, such as svn_revision_id.
+    - Each algorithm appears once in a list, since the attestation's JSON uses it
+      as a key; the validator does not check this.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    see_also:
+    - https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md
+    - https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation
+    slots:
+    - inTotoAdditionalDigest__algorithm
+    - inTotoAdditionalDigest__value
+    attributes:
+      algorithm:
+        name: algorithm
+        description: The algorithm's name, as the key the attestation's JSON uses,
+          such as svn_revision_id.
+        comments:
+        - An algorithm that InTotoDigestSet names, by its JSON key or by its field
+          name, goes in that field instead.
+        required: true
+        pattern: ^[a-z][A-Za-z0-9_]*$
+        none_of:
+        - equals_string_in: *id001
+      value:
+        name: value
+        description: The digest under that algorithm, in the encoding the algorithm
+          documents.
+        required: true
+        pattern: ^\S+$
+    class_uri: slsa:InTotoAdditionalDigest
   InTotoAnnotation:
     name: InTotoAnnotation
     definition_uri: https://w3id.org/lmodel/slsa/InTotoAnnotation
-    description: One vendor-specific annotation on a resource descriptor, with a key
-      and one or more values.
+    description: 'One vendor-specific annotation on a resource descriptor: a key and
+      its values.'
+    comments:
+    - The attestation's JSON allows any JSON value. A string becomes one value and
+      an array one value per item; any other value or item is written as its JSON
+      text, so one value cannot tell a string from a one-item array.
+    - Each key appears once in a list, since the attestation's JSON uses it as a key;
+      the validator does not check this.
     in_subset:
     - slsa_build_track
     - slsa_source_track
@@ -2234,11 +3048,15 @@ classes:
   InTotoResourceDescriptor:
     name: InTotoResourceDescriptor
     definition_uri: https://w3id.org/lmodel/slsa/InTotoResourceDescriptor
-    description: A reference to a software artifact or other resource, by URI, by
-      digest, or both, with optional metadata.
+    description: A reference to a software artifact or other resource by URI or digest,
+      or the resource itself as content, with optional metadata.
+    notes:
+    - Each condition in any_of names its range through a nested any_of, because the
+      JSON Schema generator leaves a condition's own range out, and a null value would
+      then count as present.
     comments:
-    - A descriptor needs a URI, a digest or both; which one a field requires is said
-      on that field.
+    - A descriptor carries at least one of a URI, a digest or its content; a field
+      that needs a particular one says so.
     in_subset:
     - slsa_build_track
     - slsa_source_track
@@ -2253,6 +3071,7 @@ classes:
     - inTotoResourceDescriptor__resource_name
     - inTotoResourceDescriptor__download_location
     - inTotoResourceDescriptor__media_type
+    - inTotoResourceDescriptor__content
     - inTotoResourceDescriptor__annotations
     attributes:
       resource_name:
@@ -2266,6 +3085,14 @@ classes:
       media_type:
         name: media_type
         description: The IANA media type of the resource's content.
+      content:
+        name: content
+        description: The resource's content itself, base64-encoded, for a resource
+          small enough to carry inline.
+        comments:
+        - The in-toto framework asks for content under 1 KB, so that attestations
+          stay small.
+        pattern: ^[A-Za-z0-9+/_-]+={0,2}$
       annotations:
         name: annotations
         description: Vendor-specific annotations on the resource, such as the source
@@ -2275,6 +3102,51 @@ classes:
         inlined: true
         inlined_as_list: true
     class_uri: slsa:InTotoResourceDescriptor
+    any_of:
+    - slot_conditions:
+        resource_uri:
+          name: resource_uri
+          required: true
+          any_of:
+          - range: uri
+    - slot_conditions:
+        digest:
+          name: digest
+          required: true
+          any_of:
+          - range: InTotoDigestSet
+    - slot_conditions:
+        content:
+          name: content
+          required: true
+          any_of:
+          - range: string
+  InTotoStatementSubject:
+    name: InTotoStatementSubject
+    definition_uri: https://w3id.org/lmodel/slsa/InTotoStatementSubject
+    description: 'One artifact an in-toto statement is about: a resource descriptor
+      that carries a digest.'
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    - slsa_build_environment_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_core
+    see_also:
+    - https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md
+    is_a: InTotoResourceDescriptor
+    slots:
+    - resource_uri
+    - inTotoResourceDescriptor__resource_name
+    - inTotoResourceDescriptor__download_location
+    - inTotoResourceDescriptor__media_type
+    - inTotoResourceDescriptor__content
+    - inTotoResourceDescriptor__annotations
+    - InTotoStatementSubject_digest
+    slot_usage:
+      digest:
+        name: digest
+        required: true
+    class_uri: slsa:InTotoStatementSubject
   InTotoStatement:
     name: InTotoStatement
     definition_uri: https://w3id.org/lmodel/slsa/InTotoStatement
@@ -2310,12 +3182,13 @@ classes:
         pattern: ^https://in-toto\.io/Statement/v1$
       subject:
         name: subject
-        description: The artifacts the predicate is about; each carries a digest.
-        range: InTotoResourceDescriptor
+        description: The artifacts the predicate is about, each with a digest.
+        range: InTotoStatementSubject
         required: true
         multivalued: true
         inlined: true
         inlined_as_list: true
+        minimum_cardinality: 1
       predicate_type:
         name: predicate_type
         description: The URI that names the predicate's type and so its schema, such
@@ -2332,8 +3205,12 @@ classes:
         name: attestation_storage_uri
         description: Where the signed attestation is stored or can be fetched.
         comments:
-        - SLSA names no standard place to store attestations; recording the place
-          used helps consumers find them (Tamanna et al., 2024, LF.1).
+        - 'SLSA asks producers to publish attestations in at least one place and preferably
+          more: beside the source repository''s releases, beside the artifact in its
+          package registry, which it prefers in the long term, or elsewhere with an
+          entry in a transparency log.'
+        - Where to store attestations was an open question for practitioners (Tamanna
+          et al., 2024, LF.1).
         in_subset:
         - slsa_adoption_study
         range: uri
@@ -2532,6 +3409,9 @@ classes:
     name: SlsaComponentVersion
     definition_uri: https://w3id.org/lmodel/slsa/SlsaComponentVersion
     description: The version of one named component of a platform.
+    comments:
+    - Each component appears once in a list, since the attestation's JSON uses its
+      name as a key; the validator does not check this.
     in_subset:
     - slsa_build_track
     from_schema: https://w3id.org/lmodel/slsa/slsa_core
@@ -2626,8 +3506,8 @@ classes:
       rebuild it.
     comments:
     - The statement that carries it has predicate_type https://slsa.dev/provenance/v1.
-    - Generating valid provenance was the most frequent adoption difficulty practitioners
-      reported (Tamanna et al., 2024, CI.1).
+    - Complicated provenance generation was the challenge with the most issues in
+      the study (Tamanna et al., 2024, CI.1).
     in_subset:
     - slsa_build_track
     from_schema: https://w3id.org/lmodel/slsa/slsa_build
@@ -2680,14 +3560,16 @@ classes:
         required: true
       external_parameters:
         name: external_parameters
-        description: The inputs under the tenant's control; complete at Build L3 and
-          verified by consumers.
+        description: The inputs under the tenant's control; required at Build L1,
+          complete at Build L3 and verified by consumers.
         comments:
         - Verifiers reject parameters they do not recognize here.
         range: SlsaBuildParameter
+        required: true
         multivalued: true
         inlined: true
         inlined_as_list: true
+        minimum_cardinality: 1
       internal_parameters:
         name: internal_parameters
         description: The inputs the platform sets itself; kept for debugging, incident
@@ -2709,8 +3591,11 @@ classes:
         description: Whether the build could reach only the dependencies it declared,
           with no other network or filesystem access.
         comments:
-        - Hermetic builds are an isolation property Build L3 platforms aim for, and
-          the one practitioners found hardest (Tamanna et al., 2024, CI.1).
+        - SLSA v1.2 does not require hermetic builds; Build L3's isolation is a different
+          property, and hermeticity is a candidate for a future Build L4.
+        - The study cites a 2023 industry survey in which over half the participants
+          found hermetic builds hard to implement, and lists "hermetic build" among
+          SLSA's unclear terms (Tamanna et al., 2024, UC.1).
         in_subset:
         - slsa_adoption_study
         range: boolean
@@ -2741,6 +3626,8 @@ classes:
     comments:
     - The specification recommends string values; a structured value is written as
       its JSON text.
+    - Each name appears once in a list, since the attestation's JSON uses it as a
+      key; the validator does not check this.
     in_subset:
     - slsa_build_track
     from_schema: https://w3id.org/lmodel/slsa/slsa_build
@@ -2873,14 +3760,14 @@ classes:
         name: policy
         description: The policy the subject was verified against, by URI and preferably
           by digest too.
-        range: InTotoResourceDescriptor
+        range: SlsaVerificationSummaryPolicy
         required: true
         inlined: true
       input_attestations:
         name: input_attestations
         description: Every attestation the verifier consulted, each with a digest;
           complete when present.
-        range: InTotoResourceDescriptor
+        range: SlsaVerificationSummaryInputAttestation
         multivalued: true
         inlined: true
         inlined_as_list: true
@@ -2891,23 +3778,34 @@ classes:
         required: true
       verified_levels:
         name: verified_levels
-        description: The highest level verified in each track, and any verified property;
-          a level implies the levels below it.
-        range: SlsaResult
+        description: The highest level verified in each track, any verified property,
+          and any result of the issuer's own; a level implies the levels below it.
+        comments:
+        - A VSA lists at most one level per track, and only FAILED when verification
+          failed; the validator checks neither.
+        range: slsa_result_value
         required: true
         multivalued: true
+        pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
+        minimum_cardinality: 1
       organization_properties:
         name: organization_properties
-        description: Properties an organization defines for its own consumers, each
-          prefixed ORG_SOURCE_.
+        description: Properties the organization defines for the revision, each prefixed
+          ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.
+        deprecated: Write these properties in verified_levels, where the attestation's
+          JSON puts them; this field goes in a later release.
         in_subset:
         - slsa_source_track
+        deprecated_element_has_possible_replacement: slsa:verified_levels
         multivalued: true
         pattern: ^ORG_SOURCE_
       dependency_levels:
         name: dependency_levels
         description: How many transitive dependencies were verified at each level;
           absent when the verifier makes no claim about dependencies.
+        comments:
+        - The attestation's JSON tells an empty map (no dependencies) from an absent
+          one (no claim); this list cannot, so an empty list reads as no claim.
         range: SlsaDependencyLevelCount
         multivalued: true
         inlined: true
@@ -2922,6 +3820,9 @@ classes:
     definition_uri: https://w3id.org/lmodel/slsa/SlsaDependencyLevelCount
     description: The number of an artifact's transitive dependencies verified at one
       level, each counted once per track at its highest level.
+    comments:
+    - Each level appears once in a list, since the attestation's JSON uses it as a
+      key; the validator does not check this.
     in_subset:
     - slsa_build_track
     from_schema: https://w3id.org/lmodel/slsa/slsa_verification
@@ -2931,9 +3832,11 @@ classes:
     attributes:
       verified_level:
         name: verified_level
-        description: The level the dependencies were verified at.
-        range: SlsaResult
+        description: The level the dependencies were verified at, or a result of the
+          issuer's own.
+        range: slsa_result_value
         required: true
+        pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
       dependency_count:
         name: dependency_count
         description: How many dependencies were verified at that level.
@@ -2941,6 +3844,64 @@ classes:
         required: true
         minimum_value: 0
     class_uri: slsa:SlsaDependencyLevelCount
+  SlsaVerificationSummaryPolicy:
+    name: SlsaVerificationSummaryPolicy
+    definition_uri: https://w3id.org/lmodel/slsa/SlsaVerificationSummaryPolicy
+    description: 'The policy a verification summary applied: a resource descriptor
+      that names the policy by URI.'
+    comments:
+    - A digest is recommended as well, to pin the exact version of the policy.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+    see_also:
+    - https://slsa.dev/spec/v1.2/verification_summary#policy
+    is_a: InTotoResourceDescriptor
+    slots:
+    - inTotoResourceDescriptor__resource_name
+    - inTotoResourceDescriptor__download_location
+    - inTotoResourceDescriptor__media_type
+    - inTotoResourceDescriptor__content
+    - inTotoResourceDescriptor__annotations
+    - SlsaVerificationSummaryPolicy_resource_uri
+    - SlsaVerificationSummaryPolicy_digest
+    slot_usage:
+      resource_uri:
+        name: resource_uri
+        required: true
+      digest:
+        name: digest
+        recommended: true
+    class_uri: slsa:SlsaVerificationSummaryPolicy
+  SlsaVerificationSummaryInputAttestation:
+    name: SlsaVerificationSummaryInputAttestation
+    definition_uri: https://w3id.org/lmodel/slsa/SlsaVerificationSummaryInputAttestation
+    description: 'One attestation a verifier consulted: a resource descriptor that
+      carries the attestation''s digest.'
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+    see_also:
+    - https://slsa.dev/spec/v1.2/verification_summary#inputAttestations
+    is_a: InTotoResourceDescriptor
+    slots:
+    - inTotoResourceDescriptor__resource_name
+    - inTotoResourceDescriptor__download_location
+    - inTotoResourceDescriptor__media_type
+    - inTotoResourceDescriptor__content
+    - inTotoResourceDescriptor__annotations
+    - SlsaVerificationSummaryInputAttestation_digest
+    - SlsaVerificationSummaryInputAttestation_resource_uri
+    slot_usage:
+      digest:
+        name: digest
+        required: true
+      resource_uri:
+        name: resource_uri
+        recommended: true
+    class_uri: slsa:SlsaVerificationSummaryInputAttestation
   SlsaSourceControlSystem:
     name: SlsaSourceControlSystem
     definition_uri: https://w3id.org/lmodel/slsa/SlsaSourceControlSystem
@@ -3161,7 +4122,7 @@ classes:
         inlined: true
       dependencies:
         name: dependencies
-        description: The dependencies, each identified by URI and digest.
+        description: The dependencies, each as a resource descriptor.
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true
@@ -3314,6 +4275,6 @@ classes:
     class_uri: slsa:SlsaAdoptionMetadata
 metamodel_version: 1.12.0
 source_file: slsa.yaml
-source_file_date: '2026-10-23T21:57:38'
-source_file_size: 3608
+source_file_date: '2026-10-27T11:08:32'
+source_file_size: 3804
 

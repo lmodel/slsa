@@ -1,5 +1,6 @@
 # A Source VSA: the repository is the resource, the revision id is the digest,
-# and the branches that pointed at the revision are an annotation.
+# and the branches that pointed at the revision are an annotation. The
+# organization's own property sits among the verified levels.
 statement_type: https://in-toto.io/Statement/v1
 subject:
   - resource_uri: https://github.com/example/myapp/commit/da39a3ee5e6b4b0d3255bfef95601890afd80709
@@ -23,5 +24,4 @@ predicate:
   verified_levels:
     - SLSA_SOURCE_LEVEL_3
     - SLSA_SOURCE_TWO_PARTY_REVIEWED
-  organization_properties:
     - ORG_SOURCE_STATIC_ANALYSIS

@@ -4,6 +4,8 @@ build_platforms:
   - builder_id: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
     build_level: SLSA_BUILD_LEVEL_3
     hosted: true
+control_planes:
+  - build_platform: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
 parties:
   - party_type: SlsaProducer
     party_name: Example project maintainers

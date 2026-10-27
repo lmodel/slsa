@@ -1,0 +1,5 @@
+# INVALID: an algorithm the set names goes in its own field, not among the
+# additional digests.
+additional_digests:
+  - algorithm: sha256
+    value: 185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969

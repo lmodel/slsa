@@ -10,11 +10,11 @@ import java.util.List;
 import lombok.*;
 
 /**
-  The build platform component that orchestrates each independent build execution and generates provenance. Managed by an admin and trusted to be outside of tenant control. Responsible for generating and signing provenance at SLSA Build L2+.
+  One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.
 **/
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ControlPlane  {
+public class SlsaVerificationSummaryInputAttestation extends InTotoResourceDescriptor {
 
 
 

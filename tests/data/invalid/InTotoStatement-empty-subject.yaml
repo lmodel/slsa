@@ -1,0 +1,4 @@
+# INVALID: a statement's subject list is never empty.
+statement_type: https://in-toto.io/Statement/v1
+subject: []
+predicate_type: https://slsa.dev/provenance/v1

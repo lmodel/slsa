@@ -1,0 +1,2 @@
+# INVALID: a digest given as null counts as no digest, so the set is empty.
+sha256: null

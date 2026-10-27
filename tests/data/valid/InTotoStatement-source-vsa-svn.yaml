@@ -1,0 +1,21 @@
+# A Source VSA from an SCS that does not use cryptographic digests: the
+# revision is named by the SCS's own canonical type, which includes the
+# repository.
+statement_type: https://in-toto.io/Statement/v1
+subject:
+  - resource_uri: https://svn.myproject.org/viewvc/MyProject/trunk?revision=2019
+    digest:
+      additional_digests:
+        - algorithm: svn_revision_id
+          value: svn+https://svn.myproject.org/svn/MyProject/trunk@2019
+predicate_type: https://slsa.dev/verification_summary/v1
+predicate:
+  predicate_kind: SlsaVerificationSummary
+  verifier:
+    verifier_id: https://example.com/source_verifier
+  resource_uri: svn+https://svn.myproject.org/svn/MyProject
+  policy:
+    resource_uri: https://example.com/slsa_source.policy
+  verification_result: PASSED
+  verified_levels:
+    - SLSA_SOURCE_LEVEL_2

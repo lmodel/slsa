@@ -1,0 +1,4 @@
+# INVALID: a URI, digest and content given as null name no resource.
+resource_uri: null
+digest: null
+content: null

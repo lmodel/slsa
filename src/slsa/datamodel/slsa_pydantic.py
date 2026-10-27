@@ -205,7 +205,7 @@ class SlsaSourceLevel(str, Enum):
     """
     SLSA_SOURCE_LEVEL_0 = "SLSA_SOURCE_LEVEL_0"
     """
-    No Source track claims; the SCS issued no VSA for the revision.
+    No Source track guarantees; a revision for which the SCS issues no Source VSA is at this level.
     """
     SLSA_SOURCE_LEVEL_1 = "SLSA_SOURCE_LEVEL_1"
     """
@@ -243,7 +243,7 @@ class SlsaReviewType(str, Enum):
     """
     AUTOMATED = "AUTOMATED"
     """
-    A tool or bot reviewed the change with no second person, which does not meet Source L4.
+    A tool or bot reviewed the change with no second person, which is not two-party review.
     """
 
 
@@ -323,7 +323,7 @@ class SlsaAdoptionStrategy(str, Enum):
     """
     ENHANCE_ALIGNMENT_FLEXIBILITY = "ENHANCE_ALIGNMENT_FLEXIBILITY"
     """
-    Make SLSA fit more contexts, with build-system tracks, flexibility for varied organizations and alignment with OpenSSF practices.
+    Make SLSA fit more contexts, with build-system tracks, gamified levels, flexibility for varied organizations and alignment with OpenSSF practices.
     """
     PROVIDE_DETAILED_DOCUMENTATION = "PROVIDE_DETAILED_DOCUMENTATION"
     """
@@ -346,19 +346,128 @@ class SlsaAdoptionStrategy(str, Enum):
 
 class InTotoDigestSet(ConfiguredBaseModel):
     """
-    A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+    A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['Digests are lowercase hexadecimal. The in-toto framework '
-                      'defines more algorithms than the five modelled here.'],
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'any_of': [{'slot_conditions': {'sha256': {'any_of': [{'range': 'string'}],
+                                                    'name': 'sha256',
+                                                    'required': True}}},
+                    {'slot_conditions': {'sha224': {'any_of': [{'range': 'string'}],
+                                                    'name': 'sha224',
+                                                    'required': True}}},
+                    {'slot_conditions': {'sha384': {'any_of': [{'range': 'string'}],
+                                                    'name': 'sha384',
+                                                    'required': True}}},
+                    {'slot_conditions': {'sha512': {'any_of': [{'range': 'string'}],
+                                                    'name': 'sha512',
+                                                    'required': True}}},
+                    {'slot_conditions': {'sha512_224': {'any_of': [{'range': 'string'}],
+                                                        'name': 'sha512_224',
+                                                        'required': True}}},
+                    {'slot_conditions': {'sha512_256': {'any_of': [{'range': 'string'}],
+                                                        'name': 'sha512_256',
+                                                        'required': True}}},
+                    {'slot_conditions': {'sha3_224': {'any_of': [{'range': 'string'}],
+                                                      'name': 'sha3_224',
+                                                      'required': True}}},
+                    {'slot_conditions': {'sha3_256': {'any_of': [{'range': 'string'}],
+                                                      'name': 'sha3_256',
+                                                      'required': True}}},
+                    {'slot_conditions': {'sha3_384': {'any_of': [{'range': 'string'}],
+                                                      'name': 'sha3_384',
+                                                      'required': True}}},
+                    {'slot_conditions': {'sha3_512': {'any_of': [{'range': 'string'}],
+                                                      'name': 'sha3_512',
+                                                      'required': True}}},
+                    {'slot_conditions': {'shake128': {'any_of': [{'range': 'string'}],
+                                                      'name': 'shake128',
+                                                      'required': True}}},
+                    {'slot_conditions': {'shake256': {'any_of': [{'range': 'string'}],
+                                                      'name': 'shake256',
+                                                      'required': True}}},
+                    {'slot_conditions': {'blake2b': {'any_of': [{'range': 'string'}],
+                                                     'name': 'blake2b',
+                                                     'required': True}}},
+                    {'slot_conditions': {'blake2s': {'any_of': [{'range': 'string'}],
+                                                     'name': 'blake2s',
+                                                     'required': True}}},
+                    {'slot_conditions': {'ripemd160': {'any_of': [{'range': 'string'}],
+                                                       'name': 'ripemd160',
+                                                       'required': True}}},
+                    {'slot_conditions': {'sm3': {'any_of': [{'range': 'string'}],
+                                                 'name': 'sm3',
+                                                 'required': True}}},
+                    {'slot_conditions': {'gost': {'any_of': [{'range': 'string'}],
+                                                  'name': 'gost',
+                                                  'required': True}}},
+                    {'slot_conditions': {'sha1': {'any_of': [{'range': 'string'}],
+                                                  'name': 'sha1',
+                                                  'required': True}}},
+                    {'slot_conditions': {'md5': {'any_of': [{'range': 'string'}],
+                                                 'name': 'md5',
+                                                 'required': True}}},
+                    {'slot_conditions': {'dir_hash': {'any_of': [{'range': 'string'}],
+                                                      'name': 'dir_hash',
+                                                      'required': True}}},
+                    {'slot_conditions': {'git_commit': {'any_of': [{'range': 'string'}],
+                                                        'name': 'git_commit',
+                                                        'required': True}}},
+                    {'slot_conditions': {'git_tree': {'any_of': [{'range': 'string'}],
+                                                      'name': 'git_tree',
+                                                      'required': True}}},
+                    {'slot_conditions': {'git_blob': {'any_of': [{'range': 'string'}],
+                                                      'name': 'git_blob',
+                                                      'required': True}}},
+                    {'slot_conditions': {'git_tag': {'any_of': [{'range': 'string'}],
+                                                     'name': 'git_tag',
+                                                     'required': True}}},
+                    {'slot_conditions': {'additional_digests': {'multivalued': True,
+                                                                'name': 'additional_digests',
+                                                                'required': True}}}],
+         'comments': ['The named algorithms take lowercase hexadecimal, and '
+                      "additional_digests holds any other algorithm, such as an SCS's "
+                      'own revision type.',
+                      'A consumer accepts only the algorithms it considers secure and '
+                      'ignores the rest, and two sets match when any accepted '
+                      'algorithm matches.',
+                      'SHAKE and BLAKE2 digests can be of any length, and this schema '
+                      'asks for at least 32 bytes, since a shorter digest resists '
+                      'collisions too weakly to identify an artifact.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'notes': ['Each condition in any_of names its range through a nested any_of, '
+                   "because the JSON Schema generator leaves a condition's own range "
+                   'out, and a null value would then count as present.'],
          'see_also': ['https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md']})
 
     sha256: Optional[str] = Field(default=None, description="""The SHA-256 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha224: Optional[str] = Field(default=None, description="""The SHA-224 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha384: Optional[str] = Field(default=None, description="""The SHA-384 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
     sha512: Optional[str] = Field(default=None, description="""The SHA-512 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha512_224: Optional[str] = Field(default=None, description="""The SHA-512/224 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha512_256: Optional[str] = Field(default=None, description="""The SHA-512/256 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha3_224: Optional[str] = Field(default=None, description="""The SHA3-224 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha3_256: Optional[str] = Field(default=None, description="""The SHA3-256 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha3_384: Optional[str] = Field(default=None, description="""The SHA3-384 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha3_512: Optional[str] = Field(default=None, description="""The SHA3-512 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    shake128: Optional[str] = Field(default=None, description="""The SHAKE128 digest of the artifact, of at least 32 bytes.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    shake256: Optional[str] = Field(default=None, description="""The SHAKE256 digest of the artifact, of at least 32 bytes.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    blake2b: Optional[str] = Field(default=None, description="""The BLAKE2b digest of the artifact, of 32 to 64 bytes.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    blake2s: Optional[str] = Field(default=None, description="""The BLAKE2s digest of the artifact, at its full 32 bytes.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    ripemd160: Optional[str] = Field(default=None, description="""The RIPEMD-160 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sm3: Optional[str] = Field(default=None, description="""The SM3 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    gost: Optional[str] = Field(default=None, description="""The GOST R 34.11 digest of the artifact, of 256 or 512 bits.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    sha1: Optional[str] = Field(default=None, description="""The SHA-1 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'comments': ['SHA-1 lacks collision resistance, so most consumers should not '
+                      'rely on it.'],
+         'domain_of': ['InTotoDigestSet']} })
+    md5: Optional[str] = Field(default=None, description="""The MD5 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'comments': ['MD5 lacks collision resistance, so most consumers should not '
+                      'accept it.'],
+         'domain_of': ['InTotoDigestSet']} })
+    dir_hash: Optional[str] = Field(default=None, description="""A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
     git_commit: Optional[str] = Field(default=None, description="""The git commit id of a source revision.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
-    git_tree: Optional[str] = Field(default=None, description="""The git tree id of a source revision's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
-    dir_hash: Optional[str] = Field(default=None, description="""A digest over a directory's content, as the in-toto framework defines it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    git_tree: Optional[str] = Field(default=None, description="""The git tree id of a source revision's content, or of any file tree.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    git_blob: Optional[str] = Field(default=None, description="""The git blob id of a file's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    git_tag: Optional[str] = Field(default=None, description="""The git object id of an annotated tag.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
+    additional_digests: Optional[list[InTotoAdditionalDigest]] = Field(default=None, description="""The digests under algorithms this class does not name.""", min_length=1, json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet']} })
 
     @field_validator('sha256')
     def pattern_sha256(cls, v):
@@ -373,6 +482,32 @@ class InTotoDigestSet(ConfiguredBaseModel):
             raise ValueError(err_msg)
         return v
 
+    @field_validator('sha224')
+    def pattern_sha224(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{56}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha224 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha224 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sha384')
+    def pattern_sha384(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{96}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha384 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha384 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
     @field_validator('sha512')
     def pattern_sha512(cls, v):
         pattern=re.compile(r"^[a-f0-9]{128}$")
@@ -383,6 +518,214 @@ class InTotoDigestSet(ConfiguredBaseModel):
                     raise ValueError(err_msg)
         elif isinstance(v, str) and not pattern.search(v):
             err_msg = f"Invalid sha512 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sha512_224')
+    def pattern_sha512_224(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{56}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha512_224 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha512_224 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sha512_256')
+    def pattern_sha512_256(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha512_256 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha512_256 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sha3_224')
+    def pattern_sha3_224(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{56}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha3_224 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha3_224 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sha3_256')
+    def pattern_sha3_256(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha3_256 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha3_256 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sha3_384')
+    def pattern_sha3_384(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{96}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha3_384 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha3_384 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sha3_512')
+    def pattern_sha3_512(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{128}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha3_512 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha3_512 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('shake128')
+    def pattern_shake128(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}([a-f0-9]{2})*$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid shake128 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid shake128 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('shake256')
+    def pattern_shake256(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}([a-f0-9]{2})*$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid shake256 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid shake256 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('blake2b')
+    def pattern_blake2b(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}([a-f0-9]{2}){0,32}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid blake2b format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid blake2b format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('blake2s')
+    def pattern_blake2s(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid blake2s format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid blake2s format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('ripemd160')
+    def pattern_ripemd160(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{40}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid ripemd160 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid ripemd160 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sm3')
+    def pattern_sm3(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sm3 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sm3 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('gost')
+    def pattern_gost(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}([a-f0-9]{64})?$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid gost format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid gost format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('sha1')
+    def pattern_sha1(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{40}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid sha1 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid sha1 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('md5')
+    def pattern_md5(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{32}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid md5 format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid md5 format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('dir_hash')
+    def pattern_dir_hash(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{64}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid dir_hash format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid dir_hash format: {v}"
             raise ValueError(err_msg)
         return v
 
@@ -412,12 +755,122 @@ class InTotoDigestSet(ConfiguredBaseModel):
             raise ValueError(err_msg)
         return v
 
+    @field_validator('git_blob')
+    def pattern_git_blob(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{40}([a-f0-9]{24})?$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid git_blob format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid git_blob format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('git_tag')
+    def pattern_git_tag(cls, v):
+        pattern=re.compile(r"^[a-f0-9]{40}([a-f0-9]{24})?$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid git_tag format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid git_tag format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+
+class InTotoAdditionalDigest(ConfiguredBaseModel):
+    """
+    One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ["In the attestation's JSON the algorithm is a key of the digest "
+                      'set beside the named ones, and an algorithm the framework does '
+                      'not define documents how its value is encoded.',
+                      'An SCS that does not use cryptographic digests defines a '
+                      'canonical revision type of its own that includes the '
+                      'repository, such as svn_revision_id.',
+                      "Each algorithm appears once in a list, since the attestation's "
+                      'JSON uses it as a key; the validator does not check this.'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'see_also': ['https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md',
+                      'https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation']})
+
+    algorithm: str = Field(default=..., description="""The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.""", json_schema_extra = { "linkml_meta": {'comments': ['An algorithm that InTotoDigestSet names, by its JSON key or by '
+                      'its field name, goes in that field instead.'],
+         'domain_of': ['InTotoAdditionalDigest'],
+         'none_of': [{'equals_string_in': ['sha256',
+                                           'sha224',
+                                           'sha384',
+                                           'sha512',
+                                           'sha512_224',
+                                           'sha512_256',
+                                           'sha3_224',
+                                           'sha3_256',
+                                           'sha3_384',
+                                           'sha3_512',
+                                           'shake128',
+                                           'shake256',
+                                           'blake2b',
+                                           'blake2s',
+                                           'ripemd160',
+                                           'sm3',
+                                           'gost',
+                                           'sha1',
+                                           'md5',
+                                           'dirHash',
+                                           'gitCommit',
+                                           'gitTree',
+                                           'gitBlob',
+                                           'gitTag',
+                                           'dir_hash',
+                                           'git_commit',
+                                           'git_tree',
+                                           'git_blob',
+                                           'git_tag']}]} })
+    value: str = Field(default=..., description="""The digest under that algorithm, in the encoding the algorithm documents.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoAdditionalDigest']} })
+
+    @field_validator('algorithm')
+    def pattern_algorithm(cls, v):
+        pattern=re.compile(r"^[a-z][A-Za-z0-9_]*$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid algorithm format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid algorithm format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+    @field_validator('value')
+    def pattern_value(cls, v):
+        pattern=re.compile(r"^\S+$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid value format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid value format: {v}"
+            raise ValueError(err_msg)
+        return v
+
 
 class InTotoAnnotation(ConfiguredBaseModel):
     """
-    One vendor-specific annotation on a resource descriptor, with a key and one or more values.
+    One vendor-specific annotation on a resource descriptor: a key and its values.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ["The attestation's JSON allows any JSON value. A string becomes "
+                      'one value and an array one value per item; any other value or '
+                      'item is written as its JSON text, so one value cannot tell a '
+                      'string from a one-item array.',
+                      "Each key appears once in a list, since the attestation's JSON "
+                      'uses it as a key; the validator does not check this.'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track', 'slsa_source_track']})
 
     annotation_key: str = Field(default=..., description="""The annotation's key.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoAnnotation']} })
@@ -426,15 +879,27 @@ class InTotoAnnotation(ConfiguredBaseModel):
 
 class InTotoResourceDescriptor(ConfiguredBaseModel):
     """
-    A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata.
+    A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['A descriptor needs a URI, a digest or both; which one a field '
-                      'requires is said on that field.'],
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'any_of': [{'slot_conditions': {'resource_uri': {'any_of': [{'range': 'uri'}],
+                                                          'name': 'resource_uri',
+                                                          'required': True}}},
+                    {'slot_conditions': {'digest': {'any_of': [{'range': 'InTotoDigestSet'}],
+                                                    'name': 'digest',
+                                                    'required': True}}},
+                    {'slot_conditions': {'content': {'any_of': [{'range': 'string'}],
+                                                     'name': 'content',
+                                                     'required': True}}}],
+         'comments': ['A descriptor carries at least one of a URI, a digest or its '
+                      'content; a field that needs a particular one says so.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track',
                        'slsa_source_track',
                        'slsa_dependency_track',
                        'slsa_build_environment_track'],
+         'notes': ['Each condition in any_of names its range through a nested any_of, '
+                   "because the JSON Schema generator leaves a condition's own range "
+                   'out, and a null value would then count as present.'],
          'see_also': ['https://github.com/in-toto/attestation/blob/main/spec/v1/resource_descriptor.md']})
 
     resource_uri: Optional[str] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaVerificationSummary'],
@@ -446,7 +911,62 @@ class InTotoResourceDescriptor(ConfiguredBaseModel):
     resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
     download_location: Optional[str] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
     media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    content: Optional[str] = Field(default=None, description="""The resource's content itself, base64-encoded, for a resource small enough to carry inline.""", json_schema_extra = { "linkml_meta": {'comments': ['The in-toto framework asks for content under 1 KB, so that '
+                      'attestations stay small.'],
+         'domain_of': ['InTotoResourceDescriptor']} })
     annotations: Optional[list[InTotoAnnotation]] = Field(default=None, description="""Vendor-specific annotations on the resource, such as the source references a Source VSA records.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+
+    @field_validator('content')
+    def pattern_content(cls, v):
+        pattern=re.compile(r"^[A-Za-z0-9+/_-]+={0,2}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid content format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid content format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+
+class InTotoStatementSubject(InTotoResourceDescriptor):
+    """
+    One artifact an in-toto statement is about: a resource descriptor that carries a digest.
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
+         'in_subset': ['slsa_build_track',
+                       'slsa_source_track',
+                       'slsa_build_environment_track'],
+         'see_also': ['https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md'],
+         'slot_usage': {'digest': {'name': 'digest', 'required': True}}})
+
+    resource_uri: Optional[str] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaVerificationSummary'],
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'slot_uri': 'slsa:resource_uri'} })
+    digest: InTotoDigestSet = Field(default=..., description="""The cryptographic digests of a resource's content, keyed by algorithm.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaMeasurement'],
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'slot_uri': 'slsa:digest'} })
+    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    download_location: Optional[str] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    content: Optional[str] = Field(default=None, description="""The resource's content itself, base64-encoded, for a resource small enough to carry inline.""", json_schema_extra = { "linkml_meta": {'comments': ['The in-toto framework asks for content under 1 KB, so that '
+                      'attestations stay small.'],
+         'domain_of': ['InTotoResourceDescriptor']} })
+    annotations: Optional[list[InTotoAnnotation]] = Field(default=None, description="""Vendor-specific annotations on the resource, such as the source references a Source VSA records.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+
+    @field_validator('content')
+    def pattern_content(cls, v):
+        pattern=re.compile(r"^[A-Za-z0-9+/_-]+={0,2}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid content format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid content format: {v}"
+            raise ValueError(err_msg)
+        return v
 
 
 class InTotoStatement(ConfiguredBaseModel):
@@ -466,12 +986,16 @@ class InTotoStatement(ConfiguredBaseModel):
                       'https://slsa.dev/spec/v1.2/attestation-model']})
 
     statement_type: str = Field(default=..., description="""The in-toto statement type, always https://in-toto.io/Statement/v1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement']} })
-    subject: list[InTotoResourceDescriptor] = Field(default=..., description="""The artifacts the predicate is about; each carries a digest.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement']} })
+    subject: list[InTotoStatementSubject] = Field(default=..., description="""The artifacts the predicate is about, each with a digest.""", min_length=1, json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement']} })
     predicate_type: str = Field(default=..., description="""The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement']} })
     predicate: Optional[Union[SlsaBuildProvenance,SlsaVerificationSummary,SlsaSourceProvenance,SlsaBuildEnvironmentAttestation]] = Field(default=None, description="""The predicate, one of the kinds this schema models; predicate_kind names which.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement']} })
-    attestation_storage_uri: Optional[str] = Field(default=None, description="""Where the signed attestation is stored or can be fetched.""", json_schema_extra = { "linkml_meta": {'comments': ['SLSA names no standard place to store attestations; recording '
-                      'the place used helps consumers find them (Tamanna et al., 2024, '
-                      'LF.1).'],
+    attestation_storage_uri: Optional[str] = Field(default=None, description="""Where the signed attestation is stored or can be fetched.""", json_schema_extra = { "linkml_meta": {'comments': ['SLSA asks producers to publish attestations in at least one '
+                      "place and preferably more: beside the source repository's "
+                      'releases, beside the artifact in its package registry, which it '
+                      'prefers in the long term, or elsewhere with an entry in a '
+                      'transparency log.',
+                      'Where to store attestations was an open question for '
+                      'practitioners (Tamanna et al., 2024, LF.1).'],
          'domain_of': ['InTotoStatement'],
          'in_subset': ['slsa_adoption_study']} })
     signing_tool: Optional[str] = Field(default=None, description="""The tool that signed the attestation, named by URI, such as Cosign or Notation.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement'], 'in_subset': ['slsa_ssf']} })
@@ -610,7 +1134,10 @@ class SlsaComponentVersion(ConfiguredBaseModel):
     """
     The version of one named component of a platform.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ["Each component appears once in a list, since the attestation's "
+                      'JSON uses its name as a key; the validator does not check '
+                      'this.'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track']})
 
     component: str = Field(default=..., description="""The component's name.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaComponentVersion']} })
@@ -625,9 +1152,10 @@ class SlsaPackageRegistry(ConfiguredBaseModel):
          'in_subset': ['slsa_build_track', 'slsa_dependency_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/terminology#distribution-model']})
 
-    ecosystem: Optional[str] = Field(default=None, description="""The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI.""", json_schema_extra = { "linkml_meta": {'comments': ['The same source can yield differently named packages in one '
-                      'ecosystem, so verifiers match provenance to package names with '
-                      'care (Tamanna et al., 2024, UR.1).'],
+    ecosystem: Optional[str] = Field(default=None, description="""The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI.""", json_schema_extra = { "linkml_meta": {'comments': ["One ecosystem's tools can name the same package differently, "
+                      'which the study found affects attestations and provenance, so '
+                      'verifiers match provenance to package names with care (Tamanna '
+                      'et al., 2024, UR.1).'],
          'domain_of': ['SlsaPackageRegistry', 'SlsaPackage'],
          'in_subset': ['slsa_build_track', 'slsa_dependency_track'],
          'slot_uri': 'slsa:ecosystem'} })
@@ -642,9 +1170,10 @@ class SlsaPackage(ConfiguredBaseModel):
          'in_subset': ['slsa_build_track', 'slsa_dependency_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/terminology#distribution-model']})
 
-    ecosystem: Optional[str] = Field(default=None, description="""The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI.""", json_schema_extra = { "linkml_meta": {'comments': ['The same source can yield differently named packages in one '
-                      'ecosystem, so verifiers match provenance to package names with '
-                      'care (Tamanna et al., 2024, UR.1).'],
+    ecosystem: Optional[str] = Field(default=None, description="""The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI.""", json_schema_extra = { "linkml_meta": {'comments': ["One ecosystem's tools can name the same package differently, "
+                      'which the study found affects attestations and provenance, so '
+                      'verifiers match provenance to package names with care (Tamanna '
+                      'et al., 2024, UR.1).'],
          'domain_of': ['SlsaPackageRegistry', 'SlsaPackage'],
          'in_subset': ['slsa_build_track', 'slsa_dependency_track'],
          'slot_uri': 'slsa:ecosystem'} })
@@ -661,9 +1190,8 @@ class SlsaBuildProvenance(SlsaPredicate):
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['The statement that carries it has predicate_type '
                       'https://slsa.dev/provenance/v1.',
-                      'Generating valid provenance was the most frequent adoption '
-                      'difficulty practitioners reported (Tamanna et al., 2024, '
-                      'CI.1).'],
+                      'Complicated provenance generation was the challenge with the '
+                      'most issues in the study (Tamanna et al., 2024, CI.1).'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_build',
          'in_subset': ['slsa_build_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#provenance']})
@@ -682,13 +1210,17 @@ class SlsaBuildDefinition(ConfiguredBaseModel):
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#builddefinition']})
 
     build_type: str = Field(default=..., description="""The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
-    external_parameters: Optional[list[SlsaBuildParameter]] = Field(default=None, description="""The inputs under the tenant's control; complete at Build L3 and verified by consumers.""", json_schema_extra = { "linkml_meta": {'comments': ['Verifiers reject parameters they do not recognize here.'],
+    external_parameters: list[SlsaBuildParameter] = Field(default=..., description="""The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.""", min_length=1, json_schema_extra = { "linkml_meta": {'comments': ['Verifiers reject parameters they do not recognize here.'],
          'domain_of': ['SlsaBuildDefinition']} })
     internal_parameters: Optional[list[SlsaBuildParameter]] = Field(default=None, description="""The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
     resolved_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
-    hermetic: Optional[bool] = Field(default=None, description="""Whether the build could reach only the dependencies it declared, with no other network or filesystem access.""", json_schema_extra = { "linkml_meta": {'comments': ['Hermetic builds are an isolation property Build L3 platforms '
-                      'aim for, and the one practitioners found hardest (Tamanna et '
-                      'al., 2024, CI.1).'],
+    hermetic: Optional[bool] = Field(default=None, description="""Whether the build could reach only the dependencies it declared, with no other network or filesystem access.""", json_schema_extra = { "linkml_meta": {'comments': ["SLSA v1.2 does not require hermetic builds; Build L3's "
+                      'isolation is a different property, and hermeticity is a '
+                      'candidate for a future Build L4.',
+                      'The study cites a 2023 industry survey in which over half the '
+                      'participants found hermetic builds hard to implement, and lists '
+                      '"hermetic build" among SLSA\'s unclear terms (Tamanna et al., '
+                      '2024, UC.1).'],
          'domain_of': ['SlsaBuildDefinition'],
          'in_subset': ['slsa_adoption_study']} })
     provenance_generation_tool: Optional[str] = Field(default=None, description="""The tool that generated this provenance, named by URI.""", json_schema_extra = { "linkml_meta": {'comments': ['Naming the generator supports the strategy of standardizing '
@@ -707,7 +1239,9 @@ class SlsaBuildParameter(ConfiguredBaseModel):
     One named input to a build, with a string value.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['The specification recommends string values; a structured value '
-                      'is written as its JSON text.'],
+                      'is written as its JSON text.',
+                      "Each name appears once in a list, since the attestation's JSON "
+                      'uses it as a key; the validator does not check this.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_build',
          'in_subset': ['slsa_build_track']})
 
@@ -767,14 +1301,37 @@ class SlsaVerificationSummary(SlsaPredicate):
          'slot_uri': 'slsa:resource_uri'} })
     verifier: SlsaVerifier = Field(default=..., description="""The verifier that made this determination.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
     time_verified: Optional[datetime ] = Field(default=None, description="""When the verification happened.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    policy: InTotoResourceDescriptor = Field(default=..., description="""The policy the subject was verified against, by URI and preferably by digest too.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    input_attestations: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""Every attestation the verifier consulted, each with a digest; complete when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
+    policy: SlsaVerificationSummaryPolicy = Field(default=..., description="""The policy the subject was verified against, by URI and preferably by digest too.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
+    input_attestations: Optional[list[SlsaVerificationSummaryInputAttestation]] = Field(default=None, description="""Every attestation the verifier consulted, each with a digest; complete when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
     verification_result: SlsaVerificationResult = Field(default=..., description="""Whether the subject passed the policy.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    verified_levels: list[SlsaResult] = Field(default=..., description="""The highest level verified in each track, and any verified property; a level implies the levels below it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    organization_properties: Optional[list[str]] = Field(default=None, description="""Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary'], 'in_subset': ['slsa_source_track']} })
-    dependency_levels: Optional[list[SlsaDependencyLevelCount]] = Field(default=None, description="""How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
+    verified_levels: list[str] = Field(default=..., description="""The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.""", min_length=1, json_schema_extra = { "linkml_meta": {'comments': ['A VSA lists at most one level per track, and only FAILED when '
+                      'verification failed; the validator checks neither.'],
+         'domain_of': ['SlsaVerificationSummary']} })
+    organization_properties: Optional[list[str]] = Field(default=None, description="""Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.""", json_schema_extra = { "linkml_meta": {'deprecated': 'Write these properties in verified_levels, where the '
+                       "attestation's JSON puts them; this field goes in a later "
+                       'release.',
+         'deprecated_element_has_possible_replacement': 'slsa:verified_levels',
+         'domain_of': ['SlsaVerificationSummary'],
+         'in_subset': ['slsa_source_track']} })
+    dependency_levels: Optional[list[SlsaDependencyLevelCount]] = Field(default=None, description="""How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.""", json_schema_extra = { "linkml_meta": {'comments': ["The attestation's JSON tells an empty map (no dependencies) "
+                      'from an absent one (no claim); this list cannot, so an empty '
+                      'list reads as no claim.'],
+         'domain_of': ['SlsaVerificationSummary']} })
     slsa_version: Optional[str] = Field(default=None, description="""The SLSA specification version the verifier applied, as MAJOR.MINOR.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
     predicate_kind: Literal["SlsaVerificationSummary"] = Field(default="SlsaVerificationSummary", description="""The kind of predicate, one of this class's descendants.""", json_schema_extra = { "linkml_meta": {'designates_type': True, 'domain_of': ['SlsaPredicate']} })
+
+    @field_validator('verified_levels')
+    def pattern_verified_levels(cls, v):
+        pattern=re.compile(r"^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid verified_levels format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid verified_levels format: {v}"
+            raise ValueError(err_msg)
+        return v
 
     @field_validator('organization_properties')
     def pattern_organization_properties(cls, v):
@@ -807,11 +1364,106 @@ class SlsaDependencyLevelCount(ConfiguredBaseModel):
     """
     The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_verification',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ["Each level appears once in a list, since the attestation's JSON "
+                      'uses it as a key; the validator does not check this.'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_verification',
          'in_subset': ['slsa_build_track']})
 
-    verified_level: SlsaResult = Field(default=..., description="""The level the dependencies were verified at.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDependencyLevelCount']} })
+    verified_level: str = Field(default=..., description="""The level the dependencies were verified at, or a result of the issuer's own.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDependencyLevelCount']} })
     dependency_count: int = Field(default=..., description="""How many dependencies were verified at that level.""", ge=0, json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDependencyLevelCount']} })
+
+    @field_validator('verified_level')
+    def pattern_verified_level(cls, v):
+        pattern=re.compile(r"^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid verified_level format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid verified_level format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+
+class SlsaVerificationSummaryPolicy(InTotoResourceDescriptor):
+    """
+    The policy a verification summary applied: a resource descriptor that names the policy by URI.
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['A digest is recommended as well, to pin the exact version of '
+                      'the policy.'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_verification',
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'see_also': ['https://slsa.dev/spec/v1.2/verification_summary#policy'],
+         'slot_usage': {'digest': {'name': 'digest', 'recommended': True},
+                        'resource_uri': {'name': 'resource_uri', 'required': True}}})
+
+    resource_uri: str = Field(default=..., description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaVerificationSummary'],
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'slot_uri': 'slsa:resource_uri'} })
+    digest: Optional[InTotoDigestSet] = Field(default=None, description="""The cryptographic digests of a resource's content, keyed by algorithm.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaMeasurement'],
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'recommended': True,
+         'slot_uri': 'slsa:digest'} })
+    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    download_location: Optional[str] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    content: Optional[str] = Field(default=None, description="""The resource's content itself, base64-encoded, for a resource small enough to carry inline.""", json_schema_extra = { "linkml_meta": {'comments': ['The in-toto framework asks for content under 1 KB, so that '
+                      'attestations stay small.'],
+         'domain_of': ['InTotoResourceDescriptor']} })
+    annotations: Optional[list[InTotoAnnotation]] = Field(default=None, description="""Vendor-specific annotations on the resource, such as the source references a Source VSA records.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+
+    @field_validator('content')
+    def pattern_content(cls, v):
+        pattern=re.compile(r"^[A-Za-z0-9+/_-]+={0,2}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid content format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid content format: {v}"
+            raise ValueError(err_msg)
+        return v
+
+
+class SlsaVerificationSummaryInputAttestation(InTotoResourceDescriptor):
+    """
+    One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_verification',
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'see_also': ['https://slsa.dev/spec/v1.2/verification_summary#inputAttestations'],
+         'slot_usage': {'digest': {'name': 'digest', 'required': True},
+                        'resource_uri': {'name': 'resource_uri', 'recommended': True}}})
+
+    resource_uri: Optional[str] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaVerificationSummary'],
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'recommended': True,
+         'slot_uri': 'slsa:resource_uri'} })
+    digest: InTotoDigestSet = Field(default=..., description="""The cryptographic digests of a resource's content, keyed by algorithm.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaMeasurement'],
+         'in_subset': ['slsa_build_track', 'slsa_source_track'],
+         'slot_uri': 'slsa:digest'} })
+    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    download_location: Optional[str] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+    content: Optional[str] = Field(default=None, description="""The resource's content itself, base64-encoded, for a resource small enough to carry inline.""", json_schema_extra = { "linkml_meta": {'comments': ['The in-toto framework asks for content under 1 KB, so that '
+                      'attestations stay small.'],
+         'domain_of': ['InTotoResourceDescriptor']} })
+    annotations: Optional[list[InTotoAnnotation]] = Field(default=None, description="""Vendor-specific annotations on the resource, such as the source references a Source VSA records.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor']} })
+
+    @field_validator('content')
+    def pattern_content(cls, v):
+        pattern=re.compile(r"^[A-Za-z0-9+/_-]+={0,2}$")
+        if isinstance(v, list):
+            for element in v:
+                if isinstance(element, str) and not pattern.search(element):
+                    err_msg = f"Invalid content format: {element}"
+                    raise ValueError(err_msg)
+        elif isinstance(v, str) and not pattern.search(v):
+            err_msg = f"Invalid content format: {v}"
+            raise ValueError(err_msg)
+        return v
 
 
 class SlsaSourceControlSystem(ConfiguredBaseModel):
@@ -954,7 +1606,7 @@ class SlsaDependencyInventory(ConfiguredBaseModel):
          'see_also': ['https://slsa.dev/spec/draft/dependency-track']})
 
     artifact: InTotoResourceDescriptor = Field(default=..., description="""The artifact whose dependencies are inventoried.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDependencyInventory']} })
-    dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The dependencies, each identified by URI and digest.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDependencyInventory']} })
+    dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The dependencies, each as a resource descriptor.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDependencyInventory']} })
     dependency_level: Optional[SlsaDependencyLevel] = Field(default=None, description="""The SLSA Dependency level the producer's process meets for this artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDependencyInventory']} })
 
 
@@ -1045,6 +1697,7 @@ class SlsaDocument(ConfiguredBaseModel):
     attestations: Optional[list[InTotoStatement]] = Field(default=None, description="""The attestations, as in-toto statements.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDocument']} })
     parties: Optional[list[Union[SlsaProducer,SlsaConsumer,SlsaVerifier,SlsaInfrastructureProvider,SlsaBuildImageProducer]]] = Field(default=None, description="""The parties, each in its role.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDocument']} })
     build_platforms: Optional[list[SlsaBuildPlatform]] = Field(default=None, description="""The build platforms.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDocument']} })
+    control_planes: Optional[list[SlsaControlPlane]] = Field(default=None, description="""The control planes of the build platforms.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDocument']} })
     packages: Optional[list[SlsaPackage]] = Field(default=None, description="""The packages.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDocument']} })
     package_registries: Optional[list[SlsaPackageRegistry]] = Field(default=None, description="""The package registries.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDocument']} })
     source_control_systems: Optional[list[SlsaSourceControlSystem]] = Field(default=None, description="""The source control systems.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaDocument']} })
@@ -1059,8 +1712,10 @@ class SlsaDocument(ConfiguredBaseModel):
 # Model rebuild
 # see https://pydantic-docs.helpmanual.io/usage/models/#rebuilding-a-model
 InTotoDigestSet.model_rebuild()
+InTotoAdditionalDigest.model_rebuild()
 InTotoAnnotation.model_rebuild()
 InTotoResourceDescriptor.model_rebuild()
+InTotoStatementSubject.model_rebuild()
 InTotoStatement.model_rebuild()
 SlsaPredicate.model_rebuild()
 SlsaParty.model_rebuild()
@@ -1080,6 +1735,8 @@ SlsaRunDetails.model_rebuild()
 SlsaBuildMetadata.model_rebuild()
 SlsaVerificationSummary.model_rebuild()
 SlsaDependencyLevelCount.model_rebuild()
+SlsaVerificationSummaryPolicy.model_rebuild()
+SlsaVerificationSummaryInputAttestation.model_rebuild()
 SlsaSourceControlSystem.model_rebuild()
 SlsaSourceRepository.model_rebuild()
 SlsaSourceRevision.model_rebuild()

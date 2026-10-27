@@ -1,8 +1,66 @@
 {
     "$defs": {
+        "InTotoAdditionalDigest": {
+            "additionalProperties": false,
+            "description": "One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.",
+            "properties": {
+                "algorithm": {
+                    "description": "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.",
+                    "not": {
+                        "anyOf": [
+                            {
+                                "enum": [
+                                    "sha256",
+                                    "sha224",
+                                    "sha384",
+                                    "sha512",
+                                    "sha512_224",
+                                    "sha512_256",
+                                    "sha3_224",
+                                    "sha3_256",
+                                    "sha3_384",
+                                    "sha3_512",
+                                    "shake128",
+                                    "shake256",
+                                    "blake2b",
+                                    "blake2s",
+                                    "ripemd160",
+                                    "sm3",
+                                    "gost",
+                                    "sha1",
+                                    "md5",
+                                    "dirHash",
+                                    "gitCommit",
+                                    "gitTree",
+                                    "gitBlob",
+                                    "gitTag",
+                                    "dir_hash",
+                                    "git_commit",
+                                    "git_tree",
+                                    "git_blob",
+                                    "git_tag"
+                                ]
+                            }
+                        ]
+                    },
+                    "pattern": "^[a-z][A-Za-z0-9_]*$"
+                },
+                "value": {
+                    "description": "The digest under that algorithm, in the encoding the algorithm documents.",
+                    "pattern": "^\\S+$",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "algorithm",
+                "value"
+            ],
+            "title": "InTotoAdditionalDigest",
+            "type": "object"
+        },
         "InTotoAnnotation": {
             "additionalProperties": false,
-            "description": "One vendor-specific annotation on a resource descriptor, with a key and one or more values.",
+            "description": "One vendor-specific annotation on a resource descriptor: a key and its values.",
             "properties": {
                 "annotation_key": {
                     "description": "The annotation's key.",
@@ -27,10 +85,395 @@
         },
         "InTotoDigestSet": {
             "additionalProperties": false,
-            "description": "A set of digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.",
+            "anyOf": [
+                {
+                    "properties": {
+                        "sha256": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha224": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha224"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha384": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha384"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha512": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha512"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha512_224": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha512_224"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha512_256": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha512_256"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha3_224": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha3_224"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha3_256": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha3_256"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha3_384": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha3_384"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha3_512": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha3_512"
+                    ]
+                },
+                {
+                    "properties": {
+                        "shake128": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "shake128"
+                    ]
+                },
+                {
+                    "properties": {
+                        "shake256": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "shake256"
+                    ]
+                },
+                {
+                    "properties": {
+                        "blake2b": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "blake2b"
+                    ]
+                },
+                {
+                    "properties": {
+                        "blake2s": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "blake2s"
+                    ]
+                },
+                {
+                    "properties": {
+                        "ripemd160": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "ripemd160"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sm3": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sm3"
+                    ]
+                },
+                {
+                    "properties": {
+                        "gost": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "gost"
+                    ]
+                },
+                {
+                    "properties": {
+                        "sha1": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "properties": {
+                        "md5": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "md5"
+                    ]
+                },
+                {
+                    "properties": {
+                        "dir_hash": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "dir_hash"
+                    ]
+                },
+                {
+                    "properties": {
+                        "git_commit": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "git_commit"
+                    ]
+                },
+                {
+                    "properties": {
+                        "git_tree": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "git_tree"
+                    ]
+                },
+                {
+                    "properties": {
+                        "git_blob": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "git_blob"
+                    ]
+                },
+                {
+                    "properties": {
+                        "git_tag": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "git_tag"
+                    ]
+                },
+                {
+                    "properties": {
+                        "additional_digests": {
+                            "items": {},
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "additional_digests"
+                    ]
+                }
+            ],
+            "description": "A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.",
             "properties": {
+                "additional_digests": {
+                    "description": "The digests under algorithms this class does not name.",
+                    "items": {
+                        "$ref": "#/$defs/InTotoAdditionalDigest"
+                    },
+                    "minItems": 1,
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "blake2b": {
+                    "description": "The BLAKE2b digest of the artifact, of 32 to 64 bytes.",
+                    "pattern": "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "blake2s": {
+                    "description": "The BLAKE2s digest of the artifact, at its full 32 bytes.",
+                    "pattern": "^[a-f0-9]{64}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "dir_hash": {
-                    "description": "A digest over a directory's content, as the in-toto framework defines it.",
+                    "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
+                    "pattern": "^[a-f0-9]{64}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "git_blob": {
+                    "description": "The git blob id of a file's content.",
+                    "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
                     "type": [
                         "string",
                         "null"
@@ -44,9 +487,57 @@
                         "null"
                     ]
                 },
-                "git_tree": {
-                    "description": "The git tree id of a source revision's content.",
+                "git_tag": {
+                    "description": "The git object id of an annotated tag.",
                     "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "git_tree": {
+                    "description": "The git tree id of a source revision's content, or of any file tree.",
+                    "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "gost": {
+                    "description": "The GOST R 34.11 digest of the artifact, of 256 or 512 bits.",
+                    "pattern": "^[a-f0-9]{64}([a-f0-9]{64})?$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "md5": {
+                    "description": "The MD5 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{32}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "ripemd160": {
+                    "description": "The RIPEMD-160 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{40}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sha1": {
+                    "description": "The SHA-1 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{40}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sha224": {
+                    "description": "The SHA-224 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{56}$",
                     "type": [
                         "string",
                         "null"
@@ -60,9 +551,89 @@
                         "null"
                     ]
                 },
+                "sha384": {
+                    "description": "The SHA-384 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{96}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sha3_224": {
+                    "description": "The SHA3-224 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{56}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sha3_256": {
+                    "description": "The SHA3-256 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{64}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sha3_384": {
+                    "description": "The SHA3-384 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{96}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sha3_512": {
+                    "description": "The SHA3-512 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{128}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "sha512": {
                     "description": "The SHA-512 digest of the artifact.",
                     "pattern": "^[a-f0-9]{128}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sha512_224": {
+                    "description": "The SHA-512/224 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{56}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sha512_256": {
+                    "description": "The SHA-512/256 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{64}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "shake128": {
+                    "description": "The SHAKE128 digest of the artifact, of at least 32 bytes.",
+                    "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "shake256": {
+                    "description": "The SHAKE256 digest of the artifact, of at least 32 bytes.",
+                    "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sm3": {
+                    "description": "The SM3 digest of the artifact.",
+                    "pattern": "^[a-f0-9]{64}$",
                     "type": [
                         "string",
                         "null"
@@ -74,7 +645,52 @@
         },
         "InTotoResourceDescriptor": {
             "additionalProperties": false,
-            "description": "A reference to a software artifact or other resource, by URI, by digest, or both, with optional metadata.",
+            "anyOf": [
+                {
+                    "properties": {
+                        "resource_uri": {
+                            "anyOf": [
+                                {
+                                    "format": "uri",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "resource_uri"
+                    ]
+                },
+                {
+                    "properties": {
+                        "digest": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/$defs/InTotoDigestSet"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "digest"
+                    ]
+                },
+                {
+                    "properties": {
+                        "content": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "content"
+                    ]
+                }
+            ],
+            "description": "A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.",
             "properties": {
                 "annotations": {
                     "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
@@ -83,6 +699,14 @@
                     },
                     "type": [
                         "array",
+                        "null"
+                    ]
+                },
+                "content": {
+                    "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
+                    "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
+                    "type": [
+                        "string",
                         "null"
                     ]
                 },
@@ -183,10 +807,11 @@
                     "type": "string"
                 },
                 "subject": {
-                    "description": "The artifacts the predicate is about; each carries a digest.",
+                    "description": "The artifacts the predicate is about, each with a digest.",
                     "items": {
-                        "$ref": "#/$defs/InTotoResourceDescriptor"
+                        "$ref": "#/$defs/InTotoStatementSubject"
                     },
+                    "minItems": 1,
                     "type": "array"
                 },
                 "transparency_log_entry": {
@@ -204,6 +829,69 @@
                 "predicate_type"
             ],
             "title": "InTotoStatement",
+            "type": "object"
+        },
+        "InTotoStatementSubject": {
+            "additionalProperties": false,
+            "description": "One artifact an in-toto statement is about: a resource descriptor that carries a digest.",
+            "properties": {
+                "annotations": {
+                    "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
+                    "items": {
+                        "$ref": "#/$defs/InTotoAnnotation"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "content": {
+                    "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
+                    "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "digest": {
+                    "$ref": "#/$defs/InTotoDigestSet",
+                    "description": "The cryptographic digests of a resource's content, keyed by algorithm."
+                },
+                "download_location": {
+                    "description": "Where the resource can be fetched, when that differs from its identifying URI.",
+                    "format": "uri",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "media_type": {
+                    "description": "The IANA media type of the resource's content.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "resource_name": {
+                    "description": "A name for the resource within the attestation that carries it.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "resource_uri": {
+                    "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
+                    "format": "uri",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "digest"
+            ],
+            "title": "InTotoStatementSubject",
             "type": "object"
         },
         "SlsaAdoptionChallenge": {
@@ -314,14 +1002,12 @@
                     "type": "string"
                 },
                 "external_parameters": {
-                    "description": "The inputs under the tenant's control; complete at Build L3 and verified by consumers.",
+                    "description": "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.",
                     "items": {
                         "$ref": "#/$defs/SlsaBuildParameter"
                     },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
+                    "minItems": 1,
+                    "type": "array"
                 },
                 "hermetic": {
                     "description": "Whether the build could reach only the dependencies it declared, with no other network or filesystem access.",
@@ -368,7 +1054,8 @@
                 }
             },
             "required": [
-                "build_type"
+                "build_type",
+                "external_parameters"
             ],
             "title": "SlsaBuildDefinition",
             "type": "object"
@@ -732,7 +1419,7 @@
                     "description": "The artifact whose dependencies are inventoried."
                 },
                 "dependencies": {
-                    "description": "The dependencies, each identified by URI and digest.",
+                    "description": "The dependencies, each as a resource descriptor.",
                     "items": {
                         "$ref": "#/$defs/InTotoResourceDescriptor"
                     },
@@ -781,8 +1468,9 @@
                     "type": "integer"
                 },
                 "verified_level": {
-                    "$ref": "#/$defs/SlsaResult",
-                    "description": "The level the dependencies were verified at."
+                    "description": "The level the dependencies were verified at, or a result of the issuer's own.",
+                    "pattern": "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$",
+                    "type": "string"
                 }
             },
             "required": [
@@ -831,6 +1519,16 @@
                     "description": "The build platforms.",
                     "items": {
                         "$ref": "#/$defs/SlsaBuildPlatform"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "control_planes": {
+                    "description": "The control planes of the build platforms.",
+                    "items": {
+                        "$ref": "#/$defs/SlsaControlPlane"
                     },
                     "type": [
                         "array",
@@ -1498,7 +2196,7 @@
                 "input_attestations": {
                     "description": "Every attestation the verifier consulted, each with a digest; complete when present.",
                     "items": {
-                        "$ref": "#/$defs/InTotoResourceDescriptor"
+                        "$ref": "#/$defs/SlsaVerificationSummaryInputAttestation"
                     },
                     "type": [
                         "array",
@@ -1506,7 +2204,7 @@
                     ]
                 },
                 "organization_properties": {
-                    "description": "Properties an organization defines for its own consumers, each prefixed ORG_SOURCE_.",
+                    "description": "Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.",
                     "items": {
                         "pattern": "^ORG_SOURCE_",
                         "type": "string"
@@ -1517,7 +2215,7 @@
                     ]
                 },
                 "policy": {
-                    "$ref": "#/$defs/InTotoResourceDescriptor",
+                    "$ref": "#/$defs/SlsaVerificationSummaryPolicy",
                     "description": "The policy the subject was verified against, by URI and preferably by digest too."
                 },
                 "predicate_kind": {
@@ -1556,10 +2254,12 @@
                     "description": "Whether the subject passed the policy."
                 },
                 "verified_levels": {
-                    "description": "The highest level verified in each track, and any verified property; a level implies the levels below it.",
+                    "description": "The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.",
                     "items": {
-                        "$ref": "#/$defs/SlsaResult"
+                        "pattern": "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$",
+                        "type": "string"
                     },
+                    "minItems": 1,
                     "type": "array"
                 },
                 "verifier": {
@@ -1575,6 +2275,136 @@
                 "verified_levels"
             ],
             "title": "SlsaVerificationSummary",
+            "type": "object"
+        },
+        "SlsaVerificationSummaryInputAttestation": {
+            "additionalProperties": false,
+            "description": "One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.",
+            "properties": {
+                "annotations": {
+                    "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
+                    "items": {
+                        "$ref": "#/$defs/InTotoAnnotation"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "content": {
+                    "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
+                    "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "digest": {
+                    "$ref": "#/$defs/InTotoDigestSet",
+                    "description": "The cryptographic digests of a resource's content, keyed by algorithm."
+                },
+                "download_location": {
+                    "description": "Where the resource can be fetched, when that differs from its identifying URI.",
+                    "format": "uri",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "media_type": {
+                    "description": "The IANA media type of the resource's content.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "resource_name": {
+                    "description": "A name for the resource within the attestation that carries it.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "resource_uri": {
+                    "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
+                    "format": "uri",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "digest"
+            ],
+            "title": "SlsaVerificationSummaryInputAttestation",
+            "type": "object"
+        },
+        "SlsaVerificationSummaryPolicy": {
+            "additionalProperties": false,
+            "description": "The policy a verification summary applied: a resource descriptor that names the policy by URI.",
+            "properties": {
+                "annotations": {
+                    "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
+                    "items": {
+                        "$ref": "#/$defs/InTotoAnnotation"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "content": {
+                    "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
+                    "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "digest": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/InTotoDigestSet"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The cryptographic digests of a resource's content, keyed by algorithm."
+                },
+                "download_location": {
+                    "description": "Where the resource can be fetched, when that differs from its identifying URI.",
+                    "format": "uri",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "media_type": {
+                    "description": "The IANA media type of the resource's content.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "resource_name": {
+                    "description": "A name for the resource within the attestation that carries it.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "resource_uri": {
+                    "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "resource_uri"
+            ],
+            "title": "SlsaVerificationSummaryPolicy",
             "type": "object"
         },
         "SlsaVerifier": {
@@ -1662,6 +2492,16 @@
             "description": "The build platforms.",
             "items": {
                 "$ref": "#/$defs/SlsaBuildPlatform"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "control_planes": {
+            "description": "The control planes of the build platforms.",
+            "items": {
+                "$ref": "#/$defs/SlsaControlPlane"
             },
             "type": [
                 "array",

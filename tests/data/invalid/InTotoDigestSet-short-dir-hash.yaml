@@ -1,0 +1,2 @@
+# INVALID: a dirhash is a SHA-256 value, so 64 hexadecimal digits.
+dir_hash: 5ab2f8a4323abafb10abb68657d9d39f1a775057

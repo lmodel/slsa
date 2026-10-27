@@ -64,6 +64,12 @@ classes:
         multivalued: true
         inlined: true
         inlined_as_list: true
+      control_planes:
+        description: The control planes of the build platforms.
+        range: SlsaControlPlane
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
       packages:
         description: The packages.
         range: SlsaPackage

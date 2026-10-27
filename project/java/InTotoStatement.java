@@ -17,7 +17,7 @@ import lombok.*;
 public class InTotoStatement  {
 
   private URI statementType;
-  private List<InTotoResourceDescriptor> subject;
+  private List<InTotoStatementSubject> subject;
   private URI predicateType;
   private SlsaPredicate predicate;
   private URI attestationStorageUri;
