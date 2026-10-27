@@ -2,6 +2,8 @@
 
 ## 2026-10-27
 
+* **Changed**: the schema concept follows the README's corrected KTL section, which says that every other key keeps its SLSA name and that `lokf adapt` does not compare class attributes.
+* **Resolved**: the README's KTL section now names `media_type` and `predicate`, the two attributes that share a name with LOKF slots, and says that `lokf adapt` does not compare attributes.
 * **Prose**: reworded 4 concept bodies in plain English (in-toto-attestation, slsa-level, slsa-linkml-schema, test-data). No fact, link, number or frontmatter changed.
 * **Changed**: the schema concept counts 40 classes and one type, names the new in-toto and VSA classes and `slsa_result_value`, and says what each validator checks, as the modules and `docs/index.md` now do.
 * **Question**: the README says that no SLSA key shares a name with a LOKF key, but `media_type` and `predicate` do.

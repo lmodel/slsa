@@ -23,7 +23,7 @@ relatedTo:
   - https://w3id.org/lmodel/slsa/knowledge/references/openssf-supply-chain
 generated:
   by: process:ktl-librarian
-  at: "2026-10-27T12:57:54Z"
+  at: "2026-10-27T13:24:13Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -97,14 +97,10 @@ A domain schema adds a host's own classes and keys to the LOKF vocabulary. The R
 
 `project.justfile` says that `lokf adapt` is in lokf's main branch but not yet in a release. Until it is, set `LOKF_CMD` to run it from a lokf checkout, for example `LOKF_CMD="uv run --project ../lokf lokf" just lokf-adapt`.
 
-The README says that in the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. It also says that no SLSA key shares a name with a LOKF key, so none is renamed.
+The README says that in the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. It also says that every other key keeps its SLSA name, because no top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. It adds that `lokf adapt` does not compare class attributes, so `media_type` and `predicate` keep the names they share with LOKF slots.
 
 ## Validating data
 
 `docs/index.md` says that `linkml-validate` checks a file against the JSON Schema generated from the schema, and that the generated models check less. The dataclasses check required fields and enum values but no patterns. The Pydantic models also check patterns and list lengths, but they leave out the rules written as `any_of` or `none_of`, such as the rule that a resource descriptor carries a URI, a digest or its content.
 
 The same page says that no tool checks that a list never repeats a name, or that a VSA lists at most one level per track.
-
-## Open questions
-
-- 2026-10-27, process:ktl-librarian: The README's KTL section says that no SLSA key shares a name with a LOKF key, so none is renamed. `.lokf/lokf.yaml` defines `media_type` and `predicate`, and `slsa_core.yaml` uses both as attributes of `InTotoResourceDescriptor` and `InTotoStatement`; `lokf adapt` renames neither. Should the README say only that `lokf adapt` renames no key?
