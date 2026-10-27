@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-27
+
 ### Added
 
 - **The digest set names every algorithm in-toto defines, and `additional_digests` holds any other, such as an SCS's own `svn_revision_id`.** A resource descriptor can also carry its `content`, base64-encoded, and `SlsaDocument` holds `control_planes`, the one class its root could not reach.
