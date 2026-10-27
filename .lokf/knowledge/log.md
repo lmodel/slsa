@@ -1,5 +1,10 @@
 # Change Log
 
+## 2026-10-27
+
+* **Changed**: the documentation site follows `DOCS.exclude` and `REDIRECTS` in `website/site.config.mjs`, which replaced `MKDOCS` in 71dc33b; the schema files and the whitepaper under `docs/` are now linked on GitHub, not served by the site.
+* **Changed**: the source map's documentation-site row checks `DOCS` and `REDIRECTS` and adds `website/scripts/routes.mjs`, since `MKDOCS` is gone from `website/site.config.mjs`.
+
 ## 2026-10-23
 
 * **Changed**: the documentation site's list of page sources reads as a list.
