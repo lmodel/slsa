@@ -62,15 +62,22 @@ skip = [
   "src/slsa/datamodel/slsa_pydantic.py",
   "src/slsa/datamodel/slsa.py",
   "src/slsa/schema/spec/*",
+  # Copied in by the KTL sidecar sync and written by npm, not by hand.
+  ".lokf/scripts/*",
+  "website/package-lock.json",
 ]
 
 # Reminder: words have to be lowercased for the ignore-words-list
-ignore-words-list = "linke"
+# gost is in-toto's name for the GOST R 34.11 digest, and intoto is the InToto
+# class prefix and the .intoto.jsonl file extension.
+ignore-words-list = "linke,gost,intoto"
 quiet-level = 3
 
 # Ref.: https://github.com/crate-ci/typos (spell checker)
 [tool.typos.default.extend-words]
 linke = "linke"
+gost = "gost"
+intoto = "intoto"
 
 [tool.typos.files]
 extend-exclude = [
@@ -81,4 +88,6 @@ extend-exclude = [
   "src/slsa/datamodel/slsa_pydantic.py",
   "src/slsa/datamodel/slsa.py",
   "src/slsa/schema/spec/*",
+  ".lokf/scripts/*",
+  "website/package-lock.json",
 ]

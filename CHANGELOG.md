@@ -25,6 +25,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 - **Descriptions and comments match the v1.2 specification and the adoption study.** Hermetic builds are not a Build L3 aim, an automated review is not two-party review, the storage comment names SLSA's preferred places, and the study's claims and sub-theme names follow the paper.
 - **`project/java/` drops the 23 classes left over from the names used before 0.4.0.**
+- **The README's KTL section gives the right reason the copy renames no key.**
+- **codespell and typos accept `gost` and `intoto`, and skip the KTL scripts and `website/package-lock.json`.**
 
 ## [0.5.3] - 2026-10-27
 
