@@ -23,7 +23,7 @@ author:
 license: https://creativecommons.org/licenses/by/4.0/
 verified:
   - by: process:ktl-librarian
-    at: "2026-10-23T22:22:59Z"
+    at: "2026-10-27T12:57:54Z"
 ---
 
 # CNCF Secure Software Factory whitepaper

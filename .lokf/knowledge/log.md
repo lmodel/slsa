@@ -2,6 +2,16 @@
 
 ## 2026-10-27
 
+* **Prose**: reworded 4 concept bodies in plain English (in-toto-attestation, slsa-level, slsa-linkml-schema, test-data). No fact, link, number or frontmatter changed.
+* **Changed**: the schema concept counts 40 classes and one type, names the new in-toto and VSA classes and `slsa_result_value`, and says what each validator checks, as the modules and `docs/index.md` now do.
+* **Question**: the README says that no SLSA key shares a name with a LOKF key, but `media_type` and `predicate` do.
+* **Added**: the in-toto attestation framework, which the schema's `InToto` classes model, from `slsa_core.yaml` and the in-toto pages at the commit the SLSA v1.2 copy links to.
+* **Changed**: the test data concept names the SVN Source VSA, the new kinds of counter-example and `tests/test_schema_rules.py`.
+* **Changed**: the adoption study concept lists each challenge theme's sub-themes and issue count, which `slsa_adoption.yaml` now gives in the study's own names.
+* **Changed**: the level glossary says that a revision with no Source VSA has Source Level 0, as `source-requirements.md` says.
+* **Changed**: the license concept names the four sidecar workflows and the ktl-website templates, as `NOTICE` has since 61be9df.
+* **Changed**: the regeneration playbook says to run `just clean` after a class is renamed or removed, because `gen-java` deletes no file.
+* **Changed**: the source map adds `tests/test_schema_rules.py`, the Validating data section of `docs/index.md`, the schema's types and the in-toto attestation pages.
 * **Changed**: the documentation site follows `DOCS.exclude` and `REDIRECTS` in `website/site.config.mjs`, which replaced `MKDOCS` in 71dc33b; the schema files and the whitepaper under `docs/` are now linked on GitHub, not served by the site.
 * **Changed**: the source map's documentation-site row checks `DOCS` and `REDIRECTS` and adds `website/scripts/routes.mjs`, since `MKDOCS` is gone from `website/site.config.mjs`.
 
