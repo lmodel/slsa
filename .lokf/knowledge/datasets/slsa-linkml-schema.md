@@ -23,7 +23,8 @@ relatedTo:
   - https://w3id.org/lmodel/slsa/knowledge/references/openssf-supply-chain
 generated:
   by: process:ktl-librarian
-  at: "2026-10-27T13:24:13Z"
+  at: "2026-10-28T18:17:05Z"
+  revision: cdf739e89fbf4a6d43e00fa3bd4a4c36951f2489
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -52,9 +53,9 @@ sources:
   - resource: .linkmllint.yaml
     title: the lint rule for permissible values
   - resource: project.justfile
-    title: the lokf-adapt recipes and their root classes
+    title: the lokf-adapt recipes, their root classes and the LOKF_CMD note
   - resource: README.md
-    title: the Knowledge Trust Ladder (KTL) section
+    title: the Mappings and Knowledge Trust Ladder (KTL) sections
 ---
 
 # slsa LinkML schema
@@ -89,15 +90,19 @@ The schema tags each element with the subsets it belongs to, and [Schema subsets
 
 The merged copies in `docs/schema/`, the Python data models, the `project/` artifacts and `.lokf/slsa.yaml` are generated from these files: see [Generated artifacts](generated-artefacts.md).
 
+## Mappings
+
+The README says that the schema declares no mappings to other vocabularies.
+
 ## As the bundle's domain schema
 
 A domain schema adds a host's own classes and keys to the LOKF vocabulary. The README says that the bundle's domain schema is `.lokf/slsa.yaml`, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy. `just lokf-adapt` rewrites the copy, and `just lokf-adapt-check` fails when the copy is stale.
 
 `project.justfile` passes nine root classes to `lokf adapt`: `SlsaParty`, `SlsaBuildPlatform`, `SlsaControlPlane`, `SlsaPackage`, `SlsaPackageRegistry`, `SlsaSourceControlSystem`, `SlsaSourceRepository`, `SlsaSourceRevision` and `SlsaBuildImage`. A concept may name any of them, or a subclass, as its `type`. The README lists thirteen classes for Obsidian users of the KTL Registrar and KTL Curator plugins to add to the *Known LOKF types* setting: `SlsaProducer`, `SlsaConsumer`, `SlsaVerifier`, `SlsaInfrastructureProvider`, `SlsaBuildImageProducer`, `SlsaBuildPlatform`, `SlsaControlPlane`, `SlsaPackage`, `SlsaPackageRegistry`, `SlsaSourceControlSystem`, `SlsaSourceRepository`, `SlsaSourceRevision` and `SlsaBuildImage`. `SlsaParty`, which the schema marks abstract, is not in that list.
 
-`project.justfile` says that `lokf adapt` is in lokf's main branch but not yet in a release. Until it is, set `LOKF_CMD` to run it from a lokf checkout, for example `LOKF_CMD="uv run --project ../lokf lokf" just lokf-adapt`.
+`project.justfile` says that the recipes run the sidecar's own `lokf`, version 0.9.0 or later. Set `LOKF_CMD` to run another `lokf`, such as one in a checkout: `LOKF_CMD="uv run --project ../lokf lokf" just lokf-adapt`.
 
-The README says that in the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. It also says that every other key keeps its SLSA name, because no top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. It adds that `lokf adapt` does not compare class attributes, so `media_type` and `predicate` keep the names they share with LOKF slots.
+The README says that in the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. It says that the slot `revision` is `slsa_revision` in the copy, because LOKF 0.9.0 defines a `revision` of its own, and that its IRI is still `slsa:revision`. It also says that every other key keeps its SLSA name, because no other top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. It adds that `lokf adapt` does not compare class attributes, so `media_type` and `predicate` keep the names they share with LOKF slots.
 
 ## Validating data
 

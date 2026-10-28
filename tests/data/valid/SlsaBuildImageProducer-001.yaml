@@ -1,0 +1,2 @@
+# A hosted build platform that builds and distributes its own build images.
+party_name: Example hosted build platform

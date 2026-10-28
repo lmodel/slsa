@@ -967,7 +967,7 @@ classes:
     - https://slsa.dev/spec/v1.2/source-requirements#definitions
     slots:
     - repository
-    - revision
+    - slsa_revision
     attributes:
       reference_type:
         description: The kind of named reference, one of this class's descendants.
@@ -1004,9 +1004,9 @@ classes:
       class holds what the specification says such provenance conveys.
     - Source L2 and above require the SCS to issue it with each new revision.
     slots:
-    - revision
+    - slsa_revision
     slot_usage:
-      revision:
+      slsa_revision:
         required: true
     attributes:
       controls_enforced:
@@ -1261,12 +1261,14 @@ slots:
     range: SlsaSourceRepository
     in_subset:
     - slsa_source_track
-  revision:
+  slsa_revision:
     description: The source revision this refers to.
     slot_uri: slsa:revision
     range: SlsaSourceRevision
     in_subset:
     - slsa_source_track
+    aliases:
+    - revision
   build_env_level:
     description: The SLSA Build Environment level this meets.
     slot_uri: slsa:build_env_level
@@ -1549,4 +1551,5 @@ notes:
 - 'Adapted for LOKF by `lokf adapt`. re-rooted on lokf:Concept: SlsaParty, SlsaBuildPlatform, SlsaControlPlane,
   SlsaPackageRegistry, SlsaPackage, SlsaSourceControlSystem, SlsaSourceRepository, SlsaSourceRevision,
   SlsaBuildImage; dropped for LOKF''s: builder_id, registry_uri, scs_uri, repository_uri, revision_id,
-  image_uri; designators demoted: predicate_kind, party_type, reference_type.'
+  image_uri; renamed, IRIs unchanged: revision -> slsa_revision; designators demoted: predicate_kind,
+  party_type, reference_type.'

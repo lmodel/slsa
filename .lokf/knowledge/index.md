@@ -32,7 +32,7 @@ A [LOKF](https://lokf.nolan-nichols.com) knowledge base for SLSA. Every Markdown
 
 * [slsa LinkML schema](datasets/slsa-linkml-schema.md) - The modular LinkML schema of the SLSA specification v1.2 (schema id `https://w3id.org/lmodel/slsa`): `slsa.yaml` imports a core module and one module per track, predicate or study, covering the Build, Source, Dependency and Build Environment tracks and the in-toto statement layer; its `lokf adapt` copy in `.lokf/slsa.yaml` is the bundle's domain schema.
 * [SLSA specification copy](datasets/slsa-spec-copy.md) - The SLSA specification's Markdown pages, images and provenance schemas (.proto, .cue) copied into `src/slsa/schema/spec/`: all 39 files are identical to `docs/spec/draft/` at SLSA tag v1.2, and a weekly workflow watches for a newer release.
-* [Generated artifacts](datasets/generated-artefacts.md) - Files generated from the slsa schema and never edited by hand, committed or git-ignored: the two merged schemas in docs/schema/, the Python data models, project/ (JSON Schema, OWL, SHACL, Java and more), docs/elements/ and the bundle's domain schema .lokf/slsa.yaml.
+* [Generated artifacts](datasets/generated-artefacts.md) - Files generated from the slsa schema and never edited by hand, committed or git-ignored: the two merged schemas in docs/schema/, the Python data models, project/ (JSON Schema, OWL, SHACL, Java and more), docs/elements/ and the bundle's domain schema .lokf/slsa.yaml, which a release also attaches as its schema asset.
 * [Test data](datasets/test-data.md) - Example YAML instances of the slsa schema in tests/data/, valid and invalid, named ClassName-###.yaml after the class they instantiate (InTotoStatement, SlsaBuildPlatform and the rest); pytest and linkml-run-examples check them.
 
 # Explanations
@@ -46,7 +46,7 @@ A [LOKF](https://lokf.nolan-nichols.com) knowledge base for SLSA. Every Markdown
 
 # Playbooks
 
-* [Regenerate and test the schema](playbooks/regenerate-and-test.md) - How to change the slsa schema and its modules, regenerate the artifacts, the docs and the bundle's domain schema with just (gen-project, gen-doc, gen-merged, lokf-adapt), then run the tests CI runs (just test) on Python 3.10 to 3.14.
+* [Regenerate and test the schema](playbooks/regenerate-and-test.md) - How to change the slsa schema and its modules, regenerate the artifacts, the docs and the bundle's domain schema with just (gen-project, gen-doc, gen-merged, lokf-adapt), then run the checks CI runs: just test on Python 3.10 to 3.14, and just lint and just lokf-adapt-check on 3.13.
 * [Release the slsa package](playbooks/release.md) - How a releasing commit merged to main makes semantic-release promote the changelog, tag vX.Y.Z and publish a GitHub Release, and how pypi-publish.yaml then publishes slsa-linkml to PyPI once PYPI_RELEASE_ENABLED is true.
 * [Knowledge sources map](playbooks/knowledge-sources.md) - The librarian's scrape map: every repository location and external URL this bundle derives concepts from, and how to re-verify each on a refresh run.
 

@@ -10,9 +10,9 @@
 # can sit beside `.lokf/lokf.yaml` (`lokf adapt --help` lists the moves). The
 # roots are the classes a knowledge concept may use as its `type`; a class with
 # an identifier of its own is one of them, because the copy gives it LOKF's
-# `id` in place of that identifier. `lokf adapt` is in lokf's main branch and
-# not yet in a release, so LOKF_CMD points the recipes at a checkout until it
-# is: LOKF_CMD="uv run --project ../lokf lokf" just lokf-adapt
+# `id` in place of that identifier. The recipes run the `lokf` the sidecar's
+# floor pins (0.9.0 or later); LOKF_CMD runs another, such as a checkout:
+# LOKF_CMD="uv run --project ../lokf lokf" just lokf-adapt
 lokf_cmd := env_var_or_default("LOKF_CMD", "uv run --project .lokf lokf")
 lokf_adapt_roots := "--root SlsaParty --root SlsaBuildPlatform --root SlsaControlPlane --root SlsaPackage --root SlsaPackageRegistry --root SlsaSourceControlSystem --root SlsaSourceRepository --root SlsaSourceRevision --root SlsaBuildImage"
 

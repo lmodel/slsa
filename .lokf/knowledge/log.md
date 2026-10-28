@@ -1,5 +1,14 @@
 # Change Log
 
+## 2026-10-28
+
+* **Changed**: the schema concept says that the adapt recipes run the released lokf 0.9.0 or later, that the copy renames `revision` to `slsa_revision` with its IRI kept, and that the schema declares no mappings, as `project.justfile` and the README now say.
+* **Changed**: the generated artifacts say that `.lokf/slsa.yaml` is also the release's schema asset, which the build checks, from the new comment in `main.yaml` and the domain-schema step of `knowledge-release.yaml`.
+* **Changed**: the test data concept says that `valid/` holds a file for every party role, now that `SlsaConsumer`, `SlsaInfrastructureProvider` and `SlsaBuildImageProducer` have examples, and names the other classes it covers.
+* **Changed**: the regeneration playbook drops the note that `lokf adapt` is unreleased and says that CI runs `just lokf-adapt-check` on Python 3.13, as `project.justfile` and `main.yaml` now say.
+* **Changed**: the documentation site names the home page's four buttons, which `HOME` in `website/site.config.mjs` sets since ff03483 added the Schema button.
+* **Changed**: the source map adds the README's Mappings section, the adapted-copy check in `main.yaml`, the domain-schema step of `knowledge-release.yaml` and the site's `HOME` setting, and drops the date of the first run.
+
 ## 2026-10-27
 
 * **Changed**: the schema concept follows the README's corrected KTL section, which says that every other key keeps its SLSA name and that `lokf adapt` does not compare class attributes.

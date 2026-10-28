@@ -14,11 +14,15 @@ sources:
     title: the _test-examples recipe
   - resource: CONTRIBUTING.md
     title: the naming rule for example data
+  - resource: src/slsa/schema/slsa.yaml
+    title: what a SlsaDocument holds
+  - resource: src/slsa/schema/slsa_core.yaml
+    title: the subclasses of SlsaParty
 dependsOn:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
 generated:
   by: process:ktl-librarian
-  at: "2026-10-27T12:57:54Z"
+  at: "2026-10-28T18:17:05Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -29,7 +33,11 @@ verified:
 
 `tests/data/README.md` says that each file is named `ClassName-###.yaml`, where the part before the first `-` is the name of a class as the schema writes it. The folder has three subfolders:
 
-- `valid/`: data that conforms to the schema. It holds `InTotoStatement` files for each kind of predicate: build provenance, Tekton build provenance, verification summary, source provenance, source verification summaries for a git and an SVN revision, and a build environment attestation. It also holds files for `InTotoDigestSet`, `InTotoResourceDescriptor`, `SlsaDocument` and most of the `Slsa` classes a document holds.
+- `valid/`: data that conforms to the schema. It holds:
+  - `InTotoStatement` files for each kind of predicate: build provenance, Tekton build provenance, verification summary, source provenance, source verification summaries for a git and an SVN revision, and a build environment attestation;
+  - files for `InTotoDigestSet`, `InTotoResourceDescriptor` and `SlsaDocument`, and for the build provenance and verification summary predicates on their own;
+  - a file for each role a party can act in, which the schema models as the subclasses of `SlsaParty`: `SlsaProducer`, `SlsaConsumer`, `SlsaVerifier`, `SlsaInfrastructureProvider` and `SlsaBuildImageProducer`;
+  - files for the other `Slsa` classes a document holds. They are the build platform and its control plane, the package and its registry, the source control system, repository and revision, a branch and a tag, the build image, the dependency inventory and the adoption metadata.
 - `invalid/`: data that must fail. The first line of each file says why it must fail. Examples are:
   - an `InTotoStatement` with no subject, a subject with no digest, the wrong statement type or a predicate of the wrong kind;
   - an `InTotoDigestSet` that is empty or whose SHA-256 digest is in uppercase hexadecimal;
