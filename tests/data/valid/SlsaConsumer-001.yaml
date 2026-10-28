@@ -1,0 +1,2 @@
+# A consumer that checks provenance before it deploys a package.
+party_name: Example deployment team
