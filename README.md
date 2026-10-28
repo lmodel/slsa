@@ -42,7 +42,7 @@ Several pre-defined command-recipes are available using [just](https://github.co
 SlsaProducer, SlsaConsumer, SlsaVerifier, SlsaInfrastructureProvider, SlsaBuildImageProducer, SlsaBuildPlatform, SlsaControlPlane, SlsaPackage, SlsaPackageRegistry, SlsaSourceControlSystem, SlsaSourceRepository, SlsaSourceRevision, SlsaBuildImage
 ```
 
-In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. Every other key keeps its SLSA name, because no top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. `lokf adapt` does not compare class attributes, so `media_type` and `predicate` keep the names they share with LOKF slots.
+In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. The slot `revision` is `slsa_revision`, because LOKF 0.9.0 defines a `revision` of its own; its IRI is still `slsa:revision`. Every other key keeps its SLSA name, because no other top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. `lokf adapt` does not compare class attributes, so `media_type` and `predicate` keep the names they share with LOKF slots.
 
 ## License
 
