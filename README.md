@@ -12,6 +12,18 @@ Supply-chain Levels for Software Artifacts (LinkML)
 
 [https://lmodel.github.io/slsa](https://lmodel.github.io/slsa)
 
+## What it models
+
+The [SLSA specification](https://slsa.dev/spec/v1.2/), version 1.2: the Build and Source tracks, the build provenance and Verification Summary Attestation predicates, the in-toto statement layer they sit in, and the roles, build platform and package model. The Dependency and Build Environment tracks follow the working draft at 1.2. The schema's `version` is 1.2.0, the copy in [src/slsa/schema/spec/](src/slsa/schema/spec) matches the `v1.2` tag, and a weekly workflow opens an issue when the SLSA Working Group tags a newer version.
+
+## Influences
+
+Two sources add elements of their own, each in a subset: the CNCF *Secure Software Factory* whitepaper (`slsa_ssf`) and the SLSA adoption study by Tamanna et al. (`slsa_adoption_study`). [docs/about.md](docs/about.md) says what each adds.
+
+## Mappings
+
+None. The schema declares no mappings to other vocabularies.
+
 ## Repository Structure
 
 * [docs/](docs/): the documentation pages the website shows
@@ -46,7 +58,7 @@ In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`
 
 ## License
 
-The schema and the code are under the Apache License 2.0 ([LICENSE](LICENSE)). The schema models the [SLSA specification](https://slsa.dev) and draws on two further sources, which [docs/about.md](docs/about.md) names.
+The schema and the code are under the Apache License 2.0 ([LICENSE](LICENSE)).
 
 The repository also carries the specification's pages in [src/slsa/schema/spec/](src/slsa/schema/spec) and the CNCF Secure Software Factory whitepaper in [docs/](docs/), each under its own license. See [NOTICE](NOTICE).
 

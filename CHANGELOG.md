@@ -10,6 +10,7 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 - **The documentation site's home page has a Schema button, which opens the schema's pages.**
 - **The build checks that `.lokf/slsa.yaml` matches the schema and `.lokf/lokf.yaml`.**
+- **The README says what the schema models, what shaped it and what it maps to.**
 
 ### Changed
 
