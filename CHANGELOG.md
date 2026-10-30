@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-30
+
 ### Changed
 
 - **The in-toto layer comes from lmodel/in-toto's core module at v0.1.0**, vendored at `src/slsa/schema/in_toto/in_toto_core.yaml`, and the schema's own copy is gone. The class names stay, and the six classes and their keys take in-toto's IRIs; `media_type` and `algorithm` take the IRIs LOKF gives them.
