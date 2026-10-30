@@ -1,76 +1,16 @@
 -- # Class: SlsaDocument Description: A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern.
 --     * Slot: id
 --     * Slot: adoption_metadata_id Description: How the deployment the document describes fares against the adoption study's themes.
--- # Class: InTotoDigestSet Description: A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+-- # Class: SlsaStatement Description: An in-toto statement with the fields this schema adds: where the signed attestation is stored, the tool that signed it and the transparency log entry that records the signature.
 --     * Slot: id
---     * Slot: sha256 Description: The SHA-256 digest of the artifact.
---     * Slot: sha224 Description: The SHA-224 digest of the artifact.
---     * Slot: sha384 Description: The SHA-384 digest of the artifact.
---     * Slot: sha512 Description: The SHA-512 digest of the artifact.
---     * Slot: sha512_224 Description: The SHA-512/224 digest of the artifact.
---     * Slot: sha512_256 Description: The SHA-512/256 digest of the artifact.
---     * Slot: sha3_224 Description: The SHA3-224 digest of the artifact.
---     * Slot: sha3_256 Description: The SHA3-256 digest of the artifact.
---     * Slot: sha3_384 Description: The SHA3-384 digest of the artifact.
---     * Slot: sha3_512 Description: The SHA3-512 digest of the artifact.
---     * Slot: shake128 Description: The SHAKE128 digest of the artifact, of at least 32 bytes.
---     * Slot: shake256 Description: The SHAKE256 digest of the artifact, of at least 32 bytes.
---     * Slot: blake2b Description: The BLAKE2b digest of the artifact, of 32 to 64 bytes.
---     * Slot: blake2s Description: The BLAKE2s digest of the artifact, at its full 32 bytes.
---     * Slot: ripemd160 Description: The RIPEMD-160 digest of the artifact.
---     * Slot: sm3 Description: The SM3 digest of the artifact.
---     * Slot: gost Description: The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
---     * Slot: sha1 Description: The SHA-1 digest of the artifact.
---     * Slot: md5 Description: The MD5 digest of the artifact.
---     * Slot: dir_hash Description: A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.
---     * Slot: git_commit Description: The git commit id of a source revision.
---     * Slot: git_tree Description: The git tree id of a source revision's content, or of any file tree.
---     * Slot: git_blob Description: The git blob id of a file's content.
---     * Slot: git_tag Description: The git object id of an annotated tag.
--- # Class: InTotoAdditionalDigest Description: One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
---     * Slot: id
---     * Slot: algorithm Description: The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.
---     * Slot: value Description: The digest under that algorithm, in the encoding the algorithm documents.
---     * Slot: InTotoDigestSet_id Description: Autocreated FK slot
--- # Class: InTotoAnnotation Description: One vendor-specific annotation on a resource descriptor: a key and its values.
---     * Slot: id
---     * Slot: annotation_key Description: The annotation's key.
---     * Slot: InTotoResourceDescriptor_id Description: Autocreated FK slot
---     * Slot: InTotoStatementSubject_id Description: Autocreated FK slot
---     * Slot: SlsaVerificationSummaryPolicy_id Description: Autocreated FK slot
---     * Slot: SlsaVerificationSummaryInputAttestation_id Description: Autocreated FK slot
--- # Class: InTotoResourceDescriptor Description: A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
---     * Slot: id
---     * Slot: resource_uri Description: The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
---     * Slot: resource_name Description: A name for the resource within the attestation that carries it.
---     * Slot: download_location Description: Where the resource can be fetched, when that differs from its identifying URI.
---     * Slot: media_type Description: The IANA media type of the resource's content.
---     * Slot: content Description: The resource's content itself, base64-encoded, for a resource small enough to carry inline.
---     * Slot: SlsaBuildPlatform_builder_id Description: Autocreated FK slot
---     * Slot: SlsaPackage_id Description: Autocreated FK slot
---     * Slot: SlsaBuildDefinition_id Description: Autocreated FK slot
---     * Slot: SlsaRunDetails_id Description: Autocreated FK slot
---     * Slot: SlsaDependencyInventory_id Description: Autocreated FK slot
---     * Slot: digest_id Description: The cryptographic digests of a resource's content, keyed by algorithm.
--- # Class: InTotoStatementSubject Description: One artifact an in-toto statement is about: a resource descriptor that carries a digest.
---     * Slot: id
---     * Slot: resource_uri Description: The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
---     * Slot: resource_name Description: A name for the resource within the attestation that carries it.
---     * Slot: download_location Description: Where the resource can be fetched, when that differs from its identifying URI.
---     * Slot: media_type Description: The IANA media type of the resource's content.
---     * Slot: content Description: The resource's content itself, base64-encoded, for a resource small enough to carry inline.
---     * Slot: InTotoStatement_id Description: Autocreated FK slot
---     * Slot: digest_id Description: The cryptographic digests of a resource's content, keyed by algorithm.
--- # Class: InTotoStatement Description: The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
---     * Slot: id
---     * Slot: statement_type Description: The in-toto statement type, always https://in-toto.io/Statement/v1.
---     * Slot: predicate_type Description: The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1.
 --     * Slot: attestation_storage_uri Description: Where the signed attestation is stored or can be fetched.
 --     * Slot: signing_tool Description: The tool that signed the attestation, named by URI, such as Cosign or Notation.
 --     * Slot: transparency_log_entry Description: The transparency log entry that records the signature, such as a Rekor entry.
+--     * Slot: statement_type Description: The in-toto statement type, always https://in-toto.io/Statement/v1.
+--     * Slot: predicate_type Description: The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.
 --     * Slot: SlsaDocument_id Description: Autocreated FK slot
---     * Slot: predicate_id Description: The predicate, one of the kinds this schema models; predicate_kind names which.
--- # Abstract Class: SlsaPredicate Description: The base of every predicate this schema models; predicate_kind names the concrete kind.
+--     * Slot: predicate_id Description: The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty.
+-- # Abstract Class: SlsaPredicate Description: The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.
 --     * Slot: id
 --     * Slot: predicate_kind Description: The kind of predicate, one of this class's descendants.
 -- # Abstract Class: SlsaParty Description: A person or organization that takes part in a software supply chain, in one of the roles SLSA names.
@@ -225,6 +165,75 @@
 --     * Slot: dependency_level Description: The SLSA Dependency level the producer's process meets for this artifact.
 --     * Slot: SlsaDocument_id Description: Autocreated FK slot
 --     * Slot: artifact_id Description: The artifact whose dependencies are inventoried.
+-- # Class: InTotoDigestSet Description: A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+--     * Slot: id
+--     * Slot: sha256 Description: The SHA-256 digest of the artifact.
+--     * Slot: sha224 Description: The SHA-224 digest of the artifact.
+--     * Slot: sha384 Description: The SHA-384 digest of the artifact.
+--     * Slot: sha512 Description: The SHA-512 digest of the artifact.
+--     * Slot: sha512_224 Description: The SHA-512/224 digest of the artifact.
+--     * Slot: sha512_256 Description: The SHA-512/256 digest of the artifact.
+--     * Slot: sha3_224 Description: The SHA3-224 digest of the artifact.
+--     * Slot: sha3_256 Description: The SHA3-256 digest of the artifact.
+--     * Slot: sha3_384 Description: The SHA3-384 digest of the artifact.
+--     * Slot: sha3_512 Description: The SHA3-512 digest of the artifact.
+--     * Slot: shake128 Description: The SHAKE128 digest of the artifact, of at least 32 bytes.
+--     * Slot: shake256 Description: The SHAKE256 digest of the artifact, of at least 32 bytes.
+--     * Slot: blake2b Description: The BLAKE2b digest of the artifact, of 32 to 64 bytes.
+--     * Slot: blake2s Description: The BLAKE2s digest of the artifact, at its full 32 bytes.
+--     * Slot: ripemd160 Description: The RIPEMD-160 digest of the artifact.
+--     * Slot: sm3 Description: The SM3 digest of the artifact.
+--     * Slot: gost Description: The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
+--     * Slot: sha1 Description: The SHA-1 digest of the artifact.
+--     * Slot: md5 Description: The MD5 digest of the artifact.
+--     * Slot: dir_hash Description: A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.
+--     * Slot: git_commit Description: The git commit id of a source revision.
+--     * Slot: git_tree Description: The git tree id of a source revision's content, or of any file tree.
+--     * Slot: git_blob Description: The git blob id of a file's content.
+--     * Slot: git_tag Description: The git object id of an annotated tag.
+-- # Class: InTotoAdditionalDigest Description: One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
+--     * Slot: id
+--     * Slot: algorithm Description: The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.
+--     * Slot: value Description: The digest under that algorithm, in the encoding the algorithm documents.
+--     * Slot: InTotoDigestSet_id Description: Autocreated FK slot
+-- # Class: InTotoAnnotation Description: One vendor-specific annotation on a resource descriptor: a key and its values.
+--     * Slot: id
+--     * Slot: annotation_key Description: The annotation's key.
+--     * Slot: SlsaVerificationSummaryPolicy_id Description: Autocreated FK slot
+--     * Slot: SlsaVerificationSummaryInputAttestation_id Description: Autocreated FK slot
+--     * Slot: InTotoResourceDescriptor_id Description: Autocreated FK slot
+--     * Slot: InTotoStatementSubject_id Description: Autocreated FK slot
+-- # Class: InTotoResourceDescriptor Description: A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
+--     * Slot: id
+--     * Slot: resource_uri Description: The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+--     * Slot: resource_name Description: A name for the resource within the attestation that carries it.
+--     * Slot: download_location Description: Where the resource can be fetched, when that differs from its identifying URI.
+--     * Slot: media_type Description: The IANA media type of the resource's content.
+--     * Slot: content Description: The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+--     * Slot: SlsaBuildPlatform_builder_id Description: Autocreated FK slot
+--     * Slot: SlsaPackage_id Description: Autocreated FK slot
+--     * Slot: SlsaBuildDefinition_id Description: Autocreated FK slot
+--     * Slot: SlsaRunDetails_id Description: Autocreated FK slot
+--     * Slot: SlsaDependencyInventory_id Description: Autocreated FK slot
+--     * Slot: digest_id Description: The cryptographic digests of a resource's content, keyed by algorithm.
+-- # Class: InTotoStatementSubject Description: One artifact an in-toto statement is about: a resource descriptor that carries a digest.
+--     * Slot: id
+--     * Slot: resource_uri Description: The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
+--     * Slot: resource_name Description: A name for the resource within the attestation that carries it.
+--     * Slot: download_location Description: Where the resource can be fetched, when that differs from its identifying URI.
+--     * Slot: media_type Description: The IANA media type of the resource's content.
+--     * Slot: content Description: The resource's content itself, base64-encoded, for a resource small enough to carry inline.
+--     * Slot: SlsaStatement_id Description: Autocreated FK slot
+--     * Slot: InTotoStatement_id Description: Autocreated FK slot
+--     * Slot: digest_id Description: The cryptographic digests of a resource's content, keyed by algorithm.
+-- # Class: InTotoStatement Description: The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
+--     * Slot: id
+--     * Slot: statement_type Description: The in-toto statement type, always https://in-toto.io/Statement/v1.
+--     * Slot: predicate_type Description: The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.
+--     * Slot: predicate_id Description: The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty.
+-- # Abstract Class: InTotoPredicate Description: The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind.
+--     * Slot: id
+--     * Slot: predicate_kind Description: The kind of predicate, one of this class's descendants.
 -- # Class: SlsaBuildImageProducer Description: The party that creates and distributes build images; the hosted build platform itself, or a third party in a bring-your-own-image setting.
 --     * Slot: id
 --     * Slot: party_type Description: The role the party acts in, one of this class's descendants.
@@ -248,9 +257,6 @@
 --     * Slot: predicate_kind Description: The kind of predicate, one of this class's descendants.
 -- # Class: SlsaAdoptionMetadata Description: The adoption challenges a deployment meets and the strategies it applies, from the study's taxonomy.
 --     * Slot: id
--- # Class: InTotoAnnotation_annotation_values
---     * Slot: InTotoAnnotation_id Description: Autocreated FK slot
---     * Slot: annotation_values Description: The annotation's values.
 -- # Class: SlsaVerificationSummary_verified_levels
 --     * Slot: SlsaVerificationSummary_id Description: Autocreated FK slot
 --     * Slot: verified_levels Description: The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.
@@ -263,65 +269,15 @@
 -- # Class: SlsaSourceProvenance_controls_enforced
 --     * Slot: SlsaSourceProvenance_id Description: Autocreated FK slot
 --     * Slot: controls_enforced Description: The technical controls the SCS enforced when the revision was created, as the organization documents them.
+-- # Class: InTotoAnnotation_annotation_values
+--     * Slot: InTotoAnnotation_id Description: Autocreated FK slot
+--     * Slot: annotation_values Description: The annotation's values.
 -- # Class: SlsaAdoptionMetadata_challenges
 --     * Slot: SlsaAdoptionMetadata_id Description: Autocreated FK slot
 --     * Slot: challenges Description: The challenge themes that apply.
 -- # Class: SlsaAdoptionMetadata_strategies
 --     * Slot: SlsaAdoptionMetadata_id Description: Autocreated FK slot
 --     * Slot: strategies Description: The strategy themes applied or recommended.
-
-CREATE TABLE "InTotoDigestSet" (
-	id INTEGER NOT NULL,
-	sha256 TEXT,
-	sha224 TEXT,
-	sha384 TEXT,
-	sha512 TEXT,
-	sha512_224 TEXT,
-	sha512_256 TEXT,
-	sha3_224 TEXT,
-	sha3_256 TEXT,
-	sha3_384 TEXT,
-	sha3_512 TEXT,
-	shake128 TEXT,
-	shake256 TEXT,
-	blake2b TEXT,
-	blake2s TEXT,
-	ripemd160 TEXT,
-	sm3 TEXT,
-	gost TEXT,
-	sha1 TEXT,
-	md5 TEXT,
-	dir_hash TEXT,
-	git_commit TEXT,
-	git_tree TEXT,
-	git_blob TEXT,
-	git_tag TEXT,
-	PRIMARY KEY (id)
-);
-CREATE INDEX "ix_InTotoDigestSet_id" ON "InTotoDigestSet" (id);
-
-CREATE TABLE "InTotoResourceDescriptor" (
-	id INTEGER NOT NULL,
-	resource_uri TEXT,
-	resource_name TEXT,
-	download_location TEXT,
-	media_type TEXT,
-	content TEXT,
-	"SlsaBuildPlatform_builder_id" TEXT,
-	"SlsaPackage_id" INTEGER,
-	"SlsaBuildDefinition_id" INTEGER,
-	"SlsaRunDetails_id" INTEGER,
-	"SlsaDependencyInventory_id" INTEGER,
-	digest_id INTEGER,
-	PRIMARY KEY (id),
-	FOREIGN KEY("SlsaBuildPlatform_builder_id") REFERENCES "SlsaBuildPlatform" (builder_id),
-	FOREIGN KEY("SlsaPackage_id") REFERENCES "SlsaPackage" (id),
-	FOREIGN KEY("SlsaBuildDefinition_id") REFERENCES "SlsaBuildDefinition" (id),
-	FOREIGN KEY("SlsaRunDetails_id") REFERENCES "SlsaRunDetails" (id),
-	FOREIGN KEY("SlsaDependencyInventory_id") REFERENCES "SlsaDependencyInventory" (id),
-	FOREIGN KEY(digest_id) REFERENCES "InTotoDigestSet" (id)
-);
-CREATE INDEX "ix_InTotoResourceDescriptor_id" ON "InTotoResourceDescriptor" (id);
 
 CREATE TABLE "SlsaPredicate" (
 	id INTEGER NOT NULL,
@@ -385,6 +341,66 @@ CREATE TABLE "SlsaDependencyInventory" (
 );
 CREATE INDEX "ix_SlsaDependencyInventory_id" ON "SlsaDependencyInventory" (id);
 
+CREATE TABLE "InTotoDigestSet" (
+	id INTEGER NOT NULL,
+	sha256 TEXT,
+	sha224 TEXT,
+	sha384 TEXT,
+	sha512 TEXT,
+	sha512_224 TEXT,
+	sha512_256 TEXT,
+	sha3_224 TEXT,
+	sha3_256 TEXT,
+	sha3_384 TEXT,
+	sha3_512 TEXT,
+	shake128 TEXT,
+	shake256 TEXT,
+	blake2b TEXT,
+	blake2s TEXT,
+	ripemd160 TEXT,
+	sm3 TEXT,
+	gost TEXT,
+	sha1 TEXT,
+	md5 TEXT,
+	dir_hash TEXT,
+	git_commit TEXT,
+	git_tree TEXT,
+	git_blob TEXT,
+	git_tag TEXT,
+	PRIMARY KEY (id)
+);
+CREATE INDEX "ix_InTotoDigestSet_id" ON "InTotoDigestSet" (id);
+
+CREATE TABLE "InTotoResourceDescriptor" (
+	id INTEGER NOT NULL,
+	resource_uri TEXT,
+	resource_name TEXT,
+	download_location TEXT,
+	media_type TEXT,
+	content TEXT,
+	"SlsaBuildPlatform_builder_id" TEXT,
+	"SlsaPackage_id" INTEGER,
+	"SlsaBuildDefinition_id" INTEGER,
+	"SlsaRunDetails_id" INTEGER,
+	"SlsaDependencyInventory_id" INTEGER,
+	digest_id INTEGER,
+	PRIMARY KEY (id),
+	FOREIGN KEY("SlsaBuildPlatform_builder_id") REFERENCES "SlsaBuildPlatform" (builder_id),
+	FOREIGN KEY("SlsaPackage_id") REFERENCES "SlsaPackage" (id),
+	FOREIGN KEY("SlsaBuildDefinition_id") REFERENCES "SlsaBuildDefinition" (id),
+	FOREIGN KEY("SlsaRunDetails_id") REFERENCES "SlsaRunDetails" (id),
+	FOREIGN KEY("SlsaDependencyInventory_id") REFERENCES "SlsaDependencyInventory" (id),
+	FOREIGN KEY(digest_id) REFERENCES "InTotoDigestSet" (id)
+);
+CREATE INDEX "ix_InTotoResourceDescriptor_id" ON "InTotoResourceDescriptor" (id);
+
+CREATE TABLE "InTotoPredicate" (
+	id INTEGER NOT NULL,
+	predicate_kind TEXT,
+	PRIMARY KEY (id)
+);
+CREATE INDEX "ix_InTotoPredicate_id" ON "InTotoPredicate" (id);
+
 CREATE TABLE "SlsaBuildImageProducer" (
 	id INTEGER NOT NULL,
 	party_type TEXT,
@@ -406,16 +422,6 @@ CREATE TABLE "SlsaDocument" (
 	FOREIGN KEY(adoption_metadata_id) REFERENCES "SlsaAdoptionMetadata" (id)
 );
 CREATE INDEX "ix_SlsaDocument_id" ON "SlsaDocument" (id);
-
-CREATE TABLE "InTotoAdditionalDigest" (
-	id INTEGER NOT NULL,
-	algorithm TEXT NOT NULL,
-	value TEXT NOT NULL,
-	"InTotoDigestSet_id" INTEGER,
-	PRIMARY KEY (id),
-	FOREIGN KEY("InTotoDigestSet_id") REFERENCES "InTotoDigestSet" (id)
-);
-CREATE INDEX "ix_InTotoAdditionalDigest_id" ON "InTotoAdditionalDigest" (id);
 
 CREATE TABLE "SlsaBuildParameter" (
 	id INTEGER NOT NULL,
@@ -440,14 +446,34 @@ CREATE TABLE "SlsaVerificationSummaryPolicy" (
 );
 CREATE INDEX "ix_SlsaVerificationSummaryPolicy_id" ON "SlsaVerificationSummaryPolicy" (id);
 
+CREATE TABLE "InTotoAdditionalDigest" (
+	id INTEGER NOT NULL,
+	algorithm TEXT NOT NULL,
+	value TEXT NOT NULL,
+	"InTotoDigestSet_id" INTEGER,
+	PRIMARY KEY (id),
+	FOREIGN KEY("InTotoDigestSet_id") REFERENCES "InTotoDigestSet" (id)
+);
+CREATE INDEX "ix_InTotoAdditionalDigest_id" ON "InTotoAdditionalDigest" (id);
+
+CREATE TABLE "InTotoStatement" (
+	id INTEGER NOT NULL,
+	statement_type TEXT NOT NULL,
+	predicate_type TEXT NOT NULL,
+	predicate_id INTEGER,
+	PRIMARY KEY (id),
+	FOREIGN KEY(predicate_id) REFERENCES "InTotoPredicate" (id)
+);
+CREATE INDEX "ix_InTotoStatement_id" ON "InTotoStatement" (id);
+
 CREATE TABLE "SlsaAdoptionMetadata_challenges" (
 	"SlsaAdoptionMetadata_id" INTEGER,
 	challenges VARCHAR(22),
 	PRIMARY KEY ("SlsaAdoptionMetadata_id", challenges),
 	FOREIGN KEY("SlsaAdoptionMetadata_id") REFERENCES "SlsaAdoptionMetadata" (id)
 );
-CREATE INDEX "ix_SlsaAdoptionMetadata_challenges_SlsaAdoptionMetadata_id" ON "SlsaAdoptionMetadata_challenges" ("SlsaAdoptionMetadata_id");
 CREATE INDEX "ix_SlsaAdoptionMetadata_challenges_challenges" ON "SlsaAdoptionMetadata_challenges" (challenges);
+CREATE INDEX "ix_SlsaAdoptionMetadata_challenges_SlsaAdoptionMetadata_id" ON "SlsaAdoptionMetadata_challenges" ("SlsaAdoptionMetadata_id");
 
 CREATE TABLE "SlsaAdoptionMetadata_strategies" (
 	"SlsaAdoptionMetadata_id" INTEGER,
@@ -455,23 +481,23 @@ CREATE TABLE "SlsaAdoptionMetadata_strategies" (
 	PRIMARY KEY ("SlsaAdoptionMetadata_id", strategies),
 	FOREIGN KEY("SlsaAdoptionMetadata_id") REFERENCES "SlsaAdoptionMetadata" (id)
 );
-CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_strategies" ON "SlsaAdoptionMetadata_strategies" (strategies);
 CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_SlsaAdoptionMetadata_id" ON "SlsaAdoptionMetadata_strategies" ("SlsaAdoptionMetadata_id");
+CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_strategies" ON "SlsaAdoptionMetadata_strategies" (strategies);
 
-CREATE TABLE "InTotoStatement" (
+CREATE TABLE "SlsaStatement" (
 	id INTEGER NOT NULL,
-	statement_type TEXT NOT NULL,
-	predicate_type TEXT NOT NULL,
 	attestation_storage_uri TEXT,
 	signing_tool TEXT,
 	transparency_log_entry TEXT,
+	statement_type TEXT NOT NULL,
+	predicate_type TEXT NOT NULL,
 	"SlsaDocument_id" INTEGER,
 	predicate_id INTEGER,
 	PRIMARY KEY (id),
 	FOREIGN KEY("SlsaDocument_id") REFERENCES "SlsaDocument" (id),
-	FOREIGN KEY(predicate_id) REFERENCES "SlsaPredicate" (id)
+	FOREIGN KEY(predicate_id) REFERENCES "InTotoPredicate" (id)
 );
-CREATE INDEX "ix_InTotoStatement_id" ON "InTotoStatement" (id);
+CREATE INDEX "ix_SlsaStatement_id" ON "SlsaStatement" (id);
 
 CREATE TABLE "SlsaParty" (
 	id INTEGER NOT NULL,
@@ -524,21 +550,6 @@ CREATE TABLE "SlsaSourceControlSystem" (
 	FOREIGN KEY("SlsaDocument_id") REFERENCES "SlsaDocument" (id)
 );
 CREATE INDEX "ix_SlsaSourceControlSystem_scs_uri" ON "SlsaSourceControlSystem" (scs_uri);
-
-CREATE TABLE "InTotoStatementSubject" (
-	id INTEGER NOT NULL,
-	resource_uri TEXT,
-	resource_name TEXT,
-	download_location TEXT,
-	media_type TEXT,
-	content TEXT,
-	"InTotoStatement_id" INTEGER,
-	digest_id INTEGER NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY("InTotoStatement_id") REFERENCES "InTotoStatement" (id),
-	FOREIGN KEY(digest_id) REFERENCES "InTotoDigestSet" (id)
-);
-CREATE INDEX "ix_InTotoStatementSubject_id" ON "InTotoStatementSubject" (id);
 
 CREATE TABLE "SlsaProducer" (
 	id INTEGER NOT NULL,
@@ -631,6 +642,23 @@ CREATE TABLE "SlsaSourceRepository" (
 );
 CREATE INDEX "ix_SlsaSourceRepository_repository_uri" ON "SlsaSourceRepository" (repository_uri);
 
+CREATE TABLE "InTotoStatementSubject" (
+	id INTEGER NOT NULL,
+	resource_uri TEXT,
+	resource_name TEXT,
+	download_location TEXT,
+	media_type TEXT,
+	content TEXT,
+	"SlsaStatement_id" INTEGER,
+	"InTotoStatement_id" INTEGER,
+	digest_id INTEGER NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY("SlsaStatement_id") REFERENCES "SlsaStatement" (id),
+	FOREIGN KEY("InTotoStatement_id") REFERENCES "InTotoStatement" (id),
+	FOREIGN KEY(digest_id) REFERENCES "InTotoDigestSet" (id)
+);
+CREATE INDEX "ix_InTotoStatementSubject_id" ON "InTotoStatementSubject" (id);
+
 CREATE TABLE "SlsaVerificationSummary_verified_levels" (
 	"SlsaVerificationSummary_id" INTEGER,
 	verified_levels TEXT NOT NULL,
@@ -646,23 +674,8 @@ CREATE TABLE "SlsaVerificationSummary_organization_properties" (
 	PRIMARY KEY ("SlsaVerificationSummary_id", organization_properties),
 	FOREIGN KEY("SlsaVerificationSummary_id") REFERENCES "SlsaVerificationSummary" (id)
 );
-CREATE INDEX "ix_SlsaVerificationSummary_organization_properties_SlsaVerificationSummary_id" ON "SlsaVerificationSummary_organization_properties" ("SlsaVerificationSummary_id");
 CREATE INDEX "ix_SlsaVerificationSummary_organization_properties_organization_properties" ON "SlsaVerificationSummary_organization_properties" (organization_properties);
-
-CREATE TABLE "InTotoAnnotation" (
-	id INTEGER NOT NULL,
-	annotation_key TEXT NOT NULL,
-	"InTotoResourceDescriptor_id" INTEGER,
-	"InTotoStatementSubject_id" INTEGER,
-	"SlsaVerificationSummaryPolicy_id" INTEGER,
-	"SlsaVerificationSummaryInputAttestation_id" INTEGER,
-	PRIMARY KEY (id),
-	FOREIGN KEY("InTotoResourceDescriptor_id") REFERENCES "InTotoResourceDescriptor" (id),
-	FOREIGN KEY("InTotoStatementSubject_id") REFERENCES "InTotoStatementSubject" (id),
-	FOREIGN KEY("SlsaVerificationSummaryPolicy_id") REFERENCES "SlsaVerificationSummaryPolicy" (id),
-	FOREIGN KEY("SlsaVerificationSummaryInputAttestation_id") REFERENCES "SlsaVerificationSummaryInputAttestation" (id)
-);
-CREATE INDEX "ix_InTotoAnnotation_id" ON "InTotoAnnotation" (id);
+CREATE INDEX "ix_SlsaVerificationSummary_organization_properties_SlsaVerificationSummary_id" ON "SlsaVerificationSummary_organization_properties" ("SlsaVerificationSummary_id");
 
 CREATE TABLE "SlsaBuildProvenance" (
 	id INTEGER NOT NULL,
@@ -688,6 +701,21 @@ CREATE TABLE "SlsaSourceRevision" (
 	FOREIGN KEY("SlsaDocument_id") REFERENCES "SlsaDocument" (id)
 );
 CREATE INDEX "ix_SlsaSourceRevision_revision_id" ON "SlsaSourceRevision" (revision_id);
+
+CREATE TABLE "InTotoAnnotation" (
+	id INTEGER NOT NULL,
+	annotation_key TEXT NOT NULL,
+	"SlsaVerificationSummaryPolicy_id" INTEGER,
+	"SlsaVerificationSummaryInputAttestation_id" INTEGER,
+	"InTotoResourceDescriptor_id" INTEGER,
+	"InTotoStatementSubject_id" INTEGER,
+	PRIMARY KEY (id),
+	FOREIGN KEY("SlsaVerificationSummaryPolicy_id") REFERENCES "SlsaVerificationSummaryPolicy" (id),
+	FOREIGN KEY("SlsaVerificationSummaryInputAttestation_id") REFERENCES "SlsaVerificationSummaryInputAttestation" (id),
+	FOREIGN KEY("InTotoResourceDescriptor_id") REFERENCES "InTotoResourceDescriptor" (id),
+	FOREIGN KEY("InTotoStatementSubject_id") REFERENCES "InTotoStatementSubject" (id)
+);
+CREATE INDEX "ix_InTotoAnnotation_id" ON "InTotoAnnotation" (id);
 
 CREATE TABLE "SlsaNamedReference" (
 	id INTEGER NOT NULL,
@@ -752,15 +780,6 @@ CREATE TABLE "SlsaBuildImage" (
 );
 CREATE INDEX "ix_SlsaBuildImage_image_uri" ON "SlsaBuildImage" (image_uri);
 
-CREATE TABLE "InTotoAnnotation_annotation_values" (
-	"InTotoAnnotation_id" INTEGER,
-	annotation_values TEXT,
-	PRIMARY KEY ("InTotoAnnotation_id", annotation_values),
-	FOREIGN KEY("InTotoAnnotation_id") REFERENCES "InTotoAnnotation" (id)
-);
-CREATE INDEX "ix_InTotoAnnotation_annotation_values_annotation_values" ON "InTotoAnnotation_annotation_values" (annotation_values);
-CREATE INDEX "ix_InTotoAnnotation_annotation_values_InTotoAnnotation_id" ON "InTotoAnnotation_annotation_values" ("InTotoAnnotation_id");
-
 CREATE TABLE "SlsaSourceRevision_parent_revisions" (
 	"SlsaSourceRevision_revision_id" TEXT,
 	parent_revisions_revision_id TEXT,
@@ -768,8 +787,17 @@ CREATE TABLE "SlsaSourceRevision_parent_revisions" (
 	FOREIGN KEY("SlsaSourceRevision_revision_id") REFERENCES "SlsaSourceRevision" (revision_id),
 	FOREIGN KEY(parent_revisions_revision_id) REFERENCES "SlsaSourceRevision" (revision_id)
 );
-CREATE INDEX "ix_SlsaSourceRevision_parent_revisions_parent_revisions_revision_id" ON "SlsaSourceRevision_parent_revisions" (parent_revisions_revision_id);
 CREATE INDEX "ix_SlsaSourceRevision_parent_revisions_SlsaSourceRevision_revision_id" ON "SlsaSourceRevision_parent_revisions" ("SlsaSourceRevision_revision_id");
+CREATE INDEX "ix_SlsaSourceRevision_parent_revisions_parent_revisions_revision_id" ON "SlsaSourceRevision_parent_revisions" (parent_revisions_revision_id);
+
+CREATE TABLE "InTotoAnnotation_annotation_values" (
+	"InTotoAnnotation_id" INTEGER,
+	annotation_values TEXT,
+	PRIMARY KEY ("InTotoAnnotation_id", annotation_values),
+	FOREIGN KEY("InTotoAnnotation_id") REFERENCES "InTotoAnnotation" (id)
+);
+CREATE INDEX "ix_InTotoAnnotation_annotation_values_InTotoAnnotation_id" ON "InTotoAnnotation_annotation_values" ("InTotoAnnotation_id");
+CREATE INDEX "ix_InTotoAnnotation_annotation_values_annotation_values" ON "InTotoAnnotation_annotation_values" (annotation_values);
 
 CREATE TABLE "SlsaBuildEnvironmentAttestation" (
 	id INTEGER NOT NULL,

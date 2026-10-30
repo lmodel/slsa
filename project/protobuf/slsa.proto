@@ -69,6 +69,11 @@ message InTotoDigestSet {
   // The digests under algorithms this class does not name.
   repeated InTotoAdditionalDigest additional_digests = 25;
 }
+// The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind.
+message InTotoPredicate {
+  // The kind of predicate, one of this class's descendants.
+  string predicate_kind = 1;
+}
 // A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
 message InTotoResourceDescriptor {
   // The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
@@ -83,25 +88,19 @@ message InTotoResourceDescriptor {
   string media_type = 5;
   // The resource's content itself, base64-encoded, for a resource small enough to carry inline.
   string content = 6;
-  // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
+  // Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.
   repeated InTotoAnnotation annotations = 7;
 }
 // The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
 message InTotoStatement {
+  // The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty.
+  InTotoPredicate predicate = 1;
   // The in-toto statement type, always https://in-toto.io/Statement/v1.
-  string statement_type = 1;
+  string statement_type = 2;
   // The artifacts the predicate is about, each with a digest.
-  repeated InTotoStatementSubject subject = 2;
-  // The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1.
-  string predicate_type = 3;
-  // The predicate, one of the kinds this schema models; predicate_kind names which.
-  SlsaPredicate predicate = 4;
-  // Where the signed attestation is stored or can be fetched.
-  string attestation_storage_uri = 5;
-  // The tool that signed the attestation, named by URI, such as Cosign or Notation.
-  string signing_tool = 6;
-  // The transparency log entry that records the signature, such as a Rekor entry.
-  string transparency_log_entry = 7;
+  repeated InTotoStatementSubject subject = 3;
+  // The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.
+  string predicate_type = 4;
 }
 // One artifact an in-toto statement is about: a resource descriptor that carries a digest.
 message InTotoStatementSubject {
@@ -115,7 +114,7 @@ message InTotoStatementSubject {
   string media_type = 4;
   // The resource's content itself, base64-encoded, for a resource small enough to carry inline.
   string content = 5;
-  // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
+  // Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.
   repeated InTotoAnnotation annotations = 6;
   // The cryptographic digests of a resource's content, keyed by algorithm.
   InTotoDigestSet digest = 7;
@@ -263,8 +262,8 @@ message SlsaDependencyLevelCount {
 }
 // A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern.
 message SlsaDocument {
-  // The attestations, as in-toto statements.
-  repeated InTotoStatement attestations = 1;
+  // The attestations, as in-toto statements with SLSA's fields.
+  repeated SlsaStatement attestations = 1;
   // The parties, each in its role.
   repeated SlsaParty parties = 2;
   // The build platforms.
@@ -346,7 +345,7 @@ message SlsaParty {
   // The party's name.
   string party_name = 2;
 }
-// The base of every predicate this schema models; predicate_kind names the concrete kind.
+// The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.
 message SlsaPredicate {
   // The kind of predicate, one of this class's descendants.
   string predicate_kind = 1;
@@ -407,6 +406,23 @@ message SlsaSourceRevision {
   // The form of review that approved the revision.
   SlsaReviewType review_type = 7;
 }
+// An in-toto statement with the fields this schema adds: where the signed attestation is stored, the tool that signed it and the transparency log entry that records the signature.
+message SlsaStatement {
+  // The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty.
+  InTotoPredicate predicate = 1;
+  // The in-toto statement type, always https://in-toto.io/Statement/v1.
+  string statement_type = 2;
+  // The artifacts the predicate is about, each with a digest.
+  repeated InTotoStatementSubject subject = 3;
+  // The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.
+  string predicate_type = 4;
+  // Where the signed attestation is stored or can be fetched.
+  string attestation_storage_uri = 5;
+  // The tool that signed the attestation, named by URI, such as Cosign or Notation.
+  string signing_tool = 6;
+  // The transparency log entry that records the signature, such as a Rekor entry.
+  string transparency_log_entry = 7;
+}
 // A named reference meant never to move once created.
 message SlsaTag {
   // The source repository this belongs to.
@@ -455,7 +471,7 @@ message SlsaVerificationSummaryInputAttestation {
   string media_type = 3;
   // The resource's content itself, base64-encoded, for a resource small enough to carry inline.
   string content = 4;
-  // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
+  // Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.
   repeated InTotoAnnotation annotations = 5;
   // The cryptographic digests of a resource's content, keyed by algorithm.
   InTotoDigestSet digest = 6;
@@ -472,7 +488,7 @@ message SlsaVerificationSummaryPolicy {
   string media_type = 3;
   // The resource's content itself, base64-encoded, for a resource small enough to carry inline.
   string content = 4;
-  // Vendor-specific annotations on the resource, such as the source references a Source VSA records.
+  // Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.
   repeated InTotoAnnotation annotations = 5;
   // The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.
   string resource_uri = 6;

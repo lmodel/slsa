@@ -16,7 +16,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper=false)
 public class SlsaDocument  {
 
-  private List<InTotoStatement> attestations;
+  private List<SlsaStatement> attestations;
   private List<SlsaParty> parties;
   private List<SlsaBuildPlatform> buildPlatforms;
   private List<SlsaControlPlane> controlPlanes;

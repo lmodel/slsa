@@ -22,7 +22,8 @@
     "./slsa_source",
     "./slsa_dependency",
     "./slsa_build_environment",
-    "./slsa_adoption"
+    "./slsa_adoption",
+    "in_toto/in_toto_core"
   ],
   "license": "Apache-2.0",
   "prefixes": [
@@ -414,6 +415,59 @@
       "base": "str",
       "uri": "http://www.w3.org/2001/XMLSchema#string",
       "pattern": "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$",
+      "@type": "TypeDefinition"
+    },
+    {
+      "name": "in_toto_resource_uri",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoResourceUri",
+      "description": "A URI that identifies or locates a resource, such as a package URL or a git repository address, with its scheme and authority in lowercase.",
+      "comments": [
+        "The framework recommends a package URL (pkg:) or an SPDX download location (git+https:), and allows one that does not resolve."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
+      ],
+      "typeof": "uri",
+      "base": "URI",
+      "uri": "http://www.w3.org/2001/XMLSchema#anyURI",
+      "repr": "str",
+      "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
+      "@type": "TypeDefinition"
+    },
+    {
+      "name": "in_toto_type_uri",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoTypeUri",
+      "description": "A URI that names a type, such as a statement's or a predicate's, with its scheme and authority in lowercase.",
+      "comments": [
+        "The framework asks that it carry a version and registers none, since the namespace of a URI keeps two types apart."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#typeuri"
+      ],
+      "typeof": "uri",
+      "base": "URI",
+      "uri": "http://www.w3.org/2001/XMLSchema#anyURI",
+      "repr": "str",
+      "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
+      "@type": "TypeDefinition"
+    },
+    {
+      "name": "in_toto_timestamp",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoTimestamp",
+      "description": "A point in time in RFC 3339 format in the UTC time zone, written with a trailing Z, such as 1985-04-12T23:20:50.52Z.",
+      "comments": [
+        "It extends string rather than datetime, because the LinkML Python runtime writes a datetime's Z as +00:00, which the framework does not allow."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#timestamp"
+      ],
+      "typeof": "string",
+      "base": "str",
+      "uri": "http://www.w3.org/2001/XMLSchema#dateTime",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$",
       "@type": "TypeDefinition"
     }
   ],
@@ -824,50 +878,6 @@
   ],
   "slots": [
     {
-      "name": "resource_uri",
-      "definition_uri": "https://w3id.org/lmodel/slsa/resource_uri",
-      "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "mappings": [
-        "https://w3id.org/lmodel/slsa/resource_uri"
-      ],
-      "slot_uri": "https://w3id.org/lmodel/slsa/resource_uri",
-      "owner": "SlsaVerificationSummary",
-      "domain_of": [
-        "InTotoResourceDescriptor",
-        "SlsaVerificationSummary"
-      ],
-      "range": "uri",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "digest",
-      "definition_uri": "https://w3id.org/lmodel/slsa/digest",
-      "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "mappings": [
-        "https://w3id.org/lmodel/slsa/digest"
-      ],
-      "slot_uri": "https://w3id.org/lmodel/slsa/digest",
-      "owner": "SlsaMeasurement",
-      "domain_of": [
-        "InTotoResourceDescriptor",
-        "SlsaMeasurement"
-      ],
-      "range": "InTotoDigestSet",
-      "inlined": true,
-      "inlined_as_list": true,
-      "@type": "SlotDefinition"
-    },
-    {
       "name": "component_versions",
       "definition_uri": "https://w3id.org/lmodel/slsa/component_versions",
       "description": "The version of each named component of a platform.",
@@ -995,8 +1005,74 @@
       "@type": "SlotDefinition"
     },
     {
+      "name": "resource_uri",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/resource_uri",
+      "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
+      ],
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/resource_uri"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/resource_uri",
+      "owner": "InTotoResourceDescriptor",
+      "domain_of": [
+        "SlsaVerificationSummary",
+        "InTotoResourceDescriptor"
+      ],
+      "range": "in_toto_resource_uri",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "digest",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/digest",
+      "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md"
+      ],
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/digest"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/digest",
+      "owner": "InTotoResourceDescriptor",
+      "domain_of": [
+        "SlsaMeasurement",
+        "InTotoResourceDescriptor"
+      ],
+      "range": "InTotoDigestSet",
+      "inlined": true,
+      "inlined_as_list": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "predicate",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/predicate",
+      "description": "The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty.",
+      "comments": [
+        "It is a slot of its own rather than an attribute of InTotoStatement, because LOKF's predicate is a relation's type: `lokf adapt` renames a slot whose name LOKF defines and keeps its IRI, so a copy beside LOKF calls it in_toto_linkml_predicate."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md"
+      ],
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/predicate"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/predicate",
+      "owner": "InTotoStatement",
+      "domain_of": [
+        "InTotoStatement"
+      ],
+      "range": "InTotoPredicate",
+      "inlined": true,
+      "inlined_as_list": true,
+      "@type": "SlotDefinition"
+    },
+    {
       "name": "slsaDocument__attestations",
-      "description": "The attestations, as in-toto statements.",
+      "description": "The attestations, as in-toto statements with SLSA's fields.",
       "from_schema": "https://w3id.org/lmodel/slsa",
       "slot_uri": "https://w3id.org/lmodel/slsa/attestations",
       "alias": "attestations",
@@ -1004,7 +1080,7 @@
       "domain_of": [
         "SlsaDocument"
       ],
-      "range": "InTotoStatement",
+      "range": "SlsaStatement",
       "multivalued": true,
       "inlined": true,
       "inlined_as_list": true,
@@ -1202,597 +1278,7 @@
       "@type": "SlotDefinition"
     },
     {
-      "name": "inTotoDigestSet__sha256",
-      "description": "The SHA-256 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha256",
-      "alias": "sha256",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha224",
-      "description": "The SHA-224 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha224",
-      "alias": "sha224",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{56}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha384",
-      "description": "The SHA-384 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha384",
-      "alias": "sha384",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{96}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha512",
-      "description": "The SHA-512 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha512",
-      "alias": "sha512",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{128}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha512_224",
-      "description": "The SHA-512/224 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha512_224",
-      "alias": "sha512_224",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{56}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha512_256",
-      "description": "The SHA-512/256 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha512_256",
-      "alias": "sha512_256",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha3_224",
-      "description": "The SHA3-224 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha3_224",
-      "alias": "sha3_224",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{56}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha3_256",
-      "description": "The SHA3-256 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha3_256",
-      "alias": "sha3_256",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha3_384",
-      "description": "The SHA3-384 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha3_384",
-      "alias": "sha3_384",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{96}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha3_512",
-      "description": "The SHA3-512 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha3_512",
-      "alias": "sha3_512",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{128}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__shake128",
-      "description": "The SHAKE128 digest of the artifact, of at least 32 bytes.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/shake128",
-      "alias": "shake128",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__shake256",
-      "description": "The SHAKE256 digest of the artifact, of at least 32 bytes.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/shake256",
-      "alias": "shake256",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__blake2b",
-      "description": "The BLAKE2b digest of the artifact, of 32 to 64 bytes.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/blake2b",
-      "alias": "blake2b",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__blake2s",
-      "description": "The BLAKE2s digest of the artifact, at its full 32 bytes.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/blake2s",
-      "alias": "blake2s",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__ripemd160",
-      "description": "The RIPEMD-160 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/ripemd160",
-      "alias": "ripemd160",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{40}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sm3",
-      "description": "The SM3 digest of the artifact.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sm3",
-      "alias": "sm3",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__gost",
-      "description": "The GOST R 34.11 digest of the artifact, of 256 or 512 bits.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/gost",
-      "alias": "gost",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}([a-f0-9]{64})?$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__sha1",
-      "description": "The SHA-1 digest of the artifact.",
-      "comments": [
-        "SHA-1 lacks collision resistance, so most consumers should not rely on it."
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/sha1",
-      "alias": "sha1",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{40}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__md5",
-      "description": "The MD5 digest of the artifact.",
-      "comments": [
-        "MD5 lacks collision resistance, so most consumers should not accept it."
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/md5",
-      "alias": "md5",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{32}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__dir_hash",
-      "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/dir_hash",
-      "alias": "dir_hash",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{64}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__git_commit",
-      "description": "The git commit id of a source revision.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/git_commit",
-      "alias": "git_commit",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__git_tree",
-      "description": "The git tree id of a source revision's content, or of any file tree.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/git_tree",
-      "alias": "git_tree",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__git_blob",
-      "description": "The git blob id of a file's content.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/git_blob",
-      "alias": "git_blob",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__git_tag",
-      "description": "The git object id of an annotated tag.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/git_tag",
-      "alias": "git_tag",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "string",
-      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoDigestSet__additional_digests",
-      "description": "The digests under algorithms this class does not name.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/additional_digests",
-      "alias": "additional_digests",
-      "owner": "InTotoDigestSet",
-      "domain_of": [
-        "InTotoDigestSet"
-      ],
-      "range": "InTotoAdditionalDigest",
-      "multivalued": true,
-      "inlined": true,
-      "inlined_as_list": true,
-      "minimum_cardinality": 1,
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoAdditionalDigest__algorithm",
-      "description": "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.",
-      "comments": [
-        "An algorithm that InTotoDigestSet names, by its JSON key or by its field name, goes in that field instead."
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/algorithm",
-      "alias": "algorithm",
-      "owner": "InTotoAdditionalDigest",
-      "domain_of": [
-        "InTotoAdditionalDigest"
-      ],
-      "range": "string",
-      "required": true,
-      "pattern": "^[a-z][A-Za-z0-9_]*$",
-      "none_of": [
-        {
-          "equals_string_in": [
-            "sha256",
-            "sha224",
-            "sha384",
-            "sha512",
-            "sha512_224",
-            "sha512_256",
-            "sha3_224",
-            "sha3_256",
-            "sha3_384",
-            "sha3_512",
-            "shake128",
-            "shake256",
-            "blake2b",
-            "blake2s",
-            "ripemd160",
-            "sm3",
-            "gost",
-            "sha1",
-            "md5",
-            "dirHash",
-            "gitCommit",
-            "gitTree",
-            "gitBlob",
-            "gitTag",
-            "dir_hash",
-            "git_commit",
-            "git_tree",
-            "git_blob",
-            "git_tag"
-          ],
-          "@type": "AnonymousSlotExpression"
-        }
-      ],
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoAdditionalDigest__value",
-      "description": "The digest under that algorithm, in the encoding the algorithm documents.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/value",
-      "alias": "value",
-      "owner": "InTotoAdditionalDigest",
-      "domain_of": [
-        "InTotoAdditionalDigest"
-      ],
-      "range": "string",
-      "required": true,
-      "pattern": "^\\S+$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoAnnotation__annotation_key",
-      "description": "The annotation's key.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/annotation_key",
-      "alias": "annotation_key",
-      "owner": "InTotoAnnotation",
-      "domain_of": [
-        "InTotoAnnotation"
-      ],
-      "range": "string",
-      "required": true,
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoAnnotation__annotation_values",
-      "description": "The annotation's values.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/annotation_values",
-      "alias": "annotation_values",
-      "owner": "InTotoAnnotation",
-      "domain_of": [
-        "InTotoAnnotation"
-      ],
-      "range": "string",
-      "multivalued": true,
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoResourceDescriptor__resource_name",
-      "description": "A name for the resource within the attestation that carries it.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/resource_name",
-      "alias": "resource_name",
-      "owner": "InTotoResourceDescriptor",
-      "domain_of": [
-        "InTotoResourceDescriptor"
-      ],
-      "range": "string",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoResourceDescriptor__download_location",
-      "description": "Where the resource can be fetched, when that differs from its identifying URI.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/download_location",
-      "alias": "download_location",
-      "owner": "InTotoResourceDescriptor",
-      "domain_of": [
-        "InTotoResourceDescriptor"
-      ],
-      "range": "uri",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoResourceDescriptor__media_type",
-      "description": "The IANA media type of the resource's content.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/media_type",
-      "alias": "media_type",
-      "owner": "InTotoResourceDescriptor",
-      "domain_of": [
-        "InTotoResourceDescriptor"
-      ],
-      "range": "string",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoResourceDescriptor__content",
-      "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
-      "comments": [
-        "The in-toto framework asks for content under 1 KB, so that attestations stay small."
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/content",
-      "alias": "content",
-      "owner": "InTotoResourceDescriptor",
-      "domain_of": [
-        "InTotoResourceDescriptor"
-      ],
-      "range": "string",
-      "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoResourceDescriptor__annotations",
-      "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/annotations",
-      "alias": "annotations",
-      "owner": "InTotoResourceDescriptor",
-      "domain_of": [
-        "InTotoResourceDescriptor"
-      ],
-      "range": "InTotoAnnotation",
-      "multivalued": true,
-      "inlined": true,
-      "inlined_as_list": true,
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoStatement__statement_type",
-      "description": "The in-toto statement type, always https://in-toto.io/Statement/v1.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/statement_type",
-      "alias": "statement_type",
-      "owner": "InTotoStatement",
-      "domain_of": [
-        "InTotoStatement"
-      ],
-      "range": "uri",
-      "required": true,
-      "pattern": "^https://in-toto\\.io/Statement/v1$",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoStatement__subject",
-      "description": "The artifacts the predicate is about, each with a digest.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/subject",
-      "alias": "subject",
-      "owner": "InTotoStatement",
-      "domain_of": [
-        "InTotoStatement"
-      ],
-      "range": "InTotoStatementSubject",
-      "required": true,
-      "multivalued": true,
-      "inlined": true,
-      "inlined_as_list": true,
-      "minimum_cardinality": 1,
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoStatement__predicate_type",
-      "description": "The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/predicate_type",
-      "alias": "predicate_type",
-      "owner": "InTotoStatement",
-      "domain_of": [
-        "InTotoStatement"
-      ],
-      "range": "uri",
-      "required": true,
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoStatement__predicate",
-      "description": "The predicate, one of the kinds this schema models; predicate_kind names which.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/predicate",
-      "alias": "predicate",
-      "owner": "InTotoStatement",
-      "domain_of": [
-        "InTotoStatement"
-      ],
-      "range": "SlsaPredicate",
-      "inlined": true,
-      "inlined_as_list": true,
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "inTotoStatement__attestation_storage_uri",
+      "name": "slsaStatement__attestation_storage_uri",
       "description": "Where the signed attestation is stored or can be fetched.",
       "comments": [
         "SLSA asks producers to publish attestations in at least one place and preferably more: beside the source repository's releases, beside the artifact in its package registry, which it prefers in the long term, or elsewhere with an entry in a transparency log.",
@@ -1804,15 +1290,15 @@
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "slot_uri": "https://w3id.org/lmodel/slsa/attestation_storage_uri",
       "alias": "attestation_storage_uri",
-      "owner": "InTotoStatement",
+      "owner": "SlsaStatement",
       "domain_of": [
-        "InTotoStatement"
+        "SlsaStatement"
       ],
       "range": "uri",
       "@type": "SlotDefinition"
     },
     {
-      "name": "inTotoStatement__signing_tool",
+      "name": "slsaStatement__signing_tool",
       "description": "The tool that signed the attestation, named by URI, such as Cosign or Notation.",
       "in_subset": [
         "slsa_ssf"
@@ -1820,15 +1306,15 @@
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "slot_uri": "https://w3id.org/lmodel/slsa/signing_tool",
       "alias": "signing_tool",
-      "owner": "InTotoStatement",
+      "owner": "SlsaStatement",
       "domain_of": [
-        "InTotoStatement"
+        "SlsaStatement"
       ],
       "range": "uri",
       "@type": "SlotDefinition"
     },
     {
-      "name": "inTotoStatement__transparency_log_entry",
+      "name": "slsaStatement__transparency_log_entry",
       "description": "The transparency log entry that records the signature, such as a Rekor entry.",
       "in_subset": [
         "slsa_ssf"
@@ -1836,25 +1322,11 @@
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "slot_uri": "https://w3id.org/lmodel/slsa/transparency_log_entry",
       "alias": "transparency_log_entry",
-      "owner": "InTotoStatement",
+      "owner": "SlsaStatement",
       "domain_of": [
-        "InTotoStatement"
+        "SlsaStatement"
       ],
       "range": "uri",
-      "@type": "SlotDefinition"
-    },
-    {
-      "name": "slsaPredicate__predicate_kind",
-      "description": "The kind of predicate, one of this class's descendants.",
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slot_uri": "https://w3id.org/lmodel/slsa/predicate_kind",
-      "designates_type": true,
-      "alias": "predicate_kind",
-      "owner": "SlsaPredicate",
-      "domain_of": [
-        "SlsaPredicate"
-      ],
-      "range": "string",
       "@type": "SlotDefinition"
     },
     {
@@ -2883,48 +2355,723 @@
       "@type": "SlotDefinition"
     },
     {
-      "name": "InTotoStatementSubject_digest",
-      "definition_uri": "https://w3id.org/lmodel/slsa/digest",
-      "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "name": "inTotoDigestSet__sha256",
+      "description": "The SHA-256 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "mappings": [
-        "https://w3id.org/lmodel/slsa/digest"
+        "https://w3id.org/lmodel/in-toto/sha256"
       ],
-      "is_a": "digest",
-      "domain": "InTotoStatementSubject",
-      "slot_uri": "https://w3id.org/lmodel/slsa/digest",
-      "alias": "digest",
-      "owner": "InTotoStatementSubject",
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha256",
+      "alias": "sha256",
+      "owner": "InTotoDigestSet",
       "domain_of": [
-        "InTotoStatementSubject"
+        "InTotoDigestSet"
       ],
-      "is_usage_slot": true,
-      "usage_slot_name": "digest",
-      "range": "InTotoDigestSet",
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha224",
+      "description": "The SHA-224 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha224"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha224",
+      "alias": "sha224",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{56}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha384",
+      "description": "The SHA-384 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha384"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha384",
+      "alias": "sha384",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{96}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha512",
+      "description": "The SHA-512 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha512"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha512",
+      "alias": "sha512",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{128}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha512_224",
+      "description": "The SHA-512/224 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha512_224"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha512_224",
+      "alias": "sha512_224",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{56}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha512_256",
+      "description": "The SHA-512/256 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha512_256"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha512_256",
+      "alias": "sha512_256",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha3_224",
+      "description": "The SHA3-224 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha3_224"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha3_224",
+      "alias": "sha3_224",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{56}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha3_256",
+      "description": "The SHA3-256 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha3_256"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha3_256",
+      "alias": "sha3_256",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha3_384",
+      "description": "The SHA3-384 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha3_384"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha3_384",
+      "alias": "sha3_384",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{96}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha3_512",
+      "description": "The SHA3-512 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha3_512"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha3_512",
+      "alias": "sha3_512",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{128}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__shake128",
+      "description": "The SHAKE128 digest of the artifact, of at least 32 bytes.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/shake128"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/shake128",
+      "alias": "shake128",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__shake256",
+      "description": "The SHAKE256 digest of the artifact, of at least 32 bytes.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/shake256"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/shake256",
+      "alias": "shake256",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__blake2b",
+      "description": "The BLAKE2b digest of the artifact, of 32 to 64 bytes.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/blake2b"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/blake2b",
+      "alias": "blake2b",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__blake2s",
+      "description": "The BLAKE2s digest of the artifact, at its full 32 bytes.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/blake2s"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/blake2s",
+      "alias": "blake2s",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__ripemd160",
+      "description": "The RIPEMD-160 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/ripemd160"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/ripemd160",
+      "alias": "ripemd160",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sm3",
+      "description": "The SM3 digest of the artifact.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sm3"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sm3",
+      "alias": "sm3",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__gost",
+      "description": "The GOST R 34.11 digest of the artifact, of 256 or 512 bits.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/gost"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/gost",
+      "alias": "gost",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}([a-f0-9]{64})?$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__sha1",
+      "description": "The SHA-1 digest of the artifact.",
+      "comments": [
+        "SHA-1 lacks collision resistance, so most consumers should not rely on it."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/sha1"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/sha1",
+      "alias": "sha1",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__md5",
+      "description": "The MD5 digest of the artifact.",
+      "comments": [
+        "MD5 lacks collision resistance, so most consumers should not accept it."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/md5"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/md5",
+      "alias": "md5",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{32}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__dir_hash",
+      "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/dir_hash"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/dir_hash",
+      "alias": "dir_hash",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__git_commit",
+      "description": "The git commit id of a source revision.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/git_commit"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/git_commit",
+      "alias": "git_commit",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__git_tree",
+      "description": "The git tree id of a source revision's content, or of any file tree.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/git_tree"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/git_tree",
+      "alias": "git_tree",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__git_blob",
+      "description": "The git blob id of a file's content.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/git_blob"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/git_blob",
+      "alias": "git_blob",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__git_tag",
+      "description": "The git object id of an annotated tag.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/git_tag"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/git_tag",
+      "alias": "git_tag",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "string",
+      "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoDigestSet__additional_digests",
+      "description": "The digests under algorithms this class does not name.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/additional_digests"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/additional_digests",
+      "alias": "additional_digests",
+      "owner": "InTotoDigestSet",
+      "domain_of": [
+        "InTotoDigestSet"
+      ],
+      "range": "InTotoAdditionalDigest",
+      "multivalued": true,
+      "inlined": true,
+      "inlined_as_list": true,
+      "minimum_cardinality": 1,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoAdditionalDigest__algorithm",
+      "description": "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.",
+      "comments": [
+        "An algorithm that InTotoDigestSet names, by its JSON key or by its field name, goes in that field instead.",
+        "A name starts with a lowercase letter, as the framework's own names do, so that SHA256 is not taken for sha256, and it may hold a colon, as go-witness's gitoid:sha256 does. The framework itself sets no rule for other names."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "http://spdx.org/rdf/terms#algorithm"
+      ],
+      "slot_uri": "http://spdx.org/rdf/terms#algorithm",
+      "alias": "algorithm",
+      "owner": "InTotoAdditionalDigest",
+      "domain_of": [
+        "InTotoAdditionalDigest"
+      ],
+      "range": "string",
       "required": true,
+      "pattern": "^[a-z][A-Za-z0-9_.:-]*$",
+      "none_of": [
+        {
+          "equals_string_in": [
+            "sha256",
+            "sha224",
+            "sha384",
+            "sha512",
+            "sha512_224",
+            "sha512_256",
+            "sha3_224",
+            "sha3_256",
+            "sha3_384",
+            "sha3_512",
+            "shake128",
+            "shake256",
+            "blake2b",
+            "blake2s",
+            "ripemd160",
+            "sm3",
+            "gost",
+            "sha1",
+            "md5",
+            "dirHash",
+            "gitCommit",
+            "gitTree",
+            "gitBlob",
+            "gitTag",
+            "dir_hash",
+            "git_commit",
+            "git_tree",
+            "git_blob",
+            "git_tag"
+          ],
+          "@type": "AnonymousSlotExpression"
+        }
+      ],
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoAdditionalDigest__value",
+      "description": "The digest under that algorithm, in the encoding the algorithm documents.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/value"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/value",
+      "alias": "value",
+      "owner": "InTotoAdditionalDigest",
+      "domain_of": [
+        "InTotoAdditionalDigest"
+      ],
+      "range": "string",
+      "required": true,
+      "pattern": "^\\S+$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoAnnotation__annotation_key",
+      "description": "The annotation's key.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/annotation_key"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/annotation_key",
+      "alias": "annotation_key",
+      "owner": "InTotoAnnotation",
+      "domain_of": [
+        "InTotoAnnotation"
+      ],
+      "range": "string",
+      "required": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoAnnotation__annotation_values",
+      "description": "The annotation's values.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/annotation_values"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/annotation_values",
+      "alias": "annotation_values",
+      "owner": "InTotoAnnotation",
+      "domain_of": [
+        "InTotoAnnotation"
+      ],
+      "range": "string",
+      "multivalued": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoResourceDescriptor__resource_name",
+      "description": "A name for the resource within the attestation that carries it.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/resource_name"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/resource_name",
+      "alias": "resource_name",
+      "owner": "InTotoResourceDescriptor",
+      "domain_of": [
+        "InTotoResourceDescriptor"
+      ],
+      "range": "string",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoResourceDescriptor__download_location",
+      "description": "Where the resource can be fetched, when that differs from its identifying URI.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/download_location"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/download_location",
+      "alias": "download_location",
+      "owner": "InTotoResourceDescriptor",
+      "domain_of": [
+        "InTotoResourceDescriptor"
+      ],
+      "range": "in_toto_resource_uri",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoResourceDescriptor__media_type",
+      "description": "The IANA media type of the resource's content.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "http://www.w3.org/ns/dcat#mediaType"
+      ],
+      "slot_uri": "http://www.w3.org/ns/dcat#mediaType",
+      "alias": "media_type",
+      "owner": "InTotoResourceDescriptor",
+      "domain_of": [
+        "InTotoResourceDescriptor"
+      ],
+      "range": "string",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoResourceDescriptor__content",
+      "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
+      "comments": [
+        "The in-toto framework asks for content under 1 KB, so that attestations stay small."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/content"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/content",
+      "alias": "content",
+      "owner": "InTotoResourceDescriptor",
+      "domain_of": [
+        "InTotoResourceDescriptor"
+      ],
+      "range": "string",
+      "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoResourceDescriptor__annotations",
+      "description": "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/annotations"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/annotations",
+      "alias": "annotations",
+      "owner": "InTotoResourceDescriptor",
+      "domain_of": [
+        "InTotoResourceDescriptor"
+      ],
+      "range": "InTotoAnnotation",
+      "multivalued": true,
       "inlined": true,
       "inlined_as_list": true,
       "@type": "SlotDefinition"
     },
     {
-      "name": "SlsaVerificationSummary_resource_uri",
-      "definition_uri": "https://w3id.org/lmodel/slsa/resource_uri",
-      "description": "The URI consumers fetch the artifact from, which the verifier verified it as.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "name": "inTotoStatement__statement_type",
+      "description": "The in-toto statement type, always https://in-toto.io/Statement/v1.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "mappings": [
-        "https://w3id.org/lmodel/slsa/resource_uri"
+        "https://w3id.org/lmodel/in-toto/statement_type"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/statement_type",
+      "alias": "statement_type",
+      "owner": "InTotoStatement",
+      "domain_of": [
+        "InTotoStatement"
+      ],
+      "range": "in_toto_type_uri",
+      "required": true,
+      "pattern": "^https://in-toto\\.io/Statement/v1$",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoStatement__subject",
+      "description": "The artifacts the predicate is about, each with a digest.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/subject"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/subject",
+      "alias": "subject",
+      "owner": "InTotoStatement",
+      "domain_of": [
+        "InTotoStatement"
+      ],
+      "range": "InTotoStatementSubject",
+      "required": true,
+      "multivalued": true,
+      "inlined": true,
+      "inlined_as_list": true,
+      "minimum_cardinality": 1,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoStatement__predicate_type",
+      "description": "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/predicate_type"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/predicate_type",
+      "alias": "predicate_type",
+      "owner": "InTotoStatement",
+      "domain_of": [
+        "InTotoStatement"
+      ],
+      "range": "in_toto_type_uri",
+      "required": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "inTotoPredicate__predicate_kind",
+      "description": "The kind of predicate, one of this class's descendants.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/predicate_kind"
+      ],
+      "slot_uri": "https://w3id.org/lmodel/in-toto/predicate_kind",
+      "designates_type": true,
+      "alias": "predicate_kind",
+      "owner": "InTotoPredicate",
+      "domain_of": [
+        "InTotoPredicate"
+      ],
+      "range": "string",
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "SlsaVerificationSummary_resource_uri",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/resource_uri",
+      "description": "The URI consumers fetch the artifact from, which the verifier verified it as.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
+      ],
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/resource_uri"
       ],
       "is_a": "resource_uri",
       "domain": "SlsaVerificationSummary",
-      "slot_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "slot_uri": "https://w3id.org/lmodel/in-toto/resource_uri",
       "alias": "resource_uri",
       "owner": "SlsaVerificationSummary",
       "domain_of": [
@@ -2932,25 +3079,24 @@
       ],
       "is_usage_slot": true,
       "usage_slot_name": "resource_uri",
-      "range": "uri",
+      "range": "in_toto_resource_uri",
       "required": true,
       "@type": "SlotDefinition"
     },
     {
       "name": "SlsaVerificationSummaryPolicy_resource_uri",
-      "definition_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/resource_uri",
       "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
       ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "mappings": [
-        "https://w3id.org/lmodel/slsa/resource_uri"
+        "https://w3id.org/lmodel/in-toto/resource_uri"
       ],
       "is_a": "resource_uri",
       "domain": "SlsaVerificationSummaryPolicy",
-      "slot_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "slot_uri": "https://w3id.org/lmodel/in-toto/resource_uri",
       "alias": "resource_uri",
       "owner": "SlsaVerificationSummaryPolicy",
       "domain_of": [
@@ -2958,25 +3104,24 @@
       ],
       "is_usage_slot": true,
       "usage_slot_name": "resource_uri",
-      "range": "uri",
+      "range": "in_toto_resource_uri",
       "required": true,
       "@type": "SlotDefinition"
     },
     {
       "name": "SlsaVerificationSummaryPolicy_digest",
-      "definition_uri": "https://w3id.org/lmodel/slsa/digest",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/digest",
       "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md"
       ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "mappings": [
-        "https://w3id.org/lmodel/slsa/digest"
+        "https://w3id.org/lmodel/in-toto/digest"
       ],
       "is_a": "digest",
       "domain": "SlsaVerificationSummaryPolicy",
-      "slot_uri": "https://w3id.org/lmodel/slsa/digest",
+      "slot_uri": "https://w3id.org/lmodel/in-toto/digest",
       "alias": "digest",
       "owner": "SlsaVerificationSummaryPolicy",
       "domain_of": [
@@ -2992,19 +3137,18 @@
     },
     {
       "name": "SlsaVerificationSummaryInputAttestation_digest",
-      "definition_uri": "https://w3id.org/lmodel/slsa/digest",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/digest",
       "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md"
       ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "mappings": [
-        "https://w3id.org/lmodel/slsa/digest"
+        "https://w3id.org/lmodel/in-toto/digest"
       ],
       "is_a": "digest",
       "domain": "SlsaVerificationSummaryInputAttestation",
-      "slot_uri": "https://w3id.org/lmodel/slsa/digest",
+      "slot_uri": "https://w3id.org/lmodel/in-toto/digest",
       "alias": "digest",
       "owner": "SlsaVerificationSummaryInputAttestation",
       "domain_of": [
@@ -3020,19 +3164,18 @@
     },
     {
       "name": "SlsaVerificationSummaryInputAttestation_resource_uri",
-      "definition_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/resource_uri",
       "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
       ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "mappings": [
-        "https://w3id.org/lmodel/slsa/resource_uri"
+        "https://w3id.org/lmodel/in-toto/resource_uri"
       ],
       "is_a": "resource_uri",
       "domain": "SlsaVerificationSummaryInputAttestation",
-      "slot_uri": "https://w3id.org/lmodel/slsa/resource_uri",
+      "slot_uri": "https://w3id.org/lmodel/in-toto/resource_uri",
       "alias": "resource_uri",
       "owner": "SlsaVerificationSummaryInputAttestation",
       "domain_of": [
@@ -3040,7 +3183,7 @@
       ],
       "is_usage_slot": true,
       "usage_slot_name": "resource_uri",
-      "range": "uri",
+      "range": "in_toto_resource_uri",
       "recommended": true,
       "@type": "SlotDefinition"
     },
@@ -3067,6 +3210,33 @@
       "usage_slot_name": "revision",
       "range": "SlsaSourceRevision",
       "required": true,
+      "@type": "SlotDefinition"
+    },
+    {
+      "name": "InTotoStatementSubject_digest",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/digest",
+      "description": "The cryptographic digests of a resource's content, keyed by algorithm.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md"
+      ],
+      "mappings": [
+        "https://w3id.org/lmodel/in-toto/digest"
+      ],
+      "is_a": "digest",
+      "domain": "InTotoStatementSubject",
+      "slot_uri": "https://w3id.org/lmodel/in-toto/digest",
+      "alias": "digest",
+      "owner": "InTotoStatementSubject",
+      "domain_of": [
+        "InTotoStatementSubject"
+      ],
+      "is_usage_slot": true,
+      "usage_slot_name": "digest",
+      "range": "InTotoDigestSet",
+      "required": true,
+      "inlined": true,
+      "inlined_as_list": true,
       "@type": "SlotDefinition"
     }
   ],
@@ -3095,8 +3265,8 @@
       "attributes": [
         {
           "name": "attestations",
-          "description": "The attestations, as in-toto statements.",
-          "range": "InTotoStatement",
+          "description": "The attestations, as in-toto statements with SLSA's fields.",
+          "range": "SlsaStatement",
           "multivalued": true,
           "inlined": true,
           "inlined_as_list": true,
@@ -3214,883 +3384,11 @@
       "@type": "ClassDefinition"
     },
     {
-      "name": "InTotoDigestSet",
-      "definition_uri": "https://w3id.org/lmodel/slsa/InTotoDigestSet",
-      "description": "A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.",
-      "notes": [
-        "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present."
-      ],
+      "name": "SlsaStatement",
+      "definition_uri": "https://w3id.org/lmodel/slsa/SlsaStatement",
+      "description": "An in-toto statement with the fields this schema adds: where the signed attestation is stored, the tool that signed it and the transparency log entry that records the signature.",
       "comments": [
-        "The named algorithms take lowercase hexadecimal, and additional_digests holds any other algorithm, such as an SCS's own revision type.",
-        "A consumer accepts only the algorithms it considers secure and ignores the rest, and two sets match when any accepted algorithm matches.",
-        "SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least 32 bytes, since a shorter digest resists collisions too weakly to identify an artifact."
-      ],
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "see_also": [
-        "https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md"
-      ],
-      "slots": [
-        "inTotoDigestSet__sha256",
-        "inTotoDigestSet__sha224",
-        "inTotoDigestSet__sha384",
-        "inTotoDigestSet__sha512",
-        "inTotoDigestSet__sha512_224",
-        "inTotoDigestSet__sha512_256",
-        "inTotoDigestSet__sha3_224",
-        "inTotoDigestSet__sha3_256",
-        "inTotoDigestSet__sha3_384",
-        "inTotoDigestSet__sha3_512",
-        "inTotoDigestSet__shake128",
-        "inTotoDigestSet__shake256",
-        "inTotoDigestSet__blake2b",
-        "inTotoDigestSet__blake2s",
-        "inTotoDigestSet__ripemd160",
-        "inTotoDigestSet__sm3",
-        "inTotoDigestSet__gost",
-        "inTotoDigestSet__sha1",
-        "inTotoDigestSet__md5",
-        "inTotoDigestSet__dir_hash",
-        "inTotoDigestSet__git_commit",
-        "inTotoDigestSet__git_tree",
-        "inTotoDigestSet__git_blob",
-        "inTotoDigestSet__git_tag",
-        "inTotoDigestSet__additional_digests"
-      ],
-      "slot_usage": {},
-      "attributes": [
-        {
-          "name": "sha256",
-          "description": "The SHA-256 digest of the artifact.",
-          "pattern": "^[a-f0-9]{64}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha224",
-          "description": "The SHA-224 digest of the artifact.",
-          "pattern": "^[a-f0-9]{56}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha384",
-          "description": "The SHA-384 digest of the artifact.",
-          "pattern": "^[a-f0-9]{96}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha512",
-          "description": "The SHA-512 digest of the artifact.",
-          "pattern": "^[a-f0-9]{128}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha512_224",
-          "description": "The SHA-512/224 digest of the artifact.",
-          "pattern": "^[a-f0-9]{56}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha512_256",
-          "description": "The SHA-512/256 digest of the artifact.",
-          "pattern": "^[a-f0-9]{64}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha3_224",
-          "description": "The SHA3-224 digest of the artifact.",
-          "pattern": "^[a-f0-9]{56}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha3_256",
-          "description": "The SHA3-256 digest of the artifact.",
-          "pattern": "^[a-f0-9]{64}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha3_384",
-          "description": "The SHA3-384 digest of the artifact.",
-          "pattern": "^[a-f0-9]{96}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha3_512",
-          "description": "The SHA3-512 digest of the artifact.",
-          "pattern": "^[a-f0-9]{128}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "shake128",
-          "description": "The SHAKE128 digest of the artifact, of at least 32 bytes.",
-          "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "shake256",
-          "description": "The SHAKE256 digest of the artifact, of at least 32 bytes.",
-          "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "blake2b",
-          "description": "The BLAKE2b digest of the artifact, of 32 to 64 bytes.",
-          "pattern": "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "blake2s",
-          "description": "The BLAKE2s digest of the artifact, at its full 32 bytes.",
-          "pattern": "^[a-f0-9]{64}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "ripemd160",
-          "description": "The RIPEMD-160 digest of the artifact.",
-          "pattern": "^[a-f0-9]{40}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sm3",
-          "description": "The SM3 digest of the artifact.",
-          "pattern": "^[a-f0-9]{64}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "gost",
-          "description": "The GOST R 34.11 digest of the artifact, of 256 or 512 bits.",
-          "pattern": "^[a-f0-9]{64}([a-f0-9]{64})?$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "sha1",
-          "description": "The SHA-1 digest of the artifact.",
-          "comments": [
-            "SHA-1 lacks collision resistance, so most consumers should not rely on it."
-          ],
-          "pattern": "^[a-f0-9]{40}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "md5",
-          "description": "The MD5 digest of the artifact.",
-          "comments": [
-            "MD5 lacks collision resistance, so most consumers should not accept it."
-          ],
-          "pattern": "^[a-f0-9]{32}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "dir_hash",
-          "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
-          "pattern": "^[a-f0-9]{64}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "git_commit",
-          "description": "The git commit id of a source revision.",
-          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "git_tree",
-          "description": "The git tree id of a source revision's content, or of any file tree.",
-          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "git_blob",
-          "description": "The git blob id of a file's content.",
-          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "git_tag",
-          "description": "The git object id of an annotated tag.",
-          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "additional_digests",
-          "description": "The digests under algorithms this class does not name.",
-          "range": "InTotoAdditionalDigest",
-          "multivalued": true,
-          "inlined": true,
-          "inlined_as_list": true,
-          "minimum_cardinality": 1,
-          "@type": "SlotDefinition"
-        }
-      ],
-      "class_uri": "https://w3id.org/lmodel/slsa/InTotoDigestSet",
-      "any_of": [
-        {
-          "slot_conditions": [
-            {
-              "name": "sha256",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha224",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha384",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha512",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha512_224",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha512_256",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha3_224",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha3_256",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha3_384",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha3_512",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "shake128",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "shake256",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "blake2b",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "blake2s",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "ripemd160",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sm3",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "gost",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "sha1",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "md5",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "dir_hash",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "git_commit",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "git_tree",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "git_blob",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "git_tag",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "additional_digests",
-              "required": true,
-              "multivalued": true,
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        }
-      ],
-      "@type": "ClassDefinition"
-    },
-    {
-      "name": "InTotoAdditionalDigest",
-      "definition_uri": "https://w3id.org/lmodel/slsa/InTotoAdditionalDigest",
-      "description": "One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.",
-      "comments": [
-        "In the attestation's JSON the algorithm is a key of the digest set beside the named ones, and an algorithm the framework does not define documents how its value is encoded.",
-        "An SCS that does not use cryptographic digests defines a canonical revision type of its own that includes the repository, such as svn_revision_id.",
-        "Each algorithm appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
-      ],
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "see_also": [
-        "https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md",
-        "https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation"
-      ],
-      "slots": [
-        "inTotoAdditionalDigest__algorithm",
-        "inTotoAdditionalDigest__value"
-      ],
-      "slot_usage": {},
-      "attributes": [
-        {
-          "name": "algorithm",
-          "description": "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.",
-          "comments": [
-            "An algorithm that InTotoDigestSet names, by its JSON key or by its field name, goes in that field instead."
-          ],
-          "required": true,
-          "pattern": "^[a-z][A-Za-z0-9_]*$",
-          "none_of": [
-            {
-              "equals_string_in": [
-                "sha256",
-                "sha224",
-                "sha384",
-                "sha512",
-                "sha512_224",
-                "sha512_256",
-                "sha3_224",
-                "sha3_256",
-                "sha3_384",
-                "sha3_512",
-                "shake128",
-                "shake256",
-                "blake2b",
-                "blake2s",
-                "ripemd160",
-                "sm3",
-                "gost",
-                "sha1",
-                "md5",
-                "dirHash",
-                "gitCommit",
-                "gitTree",
-                "gitBlob",
-                "gitTag",
-                "dir_hash",
-                "git_commit",
-                "git_tree",
-                "git_blob",
-                "git_tag"
-              ],
-              "@type": "AnonymousSlotExpression"
-            }
-          ],
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "value",
-          "description": "The digest under that algorithm, in the encoding the algorithm documents.",
-          "required": true,
-          "pattern": "^\\S+$",
-          "@type": "SlotDefinition"
-        }
-      ],
-      "class_uri": "https://w3id.org/lmodel/slsa/InTotoAdditionalDigest",
-      "@type": "ClassDefinition"
-    },
-    {
-      "name": "InTotoAnnotation",
-      "definition_uri": "https://w3id.org/lmodel/slsa/InTotoAnnotation",
-      "description": "One vendor-specific annotation on a resource descriptor: a key and its values.",
-      "comments": [
-        "The attestation's JSON allows any JSON value. A string becomes one value and an array one value per item; any other value or item is written as its JSON text, so one value cannot tell a string from a one-item array.",
-        "Each key appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
-      ],
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "slots": [
-        "inTotoAnnotation__annotation_key",
-        "inTotoAnnotation__annotation_values"
-      ],
-      "slot_usage": {},
-      "attributes": [
-        {
-          "name": "annotation_key",
-          "description": "The annotation's key.",
-          "required": true,
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "annotation_values",
-          "description": "The annotation's values.",
-          "multivalued": true,
-          "@type": "SlotDefinition"
-        }
-      ],
-      "class_uri": "https://w3id.org/lmodel/slsa/InTotoAnnotation",
-      "@type": "ClassDefinition"
-    },
-    {
-      "name": "InTotoResourceDescriptor",
-      "definition_uri": "https://w3id.org/lmodel/slsa/InTotoResourceDescriptor",
-      "description": "A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.",
-      "notes": [
-        "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present."
-      ],
-      "comments": [
-        "A descriptor carries at least one of a URI, a digest or its content; a field that needs a particular one says so."
-      ],
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track",
-        "slsa_dependency_track",
-        "slsa_build_environment_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "see_also": [
-        "https://github.com/in-toto/attestation/blob/main/spec/v1/resource_descriptor.md"
-      ],
-      "slots": [
-        "resource_uri",
-        "digest",
-        "inTotoResourceDescriptor__resource_name",
-        "inTotoResourceDescriptor__download_location",
-        "inTotoResourceDescriptor__media_type",
-        "inTotoResourceDescriptor__content",
-        "inTotoResourceDescriptor__annotations"
-      ],
-      "slot_usage": {},
-      "attributes": [
-        {
-          "name": "resource_name",
-          "description": "A name for the resource within the attestation that carries it.",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "download_location",
-          "description": "Where the resource can be fetched, when that differs from its identifying URI.",
-          "range": "uri",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "media_type",
-          "description": "The IANA media type of the resource's content.",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "content",
-          "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
-          "comments": [
-            "The in-toto framework asks for content under 1 KB, so that attestations stay small."
-          ],
-          "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "annotations",
-          "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
-          "range": "InTotoAnnotation",
-          "multivalued": true,
-          "inlined": true,
-          "inlined_as_list": true,
-          "@type": "SlotDefinition"
-        }
-      ],
-      "class_uri": "https://w3id.org/lmodel/slsa/InTotoResourceDescriptor",
-      "any_of": [
-        {
-          "slot_conditions": [
-            {
-              "name": "resource_uri",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "uri",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "digest",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "InTotoDigestSet",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        },
-        {
-          "slot_conditions": [
-            {
-              "name": "content",
-              "required": true,
-              "any_of": [
-                {
-                  "range": "string",
-                  "@type": "AnonymousSlotExpression"
-                }
-              ],
-              "@type": "SlotDefinition"
-            }
-          ],
-          "@type": "AnonymousClassExpression"
-        }
-      ],
-      "@type": "ClassDefinition"
-    },
-    {
-      "name": "InTotoStatementSubject",
-      "definition_uri": "https://w3id.org/lmodel/slsa/InTotoStatementSubject",
-      "description": "One artifact an in-toto statement is about: a resource descriptor that carries a digest.",
-      "in_subset": [
-        "slsa_build_track",
-        "slsa_source_track",
-        "slsa_build_environment_track"
-      ],
-      "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
-      "see_also": [
-        "https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md"
-      ],
-      "is_a": "InTotoResourceDescriptor",
-      "slots": [
-        "resource_uri",
-        "inTotoResourceDescriptor__resource_name",
-        "inTotoResourceDescriptor__download_location",
-        "inTotoResourceDescriptor__media_type",
-        "inTotoResourceDescriptor__content",
-        "inTotoResourceDescriptor__annotations",
-        "InTotoStatementSubject_digest"
-      ],
-      "slot_usage": {},
-      "class_uri": "https://w3id.org/lmodel/slsa/InTotoStatementSubject",
-      "@type": "ClassDefinition"
-    },
-    {
-      "name": "InTotoStatement",
-      "definition_uri": "https://w3id.org/lmodel/slsa/InTotoStatement",
-      "description": "The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.",
-      "comments": [
-        "The signature envelope around a statement is outside this model.",
+        "InTotoStatement comes from lmodel/in-toto and holds only what the in-toto specification defines, so the fields SLSA's adoption study and the Secure Software Factory add live on this subclass. A statement without them is a valid SlsaStatement too.",
         "Attestation and provenance are often confused; a statement is the attestation, and build provenance is one kind of predicate it may carry (Tamanna et al., 2024, UC.1)."
       ],
       "in_subset": [
@@ -4100,53 +3398,21 @@
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "see_also": [
-        "https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md",
-        "https://slsa.dev/spec/v1.2/attestation-model"
+        "https://slsa.dev/spec/v1.2/attestation-model",
+        "https://slsa.dev/spec/v1.2/distributing-provenance"
       ],
+      "is_a": "InTotoStatement",
       "slots": [
+        "predicate",
         "inTotoStatement__statement_type",
         "inTotoStatement__subject",
         "inTotoStatement__predicate_type",
-        "inTotoStatement__predicate",
-        "inTotoStatement__attestation_storage_uri",
-        "inTotoStatement__signing_tool",
-        "inTotoStatement__transparency_log_entry"
+        "slsaStatement__attestation_storage_uri",
+        "slsaStatement__signing_tool",
+        "slsaStatement__transparency_log_entry"
       ],
       "slot_usage": {},
       "attributes": [
-        {
-          "name": "statement_type",
-          "description": "The in-toto statement type, always https://in-toto.io/Statement/v1.",
-          "range": "uri",
-          "required": true,
-          "pattern": "^https://in-toto\\.io/Statement/v1$",
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "subject",
-          "description": "The artifacts the predicate is about, each with a digest.",
-          "range": "InTotoStatementSubject",
-          "required": true,
-          "multivalued": true,
-          "inlined": true,
-          "inlined_as_list": true,
-          "minimum_cardinality": 1,
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "predicate_type",
-          "description": "The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1.",
-          "range": "uri",
-          "required": true,
-          "@type": "SlotDefinition"
-        },
-        {
-          "name": "predicate",
-          "description": "The predicate, one of the kinds this schema models; predicate_kind names which.",
-          "range": "SlsaPredicate",
-          "inlined": true,
-          "@type": "SlotDefinition"
-        },
         {
           "name": "attestation_storage_uri",
           "description": "Where the signed attestation is stored or can be fetched.",
@@ -4179,33 +3445,25 @@
           "@type": "SlotDefinition"
         }
       ],
-      "class_uri": "https://w3id.org/lmodel/slsa/InTotoStatement",
+      "class_uri": "https://w3id.org/lmodel/slsa/SlsaStatement",
       "@type": "ClassDefinition"
     },
     {
       "name": "SlsaPredicate",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaPredicate",
-      "description": "The base of every predicate this schema models; predicate_kind names the concrete kind.",
+      "description": "The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.",
       "in_subset": [
         "slsa_build_track",
         "slsa_source_track",
         "slsa_build_environment_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "is_a": "InTotoPredicate",
       "abstract": true,
       "slots": [
-        "slsaPredicate__predicate_kind"
+        "inTotoPredicate__predicate_kind"
       ],
       "slot_usage": {},
-      "attributes": [
-        {
-          "name": "predicate_kind",
-          "description": "The kind of predicate, one of this class's descendants.",
-          "designates_type": true,
-          "range": "string",
-          "@type": "SlotDefinition"
-        }
-      ],
       "class_uri": "https://w3id.org/lmodel/slsa/SlsaPredicate",
       "@type": "ClassDefinition"
     },
@@ -4556,7 +3814,7 @@
       ],
       "is_a": "SlsaPredicate",
       "slots": [
-        "slsaPredicate__predicate_kind",
+        "inTotoPredicate__predicate_kind",
         "slsaBuildProvenance__build_definition",
         "slsaBuildProvenance__run_details"
       ],
@@ -4822,7 +4080,7 @@
       ],
       "is_a": "SlsaPredicate",
       "slots": [
-        "slsaPredicate__predicate_kind",
+        "inTotoPredicate__predicate_kind",
         "SlsaVerificationSummary_resource_uri",
         "slsaVerificationSummary__verifier",
         "slsaVerificationSummary__time_verified",
@@ -5248,7 +4506,7 @@
       ],
       "is_a": "SlsaPredicate",
       "slots": [
-        "slsaPredicate__predicate_kind",
+        "inTotoPredicate__predicate_kind",
         "SlsaSourceProvenance_revision",
         "slsaSourceProvenance__controls_enforced"
       ],
@@ -5426,7 +4684,7 @@
       ],
       "is_a": "SlsaPredicate",
       "slots": [
-        "slsaPredicate__predicate_kind",
+        "inTotoPredicate__predicate_kind",
         "build_env_level",
         "slsaBuildEnvironmentAttestation__build_id",
         "slsaBuildEnvironmentAttestation__build_image",
@@ -5496,12 +4754,977 @@
       ],
       "class_uri": "https://w3id.org/lmodel/slsa/SlsaAdoptionMetadata",
       "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoDigestSet",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoDigestSet",
+      "description": "A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.",
+      "notes": [
+        "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present."
+      ],
+      "comments": [
+        "The named algorithms take lowercase hexadecimal, and additional_digests holds any other algorithm, such as an SCS's own revision type.",
+        "A consumer accepts only the algorithms it considers secure and ignores the rest, and two sets match when any accepted algorithm matches.",
+        "SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least 32 bytes, since a shorter digest resists collisions too weakly to identify an artifact."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md"
+      ],
+      "slots": [
+        "inTotoDigestSet__sha256",
+        "inTotoDigestSet__sha224",
+        "inTotoDigestSet__sha384",
+        "inTotoDigestSet__sha512",
+        "inTotoDigestSet__sha512_224",
+        "inTotoDigestSet__sha512_256",
+        "inTotoDigestSet__sha3_224",
+        "inTotoDigestSet__sha3_256",
+        "inTotoDigestSet__sha3_384",
+        "inTotoDigestSet__sha3_512",
+        "inTotoDigestSet__shake128",
+        "inTotoDigestSet__shake256",
+        "inTotoDigestSet__blake2b",
+        "inTotoDigestSet__blake2s",
+        "inTotoDigestSet__ripemd160",
+        "inTotoDigestSet__sm3",
+        "inTotoDigestSet__gost",
+        "inTotoDigestSet__sha1",
+        "inTotoDigestSet__md5",
+        "inTotoDigestSet__dir_hash",
+        "inTotoDigestSet__git_commit",
+        "inTotoDigestSet__git_tree",
+        "inTotoDigestSet__git_blob",
+        "inTotoDigestSet__git_tag",
+        "inTotoDigestSet__additional_digests"
+      ],
+      "slot_usage": {},
+      "attributes": [
+        {
+          "name": "sha256",
+          "description": "The SHA-256 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha256",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha224",
+          "description": "The SHA-224 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha224",
+          "pattern": "^[a-f0-9]{56}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha384",
+          "description": "The SHA-384 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha384",
+          "pattern": "^[a-f0-9]{96}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha512",
+          "description": "The SHA-512 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha512",
+          "pattern": "^[a-f0-9]{128}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha512_224",
+          "description": "The SHA-512/224 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha512_224",
+          "pattern": "^[a-f0-9]{56}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha512_256",
+          "description": "The SHA-512/256 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha512_256",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha3_224",
+          "description": "The SHA3-224 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha3_224",
+          "pattern": "^[a-f0-9]{56}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha3_256",
+          "description": "The SHA3-256 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha3_256",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha3_384",
+          "description": "The SHA3-384 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha3_384",
+          "pattern": "^[a-f0-9]{96}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha3_512",
+          "description": "The SHA3-512 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sha3_512",
+          "pattern": "^[a-f0-9]{128}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "shake128",
+          "description": "The SHAKE128 digest of the artifact, of at least 32 bytes.",
+          "slot_uri": "in_toto_linkml:shake128",
+          "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "shake256",
+          "description": "The SHAKE256 digest of the artifact, of at least 32 bytes.",
+          "slot_uri": "in_toto_linkml:shake256",
+          "pattern": "^[a-f0-9]{64}([a-f0-9]{2})*$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "blake2b",
+          "description": "The BLAKE2b digest of the artifact, of 32 to 64 bytes.",
+          "slot_uri": "in_toto_linkml:blake2b",
+          "pattern": "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "blake2s",
+          "description": "The BLAKE2s digest of the artifact, at its full 32 bytes.",
+          "slot_uri": "in_toto_linkml:blake2s",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "ripemd160",
+          "description": "The RIPEMD-160 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:ripemd160",
+          "pattern": "^[a-f0-9]{40}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sm3",
+          "description": "The SM3 digest of the artifact.",
+          "slot_uri": "in_toto_linkml:sm3",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "gost",
+          "description": "The GOST R 34.11 digest of the artifact, of 256 or 512 bits.",
+          "slot_uri": "in_toto_linkml:gost",
+          "pattern": "^[a-f0-9]{64}([a-f0-9]{64})?$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "sha1",
+          "description": "The SHA-1 digest of the artifact.",
+          "comments": [
+            "SHA-1 lacks collision resistance, so most consumers should not rely on it."
+          ],
+          "slot_uri": "in_toto_linkml:sha1",
+          "pattern": "^[a-f0-9]{40}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "md5",
+          "description": "The MD5 digest of the artifact.",
+          "comments": [
+            "MD5 lacks collision resistance, so most consumers should not accept it."
+          ],
+          "slot_uri": "in_toto_linkml:md5",
+          "pattern": "^[a-f0-9]{32}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "dir_hash",
+          "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
+          "slot_uri": "in_toto_linkml:dir_hash",
+          "pattern": "^[a-f0-9]{64}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "git_commit",
+          "description": "The git commit id of a source revision.",
+          "slot_uri": "in_toto_linkml:git_commit",
+          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "git_tree",
+          "description": "The git tree id of a source revision's content, or of any file tree.",
+          "slot_uri": "in_toto_linkml:git_tree",
+          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "git_blob",
+          "description": "The git blob id of a file's content.",
+          "slot_uri": "in_toto_linkml:git_blob",
+          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "git_tag",
+          "description": "The git object id of an annotated tag.",
+          "slot_uri": "in_toto_linkml:git_tag",
+          "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "additional_digests",
+          "description": "The digests under algorithms this class does not name.",
+          "slot_uri": "in_toto_linkml:additional_digests",
+          "range": "InTotoAdditionalDigest",
+          "multivalued": true,
+          "inlined": true,
+          "inlined_as_list": true,
+          "minimum_cardinality": 1,
+          "@type": "SlotDefinition"
+        }
+      ],
+      "class_uri": "https://w3id.org/lmodel/in-toto/InTotoDigestSet",
+      "any_of": [
+        {
+          "slot_conditions": [
+            {
+              "name": "sha256",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha224",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha384",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha512",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha512_224",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha512_256",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha3_224",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha3_256",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha3_384",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha3_512",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "shake128",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "shake256",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "blake2b",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "blake2s",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "ripemd160",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sm3",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "gost",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "sha1",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "md5",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "dir_hash",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "git_commit",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "git_tree",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "git_blob",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "git_tag",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "additional_digests",
+              "required": true,
+              "multivalued": true,
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        }
+      ],
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoAdditionalDigest",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoAdditionalDigest",
+      "description": "One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.",
+      "comments": [
+        "In the attestation's JSON the algorithm is a key of the digest set beside the named ones, and an algorithm the framework does not define documents how its value is encoded.",
+        "An SCS that does not use cryptographic digests defines a canonical revision type of its own that includes the repository, such as svn_revision_id.",
+        "Each algorithm appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md"
+      ],
+      "slots": [
+        "inTotoAdditionalDigest__algorithm",
+        "inTotoAdditionalDigest__value"
+      ],
+      "slot_usage": {},
+      "attributes": [
+        {
+          "name": "algorithm",
+          "description": "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.",
+          "comments": [
+            "An algorithm that InTotoDigestSet names, by its JSON key or by its field name, goes in that field instead.",
+            "A name starts with a lowercase letter, as the framework's own names do, so that SHA256 is not taken for sha256, and it may hold a colon, as go-witness's gitoid:sha256 does. The framework itself sets no rule for other names."
+          ],
+          "slot_uri": "spdx:algorithm",
+          "required": true,
+          "pattern": "^[a-z][A-Za-z0-9_.:-]*$",
+          "none_of": [
+            {
+              "equals_string_in": [
+                "sha256",
+                "sha224",
+                "sha384",
+                "sha512",
+                "sha512_224",
+                "sha512_256",
+                "sha3_224",
+                "sha3_256",
+                "sha3_384",
+                "sha3_512",
+                "shake128",
+                "shake256",
+                "blake2b",
+                "blake2s",
+                "ripemd160",
+                "sm3",
+                "gost",
+                "sha1",
+                "md5",
+                "dirHash",
+                "gitCommit",
+                "gitTree",
+                "gitBlob",
+                "gitTag",
+                "dir_hash",
+                "git_commit",
+                "git_tree",
+                "git_blob",
+                "git_tag"
+              ],
+              "@type": "AnonymousSlotExpression"
+            }
+          ],
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "value",
+          "description": "The digest under that algorithm, in the encoding the algorithm documents.",
+          "slot_uri": "in_toto_linkml:value",
+          "required": true,
+          "pattern": "^\\S+$",
+          "@type": "SlotDefinition"
+        }
+      ],
+      "class_uri": "https://w3id.org/lmodel/in-toto/InTotoAdditionalDigest",
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoAnnotation",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoAnnotation",
+      "description": "One vendor-specific annotation on a resource descriptor: a key and its values.",
+      "comments": [
+        "The attestation's JSON allows any JSON value. A string becomes one value and an array one value per item; any other value or item is written as its JSON text, so one value cannot tell a string from a one-item array.",
+        "Each key appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "slots": [
+        "inTotoAnnotation__annotation_key",
+        "inTotoAnnotation__annotation_values"
+      ],
+      "slot_usage": {},
+      "attributes": [
+        {
+          "name": "annotation_key",
+          "description": "The annotation's key.",
+          "slot_uri": "in_toto_linkml:annotation_key",
+          "required": true,
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "annotation_values",
+          "description": "The annotation's values.",
+          "slot_uri": "in_toto_linkml:annotation_values",
+          "multivalued": true,
+          "@type": "SlotDefinition"
+        }
+      ],
+      "class_uri": "https://w3id.org/lmodel/in-toto/InTotoAnnotation",
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoResourceDescriptor",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor",
+      "description": "A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.",
+      "notes": [
+        "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present."
+      ],
+      "comments": [
+        "A descriptor carries at least one of a URI, a digest or its content; a field that needs a particular one says so."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/resource_descriptor.md"
+      ],
+      "slots": [
+        "resource_uri",
+        "digest",
+        "inTotoResourceDescriptor__resource_name",
+        "inTotoResourceDescriptor__download_location",
+        "inTotoResourceDescriptor__media_type",
+        "inTotoResourceDescriptor__content",
+        "inTotoResourceDescriptor__annotations"
+      ],
+      "slot_usage": {},
+      "attributes": [
+        {
+          "name": "resource_name",
+          "description": "A name for the resource within the attestation that carries it.",
+          "slot_uri": "in_toto_linkml:resource_name",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "download_location",
+          "description": "Where the resource can be fetched, when that differs from its identifying URI.",
+          "slot_uri": "in_toto_linkml:download_location",
+          "range": "in_toto_resource_uri",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "media_type",
+          "description": "The IANA media type of the resource's content.",
+          "slot_uri": "dcat:mediaType",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "content",
+          "description": "The resource's content itself, base64-encoded, for a resource small enough to carry inline.",
+          "comments": [
+            "The in-toto framework asks for content under 1 KB, so that attestations stay small."
+          ],
+          "slot_uri": "in_toto_linkml:content",
+          "pattern": "^[A-Za-z0-9+/_-]+={0,2}$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "annotations",
+          "description": "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.",
+          "slot_uri": "in_toto_linkml:annotations",
+          "range": "InTotoAnnotation",
+          "multivalued": true,
+          "inlined": true,
+          "inlined_as_list": true,
+          "@type": "SlotDefinition"
+        }
+      ],
+      "class_uri": "https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor",
+      "any_of": [
+        {
+          "slot_conditions": [
+            {
+              "name": "resource_uri",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "uri",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "digest",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "InTotoDigestSet",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        },
+        {
+          "slot_conditions": [
+            {
+              "name": "content",
+              "required": true,
+              "any_of": [
+                {
+                  "range": "string",
+                  "@type": "AnonymousSlotExpression"
+                }
+              ],
+              "@type": "SlotDefinition"
+            }
+          ],
+          "@type": "AnonymousClassExpression"
+        }
+      ],
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoStatementSubject",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoStatementSubject",
+      "description": "One artifact an in-toto statement is about: a resource descriptor that carries a digest.",
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md"
+      ],
+      "is_a": "InTotoResourceDescriptor",
+      "slots": [
+        "resource_uri",
+        "inTotoResourceDescriptor__resource_name",
+        "inTotoResourceDescriptor__download_location",
+        "inTotoResourceDescriptor__media_type",
+        "inTotoResourceDescriptor__content",
+        "inTotoResourceDescriptor__annotations",
+        "InTotoStatementSubject_digest"
+      ],
+      "slot_usage": {},
+      "class_uri": "https://w3id.org/lmodel/in-toto/InTotoStatementSubject",
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoStatement",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoStatement",
+      "description": "The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.",
+      "comments": [
+        "The signature envelope around a statement, and the bundle that collects signed statements, are outside this model.",
+        "A statement is the attestation, and its predicate is one kind of claim about the subjects, such as a test result or build provenance."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md"
+      ],
+      "slots": [
+        "predicate",
+        "inTotoStatement__statement_type",
+        "inTotoStatement__subject",
+        "inTotoStatement__predicate_type"
+      ],
+      "slot_usage": {},
+      "attributes": [
+        {
+          "name": "statement_type",
+          "description": "The in-toto statement type, always https://in-toto.io/Statement/v1.",
+          "slot_uri": "in_toto_linkml:statement_type",
+          "range": "in_toto_type_uri",
+          "required": true,
+          "pattern": "^https://in-toto\\.io/Statement/v1$",
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "subject",
+          "description": "The artifacts the predicate is about, each with a digest.",
+          "slot_uri": "in_toto_linkml:subject",
+          "range": "InTotoStatementSubject",
+          "required": true,
+          "multivalued": true,
+          "inlined": true,
+          "inlined_as_list": true,
+          "minimum_cardinality": 1,
+          "@type": "SlotDefinition"
+        },
+        {
+          "name": "predicate_type",
+          "description": "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.",
+          "slot_uri": "in_toto_linkml:predicate_type",
+          "range": "in_toto_type_uri",
+          "required": true,
+          "@type": "SlotDefinition"
+        }
+      ],
+      "class_uri": "https://w3id.org/lmodel/in-toto/InTotoStatement",
+      "@type": "ClassDefinition"
+    },
+    {
+      "name": "InTotoPredicate",
+      "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoPredicate",
+      "description": "The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind.",
+      "comments": [
+        "The statement's predicate_type names the predicate's type by URI, and each concrete class says which URI it renders. Nothing ties the two, since a schema that imports this module may model a predicate under its own URI."
+      ],
+      "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "see_also": [
+        "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/predicate.md"
+      ],
+      "abstract": true,
+      "slots": [
+        "inTotoPredicate__predicate_kind"
+      ],
+      "slot_usage": {},
+      "attributes": [
+        {
+          "name": "predicate_kind",
+          "description": "The kind of predicate, one of this class's descendants.",
+          "slot_uri": "in_toto_linkml:predicate_kind",
+          "designates_type": true,
+          "range": "string",
+          "@type": "SlotDefinition"
+        }
+      ],
+      "class_uri": "https://w3id.org/lmodel/in-toto/InTotoPredicate",
+      "@type": "ClassDefinition"
     }
   ],
   "metamodel_version": "1.12.0",
   "source_file": "slsa.yaml",
-  "source_file_date": "2026-10-27T11:08:32",
-  "source_file_size": 3804,
+  "source_file_date": "2026-10-30T16:19:28",
+  "source_file_size": 3821,
   "@type": "SchemaDefinition",
   "@context": [
     "project/jsonld/slsa.context.jsonld",
@@ -5513,6 +5736,7 @@
     "./slsa_dependency.context.jsonld",
     "./slsa_build_environment.context.jsonld",
     "./slsa_adoption.context.jsonld",
+    "in_toto/in_toto_core.context.jsonld",
     {
       "@base": "https://w3id.org/lmodel/slsa/"
     }

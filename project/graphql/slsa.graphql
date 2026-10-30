@@ -124,12 +124,17 @@ type InTotoDigestSet
     additionalDigests: [InTotoAdditionalDigest]
   }
 
+interface InTotoPredicate
+  {
+    predicateKind: String
+  }
+
 type InTotoResourceDescriptor
   {
-    resourceUri: String
+    resourceUri: InTotoResourceUri
     digest: InTotoDigestSet
     resourceName: String
-    downloadLocation: String
+    downloadLocation: InTotoResourceUri
     mediaType: String
     content: String
     annotations: [InTotoAnnotation]
@@ -137,20 +142,17 @@ type InTotoResourceDescriptor
 
 type InTotoStatement
   {
-    statementType: String!
+    predicate: InTotoPredicate
+    statementType: InTotoTypeUri!
     subject: [InTotoStatementSubject]!
-    predicateType: String!
-    predicate: SlsaPredicate
-    attestationStorageUri: String
-    signingTool: String
-    transparencyLogEntry: String
+    predicateType: InTotoTypeUri!
   }
 
 type InTotoStatementSubject
   {
-    resourceUri: String
+    resourceUri: InTotoResourceUri
     resourceName: String
-    downloadLocation: String
+    downloadLocation: InTotoResourceUri
     mediaType: String
     content: String
     annotations: [InTotoAnnotation]
@@ -267,7 +269,7 @@ type SlsaDependencyLevelCount
 
 type SlsaDocument
   {
-    attestations: [InTotoStatement]
+    attestations: [SlsaStatement]
     parties: [SlsaParty]
     buildPlatforms: [SlsaBuildPlatform]
     controlPlanes: [SlsaControlPlane]
@@ -373,6 +375,17 @@ type SlsaSourceRevision
     reviewType: SlsaReviewType
   }
 
+type SlsaStatement
+  {
+    predicate: InTotoPredicate
+    statementType: InTotoTypeUri!
+    subject: [InTotoStatementSubject]!
+    predicateType: InTotoTypeUri!
+    attestationStorageUri: String
+    signingTool: String
+    transparencyLogEntry: String
+  }
+
 type SlsaTag
   {
     repository: SlsaSourceRepository
@@ -385,7 +398,7 @@ type SlsaTag
 type SlsaVerificationSummary
   {
     predicateKind: String
-    resourceUri: String!
+    resourceUri: InTotoResourceUri!
     verifier: SlsaVerifier!
     timeVerified: String
     policy: SlsaVerificationSummaryPolicy!
@@ -400,22 +413,22 @@ type SlsaVerificationSummary
 type SlsaVerificationSummaryInputAttestation
   {
     resourceName: String
-    downloadLocation: String
+    downloadLocation: InTotoResourceUri
     mediaType: String
     content: String
     annotations: [InTotoAnnotation]
     digest: InTotoDigestSet!
-    resourceUri: String
+    resourceUri: InTotoResourceUri
   }
 
 type SlsaVerificationSummaryPolicy
   {
     resourceName: String
-    downloadLocation: String
+    downloadLocation: InTotoResourceUri
     mediaType: String
     content: String
     annotations: [InTotoAnnotation]
-    resourceUri: String!
+    resourceUri: InTotoResourceUri!
     digest: InTotoDigestSet
   }
 

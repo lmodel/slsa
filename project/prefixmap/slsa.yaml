@@ -1,4 +1,28 @@
 {
+   "dcat": "http://www.w3.org/ns/dcat#",
+   "in_toto_linkml": "https://w3id.org/lmodel/in-toto/",
    "linkml": "https://w3id.org/linkml/",
-   "slsa": "https://w3id.org/lmodel/slsa/"
+   "slsa": "https://w3id.org/lmodel/slsa/",
+   "spdx": "http://spdx.org/rdf/terms#",
+   "InTotoAdditionalDigest": {
+      "@id": "in_toto_linkml:InTotoAdditionalDigest"
+   },
+   "InTotoAnnotation": {
+      "@id": "in_toto_linkml:InTotoAnnotation"
+   },
+   "InTotoDigestSet": {
+      "@id": "in_toto_linkml:InTotoDigestSet"
+   },
+   "InTotoPredicate": {
+      "@id": "in_toto_linkml:InTotoPredicate"
+   },
+   "InTotoResourceDescriptor": {
+      "@id": "in_toto_linkml:InTotoResourceDescriptor"
+   },
+   "InTotoStatement": {
+      "@id": "in_toto_linkml:InTotoStatement"
+   },
+   "InTotoStatementSubject": {
+      "@id": "in_toto_linkml:InTotoStatementSubject"
+   }
 }

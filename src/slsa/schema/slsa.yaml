@@ -47,8 +47,8 @@ classes:
       repositories and images they concern.
     attributes:
       attestations:
-        description: The attestations, as in-toto statements.
-        range: InTotoStatement
+        description: The attestations, as in-toto statements with SLSA's fields.
+        range: SlsaStatement
         multivalued: true
         inlined: true
         inlined_as_list: true

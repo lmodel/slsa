@@ -43,7 +43,7 @@
                             }
                         ]
                     },
-                    "pattern": "^[a-z][A-Za-z0-9_]*$"
+                    "pattern": "^[a-z][A-Za-z0-9_.:-]*$"
                 },
                 "value": {
                     "description": "The digest under that algorithm, in the encoding the algorithm documents.",
@@ -643,6 +643,24 @@
             "title": "InTotoDigestSet",
             "type": "object"
         },
+        "InTotoPredicate": {
+            "additionalProperties": false,
+            "description": "The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind.",
+            "properties": {
+                "predicate_kind": {
+                    "description": "The kind of predicate, one of this class's descendants.",
+                    "enum": [
+                        "InTotoPredicate"
+                    ],
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "title": "InTotoPredicate",
+            "type": "object"
+        },
         "InTotoResourceDescriptor": {
             "additionalProperties": false,
             "anyOf": [
@@ -693,7 +711,7 @@
             "description": "A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.",
             "properties": {
                 "annotations": {
-                    "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
+                    "description": "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.",
                     "items": {
                         "$ref": "#/$defs/InTotoAnnotation"
                     },
@@ -724,6 +742,7 @@
                 "download_location": {
                     "description": "Where the resource can be fetched, when that differs from its identifying URI.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": [
                         "string",
                         "null"
@@ -746,6 +765,7 @@
                 "resource_uri": {
                     "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": [
                         "string",
                         "null"
@@ -759,14 +779,6 @@
             "additionalProperties": false,
             "description": "The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.",
             "properties": {
-                "attestation_storage_uri": {
-                    "description": "Where the signed attestation is stored or can be fetched.",
-                    "format": "uri",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
-                },
                 "predicate": {
                     "anyOf": [
                         {
@@ -785,20 +797,13 @@
                             "type": "null"
                         }
                     ],
-                    "description": "The predicate, one of the kinds this schema models; predicate_kind names which."
+                    "description": "The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty."
                 },
                 "predicate_type": {
-                    "description": "The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1.",
+                    "description": "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": "string"
-                },
-                "signing_tool": {
-                    "description": "The tool that signed the attestation, named by URI, such as Cosign or Notation.",
-                    "format": "uri",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
                 },
                 "statement_type": {
                     "description": "The in-toto statement type, always https://in-toto.io/Statement/v1.",
@@ -813,14 +818,6 @@
                     },
                     "minItems": 1,
                     "type": "array"
-                },
-                "transparency_log_entry": {
-                    "description": "The transparency log entry that records the signature, such as a Rekor entry.",
-                    "format": "uri",
-                    "type": [
-                        "string",
-                        "null"
-                    ]
                 }
             },
             "required": [
@@ -836,7 +833,7 @@
             "description": "One artifact an in-toto statement is about: a resource descriptor that carries a digest.",
             "properties": {
                 "annotations": {
-                    "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
+                    "description": "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.",
                     "items": {
                         "$ref": "#/$defs/InTotoAnnotation"
                     },
@@ -860,6 +857,7 @@
                 "download_location": {
                     "description": "Where the resource can be fetched, when that differs from its identifying URI.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": [
                         "string",
                         "null"
@@ -882,6 +880,7 @@
                 "resource_uri": {
                     "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": [
                         "string",
                         "null"
@@ -1496,9 +1495,9 @@
                     "description": "How the deployment the document describes fares against the adoption study's themes."
                 },
                 "attestations": {
-                    "description": "The attestations, as in-toto statements.",
+                    "description": "The attestations, as in-toto statements with SLSA's fields.",
                     "items": {
-                        "$ref": "#/$defs/InTotoStatement"
+                        "$ref": "#/$defs/SlsaStatement"
                     },
                     "type": [
                         "array",
@@ -1849,7 +1848,7 @@
         },
         "SlsaPredicate": {
             "additionalProperties": false,
-            "description": "The base of every predicate this schema models; predicate_kind names the concrete kind.",
+            "description": "The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.",
             "properties": {
                 "predicate_kind": {
                     "description": "The kind of predicate, one of this class's descendants.",
@@ -2123,6 +2122,83 @@
             "title": "SlsaSourceRevision",
             "type": "object"
         },
+        "SlsaStatement": {
+            "additionalProperties": false,
+            "description": "An in-toto statement with the fields this schema adds: where the signed attestation is stored, the tool that signed it and the transparency log entry that records the signature.",
+            "properties": {
+                "attestation_storage_uri": {
+                    "description": "Where the signed attestation is stored or can be fetched.",
+                    "format": "uri",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "predicate": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/SlsaBuildProvenance"
+                        },
+                        {
+                            "$ref": "#/$defs/SlsaVerificationSummary"
+                        },
+                        {
+                            "$ref": "#/$defs/SlsaSourceProvenance"
+                        },
+                        {
+                            "$ref": "#/$defs/SlsaBuildEnvironmentAttestation"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty."
+                },
+                "predicate_type": {
+                    "description": "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.",
+                    "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
+                    "type": "string"
+                },
+                "signing_tool": {
+                    "description": "The tool that signed the attestation, named by URI, such as Cosign or Notation.",
+                    "format": "uri",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "statement_type": {
+                    "description": "The in-toto statement type, always https://in-toto.io/Statement/v1.",
+                    "format": "uri",
+                    "pattern": "^https://in-toto\\.io/Statement/v1$",
+                    "type": "string"
+                },
+                "subject": {
+                    "description": "The artifacts the predicate is about, each with a digest.",
+                    "items": {
+                        "$ref": "#/$defs/InTotoStatementSubject"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                },
+                "transparency_log_entry": {
+                    "description": "The transparency log entry that records the signature, such as a Rekor entry.",
+                    "format": "uri",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "statement_type",
+                "subject",
+                "predicate_type"
+            ],
+            "title": "SlsaStatement",
+            "type": "object"
+        },
         "SlsaTag": {
             "additionalProperties": false,
             "description": "A named reference meant never to move once created.",
@@ -2231,6 +2307,7 @@
                 "resource_uri": {
                     "description": "The URI consumers fetch the artifact from, which the verifier verified it as.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": "string"
                 },
                 "slsa_version": {
@@ -2282,7 +2359,7 @@
             "description": "One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.",
             "properties": {
                 "annotations": {
-                    "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
+                    "description": "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.",
                     "items": {
                         "$ref": "#/$defs/InTotoAnnotation"
                     },
@@ -2306,6 +2383,7 @@
                 "download_location": {
                     "description": "Where the resource can be fetched, when that differs from its identifying URI.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": [
                         "string",
                         "null"
@@ -2328,6 +2406,7 @@
                 "resource_uri": {
                     "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": [
                         "string",
                         "null"
@@ -2345,7 +2424,7 @@
             "description": "The policy a verification summary applied: a resource descriptor that names the policy by URI.",
             "properties": {
                 "annotations": {
-                    "description": "Vendor-specific annotations on the resource, such as the source references a Source VSA records.",
+                    "description": "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records.",
                     "items": {
                         "$ref": "#/$defs/InTotoAnnotation"
                     },
@@ -2376,6 +2455,7 @@
                 "download_location": {
                     "description": "Where the resource can be fetched, when that differs from its identifying URI.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": [
                         "string",
                         "null"
@@ -2398,6 +2478,7 @@
                 "resource_uri": {
                     "description": "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": "string"
                 }
             },
@@ -2469,9 +2550,9 @@
             "description": "How the deployment the document describes fares against the adoption study's themes."
         },
         "attestations": {
-            "description": "The attestations, as in-toto statements.",
+            "description": "The attestations, as in-toto statements with SLSA's fields.",
             "items": {
-                "$ref": "#/$defs/InTotoStatement"
+                "$ref": "#/$defs/SlsaStatement"
             },
             "type": [
                 "array",

@@ -1,9 +1,12 @@
 # metamodel_version: 1.12.0
 # version: 1.2.0
 BASE <https://w3id.org/lmodel/slsa/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX linkml: <https://w3id.org/linkml/>
+PREFIX in_toto_linkml: <https://w3id.org/lmodel/in-toto/>
+PREFIX spdx: <http://spdx.org/rdf/terms#>
 
 
 linkml:String xsd:string
@@ -46,87 +49,100 @@ linkml:Sparqlpath xsd:string
 
 <SlsaResultValue> xsd:string
 
-<InTotoAdditionalDigest> CLOSED {
-    (  $<InTotoAdditionalDigest_tes> (  <algorithm> @linkml:String ;
-          <value> @linkml:String
+in_toto_linkml:InTotoResourceUri IRI
+
+in_toto_linkml:InTotoTypeUri IRI
+
+in_toto_linkml:InTotoTimestamp xsd:dateTime
+
+in_toto_linkml:InTotoAdditionalDigest CLOSED {
+    (  $in_toto_linkml:InTotoAdditionalDigest_tes (  spdx:algorithm @linkml:String ;
+          in_toto_linkml:value @linkml:String
        ) ;
-       rdf:type [ <InTotoAdditionalDigest> ] ?
+       rdf:type [ in_toto_linkml:InTotoAdditionalDigest ] ?
     )
 }
 
-<InTotoAnnotation> CLOSED {
-    (  $<InTotoAnnotation_tes> (  <annotation_key> @linkml:String ;
-          <annotation_values> @linkml:String *
+in_toto_linkml:InTotoAnnotation CLOSED {
+    (  $in_toto_linkml:InTotoAnnotation_tes (  in_toto_linkml:annotation_key @linkml:String ;
+          in_toto_linkml:annotation_values @linkml:String *
        ) ;
-       rdf:type [ <InTotoAnnotation> ] ?
+       rdf:type [ in_toto_linkml:InTotoAnnotation ] ?
     )
 }
 
-<InTotoDigestSet> CLOSED {
-    (  $<InTotoDigestSet_tes> (  <sha256> @linkml:String ? ;
-          <sha224> @linkml:String ? ;
-          <sha384> @linkml:String ? ;
-          <sha512> @linkml:String ? ;
-          <sha512_224> @linkml:String ? ;
-          <sha512_256> @linkml:String ? ;
-          <sha3_224> @linkml:String ? ;
-          <sha3_256> @linkml:String ? ;
-          <sha3_384> @linkml:String ? ;
-          <sha3_512> @linkml:String ? ;
-          <shake128> @linkml:String ? ;
-          <shake256> @linkml:String ? ;
-          <blake2b> @linkml:String ? ;
-          <blake2s> @linkml:String ? ;
-          <ripemd160> @linkml:String ? ;
-          <sm3> @linkml:String ? ;
-          <gost> @linkml:String ? ;
-          <sha1> @linkml:String ? ;
-          <md5> @linkml:String ? ;
-          <dir_hash> @linkml:String ? ;
-          <git_commit> @linkml:String ? ;
-          <git_tree> @linkml:String ? ;
-          <git_blob> @linkml:String ? ;
-          <git_tag> @linkml:String ? ;
-          <additional_digests> @<InTotoAdditionalDigest> *
+in_toto_linkml:InTotoDigestSet CLOSED {
+    (  $in_toto_linkml:InTotoDigestSet_tes (  in_toto_linkml:sha256 @linkml:String ? ;
+          in_toto_linkml:sha224 @linkml:String ? ;
+          in_toto_linkml:sha384 @linkml:String ? ;
+          in_toto_linkml:sha512 @linkml:String ? ;
+          in_toto_linkml:sha512_224 @linkml:String ? ;
+          in_toto_linkml:sha512_256 @linkml:String ? ;
+          in_toto_linkml:sha3_224 @linkml:String ? ;
+          in_toto_linkml:sha3_256 @linkml:String ? ;
+          in_toto_linkml:sha3_384 @linkml:String ? ;
+          in_toto_linkml:sha3_512 @linkml:String ? ;
+          in_toto_linkml:shake128 @linkml:String ? ;
+          in_toto_linkml:shake256 @linkml:String ? ;
+          in_toto_linkml:blake2b @linkml:String ? ;
+          in_toto_linkml:blake2s @linkml:String ? ;
+          in_toto_linkml:ripemd160 @linkml:String ? ;
+          in_toto_linkml:sm3 @linkml:String ? ;
+          in_toto_linkml:gost @linkml:String ? ;
+          in_toto_linkml:sha1 @linkml:String ? ;
+          in_toto_linkml:md5 @linkml:String ? ;
+          in_toto_linkml:dir_hash @linkml:String ? ;
+          in_toto_linkml:git_commit @linkml:String ? ;
+          in_toto_linkml:git_tree @linkml:String ? ;
+          in_toto_linkml:git_blob @linkml:String ? ;
+          in_toto_linkml:git_tag @linkml:String ? ;
+          in_toto_linkml:additional_digests @in_toto_linkml:InTotoAdditionalDigest *
        ) ;
-       rdf:type [ <InTotoDigestSet> ] ?
+       rdf:type [ in_toto_linkml:InTotoDigestSet ] ?
     )
 }
 
-<InTotoResourceDescriptor>  (
-    CLOSED {
-       (  $<InTotoResourceDescriptor_tes> (  <resource_uri> @linkml:Uri ? ;
-             <digest> @<InTotoDigestSet> ? ;
-             <resource_name> @linkml:String ? ;
-             <download_location> @linkml:Uri ? ;
-             <media_type> @linkml:String ? ;
-             <content> @linkml:String ? ;
-             <annotations> @<InTotoAnnotation> *
-          ) ;
-          rdf:type [ <InTotoResourceDescriptor> ] ?
+in_toto_linkml:InTotoPredicate  (
+    {
+       (  $in_toto_linkml:InTotoPredicate_tes in_toto_linkml:predicate_kind @linkml:String ? ;
+          rdf:type [ in_toto_linkml:InTotoPredicate ] ?
        )
-    } OR @<InTotoStatementSubject> OR @<SlsaVerificationSummaryInputAttestation> OR @<SlsaVerificationSummaryPolicy>
+    } OR @<SlsaPredicate>
 )
 
-<InTotoStatement> CLOSED {
-    (  $<InTotoStatement_tes> (  <statement_type> @linkml:Uri ;
-          <subject> @<InTotoStatementSubject> + ;
-          <predicate_type> @linkml:Uri ;
-          <predicate> @<SlsaPredicate> ? ;
-          <attestation_storage_uri> @linkml:Uri ? ;
-          <signing_tool> @linkml:Uri ? ;
-          <transparency_log_entry> @linkml:Uri ?
-       ) ;
-       rdf:type [ <InTotoStatement> ] ?
-    )
-}
+in_toto_linkml:InTotoResourceDescriptor  (
+    CLOSED {
+       (  $in_toto_linkml:InTotoResourceDescriptor_tes (  in_toto_linkml:resource_uri @in_toto_linkml:InTotoResourceUri ? ;
+             in_toto_linkml:digest @in_toto_linkml:InTotoDigestSet ? ;
+             in_toto_linkml:resource_name @linkml:String ? ;
+             in_toto_linkml:download_location @in_toto_linkml:InTotoResourceUri ? ;
+             dcat:mediaType @linkml:String ? ;
+             in_toto_linkml:content @linkml:String ? ;
+             in_toto_linkml:annotations @in_toto_linkml:InTotoAnnotation *
+          ) ;
+          rdf:type [ in_toto_linkml:InTotoResourceDescriptor ] ?
+       )
+    } OR @in_toto_linkml:InTotoStatementSubject OR @<SlsaVerificationSummaryInputAttestation> OR @<SlsaVerificationSummaryPolicy>
+)
 
-<InTotoStatementSubject> CLOSED {
-    (  $<InTotoStatementSubject_tes> (  &<InTotoResourceDescriptor_tes> ;
-          rdf:type [ <InTotoResourceDescriptor> ] ? ;
-          <digest> @<InTotoDigestSet>
+in_toto_linkml:InTotoStatement  (
+    CLOSED {
+       (  $in_toto_linkml:InTotoStatement_tes (  in_toto_linkml:predicate @in_toto_linkml:InTotoPredicate ? ;
+             in_toto_linkml:statement_type @in_toto_linkml:InTotoTypeUri ;
+             in_toto_linkml:subject @in_toto_linkml:InTotoStatementSubject + ;
+             in_toto_linkml:predicate_type @in_toto_linkml:InTotoTypeUri
+          ) ;
+          rdf:type [ in_toto_linkml:InTotoStatement ] ?
+       )
+    } OR @<SlsaStatement>
+)
+
+in_toto_linkml:InTotoStatementSubject CLOSED {
+    (  $in_toto_linkml:InTotoStatementSubject_tes (  &in_toto_linkml:InTotoResourceDescriptor_tes ;
+          rdf:type [ in_toto_linkml:InTotoResourceDescriptor ] ? ;
+          in_toto_linkml:digest @in_toto_linkml:InTotoDigestSet
        ) ;
-       rdf:type [ <InTotoStatementSubject> ] ?
+       rdf:type [ in_toto_linkml:InTotoStatementSubject ] ?
     )
 }
 
@@ -157,7 +173,7 @@ linkml:Sparqlpath xsd:string
     (  $<SlsaBuildDefinition_tes> (  <build_type> @linkml:Uri ;
           <external_parameters> @<SlsaBuildParameter> + ;
           <internal_parameters> @<SlsaBuildParameter> * ;
-          <resolved_dependencies> @<InTotoResourceDescriptor> * ;
+          <resolved_dependencies> @in_toto_linkml:InTotoResourceDescriptor * ;
           <hermetic> @linkml:Boolean ? ;
           <provenance_generation_tool> @linkml:Uri ? ;
           <pipeline_orchestrator> @linkml:Uri ?
@@ -225,7 +241,7 @@ linkml:Sparqlpath xsd:string
              <https://w3id.org/lmodel/slsa/SlsaBuildLevel#SLSA_BUILD_LEVEL_2>
              <https://w3id.org/lmodel/slsa/SlsaBuildLevel#SLSA_BUILD_LEVEL_3> ] ? ;
           <hosted> @linkml:Boolean ? ;
-          <builder_dependencies> @<InTotoResourceDescriptor> *
+          <builder_dependencies> @in_toto_linkml:InTotoResourceDescriptor *
        ) ;
        rdf:type [ <SlsaBuildPlatform> ]
     )
@@ -264,8 +280,8 @@ linkml:Sparqlpath xsd:string
 }
 
 <SlsaDependencyInventory> CLOSED {
-    (  $<SlsaDependencyInventory_tes> (  <artifact> @<InTotoResourceDescriptor> ;
-          <dependencies> @<InTotoResourceDescriptor> * ;
+    (  $<SlsaDependencyInventory_tes> (  <artifact> @in_toto_linkml:InTotoResourceDescriptor ;
+          <dependencies> @in_toto_linkml:InTotoResourceDescriptor * ;
           <dependency_level> [ <https://w3id.org/lmodel/slsa/SlsaDependencyLevel#SLSA_DEPENDENCY_LEVEL_0>
              <https://w3id.org/lmodel/slsa/SlsaDependencyLevel#SLSA_DEPENDENCY_LEVEL_1>
              <https://w3id.org/lmodel/slsa/SlsaDependencyLevel#SLSA_DEPENDENCY_LEVEL_2>
@@ -285,7 +301,7 @@ linkml:Sparqlpath xsd:string
 }
 
 <SlsaDocument> CLOSED {
-    (  $<SlsaDocument_tes> (  <attestations> @<InTotoStatement> * ;
+    (  $<SlsaDocument_tes> (  <attestations> @<SlsaStatement> * ;
           <parties> @<SlsaParty> * ;
           <build_platforms> @<SlsaBuildPlatform> * ;
           <control_planes> @<SlsaControlPlane> * ;
@@ -312,7 +328,7 @@ linkml:Sparqlpath xsd:string
 }
 
 <SlsaMeasurement> CLOSED {
-    (  $<SlsaMeasurement_tes> (  <digest> @<InTotoDigestSet> ? ;
+    (  $<SlsaMeasurement_tes> (  in_toto_linkml:digest @in_toto_linkml:InTotoDigestSet ? ;
           <measured_component> @linkml:String
        ) ;
        rdf:type [ <SlsaMeasurement> ] ?
@@ -336,7 +352,7 @@ linkml:Sparqlpath xsd:string
     (  $<SlsaPackage_tes> (  <ecosystem> @linkml:String ? ;
           <package_name> @linkml:String ;
           <registry> @<SlsaPackageRegistry> ? ;
-          <package_artifacts> @<InTotoResourceDescriptor> * ;
+          <package_artifacts> @in_toto_linkml:InTotoResourceDescriptor * ;
           <guac_uri> @linkml:Uri ? ;
           <security_insights_uri> @linkml:Uri ?
        ) ;
@@ -367,7 +383,9 @@ linkml:Sparqlpath xsd:string
 )
 
 <SlsaPredicate_struct> {
-    (  $<SlsaPredicate_tes> <predicate_kind> @linkml:String ? ;
+    (  $<SlsaPredicate_tes> (  &in_toto_linkml:InTotoPredicate_tes ;
+          rdf:type [ in_toto_linkml:InTotoPredicate ] ?
+       ) ;
        rdf:type [ <SlsaPredicate> ] ?
     )
 }
@@ -384,7 +402,7 @@ linkml:Sparqlpath xsd:string
 <SlsaRunDetails> CLOSED {
     (  $<SlsaRunDetails_tes> (  <builder> @<SlsaBuildPlatform> ;
           <build_metadata> @<SlsaBuildMetadata> ? ;
-          <byproducts> @<InTotoResourceDescriptor> *
+          <byproducts> @in_toto_linkml:InTotoResourceDescriptor *
        ) ;
        rdf:type [ <SlsaRunDetails> ] ?
     )
@@ -431,6 +449,17 @@ linkml:Sparqlpath xsd:string
     )
 }
 
+<SlsaStatement> CLOSED {
+    (  $<SlsaStatement_tes> (  &in_toto_linkml:InTotoStatement_tes ;
+          rdf:type [ in_toto_linkml:InTotoStatement ] ? ;
+          <attestation_storage_uri> @linkml:Uri ? ;
+          <signing_tool> @linkml:Uri ? ;
+          <transparency_log_entry> @linkml:Uri ?
+       ) ;
+       rdf:type [ <SlsaStatement> ] ?
+    )
+}
+
 <SlsaTag> CLOSED {
     (  $<SlsaTag_tes> (  &<SlsaNamedReference_tes> ;
           rdf:type [ <SlsaNamedReference> ] ?
@@ -442,7 +471,7 @@ linkml:Sparqlpath xsd:string
 <SlsaVerificationSummary> CLOSED {
     (  $<SlsaVerificationSummary_tes> (  &<SlsaPredicate_tes> ;
           rdf:type [ <SlsaPredicate> ] ? ;
-          <resource_uri> @linkml:Uri ;
+          in_toto_linkml:resource_uri @in_toto_linkml:InTotoResourceUri ;
           <verifier> @<SlsaVerifier> ;
           <time_verified> @linkml:Datetime ? ;
           <policy> @<SlsaVerificationSummaryPolicy> ;
@@ -459,20 +488,20 @@ linkml:Sparqlpath xsd:string
 }
 
 <SlsaVerificationSummaryInputAttestation> CLOSED {
-    (  $<SlsaVerificationSummaryInputAttestation_tes> (  &<InTotoResourceDescriptor_tes> ;
-          rdf:type [ <InTotoResourceDescriptor> ] ? ;
-          <digest> @<InTotoDigestSet> ;
-          <resource_uri> @linkml:Uri ?
+    (  $<SlsaVerificationSummaryInputAttestation_tes> (  &in_toto_linkml:InTotoResourceDescriptor_tes ;
+          rdf:type [ in_toto_linkml:InTotoResourceDescriptor ] ? ;
+          in_toto_linkml:digest @in_toto_linkml:InTotoDigestSet ;
+          in_toto_linkml:resource_uri @in_toto_linkml:InTotoResourceUri ?
        ) ;
        rdf:type [ <SlsaVerificationSummaryInputAttestation> ] ?
     )
 }
 
 <SlsaVerificationSummaryPolicy> CLOSED {
-    (  $<SlsaVerificationSummaryPolicy_tes> (  &<InTotoResourceDescriptor_tes> ;
-          rdf:type [ <InTotoResourceDescriptor> ] ? ;
-          <resource_uri> @linkml:Uri ;
-          <digest> @<InTotoDigestSet> ?
+    (  $<SlsaVerificationSummaryPolicy_tes> (  &in_toto_linkml:InTotoResourceDescriptor_tes ;
+          rdf:type [ in_toto_linkml:InTotoResourceDescriptor ] ? ;
+          in_toto_linkml:resource_uri @in_toto_linkml:InTotoResourceUri ;
+          in_toto_linkml:digest @in_toto_linkml:InTotoDigestSet ?
        ) ;
        rdf:type [ <SlsaVerificationSummaryPolicy> ] ?
     )
