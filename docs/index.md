@@ -19,7 +19,7 @@ the document root. An importer may take one module.
 
 ## Validating data
 
-`linkml-validate -s src/slsa/schema/slsa.yaml -C InTotoStatement statement.yaml`
+`linkml-validate -s src/slsa/schema/slsa.yaml -C SlsaStatement statement.yaml`
 checks a file against the JSON Schema generated from the schema. The models in
 `src/slsa/datamodel/` check less. The dataclasses check required fields and enum
 values but no patterns. The Pydantic models also check patterns and list

@@ -94,3 +94,12 @@ website/ and the knowledge-website workflow derive from the ktl-website
 templates in the same repository, and website/NOTICE lists the part
 adapted from the LOKF toolkit's site. All of them are licensed under the
 Apache License, Version 2.0.
+
+lmodel/in-toto
+--------------
+
+src/slsa/schema/in_toto/in_toto_core.yaml is the core module of the
+in-toto Attestation Framework's LinkML schema from lmodel/in-toto
+(https://github.com/lmodel/in-toto) at v0.1.0, under the Apache License
+2.0, copied unchanged. tests/test_in_toto_import.py pins its git object
+hash.

@@ -14,7 +14,7 @@ Supply-chain Levels for Software Artifacts (LinkML)
 
 ## What it models
 
-The [SLSA specification](https://slsa.dev/spec/v1.2/), version 1.2: the Build and Source tracks, the build provenance and Verification Summary Attestation predicates, the in-toto statement layer they sit in, and the roles, build platform and package model. The Dependency and Build Environment tracks follow the working draft at 1.2. The schema's `version` is 1.2.0, the copy in [src/slsa/schema/spec/](src/slsa/schema/spec) matches the `v1.2` tag, and a weekly workflow opens an issue when the SLSA Working Group tags a newer version.
+The [SLSA specification](https://slsa.dev/spec/v1.2/), version 1.2: the Build and Source tracks, the build provenance and Verification Summary Attestation predicates, and the roles, build platform and package model. The in-toto statement layer they sit in comes from [lmodel/in-toto](https://github.com/lmodel/in-toto)'s core module, vendored in [src/slsa/schema/in_toto/](src/slsa/schema/in_toto). The Dependency and Build Environment tracks follow the working draft at 1.2. The schema's `version` is 1.2.0, the copy in [src/slsa/schema/spec/](src/slsa/schema/spec) matches the `v1.2` tag, and a weekly workflow opens an issue when the SLSA Working Group tags a newer version.
 
 ## Influences
 
@@ -54,7 +54,7 @@ Several pre-defined command-recipes are available using [just](https://github.co
 SlsaProducer, SlsaConsumer, SlsaVerifier, SlsaInfrastructureProvider, SlsaBuildImageProducer, SlsaBuildPlatform, SlsaControlPlane, SlsaPackage, SlsaPackageRegistry, SlsaSourceControlSystem, SlsaSourceRepository, SlsaSourceRevision, SlsaBuildImage
 ```
 
-In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. The slot `revision` is `slsa_revision`, because LOKF 0.9.0 defines a `revision` of its own; its IRI is still `slsa:revision`. Every other key keeps its SLSA name, because no other top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. `lokf adapt` does not compare class attributes, so `media_type` and `predicate` keep the names they share with LOKF slots.
+In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. Two slots are renamed in the copy, because LOKF 0.9.0 defines slots of the same names: `revision` is `slsa_revision`, with its IRI still `slsa:revision`, and a statement's `predicate` is `slsa_predicate`, with in-toto's IRI. A slsa document keeps both keys. Every other key keeps its name, because no other top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. `lokf adapt` does not compare class attributes, so `media_type` keeps the name it shares with a LOKF slot, and takes that slot's IRI, `dcat:mediaType`.
 
 ## License
 
