@@ -2,6 +2,11 @@
 
 ## 2026-10-30
 
+* **Changed**: the generated artifacts say that a release compares the justfile's `schema :=` line and the schema's files as well as the bundle, and how the schema asset is packed and attested, as `knowledge-release.yaml` has said since 23442fd.
+* **Changed**: the documentation site says that a push builds the site only on the default branch and that a run by hand builds it too, as `knowledge-website.yaml` says, and names the Guides group that `site.config.mjs` puts the docs pages in.
+* **Changed**: the schema concept follows the corrected naming paragraph of `docs/about.md`, which puts the in-toto layer under `in_toto_linkml:`, and the module table of `src/slsa/schema/README.md`, which now lists the vendored in-toto module.
+* **Changed**: the specification page quotes the overview at `https://slsa.dev/spec/v1.2/`, which says that the specification is established by industry consensus and organized into a series of levels.
+* **Changed**: the source map names the release's comparison step beside its domain-schema step, and no longer lists `knowledge-website.yaml` among the workflows it leaves out.
 * **Rewrite**: the in-toto page says that the schema takes the in-toto layer from lmodel/in-toto's core module at v0.1.0, vendored unchanged and pinned by `tests/test_in_toto_import.py`, and names `InTotoPredicate`, the three field types and the module's IRIs.
 * **Rewrite**: the schema concept follows the in-toto import: `slsa_core.yaml` imports lmodel/in-toto's vendored core module and adds `SlsaStatement`, the modules hold 42 classes and 4 types, six SLSA fields take in-toto's types, and the adapt copy renames a statement's `predicate` to `slsa_predicate`, as the README now says.
 * **Rewrite**: the test data concept counts 32 valid and 36 invalid files, names the renamed `SlsaStatement` examples, and adds the counter-examples for a start time with an offset and a verifier id with an uppercase host.

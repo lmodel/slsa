@@ -33,7 +33,7 @@ sources:
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-30T23:13:40Z"
+  at: "2026-10-30T23:20:11Z"
 status: draft
 ---
 
@@ -51,7 +51,7 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `docs/Secure_Software_Factory_Whitepaper.pdf` | `references/secure-software-factory` | confirm the file is still there |
 | `justfile`, `project.justfile`, `.linkml/generators.yaml`, `project/`, `src/slsa/datamodel/`, `docs/schema/` | `datasets/generated-artefacts`, `playbooks/regenerate-and-test` | re-read the `gen-project`, `gen-python`, `gen-doc`, `gen-merged`, `lokf-adapt`, `lokf-adapt-check` and `test` recipe chains; re-list `project/*/`; re-read the `excludes` in `.linkml/generators.yaml` |
 | `project.justfile`, the README's Knowledge Trust Ladder (KTL) and Mappings sections | the domain-schema and mappings sections of `datasets/slsa-linkml-schema` | re-read the `--root` classes, the known-types list, the `LOKF_CMD` note, the renamed and kept keys, and whether the schema declares mappings |
-| the comment on the adapted schema copy check in `.github/workflows/main.yaml`, the Pack the domain schema step of `.github/workflows/knowledge-release.yaml` | the release's schema asset in `datasets/generated-artefacts` | re-read the asset's name, its checksum file and which releases get it |
+| the comment on the adapted schema copy check in `.github/workflows/main.yaml`, the Compare with the last released bundle and Pack the domain schema steps of `.github/workflows/knowledge-release.yaml` | the release's schema asset in `datasets/generated-artefacts` | re-read the asset's name, its checksum file, what the comparison reads and which releases get it |
 | `tests/data/`, `tests/test_data.py`, `tests/test_schema_rules.py` | `datasets/test-data` | re-list and count the files in `tests/data/valid/` and `tests/data/invalid/`; re-read the naming rule and the two tests |
 | `website/site.config.mjs`, `website/scripts/routes.mjs`, `website/README.md`, `docs/index.md`, `.github/workflows/knowledge-website.yaml` | `services/documentation-site` | confirm the triggers and the deploy switch, the `DOCS`, `REDIRECTS` and `HOME` settings, and where a link to a file under `docs/` that is no page goes |
 | `.github/workflows/main.yaml`, `CONTRIBUTING.md` | CI facts in `playbooks/regenerate-and-test` | confirm the Python matrix, the `just test`, `just lint` and `just lokf-adapt-check` steps and the regeneration steps |
@@ -75,4 +75,4 @@ These are not knowledge sources, and are left out on purpose:
 - `uv.lock`, `.gitignore`, `.pre-commit-config.yaml`, `.yamllint.yaml`, `.editorconfig`, `config.public.mk`, `.github/dependabot.yml`, `.github/workflows/lint-and-docs.yaml`, `.markdownlint-cli2.jsonc`, `lychee.toml` and `.github/scripts/report-issue.sh` (tooling);
 - `src/slsa/__init__.py`, `src/slsa/_version.py` and `tests/__init__.py` (package and test plumbing);
 - `llms.txt` (the pointer that sends agents to this bundle);
-- the `.lokf/` sidecar itself, including the `knowledge_bundle` link, `.github/workflows/knowledge-*.yaml` beyond the domain-schema step of `knowledge-release.yaml`, and `.github/PULL_REQUEST_TEMPLATE/knowledge-sync.md`.
+- the `.lokf/` sidecar itself, including the `knowledge_bundle` link, `.github/workflows/knowledge-*.yaml` beyond `knowledge-website.yaml` and the comparison and domain-schema steps of `knowledge-release.yaml`, and `.github/PULL_REQUEST_TEMPLATE/knowledge-sync.md`.

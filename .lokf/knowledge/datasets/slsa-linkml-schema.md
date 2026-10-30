@@ -23,7 +23,7 @@ relatedTo:
   - https://w3id.org/lmodel/slsa/knowledge/references/openssf-supply-chain
 generated:
   by: process:ktl-librarian
-  at: "2026-10-30T23:13:40Z"
+  at: "2026-10-30T23:20:11Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -34,7 +34,7 @@ sources:
     title: the umbrella schema, its header and SlsaDocument
   - resource: src/slsa/schema/README.md
     id: schema-readme.md
-    title: the rule on module imports
+    title: the table of modules and the rule on module imports
   - resource: src/slsa/schema/slsa_core.yaml
     id: slsa_core.yaml
     title: the core module, SlsaStatement, SlsaPredicate and the six subsets
@@ -84,7 +84,7 @@ sources:
 `src/slsa/schema/README.md` says that each module imports the core and lints alone, and that no module imports the umbrella, so an importer can take one module.[^schema-readme.md]
 
 - **`slsa_core.yaml`** holds what every track shares: `SlsaStatement` and `SlsaPredicate`, the roles, the build platform and its control plane, the package model, the `SlsaBuildLevel` enum and the six subsets. The roles are `SlsaParty` and its subclasses `SlsaProducer`, `SlsaConsumer`, `SlsaVerifier` and `SlsaInfrastructureProvider`. The module imports `linkml:types` and lmodel/in-toto's core module, `./in_toto/in_toto_core`.[^slsa_core.yaml]
-- **`in_toto/in_toto_core.yaml`** is that core module, copied unchanged from lmodel/in-toto at v0.1.0.[^notice] It holds the in-toto statement layer: the six `InToto` classes, the abstract `InTotoPredicate` and three field types.[^in_toto_core.yaml] [in-toto attestation framework](../references/in-toto-attestation.md) describes it.
+- **`in_toto/in_toto_core.yaml`** is that core module, copied unchanged from lmodel/in-toto at v0.1.0.[^notice] It holds the in-toto statement layer: the six `InToto` classes, the abstract `InTotoPredicate` and three field types.[^in_toto_core.yaml] The README's table says that it imports only `linkml:types` and is never edited here, and that `tests/test_in_toto_import.py` pins it.[^schema-readme.md] [in-toto attestation framework](../references/in-toto-attestation.md) describes it.
 - **`slsa_build.yaml`** holds the Build track's provenance predicate, `SlsaBuildProvenance`, with `SlsaBuildDefinition`, `SlsaRunDetails`, `SlsaBuildMetadata` and `SlsaBuildParameter`.
 - **`slsa_verification.yaml`** holds the Verification Summary Attestation (VSA) predicate, `SlsaVerificationSummary`, with the classes for its policy, its input attestations and its dependency counts. It also holds the `SlsaResult` and `SlsaVerificationResult` enums and the `slsa_result_value` type.
 - **`slsa_source.yaml`** holds the Source track: source control systems, repositories, revisions, branches and tags, and source provenance.
@@ -102,7 +102,7 @@ Together, the modules hold 42 classes, 9 enums, 4 types and 6 subsets. The in-to
 
 ## Names and enums
 
-`docs/about.md` says that classes carry a prefix (`InTotoStatement`, `SlsaPackage`) so that they can be imported beside other vocabularies, that slots are snake_case, and that permissible values keep the strings SLSA defines, such as `SLSA_BUILD_LEVEL_3`.[^docs-about.md] `.linkmllint.yaml` makes UPPER_CASE permissible values the lint rule, because the SLSA-defined values are the strings that appear in attestations and policies.
+`docs/about.md` says that element names carry a prefix (`SlsaStatement`, `SlsaPackage`, and `InTotoStatement` in the in-toto layer) so that they can be imported beside other vocabularies, that slots are snake_case, and that permissible values keep the strings SLSA defines, such as `SLSA_BUILD_LEVEL_3`. It says that the in-toto layer's elements live under `in_toto_linkml:` (`https://w3id.org/lmodel/in-toto/`), except `media_type` and `algorithm`, which take the IRIs LOKF gives them, and that every other element lives under `slsa:`.[^docs-about.md] `.linkmllint.yaml` makes UPPER_CASE permissible values the lint rule, because the SLSA-defined values are the strings that appear in attestations and policies.
 
 `SlsaBuildLevel`, `SlsaSourceLevel`, `SlsaDependencyLevel` and `SlsaBuildEnvironmentLevel` name each track's [levels](../glossary/slsa-level.md). `SlsaResult` lists the verification results SLSA defines, and `SlsaVerificationResult` says whether a verification passed. A VSA's verified levels take the `slsa_result_value` type, which admits SLSA's results and an issuer's own. `SlsaReviewType` names the forms of review that may approve a revision. `SlsaAdoptionChallenge` and `SlsaAdoptionStrategy` encode the [adoption study](../references/slsa-adoption-study.md)'s themes.
 
@@ -123,7 +123,7 @@ The README says that in the copy, LOKF's `id` stands in for each class's own ide
 `docs/index.md` says that `linkml-validate -s src/slsa/schema/slsa.yaml -C SlsaStatement statement.yaml` checks a file against the JSON Schema generated from the schema, and that the generated models check less. The dataclasses check required fields and enum values but no patterns. The Pydantic models also check patterns and list lengths, but they leave out the rules written as `any_of` or `none_of`, such as the rule that a resource descriptor carries a URI, a digest or its content. The same page says that no tool checks that a list never repeats a name, or that a VSA lists at most one level per track.[^index.md]
 
 [^schema-slsa.yaml]: src/slsa/schema/slsa.yaml and its imports, counted with SchemaView
-[^schema-readme.md]: src/slsa/schema/README.md, under the table
+[^schema-readme.md]: src/slsa/schema/README.md, the table and the line under it
 [^slsa_core.yaml]: src/slsa/schema/slsa_core.yaml, `imports` and `classes`
 [^notice]: NOTICE, the lmodel/in-toto section
 [^in_toto_core.yaml]: src/slsa/schema/in_toto/in_toto_core.yaml, `types` and `classes`
