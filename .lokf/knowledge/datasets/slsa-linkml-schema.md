@@ -23,7 +23,7 @@ relatedTo:
   - https://w3id.org/lmodel/slsa/knowledge/references/openssf-supply-chain
 generated:
   by: process:ktl-librarian
-  at: "2026-10-30T23:20:11Z"
+  at: "2026-10-30T23:21:44Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -81,7 +81,7 @@ sources:
 
 ## Modules
 
-`src/slsa/schema/README.md` says that each module imports the core and lints alone, and that no module imports the umbrella, so an importer can take one module.[^schema-readme.md]
+`src/slsa/schema/README.md` says that each `slsa_*` module imports the core and lints alone, and that no module imports the umbrella, so an importer can take one module.[^schema-readme.md]
 
 - **`slsa_core.yaml`** holds what every track shares: `SlsaStatement` and `SlsaPredicate`, the roles, the build platform and its control plane, the package model, the `SlsaBuildLevel` enum and the six subsets. The roles are `SlsaParty` and its subclasses `SlsaProducer`, `SlsaConsumer`, `SlsaVerifier` and `SlsaInfrastructureProvider`. The module imports `linkml:types` and lmodel/in-toto's core module, `./in_toto/in_toto_core`.[^slsa_core.yaml]
 - **`in_toto/in_toto_core.yaml`** is that core module, copied unchanged from lmodel/in-toto at v0.1.0.[^notice] It holds the in-toto statement layer: the six `InToto` classes, the abstract `InTotoPredicate` and three field types.[^in_toto_core.yaml] The README's table says that it imports only `linkml:types` and is never edited here, and that `tests/test_in_toto_import.py` pins it.[^schema-readme.md] [in-toto attestation framework](../references/in-toto-attestation.md) describes it.
