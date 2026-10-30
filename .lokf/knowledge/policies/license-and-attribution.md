@@ -40,7 +40,7 @@ The README says that the schema and the code are under the Apache License 2.0 (`
 - **The Secure Software Factory whitepaper.** `docs/Secure_Software_Factory_Whitepaper.pdf` is CNCF TAG-Security's whitepaper, copied unmodified from `cncf/tag-security`, whose documentation is under CC BY 4.0.
 - **linkml-project-copier.** `NOTICE` says that the project was generated from linkml-project-copier, and that its justfile, configuration and documentation scaffolding derive from that template. `NOTICE` carries the template's MIT License text.
 - **The knowledge bundle tooling.** `NOTICE` says that the scripts under `.lokf/scripts/` and `.lokf/m365/` and the knowledge-librarian, knowledge-registrar, knowledge-release and knowledge-sync workflows are copies of the ktl-sidecar templates in knowledge-trust-ladder. It says that the site under `website/` and the knowledge-website workflow derive from the ktl-website templates in the same repository, and that `website/NOTICE` lists the part adapted from the LOKF toolkit's site. All of them are under the Apache License 2.0.
-- **lmodel/in-toto.** `NOTICE` says that `src/slsa/schema/in_toto/in_toto_core.yaml` is the core module of the in-toto Attestation Framework's LinkML schema from lmodel/in-toto at v0.1.0, under the Apache License 2.0, copied unchanged, and that `tests/test_in_toto_import.py` pins its git object hash.
+- **lmodel/in-toto.** `NOTICE` says that `src/slsa/schema/in_toto/in_toto_core.yaml` is the core module of the in-toto Attestation Framework's LinkML schema from lmodel/in-toto at v0.1.0, under the Apache License 2.0, copied unchanged. It says that `tests/test_in_toto_import.py` pins its git object hash.
 
 ## Endorsement
 

@@ -52,6 +52,12 @@ The README marks `project/` as auto-generated and not to be edited. `CONTRIBUTIN
 
 A comment in `.github/workflows/main.yaml` says that the knowledge bundle validates against `.lokf/slsa.yaml` and that the release attaches it, so the copy must match the schema and `.lokf/lokf.yaml`. On Python 3.13, the build checks that it does.
 
-`.github/workflows/knowledge-release.yaml` attaches the copy to a release beside the bundle's zip file, as `schema-<tag>-<name>.yaml` with its own `.sha256` file. `<name>` is the repository's name unless the `KNOWLEDGE_RELEASE_NAME` repository variable gives another. The workflow attaches nothing when three things match the newest other published release that carries a bundle: the bundle's git tree, the `schema :=` line of `.lokf/justfile`, and the schema's files, which are the file that line names and the local files it imports in turn, apart from `lokf.yaml`. A manual run that sets `force` skips the comparison. [Release the slsa package](../playbooks/release.md) says when the workflow runs.
+`.github/workflows/knowledge-release.yaml` attaches the copy to a release beside the bundle's zip file, as `schema-<tag>-<name>.yaml` with its own `.sha256` file. `<name>` is the repository's name unless the `KNOWLEDGE_RELEASE_NAME` repository variable gives another. The workflow attaches nothing when three things match the newest other published release that carries a bundle:
+
+- the bundle's git tree;
+- the `schema :=` line of `.lokf/justfile`;
+- the schema's files: the file that line names, and the local files it imports in turn, apart from `lokf.yaml`.
+
+A manual run that sets `force` skips the comparison. [Release the slsa package](../playbooks/release.md) says when the workflow runs.
 
 The released copy must import LOKF core by the name `lokf`. The step that packs it rewrites a relative import of `.lokf/lokf.yaml` to that name, and merges into the copy any other local file the schema imports. `.lokf/slsa.yaml` imports only `linkml:types` and `lokf`, so the step attaches it as it is. The job that uploads the files checks each against its checksum, and in a public repository it attests the build provenance of the zip and the schema file.

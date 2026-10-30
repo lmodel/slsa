@@ -2,6 +2,7 @@
 
 ## 2026-10-30
 
+* **Prose**: reworded 5 concept bodies in plain English. No fact, link, number or frontmatter changed.
 * **Changed**: the schema concept says that each `slsa_*` module imports the core, as the line under the module table of `src/slsa/schema/README.md` now does.
 * **Changed**: the generated artifacts say that a release compares the justfile's `schema :=` line and the schema's files as well as the bundle, and how the schema asset is packed and attested, as `knowledge-release.yaml` has said since 23442fd.
 * **Changed**: the documentation site says that a push builds the site only on the default branch and that a run by hand builds it too, as `knowledge-website.yaml` says, and names the Guides group that `site.config.mjs` puts the docs pages in.
