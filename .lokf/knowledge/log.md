@@ -1,5 +1,16 @@
 # Change Log
 
+## 2026-10-30
+
+* **Rewrite**: the in-toto page says that the schema takes the in-toto layer from lmodel/in-toto's core module at v0.1.0, vendored unchanged and pinned by `tests/test_in_toto_import.py`, and names `InTotoPredicate`, the three field types and the module's IRIs.
+* **Rewrite**: the schema concept follows the in-toto import: `slsa_core.yaml` imports lmodel/in-toto's vendored core module and adds `SlsaStatement`, the modules hold 42 classes and 4 types, six SLSA fields take in-toto's types, and the adapt copy renames a statement's `predicate` to `slsa_predicate`, as the README now says.
+* **Rewrite**: the test data concept counts 32 valid and 36 invalid files, names the renamed `SlsaStatement` examples, and adds the counter-examples for a start time with an offset and a verifier id with an uppercase host.
+* **Changed**: the whitepaper page puts `signing_tool` and `transparency_log_entry` on `SlsaStatement`, as `docs/about.md` now does.
+* **Changed**: the specification page says that the in-toto statement layer comes from lmodel/in-toto's vendored core module, as `docs/about.md` now does.
+* **Changed**: the license concept adds the lmodel/in-toto entry that `NOTICE` now carries.
+* **Changed**: the regeneration playbook says to leave the vendored `in_toto/in_toto_core.yaml` unchanged, since `tests/test_in_toto_import.py` pins its hash, and how to take a later lmodel/in-toto release.
+* **Changed**: the source map adds the vendored in-toto module, its pinning test and the lmodel/in-toto release, and asks a refresh to recount the example files.
+
 ## 2026-10-28
 
 * **Changed**: the schema concept says that the adapt recipes run the released lokf 0.9.0 or later, that the copy renames `revision` to `slsa_revision` with its IRI kept, and that the schema declares no mappings, as `project.justfile` and the README now say.

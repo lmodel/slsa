@@ -18,7 +18,7 @@ generated:
 status: draft
 verified:
   - by: process:ktl-librarian
-    at: "2026-10-22T18:46:59Z"
+    at: "2026-10-30T23:13:40Z"
 ---
 
 # SLSA adoption study

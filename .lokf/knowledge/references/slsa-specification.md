@@ -14,7 +14,7 @@ sources:
     title: the SLSA repository README, License section
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T22:17:38Z"
+  at: "2026-10-30T23:13:40Z"
 status: draft
 author:
   - type: Organization
@@ -29,7 +29,7 @@ verified:
 
 SLSA (Supply-chain Levels for Software Artifacts) is a specification for describing and incrementally improving supply chain security. It is organized into tracks, and each track into levels that give increasing security guarantees. Its home is <https://slsa.dev>.
 
-`docs/about.md` says that the schema is a LinkML model of the SLSA specification, version 1.2. It renders the specification's Build and Source tracks, the build provenance and Verification Summary Attestation predicates, the in-toto statement layer they sit in, and the roles, build platform and package model the specification defines. The Dependency and Build Environment tracks follow the working draft at version 1.2, which the release does not include.
+`docs/about.md` says that the schema is a LinkML model of the SLSA specification, version 1.2. It renders the specification's Build and Source tracks, the build provenance and Verification Summary Attestation predicates, and the roles, build platform and package model the specification defines. The in-toto statement layer they sit in comes from lmodel/in-toto's core module, which `src/slsa/schema/in_toto/in_toto_core.yaml` vendors, and `SlsaStatement` adds SLSA's fields to its statement: see [in-toto attestation framework](in-toto-attestation.md). The Dependency and Build Environment tracks follow the working draft at version 1.2, which the release does not include.
 
 The schema header in `src/slsa/schema/slsa.yaml` agrees. It gives `version: 1.2.0` and `source: https://slsa.dev/spec/v1.2`, and lists `https://slsa.dev/spec/v1.2/` under `see_also`. A comment says that the version is the SLSA specification version the model renders.
 
