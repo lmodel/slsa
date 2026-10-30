@@ -1,0 +1,10 @@
+# INVALID: the verifier's id writes its host in uppercase, and an in-toto type
+# URI keeps its scheme and authority in lowercase.
+verifier:
+  verifier_id: https://EXAMPLE.com/publication_verifier
+resource_uri: https://example.com/example-1.2.3.tar.gz
+policy:
+  resource_uri: https://example.com/example_tarball.policy
+verification_result: FAILED
+verified_levels:
+  - FAILED

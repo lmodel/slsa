@@ -60,7 +60,7 @@ classes:
         description: >-
           The URI of the template that says how to run the build and read its parameters
           and dependencies; required at Build L1.
-        range: uri
+        range: in_toto_type_uri
         required: true
       external_parameters:
         description: >-
@@ -188,9 +188,9 @@ classes:
           useful for finding its logs.
       started_on:
         description: When the build started.
-        range: datetime
+        range: in_toto_timestamp
       finished_on:
         description: When the build finished.
-        range: datetime
+        range: in_toto_timestamp
     in_subset:
       - slsa_build_track

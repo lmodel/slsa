@@ -1,0 +1,12 @@
+# INVALID: started_on carries a +01:00 offset, and an in-toto timestamp is UTC
+# with a trailing Z.
+build_definition:
+  build_type: https://actions.github.io/buildtypes/workflow/v1
+  external_parameters:
+    - parameter_name: workflow
+      parameter_value: .github/workflows/build.yml
+run_details:
+  builder:
+    builder_id: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.9.0
+  build_metadata:
+    started_on: "2024-01-15T11:00:00+01:00"

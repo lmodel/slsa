@@ -84,7 +84,7 @@ classes:
         inlined: true
       time_verified:
         description: When the verification happened.
-        range: datetime
+        range: in_toto_timestamp
       policy:
         description: >-
           The policy the subject was verified against, by URI and preferably by digest

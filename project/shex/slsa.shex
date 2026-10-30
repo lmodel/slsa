@@ -170,7 +170,7 @@ in_toto_linkml:InTotoStatementSubject CLOSED {
 }
 
 <SlsaBuildDefinition> CLOSED {
-    (  $<SlsaBuildDefinition_tes> (  <build_type> @linkml:Uri ;
+    (  $<SlsaBuildDefinition_tes> (  <build_type> @in_toto_linkml:InTotoTypeUri ;
           <external_parameters> @<SlsaBuildParameter> + ;
           <internal_parameters> @<SlsaBuildParameter> * ;
           <resolved_dependencies> @in_toto_linkml:InTotoResourceDescriptor * ;
@@ -219,8 +219,8 @@ in_toto_linkml:InTotoStatementSubject CLOSED {
 
 <SlsaBuildMetadata> CLOSED {
     (  $<SlsaBuildMetadata_tes> (  <invocation_id> @linkml:String ? ;
-          <started_on> @linkml:Datetime ? ;
-          <finished_on> @linkml:Datetime ?
+          <started_on> @in_toto_linkml:InTotoTimestamp ? ;
+          <finished_on> @in_toto_linkml:InTotoTimestamp ?
        ) ;
        rdf:type [ <SlsaBuildMetadata> ] ?
     )
@@ -473,7 +473,7 @@ in_toto_linkml:InTotoStatementSubject CLOSED {
           rdf:type [ <SlsaPredicate> ] ? ;
           in_toto_linkml:resource_uri @in_toto_linkml:InTotoResourceUri ;
           <verifier> @<SlsaVerifier> ;
-          <time_verified> @linkml:Datetime ? ;
+          <time_verified> @in_toto_linkml:InTotoTimestamp ? ;
           <policy> @<SlsaVerificationSummaryPolicy> ;
           <input_attestations> @<SlsaVerificationSummaryInputAttestation> * ;
           <verification_result> [ <https://w3id.org/lmodel/slsa/SlsaVerificationResult#PASSED>
@@ -511,7 +511,7 @@ in_toto_linkml:InTotoStatementSubject CLOSED {
     (  $<SlsaVerifier_tes> (  &<SlsaParty_tes> ;
           rdf:type [ <SlsaParty> ] ? ;
           <component_versions> @<SlsaComponentVersion> * ;
-          <verifier_id> @linkml:Uri
+          <verifier_id> @in_toto_linkml:InTotoTypeUri
        ) ;
        rdf:type [ <SlsaVerifier> ] ?
     )

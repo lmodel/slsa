@@ -998,6 +998,7 @@
                 "build_type": {
                     "description": "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": "string"
                 },
                 "external_parameters": {
@@ -1215,7 +1216,7 @@
             "properties": {
                 "finished_on": {
                     "description": "When the build finished.",
-                    "format": "date-time",
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$",
                     "type": [
                         "string",
                         "null"
@@ -1230,7 +1231,7 @@
                 },
                 "started_on": {
                     "description": "When the build started.",
-                    "format": "date-time",
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$",
                     "type": [
                         "string",
                         "null"
@@ -1290,6 +1291,7 @@
                 "builder_id": {
                     "description": "The URI that identifies the platform and determines its SLSA Build level.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": "string"
                 },
                 "component_versions": {
@@ -2320,7 +2322,7 @@
                 },
                 "time_verified": {
                     "description": "When the verification happened.",
-                    "format": "date-time",
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$",
                     "type": [
                         "string",
                         "null"
@@ -2522,6 +2524,7 @@
                 "verifier_id": {
                     "description": "The URI that identifies the verifier.",
                     "format": "uri",
+                    "pattern": "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$",
                     "type": "string"
                 }
             },

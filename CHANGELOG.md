@@ -11,6 +11,7 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 - **The in-toto layer comes from lmodel/in-toto's core module at v0.1.0**, vendored at `src/slsa/schema/in_toto/in_toto_core.yaml`, and the schema's own copy is gone. The class names stay, and the six classes and their keys take in-toto's IRIs; `media_type` and `algorithm` take the IRIs LOKF gives them.
 - **`SlsaPredicate` extends in-toto's `InTotoPredicate`.** A statement keeps its `predicate` key, which the adapt copy calls `slsa_predicate`, because LOKF's `predicate` is a relation's type.
 - **`attestation_storage_uri`, `signing_tool` and `transparency_log_entry` moved to `SlsaStatement`**, a subclass of `InTotoStatement` that `SlsaDocument` holds, since in-toto's statement carries only what its specification defines.
+- **`build_type`, `builder_id` and `verifier_id` take in-toto's `in_toto_type_uri`, and `started_on`, `finished_on` and `time_verified` take `in_toto_timestamp`**, the field types the SLSA specification gives them. A timestamp now ends in Z, and a type URI keeps its scheme and host in lowercase.
 
 ## [0.7.1] - 2026-10-29
 

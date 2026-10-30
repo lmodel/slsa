@@ -324,8 +324,8 @@ CREATE INDEX "ix_SlsaBuildDefinition_id" ON "SlsaBuildDefinition" (id);
 CREATE TABLE "SlsaBuildMetadata" (
 	id INTEGER NOT NULL,
 	invocation_id TEXT,
-	started_on DATETIME,
-	finished_on DATETIME,
+	started_on TEXT,
+	finished_on TEXT,
 	PRIMARY KEY (id)
 );
 CREATE INDEX "ix_SlsaBuildMetadata_id" ON "SlsaBuildMetadata" (id);
@@ -472,8 +472,8 @@ CREATE TABLE "SlsaAdoptionMetadata_challenges" (
 	PRIMARY KEY ("SlsaAdoptionMetadata_id", challenges),
 	FOREIGN KEY("SlsaAdoptionMetadata_id") REFERENCES "SlsaAdoptionMetadata" (id)
 );
-CREATE INDEX "ix_SlsaAdoptionMetadata_challenges_challenges" ON "SlsaAdoptionMetadata_challenges" (challenges);
 CREATE INDEX "ix_SlsaAdoptionMetadata_challenges_SlsaAdoptionMetadata_id" ON "SlsaAdoptionMetadata_challenges" ("SlsaAdoptionMetadata_id");
+CREATE INDEX "ix_SlsaAdoptionMetadata_challenges_challenges" ON "SlsaAdoptionMetadata_challenges" (challenges);
 
 CREATE TABLE "SlsaAdoptionMetadata_strategies" (
 	"SlsaAdoptionMetadata_id" INTEGER,
@@ -481,8 +481,8 @@ CREATE TABLE "SlsaAdoptionMetadata_strategies" (
 	PRIMARY KEY ("SlsaAdoptionMetadata_id", strategies),
 	FOREIGN KEY("SlsaAdoptionMetadata_id") REFERENCES "SlsaAdoptionMetadata" (id)
 );
-CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_SlsaAdoptionMetadata_id" ON "SlsaAdoptionMetadata_strategies" ("SlsaAdoptionMetadata_id");
 CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_strategies" ON "SlsaAdoptionMetadata_strategies" (strategies);
+CREATE INDEX "ix_SlsaAdoptionMetadata_strategies_SlsaAdoptionMetadata_id" ON "SlsaAdoptionMetadata_strategies" ("SlsaAdoptionMetadata_id");
 
 CREATE TABLE "SlsaStatement" (
 	id INTEGER NOT NULL,
@@ -531,7 +531,7 @@ CREATE INDEX "ix_SlsaPackageRegistry_registry_uri" ON "SlsaPackageRegistry" (reg
 CREATE TABLE "SlsaVerificationSummary" (
 	id INTEGER NOT NULL,
 	resource_uri TEXT NOT NULL,
-	time_verified DATETIME,
+	time_verified TEXT,
 	verification_result VARCHAR(6) NOT NULL,
 	slsa_version TEXT,
 	predicate_kind TEXT,
@@ -787,8 +787,8 @@ CREATE TABLE "SlsaSourceRevision_parent_revisions" (
 	FOREIGN KEY("SlsaSourceRevision_revision_id") REFERENCES "SlsaSourceRevision" (revision_id),
 	FOREIGN KEY(parent_revisions_revision_id) REFERENCES "SlsaSourceRevision" (revision_id)
 );
-CREATE INDEX "ix_SlsaSourceRevision_parent_revisions_SlsaSourceRevision_revision_id" ON "SlsaSourceRevision_parent_revisions" ("SlsaSourceRevision_revision_id");
 CREATE INDEX "ix_SlsaSourceRevision_parent_revisions_parent_revisions_revision_id" ON "SlsaSourceRevision_parent_revisions" (parent_revisions_revision_id);
+CREATE INDEX "ix_SlsaSourceRevision_parent_revisions_SlsaSourceRevision_revision_id" ON "SlsaSourceRevision_parent_revisions" ("SlsaSourceRevision_revision_id");
 
 CREATE TABLE "InTotoAnnotation_annotation_values" (
 	"InTotoAnnotation_id" INTEGER,
@@ -816,8 +816,8 @@ CREATE TABLE "SlsaSourceProvenance_controls_enforced" (
 	PRIMARY KEY ("SlsaSourceProvenance_id", controls_enforced),
 	FOREIGN KEY("SlsaSourceProvenance_id") REFERENCES "SlsaSourceProvenance" (id)
 );
-CREATE INDEX "ix_SlsaSourceProvenance_controls_enforced_SlsaSourceProvenance_id" ON "SlsaSourceProvenance_controls_enforced" ("SlsaSourceProvenance_id");
 CREATE INDEX "ix_SlsaSourceProvenance_controls_enforced_controls_enforced" ON "SlsaSourceProvenance_controls_enforced" (controls_enforced);
+CREATE INDEX "ix_SlsaSourceProvenance_controls_enforced_SlsaSourceProvenance_id" ON "SlsaSourceProvenance_controls_enforced" ("SlsaSourceProvenance_id");
 
 CREATE TABLE "SlsaMeasurement" (
 	id INTEGER NOT NULL,

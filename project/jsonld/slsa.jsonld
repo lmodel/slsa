@@ -1366,7 +1366,7 @@
       "domain_of": [
         "SlsaVerifier"
       ],
-      "range": "uri",
+      "range": "in_toto_type_uri",
       "required": true,
       "@type": "SlotDefinition"
     },
@@ -1381,7 +1381,7 @@
       "domain_of": [
         "SlsaBuildPlatform"
       ],
-      "range": "uri",
+      "range": "in_toto_type_uri",
       "required": true,
       "@type": "SlotDefinition"
     },
@@ -1589,7 +1589,7 @@
       "domain_of": [
         "SlsaBuildDefinition"
       ],
-      "range": "uri",
+      "range": "in_toto_type_uri",
       "required": true,
       "@type": "SlotDefinition"
     },
@@ -1800,7 +1800,7 @@
       "domain_of": [
         "SlsaBuildMetadata"
       ],
-      "range": "datetime",
+      "range": "in_toto_timestamp",
       "@type": "SlotDefinition"
     },
     {
@@ -1813,7 +1813,7 @@
       "domain_of": [
         "SlsaBuildMetadata"
       ],
-      "range": "datetime",
+      "range": "in_toto_timestamp",
       "@type": "SlotDefinition"
     },
     {
@@ -1842,7 +1842,7 @@
       "domain_of": [
         "SlsaVerificationSummary"
       ],
-      "range": "datetime",
+      "range": "in_toto_timestamp",
       "@type": "SlotDefinition"
     },
     {
@@ -3568,7 +3568,7 @@
         {
           "name": "verifier_id",
           "description": "The URI that identifies the verifier.",
-          "range": "uri",
+          "range": "in_toto_type_uri",
           "required": true,
           "@type": "SlotDefinition"
         }
@@ -3622,7 +3622,7 @@
           "name": "builder_id",
           "description": "The URI that identifies the platform and determines its SLSA Build level.",
           "identifier": true,
-          "range": "uri",
+          "range": "in_toto_type_uri",
           "@type": "SlotDefinition"
         },
         {
@@ -3865,7 +3865,7 @@
         {
           "name": "build_type",
           "description": "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.",
-          "range": "uri",
+          "range": "in_toto_type_uri",
           "required": true,
           "@type": "SlotDefinition"
         },
@@ -4047,13 +4047,13 @@
         {
           "name": "started_on",
           "description": "When the build started.",
-          "range": "datetime",
+          "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         },
         {
           "name": "finished_on",
           "description": "When the build finished.",
-          "range": "datetime",
+          "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         }
       ],
@@ -4105,7 +4105,7 @@
         {
           "name": "time_verified",
           "description": "When the verification happened.",
-          "range": "datetime",
+          "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         },
         {

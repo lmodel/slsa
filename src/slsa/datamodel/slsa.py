@@ -105,7 +105,7 @@ class InTotoTimestamp(String):
 
 
 # Class references
-class SlsaBuildPlatformBuilderId(URI):
+class SlsaBuildPlatformBuilderId(InTotoTypeUri):
     pass
 
 
@@ -286,14 +286,14 @@ class SlsaVerifier(SlsaParty):
     class_name: ClassVar[str] = "SlsaVerifier"
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaVerifier
 
-    verifier_id: Union[str, URI] = None
+    verifier_id: Union[str, InTotoTypeUri] = None
     component_versions: Optional[Union[Union[dict, "SlsaComponentVersion"], list[Union[dict, "SlsaComponentVersion"]]]] = empty_list()
 
     def __post_init__(self, *_: str, **kwargs: Any):
         if self._is_empty(self.verifier_id):
             self.MissingRequiredField("verifier_id")
-        if not isinstance(self.verifier_id, URI):
-            self.verifier_id = URI(self.verifier_id)
+        if not isinstance(self.verifier_id, InTotoTypeUri):
+            self.verifier_id = InTotoTypeUri(self.verifier_id)
 
         self._normalize_inlined_as_list(slot_name="component_versions", slot_type=SlsaComponentVersion, key_name="component", keyed=False)
 
@@ -494,7 +494,7 @@ class SlsaBuildDefinition(YAMLRoot):
     class_name: ClassVar[str] = "SlsaBuildDefinition"
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaBuildDefinition
 
-    build_type: Union[str, URI] = None
+    build_type: Union[str, InTotoTypeUri] = None
     external_parameters: Union[Union[dict, "SlsaBuildParameter"], list[Union[dict, "SlsaBuildParameter"]]] = None
     internal_parameters: Optional[Union[Union[dict, "SlsaBuildParameter"], list[Union[dict, "SlsaBuildParameter"]]]] = empty_list()
     resolved_dependencies: Optional[Union[Union[dict, "InTotoResourceDescriptor"], list[Union[dict, "InTotoResourceDescriptor"]]]] = empty_list()
@@ -505,8 +505,8 @@ class SlsaBuildDefinition(YAMLRoot):
     def __post_init__(self, *_: str, **kwargs: Any):
         if self._is_empty(self.build_type):
             self.MissingRequiredField("build_type")
-        if not isinstance(self.build_type, URI):
-            self.build_type = URI(self.build_type)
+        if not isinstance(self.build_type, InTotoTypeUri):
+            self.build_type = InTotoTypeUri(self.build_type)
 
         if self._is_empty(self.external_parameters):
             self.MissingRequiredField("external_parameters")
@@ -602,18 +602,18 @@ class SlsaBuildMetadata(YAMLRoot):
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaBuildMetadata
 
     invocation_id: Optional[str] = None
-    started_on: Optional[Union[str, XSDDateTime]] = None
-    finished_on: Optional[Union[str, XSDDateTime]] = None
+    started_on: Optional[Union[str, InTotoTimestamp]] = None
+    finished_on: Optional[Union[str, InTotoTimestamp]] = None
 
     def __post_init__(self, *_: str, **kwargs: Any):
         if self.invocation_id is not None and not isinstance(self.invocation_id, str):
             self.invocation_id = str(self.invocation_id)
 
-        if self.started_on is not None and not isinstance(self.started_on, XSDDateTime):
-            self.started_on = XSDDateTime(self.started_on)
+        if self.started_on is not None and not isinstance(self.started_on, InTotoTimestamp):
+            self.started_on = InTotoTimestamp(self.started_on)
 
-        if self.finished_on is not None and not isinstance(self.finished_on, XSDDateTime):
-            self.finished_on = XSDDateTime(self.finished_on)
+        if self.finished_on is not None and not isinstance(self.finished_on, InTotoTimestamp):
+            self.finished_on = InTotoTimestamp(self.finished_on)
 
         super().__post_init__(**kwargs)
 
@@ -1462,7 +1462,7 @@ class SlsaVerificationSummary(SlsaPredicate):
     policy: Union[dict, SlsaVerificationSummaryPolicy] = None
     verification_result: Union[str, "SlsaVerificationResult"] = None
     verified_levels: Union[Union[str, SlsaResultValue], list[Union[str, SlsaResultValue]]] = None
-    time_verified: Optional[Union[str, XSDDateTime]] = None
+    time_verified: Optional[Union[str, InTotoTimestamp]] = None
     input_attestations: Optional[Union[Union[dict, SlsaVerificationSummaryInputAttestation], list[Union[dict, SlsaVerificationSummaryInputAttestation]]]] = empty_list()
     organization_properties: Optional[Union[str, list[str]]] = empty_list()
     dependency_levels: Optional[Union[Union[dict, SlsaDependencyLevelCount], list[Union[dict, SlsaDependencyLevelCount]]]] = empty_list()
@@ -1495,8 +1495,8 @@ class SlsaVerificationSummary(SlsaPredicate):
             self.verified_levels = [self.verified_levels] if self.verified_levels is not None else []
         self.verified_levels = [v if isinstance(v, SlsaResultValue) else SlsaResultValue(v) for v in self.verified_levels]
 
-        if self.time_verified is not None and not isinstance(self.time_verified, XSDDateTime):
-            self.time_verified = XSDDateTime(self.time_verified)
+        if self.time_verified is not None and not isinstance(self.time_verified, InTotoTimestamp):
+            self.time_verified = InTotoTimestamp(self.time_verified)
 
         if not isinstance(self.input_attestations, list):
             self.input_attestations = [self.input_attestations] if self.input_attestations is not None else []
@@ -1899,7 +1899,7 @@ slots.slsaParty__party_name = Slot(uri=SLSA.party_name, name="slsaParty__party_n
                    model_uri=SLSA.slsaParty__party_name, domain=None, range=Optional[str])
 
 slots.slsaVerifier__verifier_id = Slot(uri=SLSA.verifier_id, name="slsaVerifier__verifier_id", curie=SLSA.curie('verifier_id'),
-                   model_uri=SLSA.slsaVerifier__verifier_id, domain=None, range=Union[str, URI])
+                   model_uri=SLSA.slsaVerifier__verifier_id, domain=None, range=Union[str, InTotoTypeUri])
 
 slots.slsaBuildPlatform__builder_id = Slot(uri=SLSA.builder_id, name="slsaBuildPlatform__builder_id", curie=SLSA.curie('builder_id'),
                    model_uri=SLSA.slsaBuildPlatform__builder_id, domain=None, range=URIRef)
@@ -1944,7 +1944,7 @@ slots.slsaBuildProvenance__run_details = Slot(uri=SLSA.run_details, name="slsaBu
                    model_uri=SLSA.slsaBuildProvenance__run_details, domain=None, range=Union[dict, SlsaRunDetails])
 
 slots.slsaBuildDefinition__build_type = Slot(uri=SLSA.build_type, name="slsaBuildDefinition__build_type", curie=SLSA.curie('build_type'),
-                   model_uri=SLSA.slsaBuildDefinition__build_type, domain=None, range=Union[str, URI])
+                   model_uri=SLSA.slsaBuildDefinition__build_type, domain=None, range=Union[str, InTotoTypeUri])
 
 slots.slsaBuildDefinition__external_parameters = Slot(uri=SLSA.external_parameters, name="slsaBuildDefinition__external_parameters", curie=SLSA.curie('external_parameters'),
                    model_uri=SLSA.slsaBuildDefinition__external_parameters, domain=None, range=Union[Union[dict, SlsaBuildParameter], list[Union[dict, SlsaBuildParameter]]])
@@ -1983,16 +1983,16 @@ slots.slsaBuildMetadata__invocation_id = Slot(uri=SLSA.invocation_id, name="slsa
                    model_uri=SLSA.slsaBuildMetadata__invocation_id, domain=None, range=Optional[str])
 
 slots.slsaBuildMetadata__started_on = Slot(uri=SLSA.started_on, name="slsaBuildMetadata__started_on", curie=SLSA.curie('started_on'),
-                   model_uri=SLSA.slsaBuildMetadata__started_on, domain=None, range=Optional[Union[str, XSDDateTime]])
+                   model_uri=SLSA.slsaBuildMetadata__started_on, domain=None, range=Optional[Union[str, InTotoTimestamp]])
 
 slots.slsaBuildMetadata__finished_on = Slot(uri=SLSA.finished_on, name="slsaBuildMetadata__finished_on", curie=SLSA.curie('finished_on'),
-                   model_uri=SLSA.slsaBuildMetadata__finished_on, domain=None, range=Optional[Union[str, XSDDateTime]])
+                   model_uri=SLSA.slsaBuildMetadata__finished_on, domain=None, range=Optional[Union[str, InTotoTimestamp]])
 
 slots.slsaVerificationSummary__verifier = Slot(uri=SLSA.verifier, name="slsaVerificationSummary__verifier", curie=SLSA.curie('verifier'),
                    model_uri=SLSA.slsaVerificationSummary__verifier, domain=None, range=Union[dict, SlsaVerifier])
 
 slots.slsaVerificationSummary__time_verified = Slot(uri=SLSA.time_verified, name="slsaVerificationSummary__time_verified", curie=SLSA.curie('time_verified'),
-                   model_uri=SLSA.slsaVerificationSummary__time_verified, domain=None, range=Optional[Union[str, XSDDateTime]])
+                   model_uri=SLSA.slsaVerificationSummary__time_verified, domain=None, range=Optional[Union[str, InTotoTimestamp]])
 
 slots.slsaVerificationSummary__policy = Slot(uri=SLSA.policy, name="slsaVerificationSummary__policy", curie=SLSA.curie('policy'),
                    model_uri=SLSA.slsaVerificationSummary__policy, domain=None, range=Union[dict, SlsaVerificationSummaryPolicy])

@@ -176,7 +176,7 @@ type SlsaBranch
 
 type SlsaBuildDefinition
   {
-    buildType: String!
+    buildType: InTotoTypeUri!
     externalParameters: [SlsaBuildParameter]!
     internalParameters: [SlsaBuildParameter]
     resolvedDependencies: [InTotoResourceDescriptor]
@@ -211,8 +211,8 @@ type SlsaBuildImageProducer
 type SlsaBuildMetadata
   {
     invocationId: String
-    startedOn: String
-    finishedOn: String
+    startedOn: InTotoTimestamp
+    finishedOn: InTotoTimestamp
   }
 
 type SlsaBuildParameter
@@ -224,7 +224,7 @@ type SlsaBuildParameter
 type SlsaBuildPlatform
   {
     componentVersions: [SlsaComponentVersion]
-    builderId: String!
+    builderId: InTotoTypeUri!
     buildLevel: SlsaBuildLevel
     hosted: Boolean
     builderDependencies: [InTotoResourceDescriptor]
@@ -400,7 +400,7 @@ type SlsaVerificationSummary
     predicateKind: String
     resourceUri: InTotoResourceUri!
     verifier: SlsaVerifier!
-    timeVerified: String
+    timeVerified: InTotoTimestamp
     policy: SlsaVerificationSummaryPolicy!
     inputAttestations: [SlsaVerificationSummaryInputAttestation]
     verificationResult: SlsaVerificationResult!
@@ -437,5 +437,5 @@ type SlsaVerifier
     partyType: String
     partyName: String
     componentVersions: [SlsaComponentVersion]
-    verifierId: String!
+    verifierId: InTotoTypeUri!
   }

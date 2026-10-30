@@ -204,7 +204,7 @@ classes:
     attributes:
       verifier_id:
         description: The URI that identifies the verifier.
-        range: uri
+        range: in_toto_type_uri
         required: true
     in_subset:
       - slsa_build_track
@@ -240,7 +240,7 @@ classes:
         identifier: true
         description: >-
           The URI that identifies the platform and determines its SLSA Build level.
-        range: uri
+        range: in_toto_type_uri
       build_level:
         description: The highest SLSA Build level the platform's provenance can meet.
         range: SlsaBuildLevel

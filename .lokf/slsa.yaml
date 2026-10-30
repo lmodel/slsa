@@ -569,7 +569,7 @@ classes:
     attributes:
       verifier_id:
         description: The URI that identifies the verifier.
-        range: uri
+        range: in_toto_type_uri
         required: true
     in_subset:
     - slsa_build_track
@@ -715,7 +715,7 @@ classes:
       build_type:
         description: The URI of the template that says how to run the build and read its parameters and
           dependencies; required at Build L1.
-        range: uri
+        range: in_toto_type_uri
         required: true
       external_parameters:
         description: The inputs under the tenant's control; required at Build L1, complete at Build L3
@@ -822,10 +822,10 @@ classes:
           for finding its logs.
       started_on:
         description: When the build started.
-        range: datetime
+        range: in_toto_timestamp
       finished_on:
         description: When the build finished.
-        range: datetime
+        range: in_toto_timestamp
     in_subset:
     - slsa_build_track
   SlsaVerificationSummary:
@@ -856,7 +856,7 @@ classes:
         inlined: true
       time_verified:
         description: When the verification happened.
-        range: datetime
+        range: in_toto_timestamp
       policy:
         description: The policy the subject was verified against, by URI and preferably by digest too.
         range: SlsaVerificationSummaryPolicy
