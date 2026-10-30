@@ -360,6 +360,8 @@ types:
     - An issuer's own result, such as an organization's ORG_SOURCE_ property, is printable
       ASCII with no spaces and does not start with SLSA_ in any letter case, so that
       it cannot pass for an SLSA result.
+    - It names the base its typeof already gives, because the SQL generator reads
+      base alone and reports a type without one.
     in_subset:
     - slsa_build_track
     - slsa_source_track

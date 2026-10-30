@@ -1381,6 +1381,7 @@ types:
     pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?Z$
   slsa_result_value:
     typeof: string
+    base: str
     description: 'A result as a VSA writes it: one of the SLSA-defined results SlsaResult lists, or one
       of the issuer''s own, which never starts with SLSA_.'
     pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
@@ -1389,6 +1390,8 @@ types:
     comments:
     - An issuer's own result, such as an organization's ORG_SOURCE_ property, is printable ASCII with
       no spaces and does not start with SLSA_ in any letter case, so that it cannot pass for an SLSA result.
+    - It names the base its typeof already gives, because the SQL generator reads base alone and reports
+      a type without one.
     notes:
     - The pattern lists the values of SlsaResult that start with SLSA_ and then admits any other value
       that does not, written without a lookahead, which SHACL's regular expressions lack. One type in
