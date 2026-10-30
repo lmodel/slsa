@@ -10,13 +10,12 @@ import java.util.List;
 import lombok.*;
 
 /**
-  The base of every predicate this schema models; predicate_kind names the concrete kind.
+  The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.
 **/
 @Data
 @EqualsAndHashCode(callSuper=false)
-public abstract class SlsaPredicate  {
+public abstract class SlsaPredicate extends InTotoPredicate {
 
-  private String predicateKind;
 
 
 }

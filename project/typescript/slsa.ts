@@ -155,124 +155,9 @@ export enum SlsaAdoptionStrategy {
 
 
 /**
- * A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+ * An in-toto statement with the fields this schema adds: where the signed attestation is stored, the tool that signed it and the transparency log entry that records the signature.
  */
-export interface InTotoDigestSet {
-    /** The SHA-256 digest of the artifact. */
-    sha256?: string,
-    /** The SHA-224 digest of the artifact. */
-    sha224?: string,
-    /** The SHA-384 digest of the artifact. */
-    sha384?: string,
-    /** The SHA-512 digest of the artifact. */
-    sha512?: string,
-    /** The SHA-512/224 digest of the artifact. */
-    sha512_224?: string,
-    /** The SHA-512/256 digest of the artifact. */
-    sha512_256?: string,
-    /** The SHA3-224 digest of the artifact. */
-    sha3_224?: string,
-    /** The SHA3-256 digest of the artifact. */
-    sha3_256?: string,
-    /** The SHA3-384 digest of the artifact. */
-    sha3_384?: string,
-    /** The SHA3-512 digest of the artifact. */
-    sha3_512?: string,
-    /** The SHAKE128 digest of the artifact, of at least 32 bytes. */
-    shake128?: string,
-    /** The SHAKE256 digest of the artifact, of at least 32 bytes. */
-    shake256?: string,
-    /** The BLAKE2b digest of the artifact, of 32 to 64 bytes. */
-    blake2b?: string,
-    /** The BLAKE2s digest of the artifact, at its full 32 bytes. */
-    blake2s?: string,
-    /** The RIPEMD-160 digest of the artifact. */
-    ripemd160?: string,
-    /** The SM3 digest of the artifact. */
-    sm3?: string,
-    /** The GOST R 34.11 digest of the artifact, of 256 or 512 bits. */
-    gost?: string,
-    /** The SHA-1 digest of the artifact. */
-    sha1?: string,
-    /** The MD5 digest of the artifact. */
-    md5?: string,
-    /** A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64. */
-    dir_hash?: string,
-    /** The git commit id of a source revision. */
-    git_commit?: string,
-    /** The git tree id of a source revision's content, or of any file tree. */
-    git_tree?: string,
-    /** The git blob id of a file's content. */
-    git_blob?: string,
-    /** The git object id of an annotated tag. */
-    git_tag?: string,
-    /** The digests under algorithms this class does not name. */
-    additional_digests?: InTotoAdditionalDigest[],
-}
-
-
-/**
- * One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
- */
-export interface InTotoAdditionalDigest {
-    /** The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id. */
-    algorithm: string,
-    /** The digest under that algorithm, in the encoding the algorithm documents. */
-    value: string,
-}
-
-
-/**
- * One vendor-specific annotation on a resource descriptor: a key and its values.
- */
-export interface InTotoAnnotation {
-    /** The annotation's key. */
-    annotation_key: string,
-    /** The annotation's values. */
-    annotation_values?: string[],
-}
-
-
-/**
- * A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
- */
-export interface InTotoResourceDescriptor {
-    /** The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference. */
-    resource_uri?: string,
-    /** The cryptographic digests of a resource's content, keyed by algorithm. */
-    digest?: InTotoDigestSet,
-    /** A name for the resource within the attestation that carries it. */
-    resource_name?: string,
-    /** Where the resource can be fetched, when that differs from its identifying URI. */
-    download_location?: string,
-    /** The IANA media type of the resource's content. */
-    media_type?: string,
-    /** The resource's content itself, base64-encoded, for a resource small enough to carry inline. */
-    content?: string,
-    /** Vendor-specific annotations on the resource, such as the source references a Source VSA records. */
-    annotations?: InTotoAnnotation[],
-}
-
-
-/**
- * One artifact an in-toto statement is about: a resource descriptor that carries a digest.
- */
-export interface InTotoStatementSubject extends InTotoResourceDescriptor {
-}
-
-
-/**
- * The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
- */
-export interface InTotoStatement {
-    /** The in-toto statement type, always https://in-toto.io/Statement/v1. */
-    statement_type: string,
-    /** The artifacts the predicate is about, each with a digest. */
-    subject: InTotoStatementSubject[],
-    /** The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1. */
-    predicate_type: string,
-    /** The predicate, one of the kinds this schema models; predicate_kind names which. */
-    predicate?: SlsaPredicate,
+export interface SlsaStatement extends InTotoStatement {
     /** Where the signed attestation is stored or can be fetched. */
     attestation_storage_uri?: string,
     /** The tool that signed the attestation, named by URI, such as Cosign or Notation. */
@@ -283,11 +168,9 @@ export interface InTotoStatement {
 
 
 /**
- * The base of every predicate this schema models; predicate_kind names the concrete kind.
+ * The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.
  */
-export interface SlsaPredicate {
-    /** The kind of predicate, one of this class's descendants. */
-    predicate_kind?: string,
+export interface SlsaPredicate extends InTotoPredicate {
 }
 
 
@@ -621,6 +504,137 @@ export interface SlsaDependencyInventory {
 
 
 /**
+ * A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
+ */
+export interface InTotoDigestSet {
+    /** The SHA-256 digest of the artifact. */
+    sha256?: string,
+    /** The SHA-224 digest of the artifact. */
+    sha224?: string,
+    /** The SHA-384 digest of the artifact. */
+    sha384?: string,
+    /** The SHA-512 digest of the artifact. */
+    sha512?: string,
+    /** The SHA-512/224 digest of the artifact. */
+    sha512_224?: string,
+    /** The SHA-512/256 digest of the artifact. */
+    sha512_256?: string,
+    /** The SHA3-224 digest of the artifact. */
+    sha3_224?: string,
+    /** The SHA3-256 digest of the artifact. */
+    sha3_256?: string,
+    /** The SHA3-384 digest of the artifact. */
+    sha3_384?: string,
+    /** The SHA3-512 digest of the artifact. */
+    sha3_512?: string,
+    /** The SHAKE128 digest of the artifact, of at least 32 bytes. */
+    shake128?: string,
+    /** The SHAKE256 digest of the artifact, of at least 32 bytes. */
+    shake256?: string,
+    /** The BLAKE2b digest of the artifact, of 32 to 64 bytes. */
+    blake2b?: string,
+    /** The BLAKE2s digest of the artifact, at its full 32 bytes. */
+    blake2s?: string,
+    /** The RIPEMD-160 digest of the artifact. */
+    ripemd160?: string,
+    /** The SM3 digest of the artifact. */
+    sm3?: string,
+    /** The GOST R 34.11 digest of the artifact, of 256 or 512 bits. */
+    gost?: string,
+    /** The SHA-1 digest of the artifact. */
+    sha1?: string,
+    /** The MD5 digest of the artifact. */
+    md5?: string,
+    /** A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64. */
+    dir_hash?: string,
+    /** The git commit id of a source revision. */
+    git_commit?: string,
+    /** The git tree id of a source revision's content, or of any file tree. */
+    git_tree?: string,
+    /** The git blob id of a file's content. */
+    git_blob?: string,
+    /** The git object id of an annotated tag. */
+    git_tag?: string,
+    /** The digests under algorithms this class does not name. */
+    additional_digests?: InTotoAdditionalDigest[],
+}
+
+
+/**
+ * One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
+ */
+export interface InTotoAdditionalDigest {
+    /** The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id. */
+    algorithm: string,
+    /** The digest under that algorithm, in the encoding the algorithm documents. */
+    value: string,
+}
+
+
+/**
+ * One vendor-specific annotation on a resource descriptor: a key and its values.
+ */
+export interface InTotoAnnotation {
+    /** The annotation's key. */
+    annotation_key: string,
+    /** The annotation's values. */
+    annotation_values?: string[],
+}
+
+
+/**
+ * A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
+ */
+export interface InTotoResourceDescriptor {
+    /** The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference. */
+    resource_uri?: string,
+    /** The cryptographic digests of a resource's content, keyed by algorithm. */
+    digest?: InTotoDigestSet,
+    /** A name for the resource within the attestation that carries it. */
+    resource_name?: string,
+    /** Where the resource can be fetched, when that differs from its identifying URI. */
+    download_location?: string,
+    /** The IANA media type of the resource's content. */
+    media_type?: string,
+    /** The resource's content itself, base64-encoded, for a resource small enough to carry inline. */
+    content?: string,
+    /** Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records. */
+    annotations?: InTotoAnnotation[],
+}
+
+
+/**
+ * One artifact an in-toto statement is about: a resource descriptor that carries a digest.
+ */
+export interface InTotoStatementSubject extends InTotoResourceDescriptor {
+}
+
+
+/**
+ * The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
+ */
+export interface InTotoStatement {
+    /** The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty. */
+    predicate?: InTotoPredicate,
+    /** The in-toto statement type, always https://in-toto.io/Statement/v1. */
+    statement_type: string,
+    /** The artifacts the predicate is about, each with a digest. */
+    subject: InTotoStatementSubject[],
+    /** The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1. */
+    predicate_type: string,
+}
+
+
+/**
+ * The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind.
+ */
+export interface InTotoPredicate {
+    /** The kind of predicate, one of this class's descendants. */
+    predicate_kind?: string,
+}
+
+
+/**
  * The party that creates and distributes build images; the hosted build platform itself, or a third party in a bring-your-own-image setting.
  */
 export interface SlsaBuildImageProducer extends SlsaParty {
@@ -683,8 +697,8 @@ export interface SlsaAdoptionMetadata {
  * A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern.
  */
 export interface SlsaDocument {
-    /** The attestations, as in-toto statements. */
-    attestations?: InTotoStatement[],
+    /** The attestations, as in-toto statements with SLSA's fields. */
+    attestations?: SlsaStatement[],
     /** The parties, each in its role. */
     parties?: SlsaParty[],
     /** The build platforms. */

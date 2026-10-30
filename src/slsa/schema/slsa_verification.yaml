@@ -24,6 +24,7 @@ imports:
 types:
   slsa_result_value:
     typeof: string
+    base: str
     description: >-
       A result as a VSA writes it: one of the SLSA-defined results SlsaResult lists, or
       one of the issuer's own, which never starts with SLSA_.
@@ -35,6 +36,9 @@ types:
         An issuer's own result, such as an organization's ORG_SOURCE_ property, is
         printable ASCII with no spaces and does not start with SLSA_ in any letter
         case, so that it cannot pass for an SLSA result.
+      - >-
+        It names the base its typeof already gives, because the SQL generator reads
+        base alone and reports a type without one.
     notes:
       - >-
         The pattern lists the values of SlsaResult that start with SLSA_ and then
@@ -84,7 +88,7 @@ classes:
         inlined: true
       time_verified:
         description: When the verification happened.
-        range: datetime
+        range: in_toto_timestamp
       policy:
         description: >-
           The policy the subject was verified against, by URI and preferably by digest

@@ -3,9 +3,10 @@ id: https://w3id.org/lmodel/slsa/slsa_core
 name: slsa_core
 title: SLSA core
 description: >-
-  The parts of the SLSA model that every track shares: the in-toto attestation
-  layer, artifact descriptors, the supply-chain roles, the build platform and
-  the package model.
+  The parts of the SLSA model that every track shares: the base of SLSA's
+  predicates and the fields SLSA adds to an in-toto statement, the
+  supply-chain roles, the build platform and the package model. The in-toto
+  attestation layer itself comes from lmodel/in-toto's core module.
 license: Apache-2.0
 see_also:
   - https://slsa.dev/spec/v1.2/terminology
@@ -20,6 +21,7 @@ prefixes:
 
 imports:
   - linkml:types
+  - ./in_toto/in_toto_core
 
 subsets:
   slsa_build_track:
@@ -50,25 +52,6 @@ subsets:
       are not part of the SLSA specification.
 
 slots:
-  resource_uri:
-    description: >-
-      The URI that identifies a resource, such as a package URL, a git repository
-      address or an OCI image reference.
-    slot_uri: slsa:resource_uri
-    range: uri
-    in_subset:
-      - slsa_build_track
-      - slsa_source_track
-
-  digest:
-    description: The cryptographic digests of a resource's content, keyed by algorithm.
-    slot_uri: slsa:digest
-    range: InTotoDigestSet
-    inlined: true
-    in_subset:
-      - slsa_build_track
-      - slsa_source_track
-
   component_versions:
     description: The version of each named component of a platform.
     slot_uri: slsa:component_versions
@@ -101,345 +84,28 @@ slots:
       - slsa_build_track
 
 classes:
-  # ── Artifact descriptors (in-toto attestation framework) ─────────────────
-
-  InTotoDigestSet:
-    description: >-
-      A set of one or more digests over one artifact, keyed by algorithm, from which a
-      consumer picks the algorithm it trusts.
-    see_also:
-      - https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md
-    comments:
-      - >-
-        The named algorithms take lowercase hexadecimal, and additional_digests holds
-        any other algorithm, such as an SCS's own revision type.
-      - >-
-        A consumer accepts only the algorithms it considers secure and ignores the
-        rest, and two sets match when any accepted algorithm matches.
-      - >-
-        SHAKE and BLAKE2 digests can be of any length, and this schema asks for at
-        least 32 bytes, since a shorter digest resists collisions too weakly to
-        identify an artifact.
-    notes:
-      - >-
-        Each condition in any_of names its range through a nested any_of, because the
-        JSON Schema generator leaves a condition's own range out, and a null value
-        would then count as present.
-    attributes:
-      sha256:
-        description: The SHA-256 digest of the artifact.
-        pattern: "^[a-f0-9]{64}$"
-      sha224:
-        description: The SHA-224 digest of the artifact.
-        pattern: "^[a-f0-9]{56}$"
-      sha384:
-        description: The SHA-384 digest of the artifact.
-        pattern: "^[a-f0-9]{96}$"
-      sha512:
-        description: The SHA-512 digest of the artifact.
-        pattern: "^[a-f0-9]{128}$"
-      sha512_224:
-        description: The SHA-512/224 digest of the artifact.
-        pattern: "^[a-f0-9]{56}$"
-      sha512_256:
-        description: The SHA-512/256 digest of the artifact.
-        pattern: "^[a-f0-9]{64}$"
-      sha3_224:
-        description: The SHA3-224 digest of the artifact.
-        pattern: "^[a-f0-9]{56}$"
-      sha3_256:
-        description: The SHA3-256 digest of the artifact.
-        pattern: "^[a-f0-9]{64}$"
-      sha3_384:
-        description: The SHA3-384 digest of the artifact.
-        pattern: "^[a-f0-9]{96}$"
-      sha3_512:
-        description: The SHA3-512 digest of the artifact.
-        pattern: "^[a-f0-9]{128}$"
-      shake128:
-        description: The SHAKE128 digest of the artifact, of at least 32 bytes.
-        pattern: "^[a-f0-9]{64}([a-f0-9]{2})*$"
-      shake256:
-        description: The SHAKE256 digest of the artifact, of at least 32 bytes.
-        pattern: "^[a-f0-9]{64}([a-f0-9]{2})*$"
-      blake2b:
-        description: The BLAKE2b digest of the artifact, of 32 to 64 bytes.
-        pattern: "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$"
-      blake2s:
-        description: The BLAKE2s digest of the artifact, at its full 32 bytes.
-        pattern: "^[a-f0-9]{64}$"
-      ripemd160:
-        description: The RIPEMD-160 digest of the artifact.
-        pattern: "^[a-f0-9]{40}$"
-      sm3:
-        description: The SM3 digest of the artifact.
-        pattern: "^[a-f0-9]{64}$"
-      gost:
-        description: The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
-        pattern: "^[a-f0-9]{64}([a-f0-9]{64})?$"
-      sha1:
-        description: The SHA-1 digest of the artifact.
-        pattern: "^[a-f0-9]{40}$"
-        comments:
-          - SHA-1 lacks collision resistance, so most consumers should not rely on it.
-      md5:
-        description: The MD5 digest of the artifact.
-        pattern: "^[a-f0-9]{32}$"
-        comments:
-          - MD5 lacks collision resistance, so most consumers should not accept it.
-      dir_hash:
-        description: >-
-          A digest over a directory's content by the dirhash Hash1 function, in
-          lowercase hexadecimal rather than base64.
-        pattern: "^[a-f0-9]{64}$"
-      git_commit:
-        description: The git commit id of a source revision.
-        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
-      git_tree:
-        description: The git tree id of a source revision's content, or of any file tree.
-        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
-      git_blob:
-        description: The git blob id of a file's content.
-        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
-      git_tag:
-        description: The git object id of an annotated tag.
-        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
-      additional_digests:
-        description: The digests under algorithms this class does not name.
-        range: InTotoAdditionalDigest
-        multivalued: true
-        minimum_cardinality: 1
-        inlined: true
-        inlined_as_list: true
-    # A digest set holds at least one digest.
-    any_of:
-      - slot_conditions: {sha256: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha224: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha384: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha512: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha512_224: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha512_256: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha3_224: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha3_256: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha3_384: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha3_512: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {shake128: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {shake256: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {blake2b: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {blake2s: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {ripemd160: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sm3: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {gost: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {sha1: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {md5: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {dir_hash: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {git_commit: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {git_tree: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {git_blob: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {git_tag: {required: true, any_of: [{range: string}]}}
-      - slot_conditions: {additional_digests: {required: true, multivalued: true}}
-    in_subset:
-      - slsa_build_track
-      - slsa_source_track
-
-  InTotoAdditionalDigest:
-    description: >-
-      One digest under an algorithm that InTotoDigestSet does not name, such as an
-      SCS's own revision type.
-    see_also:
-      - https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md
-      - https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation
-    comments:
-      - >-
-        In the attestation's JSON the algorithm is a key of the digest set beside the
-        named ones, and an algorithm the framework does not define documents how its
-        value is encoded.
-      - >-
-        An SCS that does not use cryptographic digests defines a canonical revision
-        type of its own that includes the repository, such as svn_revision_id.
-      - >-
-        Each algorithm appears once in a list, since the attestation's JSON uses it as
-        a key; the validator does not check this.
-    attributes:
-      algorithm:
-        description: >-
-          The algorithm's name, as the key the attestation's JSON uses, such as
-          svn_revision_id.
-        required: true
-        pattern: "^[a-z][A-Za-z0-9_]*$"
-        none_of:
-          - equals_string_in:
-              - sha256
-              - sha224
-              - sha384
-              - sha512
-              - sha512_224
-              - sha512_256
-              - sha3_224
-              - sha3_256
-              - sha3_384
-              - sha3_512
-              - shake128
-              - shake256
-              - blake2b
-              - blake2s
-              - ripemd160
-              - sm3
-              - gost
-              - sha1
-              - md5
-              - dirHash
-              - gitCommit
-              - gitTree
-              - gitBlob
-              - gitTag
-              - dir_hash
-              - git_commit
-              - git_tree
-              - git_blob
-              - git_tag
-        comments:
-          - >-
-            An algorithm that InTotoDigestSet names, by its JSON key or by its field
-            name, goes in that field instead.
-      value:
-        description: The digest under that algorithm, in the encoding the algorithm documents.
-        required: true
-        pattern: "^\\S+$"
-    in_subset:
-      - slsa_build_track
-      - slsa_source_track
-
-  InTotoAnnotation:
-    description: >-
-      One vendor-specific annotation on a resource descriptor: a key and its values.
-    comments:
-      - >-
-        The attestation's JSON allows any JSON value. A string becomes one value and an
-        array one value per item; any other value or item is written as its JSON
-        text, so one value cannot tell a string from a one-item array.
-      - >-
-        Each key appears once in a list, since the attestation's JSON uses it as a
-        key; the validator does not check this.
-    attributes:
-      annotation_key:
-        description: The annotation's key.
-        required: true
-      annotation_values:
-        description: The annotation's values.
-        multivalued: true
-    in_subset:
-      - slsa_build_track
-      - slsa_source_track
-
-  InTotoResourceDescriptor:
-    description: >-
-      A reference to a software artifact or other resource by URI or digest, or the
-      resource itself as content, with optional metadata.
-    see_also:
-      - https://github.com/in-toto/attestation/blob/main/spec/v1/resource_descriptor.md
-    comments:
-      - >-
-        A descriptor carries at least one of a URI, a digest or its content; a field
-        that needs a particular one says so.
-    notes:
-      - >-
-        Each condition in any_of names its range through a nested any_of, because the
-        JSON Schema generator leaves a condition's own range out, and a null value
-        would then count as present.
-    slots:
-      - resource_uri
-      - digest
-    attributes:
-      resource_name:
-        description: A name for the resource within the attestation that carries it.
-      download_location:
-        description: >-
-          Where the resource can be fetched, when that differs from its identifying URI.
-        range: uri
-      media_type:
-        description: The IANA media type of the resource's content.
-      content:
-        description: >-
-          The resource's content itself, base64-encoded, for a resource small enough to
-          carry inline.
-        pattern: "^[A-Za-z0-9+/_-]+={0,2}$"
-        comments:
-          - The in-toto framework asks for content under 1 KB, so that attestations stay small.
-      annotations:
-        description: >-
-          Vendor-specific annotations on the resource, such as the source references a
-          Source VSA records.
-        range: InTotoAnnotation
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-    any_of:
-      - slot_conditions: {resource_uri: {required: true, any_of: [{range: uri}]}}
-      - slot_conditions: {digest: {required: true, any_of: [{range: InTotoDigestSet}]}}
-      - slot_conditions: {content: {required: true, any_of: [{range: string}]}}
-    in_subset:
-      - slsa_build_track
-      - slsa_source_track
-      - slsa_dependency_track
-      - slsa_build_environment_track
-
-  InTotoStatementSubject:
-    is_a: InTotoResourceDescriptor
-    description: >-
-      One artifact an in-toto statement is about: a resource descriptor that carries a
-      digest.
-    see_also:
-      - https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md
-    slot_usage:
-      digest:
-        required: true
-    in_subset:
-      - slsa_build_track
-      - slsa_source_track
-      - slsa_build_environment_track
-
   # ── Attestation layer ────────────────────────────────────────────────────
 
-  InTotoStatement:
+  SlsaStatement:
+    is_a: InTotoStatement
     description: >-
-      The statement layer of an in-toto attestation: the subjects it is about,
-      the type of its predicate and the predicate itself.
+      An in-toto statement with the fields this schema adds: where the signed
+      attestation is stored, the tool that signed it and the transparency log
+      entry that records the signature.
     see_also:
-      - https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md
       - https://slsa.dev/spec/v1.2/attestation-model
+      - https://slsa.dev/spec/v1.2/distributing-provenance
     comments:
-      - The signature envelope around a statement is outside this model.
+      - >-
+        InTotoStatement comes from lmodel/in-toto and holds only what the in-toto
+        specification defines, so the fields SLSA's adoption study and the Secure
+        Software Factory add live on this subclass. A statement without them is a
+        valid SlsaStatement too.
       - >-
         Attestation and provenance are often confused; a statement is the attestation,
         and build provenance is one kind of predicate it may carry (Tamanna et al.,
         2024, UC.1).
     attributes:
-      statement_type:
-        description: The in-toto statement type, always https://in-toto.io/Statement/v1.
-        range: uri
-        required: true
-        pattern: "^https://in-toto\\.io/Statement/v1$"
-      subject:
-        description: The artifacts the predicate is about, each with a digest.
-        range: InTotoStatementSubject
-        multivalued: true
-        required: true
-        minimum_cardinality: 1
-        inlined: true
-        inlined_as_list: true
-      predicate_type:
-        description: >-
-          The URI that names the predicate's type and so its schema, such as
-          https://slsa.dev/provenance/v1.
-        range: uri
-        required: true
-      predicate:
-        description: >-
-          The predicate, one of the kinds this schema models; predicate_kind names
-          which.
-        range: SlsaPredicate
-        inlined: true
       attestation_storage_uri:
         description: Where the signed attestation is stored or can be fetched.
         range: uri
@@ -473,15 +139,11 @@ classes:
       - slsa_build_environment_track
 
   SlsaPredicate:
+    is_a: InTotoPredicate
     abstract: true
     description: >-
-      The base of every predicate this schema models; predicate_kind names the concrete
-      kind.
-    attributes:
-      predicate_kind:
-        description: The kind of predicate, one of this class's descendants.
-        designates_type: true
-        range: string
+      The base of every predicate this schema models; the predicate_kind it takes from
+      InTotoPredicate names the concrete kind.
     in_subset:
       - slsa_build_track
       - slsa_source_track
@@ -542,7 +204,7 @@ classes:
     attributes:
       verifier_id:
         description: The URI that identifies the verifier.
-        range: uri
+        range: in_toto_type_uri
         required: true
     in_subset:
       - slsa_build_track
@@ -578,7 +240,7 @@ classes:
         identifier: true
         description: >-
           The URI that identifies the platform and determines its SLSA Build level.
-        range: uri
+        range: in_toto_type_uri
       build_level:
         description: The highest SLSA Build level the platform's provenance can meet.
         range: SlsaBuildLevel

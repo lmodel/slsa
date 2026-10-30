@@ -124,12 +124,17 @@ type InTotoDigestSet
     additionalDigests: [InTotoAdditionalDigest]
   }
 
+interface InTotoPredicate
+  {
+    predicateKind: String
+  }
+
 type InTotoResourceDescriptor
   {
-    resourceUri: String
+    resourceUri: InTotoResourceUri
     digest: InTotoDigestSet
     resourceName: String
-    downloadLocation: String
+    downloadLocation: InTotoResourceUri
     mediaType: String
     content: String
     annotations: [InTotoAnnotation]
@@ -137,20 +142,17 @@ type InTotoResourceDescriptor
 
 type InTotoStatement
   {
-    statementType: String!
+    predicate: InTotoPredicate
+    statementType: InTotoTypeUri!
     subject: [InTotoStatementSubject]!
-    predicateType: String!
-    predicate: SlsaPredicate
-    attestationStorageUri: String
-    signingTool: String
-    transparencyLogEntry: String
+    predicateType: InTotoTypeUri!
   }
 
 type InTotoStatementSubject
   {
-    resourceUri: String
+    resourceUri: InTotoResourceUri
     resourceName: String
-    downloadLocation: String
+    downloadLocation: InTotoResourceUri
     mediaType: String
     content: String
     annotations: [InTotoAnnotation]
@@ -174,7 +176,7 @@ type SlsaBranch
 
 type SlsaBuildDefinition
   {
-    buildType: String!
+    buildType: InTotoTypeUri!
     externalParameters: [SlsaBuildParameter]!
     internalParameters: [SlsaBuildParameter]
     resolvedDependencies: [InTotoResourceDescriptor]
@@ -209,8 +211,8 @@ type SlsaBuildImageProducer
 type SlsaBuildMetadata
   {
     invocationId: String
-    startedOn: String
-    finishedOn: String
+    startedOn: InTotoTimestamp
+    finishedOn: InTotoTimestamp
   }
 
 type SlsaBuildParameter
@@ -222,7 +224,7 @@ type SlsaBuildParameter
 type SlsaBuildPlatform
   {
     componentVersions: [SlsaComponentVersion]
-    builderId: String!
+    builderId: InTotoTypeUri!
     buildLevel: SlsaBuildLevel
     hosted: Boolean
     builderDependencies: [InTotoResourceDescriptor]
@@ -267,7 +269,7 @@ type SlsaDependencyLevelCount
 
 type SlsaDocument
   {
-    attestations: [InTotoStatement]
+    attestations: [SlsaStatement]
     parties: [SlsaParty]
     buildPlatforms: [SlsaBuildPlatform]
     controlPlanes: [SlsaControlPlane]
@@ -373,6 +375,17 @@ type SlsaSourceRevision
     reviewType: SlsaReviewType
   }
 
+type SlsaStatement
+  {
+    predicate: InTotoPredicate
+    statementType: InTotoTypeUri!
+    subject: [InTotoStatementSubject]!
+    predicateType: InTotoTypeUri!
+    attestationStorageUri: String
+    signingTool: String
+    transparencyLogEntry: String
+  }
+
 type SlsaTag
   {
     repository: SlsaSourceRepository
@@ -385,9 +398,9 @@ type SlsaTag
 type SlsaVerificationSummary
   {
     predicateKind: String
-    resourceUri: String!
+    resourceUri: InTotoResourceUri!
     verifier: SlsaVerifier!
-    timeVerified: String
+    timeVerified: InTotoTimestamp
     policy: SlsaVerificationSummaryPolicy!
     inputAttestations: [SlsaVerificationSummaryInputAttestation]
     verificationResult: SlsaVerificationResult!
@@ -400,22 +413,22 @@ type SlsaVerificationSummary
 type SlsaVerificationSummaryInputAttestation
   {
     resourceName: String
-    downloadLocation: String
+    downloadLocation: InTotoResourceUri
     mediaType: String
     content: String
     annotations: [InTotoAnnotation]
     digest: InTotoDigestSet!
-    resourceUri: String
+    resourceUri: InTotoResourceUri
   }
 
 type SlsaVerificationSummaryPolicy
   {
     resourceName: String
-    downloadLocation: String
+    downloadLocation: InTotoResourceUri
     mediaType: String
     content: String
     annotations: [InTotoAnnotation]
-    resourceUri: String!
+    resourceUri: InTotoResourceUri!
     digest: InTotoDigestSet
   }
 
@@ -424,5 +437,5 @@ type SlsaVerifier
     partyType: String
     partyName: String
     componentVersions: [SlsaComponentVersion]
-    verifierId: String!
+    verifierId: InTotoTypeUri!
   }

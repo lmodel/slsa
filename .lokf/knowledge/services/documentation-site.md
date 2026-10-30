@@ -20,7 +20,7 @@ dependsOn:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
 generated:
   by: process:ktl-librarian
-  at: "2026-10-28T18:17:05Z"
+  at: "2026-10-30T23:20:11Z"
   revision: ff03483ebe9399faaadd37581b88d33b2bd65b1f
 status: draft
 verified:
@@ -40,9 +40,16 @@ verified:
 
 The site also serves the four files `lokf export` writes under `knowledge/`.
 
-`.github/workflows/knowledge-website.yaml` builds the site, with a check of every link between its pages, on each push and pull request that touches its inputs, and every Monday. It deploys the default branch's build to GitHub Pages only once the repository variable `KNOWLEDGE_WEBSITE_ENABLED` is `true`, and deploys nothing for a pull request.
+`.github/workflows/knowledge-website.yaml` builds the site, with a check of every link between its pages:
 
-`website/site.config.mjs` names `docs/` as the docs folder in `DOCS` and gives it no sidebar groups, so the Guide lists the docs pages by title with `docs/index.md` first as its Overview. `docs/about.md` is the only other docs page. `DOCS.exclude` keeps `docs/templates-linkml/` off the site.
+- on each push to the default branch that touches its inputs;
+- on each pull request that touches its inputs;
+- on a run by hand;
+- every Monday.
+
+It deploys the default branch's build to GitHub Pages only once the repository variable `KNOWLEDGE_WEBSITE_ENABLED` is `true`, and deploys nothing for a pull request.
+
+`website/site.config.mjs` names `docs/` as the docs folder in `DOCS` and gives it no sidebar groups, so every docs page sits in one Guides group, by title, with `docs/index.md` first as its Overview. `docs/about.md` is the only other docs page. `DOCS.exclude` keeps `docs/templates-linkml/` off the site.
 
 `HOME` in the same file gives the home page four buttons, in this order: Browse the bundle, Schema (the schema's pages), Bundle health and Knowledge graph.
 

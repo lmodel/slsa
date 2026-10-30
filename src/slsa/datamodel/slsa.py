@@ -62,8 +62,11 @@ metamodel_version = "1.12.0"
 version = "1.2.0"
 
 # Namespaces
+DCAT = CurieNamespace('dcat', 'http://www.w3.org/ns/dcat#')
+IN_TOTO_LINKML = CurieNamespace('in_toto_linkml', 'https://w3id.org/lmodel/in-toto/')
 LINKML = CurieNamespace('linkml', 'https://w3id.org/linkml/')
 SLSA = CurieNamespace('slsa', 'https://w3id.org/lmodel/slsa/')
+SPDX = CurieNamespace('spdx', 'http://spdx.org/rdf/terms#')
 XSD = CurieNamespace('xsd', 'http://www.w3.org/2001/XMLSchema#')
 DEFAULT_ = SLSA
 
@@ -77,8 +80,32 @@ class SlsaResultValue(String):
     type_model_uri = SLSA.SlsaResultValue
 
 
+class InTotoResourceUri(Uri):
+    """ A URI that identifies or locates a resource, such as a package URL or a git repository address, with its scheme and authority in lowercase. """
+    type_class_uri = XSD["anyURI"]
+    type_class_curie = "xsd:anyURI"
+    type_name = "in_toto_resource_uri"
+    type_model_uri = SLSA.InTotoResourceUri
+
+
+class InTotoTypeUri(Uri):
+    """ A URI that names a type, such as a statement's or a predicate's, with its scheme and authority in lowercase. """
+    type_class_uri = XSD["anyURI"]
+    type_class_curie = "xsd:anyURI"
+    type_name = "in_toto_type_uri"
+    type_model_uri = SLSA.InTotoTypeUri
+
+
+class InTotoTimestamp(String):
+    """ A point in time in RFC 3339 format in the UTC time zone, written with a trailing Z, such as 1985-04-12T23:20:50.52Z. """
+    type_class_uri = XSD["dateTime"]
+    type_class_curie = "xsd:dateTime"
+    type_name = "in_toto_timestamp"
+    type_model_uri = SLSA.InTotoTimestamp
+
+
 # Class references
-class SlsaBuildPlatformBuilderId(URI):
+class SlsaBuildPlatformBuilderId(InTotoTypeUri):
     pass
 
 
@@ -114,7 +141,7 @@ class SlsaDocument(YAMLRoot):
     class_name: ClassVar[str] = "SlsaDocument"
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaDocument
 
-    attestations: Optional[Union[Union[dict, "InTotoStatement"], list[Union[dict, "InTotoStatement"]]]] = empty_list()
+    attestations: Optional[Union[Union[dict, "SlsaStatement"], list[Union[dict, "SlsaStatement"]]]] = empty_list()
     parties: Optional[Union[Union[dict, "SlsaParty"], list[Union[dict, "SlsaParty"]]]] = empty_list()
     build_platforms: Optional[Union[dict[Union[str, SlsaBuildPlatformBuilderId], Union[dict, "SlsaBuildPlatform"]], list[Union[dict, "SlsaBuildPlatform"]]]] = empty_dict()
     control_planes: Optional[Union[Union[dict, "SlsaControlPlane"], list[Union[dict, "SlsaControlPlane"]]]] = empty_list()
@@ -129,7 +156,7 @@ class SlsaDocument(YAMLRoot):
     adoption_metadata: Optional[Union[dict, "SlsaAdoptionMetadata"]] = None
 
     def __post_init__(self, *_: str, **kwargs: Any):
-        self._normalize_inlined_as_list(slot_name="attestations", slot_type=InTotoStatement, key_name="statement_type", keyed=False)
+        self._normalize_inlined_as_list(slot_name="attestations", slot_type=SlsaStatement, key_name="statement_type", keyed=False)
 
         if not isinstance(self.parties, list):
             self.parties = [self.parties] if self.parties is not None else []
@@ -163,339 +190,6 @@ class SlsaDocument(YAMLRoot):
             self.adoption_metadata = SlsaAdoptionMetadata(**as_dict(self.adoption_metadata))
 
         super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class InTotoDigestSet(YAMLRoot):
-    """
-    A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it
-    trusts.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["InTotoDigestSet"]
-    class_class_curie: ClassVar[str] = "slsa:InTotoDigestSet"
-    class_name: ClassVar[str] = "InTotoDigestSet"
-    class_model_uri: ClassVar[URIRef] = SLSA.InTotoDigestSet
-
-    sha256: Optional[str] = None
-    sha224: Optional[str] = None
-    sha384: Optional[str] = None
-    sha512: Optional[str] = None
-    sha512_224: Optional[str] = None
-    sha512_256: Optional[str] = None
-    sha3_224: Optional[str] = None
-    sha3_256: Optional[str] = None
-    sha3_384: Optional[str] = None
-    sha3_512: Optional[str] = None
-    shake128: Optional[str] = None
-    shake256: Optional[str] = None
-    blake2b: Optional[str] = None
-    blake2s: Optional[str] = None
-    ripemd160: Optional[str] = None
-    sm3: Optional[str] = None
-    gost: Optional[str] = None
-    sha1: Optional[str] = None
-    md5: Optional[str] = None
-    dir_hash: Optional[str] = None
-    git_commit: Optional[str] = None
-    git_tree: Optional[str] = None
-    git_blob: Optional[str] = None
-    git_tag: Optional[str] = None
-    additional_digests: Optional[Union[Union[dict, "InTotoAdditionalDigest"], list[Union[dict, "InTotoAdditionalDigest"]]]] = empty_list()
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self.sha256 is not None and not isinstance(self.sha256, str):
-            self.sha256 = str(self.sha256)
-
-        if self.sha224 is not None and not isinstance(self.sha224, str):
-            self.sha224 = str(self.sha224)
-
-        if self.sha384 is not None and not isinstance(self.sha384, str):
-            self.sha384 = str(self.sha384)
-
-        if self.sha512 is not None and not isinstance(self.sha512, str):
-            self.sha512 = str(self.sha512)
-
-        if self.sha512_224 is not None and not isinstance(self.sha512_224, str):
-            self.sha512_224 = str(self.sha512_224)
-
-        if self.sha512_256 is not None and not isinstance(self.sha512_256, str):
-            self.sha512_256 = str(self.sha512_256)
-
-        if self.sha3_224 is not None and not isinstance(self.sha3_224, str):
-            self.sha3_224 = str(self.sha3_224)
-
-        if self.sha3_256 is not None and not isinstance(self.sha3_256, str):
-            self.sha3_256 = str(self.sha3_256)
-
-        if self.sha3_384 is not None and not isinstance(self.sha3_384, str):
-            self.sha3_384 = str(self.sha3_384)
-
-        if self.sha3_512 is not None and not isinstance(self.sha3_512, str):
-            self.sha3_512 = str(self.sha3_512)
-
-        if self.shake128 is not None and not isinstance(self.shake128, str):
-            self.shake128 = str(self.shake128)
-
-        if self.shake256 is not None and not isinstance(self.shake256, str):
-            self.shake256 = str(self.shake256)
-
-        if self.blake2b is not None and not isinstance(self.blake2b, str):
-            self.blake2b = str(self.blake2b)
-
-        if self.blake2s is not None and not isinstance(self.blake2s, str):
-            self.blake2s = str(self.blake2s)
-
-        if self.ripemd160 is not None and not isinstance(self.ripemd160, str):
-            self.ripemd160 = str(self.ripemd160)
-
-        if self.sm3 is not None and not isinstance(self.sm3, str):
-            self.sm3 = str(self.sm3)
-
-        if self.gost is not None and not isinstance(self.gost, str):
-            self.gost = str(self.gost)
-
-        if self.sha1 is not None and not isinstance(self.sha1, str):
-            self.sha1 = str(self.sha1)
-
-        if self.md5 is not None and not isinstance(self.md5, str):
-            self.md5 = str(self.md5)
-
-        if self.dir_hash is not None and not isinstance(self.dir_hash, str):
-            self.dir_hash = str(self.dir_hash)
-
-        if self.git_commit is not None and not isinstance(self.git_commit, str):
-            self.git_commit = str(self.git_commit)
-
-        if self.git_tree is not None and not isinstance(self.git_tree, str):
-            self.git_tree = str(self.git_tree)
-
-        if self.git_blob is not None and not isinstance(self.git_blob, str):
-            self.git_blob = str(self.git_blob)
-
-        if self.git_tag is not None and not isinstance(self.git_tag, str):
-            self.git_tag = str(self.git_tag)
-
-        self._normalize_inlined_as_list(slot_name="additional_digests", slot_type=InTotoAdditionalDigest, key_name="algorithm", keyed=False)
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class InTotoAdditionalDigest(YAMLRoot):
-    """
-    One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["InTotoAdditionalDigest"]
-    class_class_curie: ClassVar[str] = "slsa:InTotoAdditionalDigest"
-    class_name: ClassVar[str] = "InTotoAdditionalDigest"
-    class_model_uri: ClassVar[URIRef] = SLSA.InTotoAdditionalDigest
-
-    algorithm: str = None
-    value: str = None
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.algorithm):
-            self.MissingRequiredField("algorithm")
-        if not isinstance(self.algorithm, str):
-            self.algorithm = str(self.algorithm)
-
-        if self._is_empty(self.value):
-            self.MissingRequiredField("value")
-        if not isinstance(self.value, str):
-            self.value = str(self.value)
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class InTotoAnnotation(YAMLRoot):
-    """
-    One vendor-specific annotation on a resource descriptor: a key and its values.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["InTotoAnnotation"]
-    class_class_curie: ClassVar[str] = "slsa:InTotoAnnotation"
-    class_name: ClassVar[str] = "InTotoAnnotation"
-    class_model_uri: ClassVar[URIRef] = SLSA.InTotoAnnotation
-
-    annotation_key: str = None
-    annotation_values: Optional[Union[str, list[str]]] = empty_list()
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.annotation_key):
-            self.MissingRequiredField("annotation_key")
-        if not isinstance(self.annotation_key, str):
-            self.annotation_key = str(self.annotation_key)
-
-        if not isinstance(self.annotation_values, list):
-            self.annotation_values = [self.annotation_values] if self.annotation_values is not None else []
-        self.annotation_values = [v if isinstance(v, str) else str(v) for v in self.annotation_values]
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class InTotoResourceDescriptor(YAMLRoot):
-    """
-    A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with
-    optional metadata.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["InTotoResourceDescriptor"]
-    class_class_curie: ClassVar[str] = "slsa:InTotoResourceDescriptor"
-    class_name: ClassVar[str] = "InTotoResourceDescriptor"
-    class_model_uri: ClassVar[URIRef] = SLSA.InTotoResourceDescriptor
-
-    resource_uri: Optional[Union[str, URI]] = None
-    digest: Optional[Union[dict, InTotoDigestSet]] = None
-    resource_name: Optional[str] = None
-    download_location: Optional[Union[str, URI]] = None
-    media_type: Optional[str] = None
-    content: Optional[str] = None
-    annotations: Optional[Union[Union[dict, InTotoAnnotation], list[Union[dict, InTotoAnnotation]]]] = empty_list()
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self.resource_uri is not None and not isinstance(self.resource_uri, URI):
-            self.resource_uri = URI(self.resource_uri)
-
-        if self.digest is not None and not isinstance(self.digest, InTotoDigestSet):
-            self.digest = InTotoDigestSet(**as_dict(self.digest))
-
-        if self.resource_name is not None and not isinstance(self.resource_name, str):
-            self.resource_name = str(self.resource_name)
-
-        if self.download_location is not None and not isinstance(self.download_location, URI):
-            self.download_location = URI(self.download_location)
-
-        if self.media_type is not None and not isinstance(self.media_type, str):
-            self.media_type = str(self.media_type)
-
-        if self.content is not None and not isinstance(self.content, str):
-            self.content = str(self.content)
-
-        self._normalize_inlined_as_list(slot_name="annotations", slot_type=InTotoAnnotation, key_name="annotation_key", keyed=False)
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class InTotoStatementSubject(InTotoResourceDescriptor):
-    """
-    One artifact an in-toto statement is about: a resource descriptor that carries a digest.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["InTotoStatementSubject"]
-    class_class_curie: ClassVar[str] = "slsa:InTotoStatementSubject"
-    class_name: ClassVar[str] = "InTotoStatementSubject"
-    class_model_uri: ClassVar[URIRef] = SLSA.InTotoStatementSubject
-
-    digest: Union[dict, InTotoDigestSet] = None
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.digest):
-            self.MissingRequiredField("digest")
-        if not isinstance(self.digest, InTotoDigestSet):
-            self.digest = InTotoDigestSet(**as_dict(self.digest))
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class InTotoStatement(YAMLRoot):
-    """
-    The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the
-    predicate itself.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["InTotoStatement"]
-    class_class_curie: ClassVar[str] = "slsa:InTotoStatement"
-    class_name: ClassVar[str] = "InTotoStatement"
-    class_model_uri: ClassVar[URIRef] = SLSA.InTotoStatement
-
-    statement_type: Union[str, URI] = None
-    subject: Union[Union[dict, InTotoStatementSubject], list[Union[dict, InTotoStatementSubject]]] = None
-    predicate_type: Union[str, URI] = None
-    predicate: Optional[Union[dict, "SlsaPredicate"]] = None
-    attestation_storage_uri: Optional[Union[str, URI]] = None
-    signing_tool: Optional[Union[str, URI]] = None
-    transparency_log_entry: Optional[Union[str, URI]] = None
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.statement_type):
-            self.MissingRequiredField("statement_type")
-        if not isinstance(self.statement_type, URI):
-            self.statement_type = URI(self.statement_type)
-
-        if self._is_empty(self.subject):
-            self.MissingRequiredField("subject")
-        if not isinstance(self.subject, list):
-            self.subject = [self.subject] if self.subject is not None else []
-        self.subject = [v if isinstance(v, InTotoStatementSubject) else InTotoStatementSubject(**as_dict(v)) for v in self.subject]
-
-        if self._is_empty(self.predicate_type):
-            self.MissingRequiredField("predicate_type")
-        if not isinstance(self.predicate_type, URI):
-            self.predicate_type = URI(self.predicate_type)
-
-        if self.predicate is not None and not isinstance(self.predicate, SlsaPredicate):
-            self.predicate = SlsaPredicate(**as_dict(self.predicate))
-
-        if self.attestation_storage_uri is not None and not isinstance(self.attestation_storage_uri, URI):
-            self.attestation_storage_uri = URI(self.attestation_storage_uri)
-
-        if self.signing_tool is not None and not isinstance(self.signing_tool, URI):
-            self.signing_tool = URI(self.signing_tool)
-
-        if self.transparency_log_entry is not None and not isinstance(self.transparency_log_entry, URI):
-            self.transparency_log_entry = URI(self.transparency_log_entry)
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class SlsaPredicate(YAMLRoot):
-    """
-    The base of every predicate this schema models; predicate_kind names the concrete kind.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["SlsaPredicate"]
-    class_class_curie: ClassVar[str] = "slsa:SlsaPredicate"
-    class_name: ClassVar[str] = "SlsaPredicate"
-    class_model_uri: ClassVar[URIRef] = SLSA.SlsaPredicate
-
-    predicate_kind: Optional[str] = None
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        self.predicate_kind = str(self.class_name)
-
-        super().__post_init__(**kwargs)
-        self.unknown_predicate_kind = str(self.class_name)
-
-
-    def __new__(cls, *args, **kwargs):
-
-        type_designator = "predicate_kind"
-        if not type_designator in kwargs:
-            return super().__new__(cls,*args,**kwargs)
-        else:
-            type_designator_value = kwargs[type_designator]
-            target_cls = cls._class_for("class_name", type_designator_value)
-
-
-            if target_cls is None:
-                raise ValueError(f"Wrong type designator value: class {cls.__name__} "
-                                 f"has no subclass with ['class_name']='{kwargs[type_designator]}'")
-            return super().__new__(target_cls,*args,**kwargs)
-
 
 
 @dataclass(repr=False)
@@ -592,14 +286,14 @@ class SlsaVerifier(SlsaParty):
     class_name: ClassVar[str] = "SlsaVerifier"
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaVerifier
 
-    verifier_id: Union[str, URI] = None
+    verifier_id: Union[str, InTotoTypeUri] = None
     component_versions: Optional[Union[Union[dict, "SlsaComponentVersion"], list[Union[dict, "SlsaComponentVersion"]]]] = empty_list()
 
     def __post_init__(self, *_: str, **kwargs: Any):
         if self._is_empty(self.verifier_id):
             self.MissingRequiredField("verifier_id")
-        if not isinstance(self.verifier_id, URI):
-            self.verifier_id = URI(self.verifier_id)
+        if not isinstance(self.verifier_id, InTotoTypeUri):
+            self.verifier_id = InTotoTypeUri(self.verifier_id)
 
         self._normalize_inlined_as_list(slot_name="component_versions", slot_type=SlsaComponentVersion, key_name="component", keyed=False)
 
@@ -643,7 +337,7 @@ class SlsaBuildPlatform(YAMLRoot):
     component_versions: Optional[Union[Union[dict, "SlsaComponentVersion"], list[Union[dict, "SlsaComponentVersion"]]]] = empty_list()
     build_level: Optional[Union[str, "SlsaBuildLevel"]] = None
     hosted: Optional[Union[bool, Bool]] = None
-    builder_dependencies: Optional[Union[Union[dict, InTotoResourceDescriptor], list[Union[dict, InTotoResourceDescriptor]]]] = empty_list()
+    builder_dependencies: Optional[Union[Union[dict, "InTotoResourceDescriptor"], list[Union[dict, "InTotoResourceDescriptor"]]]] = empty_list()
 
     def __post_init__(self, *_: str, **kwargs: Any):
         if self._is_empty(self.builder_id):
@@ -758,7 +452,7 @@ class SlsaPackage(YAMLRoot):
     package_name: str = None
     ecosystem: Optional[str] = None
     registry: Optional[Union[str, SlsaPackageRegistryRegistryUri]] = None
-    package_artifacts: Optional[Union[Union[dict, InTotoResourceDescriptor], list[Union[dict, InTotoResourceDescriptor]]]] = empty_list()
+    package_artifacts: Optional[Union[Union[dict, "InTotoResourceDescriptor"], list[Union[dict, "InTotoResourceDescriptor"]]]] = empty_list()
     guac_uri: Optional[Union[str, URI]] = None
     security_insights_uri: Optional[Union[str, URI]] = None
 
@@ -788,37 +482,6 @@ class SlsaPackage(YAMLRoot):
 
 
 @dataclass(repr=False)
-class SlsaBuildProvenance(SlsaPredicate):
-    """
-    The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build
-    met their expectations and others can rebuild it.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["SlsaBuildProvenance"]
-    class_class_curie: ClassVar[str] = "slsa:SlsaBuildProvenance"
-    class_name: ClassVar[str] = "SlsaBuildProvenance"
-    class_model_uri: ClassVar[URIRef] = SLSA.SlsaBuildProvenance
-
-    build_definition: Union[dict, "SlsaBuildDefinition"] = None
-    run_details: Union[dict, "SlsaRunDetails"] = None
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.build_definition):
-            self.MissingRequiredField("build_definition")
-        if not isinstance(self.build_definition, SlsaBuildDefinition):
-            self.build_definition = SlsaBuildDefinition(**as_dict(self.build_definition))
-
-        if self._is_empty(self.run_details):
-            self.MissingRequiredField("run_details")
-        if not isinstance(self.run_details, SlsaRunDetails):
-            self.run_details = SlsaRunDetails(**as_dict(self.run_details))
-
-        super().__post_init__(**kwargs)
-        self.unknown_predicate_kind = str(self.class_name)
-
-
-@dataclass(repr=False)
 class SlsaBuildDefinition(YAMLRoot):
     """
     The inputs to a build, in enough detail to initialize it and begin execution; the builder vouches for their
@@ -831,10 +494,10 @@ class SlsaBuildDefinition(YAMLRoot):
     class_name: ClassVar[str] = "SlsaBuildDefinition"
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaBuildDefinition
 
-    build_type: Union[str, URI] = None
+    build_type: Union[str, InTotoTypeUri] = None
     external_parameters: Union[Union[dict, "SlsaBuildParameter"], list[Union[dict, "SlsaBuildParameter"]]] = None
     internal_parameters: Optional[Union[Union[dict, "SlsaBuildParameter"], list[Union[dict, "SlsaBuildParameter"]]]] = empty_list()
-    resolved_dependencies: Optional[Union[Union[dict, InTotoResourceDescriptor], list[Union[dict, InTotoResourceDescriptor]]]] = empty_list()
+    resolved_dependencies: Optional[Union[Union[dict, "InTotoResourceDescriptor"], list[Union[dict, "InTotoResourceDescriptor"]]]] = empty_list()
     hermetic: Optional[Union[bool, Bool]] = None
     provenance_generation_tool: Optional[Union[str, URI]] = None
     pipeline_orchestrator: Optional[Union[str, URI]] = None
@@ -842,8 +505,8 @@ class SlsaBuildDefinition(YAMLRoot):
     def __post_init__(self, *_: str, **kwargs: Any):
         if self._is_empty(self.build_type):
             self.MissingRequiredField("build_type")
-        if not isinstance(self.build_type, URI):
-            self.build_type = URI(self.build_type)
+        if not isinstance(self.build_type, InTotoTypeUri):
+            self.build_type = InTotoTypeUri(self.build_type)
 
         if self._is_empty(self.external_parameters):
             self.MissingRequiredField("external_parameters")
@@ -908,7 +571,7 @@ class SlsaRunDetails(YAMLRoot):
 
     builder: Union[dict, SlsaBuildPlatform] = None
     build_metadata: Optional[Union[dict, "SlsaBuildMetadata"]] = None
-    byproducts: Optional[Union[Union[dict, InTotoResourceDescriptor], list[Union[dict, InTotoResourceDescriptor]]]] = empty_list()
+    byproducts: Optional[Union[Union[dict, "InTotoResourceDescriptor"], list[Union[dict, "InTotoResourceDescriptor"]]]] = empty_list()
 
     def __post_init__(self, *_: str, **kwargs: Any):
         if self._is_empty(self.builder):
@@ -939,91 +602,20 @@ class SlsaBuildMetadata(YAMLRoot):
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaBuildMetadata
 
     invocation_id: Optional[str] = None
-    started_on: Optional[Union[str, XSDDateTime]] = None
-    finished_on: Optional[Union[str, XSDDateTime]] = None
+    started_on: Optional[Union[str, InTotoTimestamp]] = None
+    finished_on: Optional[Union[str, InTotoTimestamp]] = None
 
     def __post_init__(self, *_: str, **kwargs: Any):
         if self.invocation_id is not None and not isinstance(self.invocation_id, str):
             self.invocation_id = str(self.invocation_id)
 
-        if self.started_on is not None and not isinstance(self.started_on, XSDDateTime):
-            self.started_on = XSDDateTime(self.started_on)
+        if self.started_on is not None and not isinstance(self.started_on, InTotoTimestamp):
+            self.started_on = InTotoTimestamp(self.started_on)
 
-        if self.finished_on is not None and not isinstance(self.finished_on, XSDDateTime):
-            self.finished_on = XSDDateTime(self.finished_on)
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class SlsaVerificationSummary(SlsaPredicate):
-    """
-    The predicate in which a verifier records that it evaluated artifacts against a policy and the SLSA levels they
-    met, so consumers can rely on the verifier instead of reading every underlying attestation.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["SlsaVerificationSummary"]
-    class_class_curie: ClassVar[str] = "slsa:SlsaVerificationSummary"
-    class_name: ClassVar[str] = "SlsaVerificationSummary"
-    class_model_uri: ClassVar[URIRef] = SLSA.SlsaVerificationSummary
-
-    resource_uri: Union[str, URI] = None
-    verifier: Union[dict, SlsaVerifier] = None
-    policy: Union[dict, "SlsaVerificationSummaryPolicy"] = None
-    verification_result: Union[str, "SlsaVerificationResult"] = None
-    verified_levels: Union[Union[str, SlsaResultValue], list[Union[str, SlsaResultValue]]] = None
-    time_verified: Optional[Union[str, XSDDateTime]] = None
-    input_attestations: Optional[Union[Union[dict, "SlsaVerificationSummaryInputAttestation"], list[Union[dict, "SlsaVerificationSummaryInputAttestation"]]]] = empty_list()
-    organization_properties: Optional[Union[str, list[str]]] = empty_list()
-    dependency_levels: Optional[Union[Union[dict, "SlsaDependencyLevelCount"], list[Union[dict, "SlsaDependencyLevelCount"]]]] = empty_list()
-    slsa_version: Optional[str] = None
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.resource_uri):
-            self.MissingRequiredField("resource_uri")
-        if not isinstance(self.resource_uri, URI):
-            self.resource_uri = URI(self.resource_uri)
-
-        if self._is_empty(self.verifier):
-            self.MissingRequiredField("verifier")
-        if not isinstance(self.verifier, SlsaVerifier):
-            self.verifier = SlsaVerifier(**as_dict(self.verifier))
-
-        if self._is_empty(self.policy):
-            self.MissingRequiredField("policy")
-        if not isinstance(self.policy, SlsaVerificationSummaryPolicy):
-            self.policy = SlsaVerificationSummaryPolicy(**as_dict(self.policy))
-
-        if self._is_empty(self.verification_result):
-            self.MissingRequiredField("verification_result")
-        if not isinstance(self.verification_result, SlsaVerificationResult):
-            self.verification_result = SlsaVerificationResult(self.verification_result)
-
-        if self._is_empty(self.verified_levels):
-            self.MissingRequiredField("verified_levels")
-        if not isinstance(self.verified_levels, list):
-            self.verified_levels = [self.verified_levels] if self.verified_levels is not None else []
-        self.verified_levels = [v if isinstance(v, SlsaResultValue) else SlsaResultValue(v) for v in self.verified_levels]
-
-        if self.time_verified is not None and not isinstance(self.time_verified, XSDDateTime):
-            self.time_verified = XSDDateTime(self.time_verified)
-
-        if not isinstance(self.input_attestations, list):
-            self.input_attestations = [self.input_attestations] if self.input_attestations is not None else []
-        self.input_attestations = [v if isinstance(v, SlsaVerificationSummaryInputAttestation) else SlsaVerificationSummaryInputAttestation(**as_dict(v)) for v in self.input_attestations]
-
-        if not isinstance(self.organization_properties, list):
-            self.organization_properties = [self.organization_properties] if self.organization_properties is not None else []
-        self.organization_properties = [v if isinstance(v, str) else str(v) for v in self.organization_properties]
-
-        self._normalize_inlined_as_list(slot_name="dependency_levels", slot_type=SlsaDependencyLevelCount, key_name="verified_level", keyed=False)
-
-        if self.slsa_version is not None and not isinstance(self.slsa_version, str):
-            self.slsa_version = str(self.slsa_version)
+        if self.finished_on is not None and not isinstance(self.finished_on, InTotoTimestamp):
+            self.finished_on = InTotoTimestamp(self.finished_on)
 
         super().__post_init__(**kwargs)
-        self.unknown_predicate_kind = str(self.class_name)
 
 
 @dataclass(repr=False)
@@ -1052,60 +644,6 @@ class SlsaDependencyLevelCount(YAMLRoot):
             self.MissingRequiredField("dependency_count")
         if not isinstance(self.dependency_count, int):
             self.dependency_count = int(self.dependency_count)
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class SlsaVerificationSummaryPolicy(InTotoResourceDescriptor):
-    """
-    The policy a verification summary applied: a resource descriptor that names the policy by URI.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["SlsaVerificationSummaryPolicy"]
-    class_class_curie: ClassVar[str] = "slsa:SlsaVerificationSummaryPolicy"
-    class_name: ClassVar[str] = "SlsaVerificationSummaryPolicy"
-    class_model_uri: ClassVar[URIRef] = SLSA.SlsaVerificationSummaryPolicy
-
-    resource_uri: Union[str, URI] = None
-    digest: Optional[Union[dict, InTotoDigestSet]] = None
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.resource_uri):
-            self.MissingRequiredField("resource_uri")
-        if not isinstance(self.resource_uri, URI):
-            self.resource_uri = URI(self.resource_uri)
-
-        if self.digest is not None and not isinstance(self.digest, InTotoDigestSet):
-            self.digest = InTotoDigestSet(**as_dict(self.digest))
-
-        super().__post_init__(**kwargs)
-
-
-@dataclass(repr=False)
-class SlsaVerificationSummaryInputAttestation(InTotoResourceDescriptor):
-    """
-    One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["SlsaVerificationSummaryInputAttestation"]
-    class_class_curie: ClassVar[str] = "slsa:SlsaVerificationSummaryInputAttestation"
-    class_name: ClassVar[str] = "SlsaVerificationSummaryInputAttestation"
-    class_model_uri: ClassVar[URIRef] = SLSA.SlsaVerificationSummaryInputAttestation
-
-    digest: Union[dict, InTotoDigestSet] = None
-    resource_uri: Optional[Union[str, URI]] = None
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.digest):
-            self.MissingRequiredField("digest")
-        if not isinstance(self.digest, InTotoDigestSet):
-            self.digest = InTotoDigestSet(**as_dict(self.digest))
-
-        if self.resource_uri is not None and not isinstance(self.resource_uri, URI):
-            self.resource_uri = URI(self.resource_uri)
 
         super().__post_init__(**kwargs)
 
@@ -1308,35 +846,6 @@ class SlsaTag(SlsaNamedReference):
 
 
 @dataclass(repr=False)
-class SlsaSourceProvenance(SlsaPredicate):
-    """
-    Evidence from an SCS of how a revision came to exist and which technical controls were enforced when it did.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["SlsaSourceProvenance"]
-    class_class_curie: ClassVar[str] = "slsa:SlsaSourceProvenance"
-    class_name: ClassVar[str] = "SlsaSourceProvenance"
-    class_model_uri: ClassVar[URIRef] = SLSA.SlsaSourceProvenance
-
-    revision: Union[str, SlsaSourceRevisionRevisionId] = None
-    controls_enforced: Optional[Union[str, list[str]]] = empty_list()
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if self._is_empty(self.revision):
-            self.MissingRequiredField("revision")
-        if not isinstance(self.revision, SlsaSourceRevisionRevisionId):
-            self.revision = SlsaSourceRevisionRevisionId(self.revision)
-
-        if not isinstance(self.controls_enforced, list):
-            self.controls_enforced = [self.controls_enforced] if self.controls_enforced is not None else []
-        self.controls_enforced = [v if isinstance(v, str) else str(v) for v in self.controls_enforced]
-
-        super().__post_init__(**kwargs)
-        self.unknown_predicate_kind = str(self.class_name)
-
-
-@dataclass(repr=False)
 class SlsaDependencyInventory(YAMLRoot):
     """
     The inventory of every third-party build dependency, direct and transitive, of one artifact version.
@@ -1348,8 +857,8 @@ class SlsaDependencyInventory(YAMLRoot):
     class_name: ClassVar[str] = "SlsaDependencyInventory"
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaDependencyInventory
 
-    artifact: Union[dict, InTotoResourceDescriptor] = None
-    dependencies: Optional[Union[Union[dict, InTotoResourceDescriptor], list[Union[dict, InTotoResourceDescriptor]]]] = empty_list()
+    artifact: Union[dict, "InTotoResourceDescriptor"] = None
+    dependencies: Optional[Union[Union[dict, "InTotoResourceDescriptor"], list[Union[dict, "InTotoResourceDescriptor"]]]] = empty_list()
     dependency_level: Optional[Union[str, "SlsaDependencyLevel"]] = None
 
     def __post_init__(self, *_: str, **kwargs: Any):
@@ -1402,7 +911,7 @@ class SlsaBuildImage(YAMLRoot):
 
     image_uri: Union[str, SlsaBuildImageImageUri] = None
     build_env_level: Optional[Union[str, "SlsaBuildEnvironmentLevel"]] = None
-    provenance: Optional[Union[dict, SlsaBuildProvenance]] = None
+    provenance: Optional[Union[dict, "SlsaBuildProvenance"]] = None
     produced_by: Optional[Union[dict, SlsaBuildImageProducer]] = None
 
     def __post_init__(self, *_: str, **kwargs: Any):
@@ -1436,7 +945,7 @@ class SlsaMeasurement(YAMLRoot):
     class_model_uri: ClassVar[URIRef] = SLSA.SlsaMeasurement
 
     measured_component: str = None
-    digest: Optional[Union[dict, InTotoDigestSet]] = None
+    digest: Optional[Union[dict, "InTotoDigestSet"]] = None
 
     def __post_init__(self, *_: str, **kwargs: Any):
         if self._is_empty(self.measured_component):
@@ -1448,6 +957,591 @@ class SlsaMeasurement(YAMLRoot):
             self.digest = InTotoDigestSet(**as_dict(self.digest))
 
         super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class SlsaAdoptionMetadata(YAMLRoot):
+    """
+    The adoption challenges a deployment meets and the strategies it applies, from the study's taxonomy.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = SLSA["SlsaAdoptionMetadata"]
+    class_class_curie: ClassVar[str] = "slsa:SlsaAdoptionMetadata"
+    class_name: ClassVar[str] = "SlsaAdoptionMetadata"
+    class_model_uri: ClassVar[URIRef] = SLSA.SlsaAdoptionMetadata
+
+    challenges: Optional[Union[Union[str, "SlsaAdoptionChallenge"], list[Union[str, "SlsaAdoptionChallenge"]]]] = empty_list()
+    strategies: Optional[Union[Union[str, "SlsaAdoptionStrategy"], list[Union[str, "SlsaAdoptionStrategy"]]]] = empty_list()
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if not isinstance(self.challenges, list):
+            self.challenges = [self.challenges] if self.challenges is not None else []
+        self.challenges = [v if isinstance(v, SlsaAdoptionChallenge) else SlsaAdoptionChallenge(v) for v in self.challenges]
+
+        if not isinstance(self.strategies, list):
+            self.strategies = [self.strategies] if self.strategies is not None else []
+        self.strategies = [v if isinstance(v, SlsaAdoptionStrategy) else SlsaAdoptionStrategy(v) for v in self.strategies]
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class InTotoDigestSet(YAMLRoot):
+    """
+    A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it
+    trusts.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = IN_TOTO_LINKML["InTotoDigestSet"]
+    class_class_curie: ClassVar[str] = "in_toto_linkml:InTotoDigestSet"
+    class_name: ClassVar[str] = "InTotoDigestSet"
+    class_model_uri: ClassVar[URIRef] = SLSA.InTotoDigestSet
+
+    sha256: Optional[str] = None
+    sha224: Optional[str] = None
+    sha384: Optional[str] = None
+    sha512: Optional[str] = None
+    sha512_224: Optional[str] = None
+    sha512_256: Optional[str] = None
+    sha3_224: Optional[str] = None
+    sha3_256: Optional[str] = None
+    sha3_384: Optional[str] = None
+    sha3_512: Optional[str] = None
+    shake128: Optional[str] = None
+    shake256: Optional[str] = None
+    blake2b: Optional[str] = None
+    blake2s: Optional[str] = None
+    ripemd160: Optional[str] = None
+    sm3: Optional[str] = None
+    gost: Optional[str] = None
+    sha1: Optional[str] = None
+    md5: Optional[str] = None
+    dir_hash: Optional[str] = None
+    git_commit: Optional[str] = None
+    git_tree: Optional[str] = None
+    git_blob: Optional[str] = None
+    git_tag: Optional[str] = None
+    additional_digests: Optional[Union[Union[dict, "InTotoAdditionalDigest"], list[Union[dict, "InTotoAdditionalDigest"]]]] = empty_list()
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self.sha256 is not None and not isinstance(self.sha256, str):
+            self.sha256 = str(self.sha256)
+
+        if self.sha224 is not None and not isinstance(self.sha224, str):
+            self.sha224 = str(self.sha224)
+
+        if self.sha384 is not None and not isinstance(self.sha384, str):
+            self.sha384 = str(self.sha384)
+
+        if self.sha512 is not None and not isinstance(self.sha512, str):
+            self.sha512 = str(self.sha512)
+
+        if self.sha512_224 is not None and not isinstance(self.sha512_224, str):
+            self.sha512_224 = str(self.sha512_224)
+
+        if self.sha512_256 is not None and not isinstance(self.sha512_256, str):
+            self.sha512_256 = str(self.sha512_256)
+
+        if self.sha3_224 is not None and not isinstance(self.sha3_224, str):
+            self.sha3_224 = str(self.sha3_224)
+
+        if self.sha3_256 is not None and not isinstance(self.sha3_256, str):
+            self.sha3_256 = str(self.sha3_256)
+
+        if self.sha3_384 is not None and not isinstance(self.sha3_384, str):
+            self.sha3_384 = str(self.sha3_384)
+
+        if self.sha3_512 is not None and not isinstance(self.sha3_512, str):
+            self.sha3_512 = str(self.sha3_512)
+
+        if self.shake128 is not None and not isinstance(self.shake128, str):
+            self.shake128 = str(self.shake128)
+
+        if self.shake256 is not None and not isinstance(self.shake256, str):
+            self.shake256 = str(self.shake256)
+
+        if self.blake2b is not None and not isinstance(self.blake2b, str):
+            self.blake2b = str(self.blake2b)
+
+        if self.blake2s is not None and not isinstance(self.blake2s, str):
+            self.blake2s = str(self.blake2s)
+
+        if self.ripemd160 is not None and not isinstance(self.ripemd160, str):
+            self.ripemd160 = str(self.ripemd160)
+
+        if self.sm3 is not None and not isinstance(self.sm3, str):
+            self.sm3 = str(self.sm3)
+
+        if self.gost is not None and not isinstance(self.gost, str):
+            self.gost = str(self.gost)
+
+        if self.sha1 is not None and not isinstance(self.sha1, str):
+            self.sha1 = str(self.sha1)
+
+        if self.md5 is not None and not isinstance(self.md5, str):
+            self.md5 = str(self.md5)
+
+        if self.dir_hash is not None and not isinstance(self.dir_hash, str):
+            self.dir_hash = str(self.dir_hash)
+
+        if self.git_commit is not None and not isinstance(self.git_commit, str):
+            self.git_commit = str(self.git_commit)
+
+        if self.git_tree is not None and not isinstance(self.git_tree, str):
+            self.git_tree = str(self.git_tree)
+
+        if self.git_blob is not None and not isinstance(self.git_blob, str):
+            self.git_blob = str(self.git_blob)
+
+        if self.git_tag is not None and not isinstance(self.git_tag, str):
+            self.git_tag = str(self.git_tag)
+
+        self._normalize_inlined_as_list(slot_name="additional_digests", slot_type=InTotoAdditionalDigest, key_name="algorithm", keyed=False)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class InTotoAdditionalDigest(YAMLRoot):
+    """
+    One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = IN_TOTO_LINKML["InTotoAdditionalDigest"]
+    class_class_curie: ClassVar[str] = "in_toto_linkml:InTotoAdditionalDigest"
+    class_name: ClassVar[str] = "InTotoAdditionalDigest"
+    class_model_uri: ClassVar[URIRef] = SLSA.InTotoAdditionalDigest
+
+    algorithm: str = None
+    value: str = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.algorithm):
+            self.MissingRequiredField("algorithm")
+        if not isinstance(self.algorithm, str):
+            self.algorithm = str(self.algorithm)
+
+        if self._is_empty(self.value):
+            self.MissingRequiredField("value")
+        if not isinstance(self.value, str):
+            self.value = str(self.value)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class InTotoAnnotation(YAMLRoot):
+    """
+    One vendor-specific annotation on a resource descriptor: a key and its values.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = IN_TOTO_LINKML["InTotoAnnotation"]
+    class_class_curie: ClassVar[str] = "in_toto_linkml:InTotoAnnotation"
+    class_name: ClassVar[str] = "InTotoAnnotation"
+    class_model_uri: ClassVar[URIRef] = SLSA.InTotoAnnotation
+
+    annotation_key: str = None
+    annotation_values: Optional[Union[str, list[str]]] = empty_list()
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.annotation_key):
+            self.MissingRequiredField("annotation_key")
+        if not isinstance(self.annotation_key, str):
+            self.annotation_key = str(self.annotation_key)
+
+        if not isinstance(self.annotation_values, list):
+            self.annotation_values = [self.annotation_values] if self.annotation_values is not None else []
+        self.annotation_values = [v if isinstance(v, str) else str(v) for v in self.annotation_values]
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class InTotoResourceDescriptor(YAMLRoot):
+    """
+    A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with
+    optional metadata.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = IN_TOTO_LINKML["InTotoResourceDescriptor"]
+    class_class_curie: ClassVar[str] = "in_toto_linkml:InTotoResourceDescriptor"
+    class_name: ClassVar[str] = "InTotoResourceDescriptor"
+    class_model_uri: ClassVar[URIRef] = SLSA.InTotoResourceDescriptor
+
+    resource_uri: Optional[Union[str, InTotoResourceUri]] = None
+    digest: Optional[Union[dict, InTotoDigestSet]] = None
+    resource_name: Optional[str] = None
+    download_location: Optional[Union[str, InTotoResourceUri]] = None
+    media_type: Optional[str] = None
+    content: Optional[str] = None
+    annotations: Optional[Union[Union[dict, InTotoAnnotation], list[Union[dict, InTotoAnnotation]]]] = empty_list()
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self.resource_uri is not None and not isinstance(self.resource_uri, InTotoResourceUri):
+            self.resource_uri = InTotoResourceUri(self.resource_uri)
+
+        if self.digest is not None and not isinstance(self.digest, InTotoDigestSet):
+            self.digest = InTotoDigestSet(**as_dict(self.digest))
+
+        if self.resource_name is not None and not isinstance(self.resource_name, str):
+            self.resource_name = str(self.resource_name)
+
+        if self.download_location is not None and not isinstance(self.download_location, InTotoResourceUri):
+            self.download_location = InTotoResourceUri(self.download_location)
+
+        if self.media_type is not None and not isinstance(self.media_type, str):
+            self.media_type = str(self.media_type)
+
+        if self.content is not None and not isinstance(self.content, str):
+            self.content = str(self.content)
+
+        self._normalize_inlined_as_list(slot_name="annotations", slot_type=InTotoAnnotation, key_name="annotation_key", keyed=False)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class SlsaVerificationSummaryPolicy(InTotoResourceDescriptor):
+    """
+    The policy a verification summary applied: a resource descriptor that names the policy by URI.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = SLSA["SlsaVerificationSummaryPolicy"]
+    class_class_curie: ClassVar[str] = "slsa:SlsaVerificationSummaryPolicy"
+    class_name: ClassVar[str] = "SlsaVerificationSummaryPolicy"
+    class_model_uri: ClassVar[URIRef] = SLSA.SlsaVerificationSummaryPolicy
+
+    resource_uri: Union[str, InTotoResourceUri] = None
+    digest: Optional[Union[dict, InTotoDigestSet]] = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.resource_uri):
+            self.MissingRequiredField("resource_uri")
+        if not isinstance(self.resource_uri, InTotoResourceUri):
+            self.resource_uri = InTotoResourceUri(self.resource_uri)
+
+        if self.digest is not None and not isinstance(self.digest, InTotoDigestSet):
+            self.digest = InTotoDigestSet(**as_dict(self.digest))
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class SlsaVerificationSummaryInputAttestation(InTotoResourceDescriptor):
+    """
+    One attestation a verifier consulted: a resource descriptor that carries the attestation's digest.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = SLSA["SlsaVerificationSummaryInputAttestation"]
+    class_class_curie: ClassVar[str] = "slsa:SlsaVerificationSummaryInputAttestation"
+    class_name: ClassVar[str] = "SlsaVerificationSummaryInputAttestation"
+    class_model_uri: ClassVar[URIRef] = SLSA.SlsaVerificationSummaryInputAttestation
+
+    digest: Union[dict, InTotoDigestSet] = None
+    resource_uri: Optional[Union[str, InTotoResourceUri]] = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.digest):
+            self.MissingRequiredField("digest")
+        if not isinstance(self.digest, InTotoDigestSet):
+            self.digest = InTotoDigestSet(**as_dict(self.digest))
+
+        if self.resource_uri is not None and not isinstance(self.resource_uri, InTotoResourceUri):
+            self.resource_uri = InTotoResourceUri(self.resource_uri)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class InTotoStatementSubject(InTotoResourceDescriptor):
+    """
+    One artifact an in-toto statement is about: a resource descriptor that carries a digest.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = IN_TOTO_LINKML["InTotoStatementSubject"]
+    class_class_curie: ClassVar[str] = "in_toto_linkml:InTotoStatementSubject"
+    class_name: ClassVar[str] = "InTotoStatementSubject"
+    class_model_uri: ClassVar[URIRef] = SLSA.InTotoStatementSubject
+
+    digest: Union[dict, InTotoDigestSet] = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.digest):
+            self.MissingRequiredField("digest")
+        if not isinstance(self.digest, InTotoDigestSet):
+            self.digest = InTotoDigestSet(**as_dict(self.digest))
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class InTotoStatement(YAMLRoot):
+    """
+    The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the
+    predicate itself.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = IN_TOTO_LINKML["InTotoStatement"]
+    class_class_curie: ClassVar[str] = "in_toto_linkml:InTotoStatement"
+    class_name: ClassVar[str] = "InTotoStatement"
+    class_model_uri: ClassVar[URIRef] = SLSA.InTotoStatement
+
+    statement_type: Union[str, InTotoTypeUri] = None
+    subject: Union[Union[dict, InTotoStatementSubject], list[Union[dict, InTotoStatementSubject]]] = None
+    predicate_type: Union[str, InTotoTypeUri] = None
+    predicate: Optional[Union[dict, "InTotoPredicate"]] = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.statement_type):
+            self.MissingRequiredField("statement_type")
+        if not isinstance(self.statement_type, InTotoTypeUri):
+            self.statement_type = InTotoTypeUri(self.statement_type)
+
+        if self._is_empty(self.subject):
+            self.MissingRequiredField("subject")
+        if not isinstance(self.subject, list):
+            self.subject = [self.subject] if self.subject is not None else []
+        self.subject = [v if isinstance(v, InTotoStatementSubject) else InTotoStatementSubject(**as_dict(v)) for v in self.subject]
+
+        if self._is_empty(self.predicate_type):
+            self.MissingRequiredField("predicate_type")
+        if not isinstance(self.predicate_type, InTotoTypeUri):
+            self.predicate_type = InTotoTypeUri(self.predicate_type)
+
+        if self.predicate is not None and not isinstance(self.predicate, InTotoPredicate):
+            self.predicate = InTotoPredicate(**as_dict(self.predicate))
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class SlsaStatement(InTotoStatement):
+    """
+    An in-toto statement with the fields this schema adds: where the signed attestation is stored, the tool that
+    signed it and the transparency log entry that records the signature.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = SLSA["SlsaStatement"]
+    class_class_curie: ClassVar[str] = "slsa:SlsaStatement"
+    class_name: ClassVar[str] = "SlsaStatement"
+    class_model_uri: ClassVar[URIRef] = SLSA.SlsaStatement
+
+    statement_type: Union[str, InTotoTypeUri] = None
+    subject: Union[Union[dict, InTotoStatementSubject], list[Union[dict, InTotoStatementSubject]]] = None
+    predicate_type: Union[str, InTotoTypeUri] = None
+    attestation_storage_uri: Optional[Union[str, URI]] = None
+    signing_tool: Optional[Union[str, URI]] = None
+    transparency_log_entry: Optional[Union[str, URI]] = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self.attestation_storage_uri is not None and not isinstance(self.attestation_storage_uri, URI):
+            self.attestation_storage_uri = URI(self.attestation_storage_uri)
+
+        if self.signing_tool is not None and not isinstance(self.signing_tool, URI):
+            self.signing_tool = URI(self.signing_tool)
+
+        if self.transparency_log_entry is not None and not isinstance(self.transparency_log_entry, URI):
+            self.transparency_log_entry = URI(self.transparency_log_entry)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class InTotoPredicate(YAMLRoot):
+    """
+    The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = IN_TOTO_LINKML["InTotoPredicate"]
+    class_class_curie: ClassVar[str] = "in_toto_linkml:InTotoPredicate"
+    class_name: ClassVar[str] = "InTotoPredicate"
+    class_model_uri: ClassVar[URIRef] = SLSA.InTotoPredicate
+
+    predicate_kind: Optional[str] = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        self.predicate_kind = str(self.class_name)
+
+        super().__post_init__(**kwargs)
+        self.unknown_predicate_kind = str(self.class_name)
+
+
+    def __new__(cls, *args, **kwargs):
+
+        type_designator = "predicate_kind"
+        if not type_designator in kwargs:
+            return super().__new__(cls,*args,**kwargs)
+        else:
+            type_designator_value = kwargs[type_designator]
+            target_cls = cls._class_for("class_name", type_designator_value)
+
+
+            if target_cls is None:
+                raise ValueError(f"Wrong type designator value: class {cls.__name__} "
+                                 f"has no subclass with ['class_name']='{kwargs[type_designator]}'")
+            return super().__new__(target_cls,*args,**kwargs)
+
+
+
+class SlsaPredicate(InTotoPredicate):
+    """
+    The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the
+    concrete kind.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = SLSA["SlsaPredicate"]
+    class_class_curie: ClassVar[str] = "slsa:SlsaPredicate"
+    class_name: ClassVar[str] = "SlsaPredicate"
+    class_model_uri: ClassVar[URIRef] = SLSA.SlsaPredicate
+
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+
+        super().__post_init__(**kwargs)
+        self.unknown_predicate_kind = str(self.class_name)
+
+
+@dataclass(repr=False)
+class SlsaBuildProvenance(SlsaPredicate):
+    """
+    The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build
+    met their expectations and others can rebuild it.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = SLSA["SlsaBuildProvenance"]
+    class_class_curie: ClassVar[str] = "slsa:SlsaBuildProvenance"
+    class_name: ClassVar[str] = "SlsaBuildProvenance"
+    class_model_uri: ClassVar[URIRef] = SLSA.SlsaBuildProvenance
+
+    build_definition: Union[dict, SlsaBuildDefinition] = None
+    run_details: Union[dict, SlsaRunDetails] = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.build_definition):
+            self.MissingRequiredField("build_definition")
+        if not isinstance(self.build_definition, SlsaBuildDefinition):
+            self.build_definition = SlsaBuildDefinition(**as_dict(self.build_definition))
+
+        if self._is_empty(self.run_details):
+            self.MissingRequiredField("run_details")
+        if not isinstance(self.run_details, SlsaRunDetails):
+            self.run_details = SlsaRunDetails(**as_dict(self.run_details))
+
+        super().__post_init__(**kwargs)
+        self.unknown_predicate_kind = str(self.class_name)
+
+
+@dataclass(repr=False)
+class SlsaVerificationSummary(SlsaPredicate):
+    """
+    The predicate in which a verifier records that it evaluated artifacts against a policy and the SLSA levels they
+    met, so consumers can rely on the verifier instead of reading every underlying attestation.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = SLSA["SlsaVerificationSummary"]
+    class_class_curie: ClassVar[str] = "slsa:SlsaVerificationSummary"
+    class_name: ClassVar[str] = "SlsaVerificationSummary"
+    class_model_uri: ClassVar[URIRef] = SLSA.SlsaVerificationSummary
+
+    resource_uri: Union[str, InTotoResourceUri] = None
+    verifier: Union[dict, SlsaVerifier] = None
+    policy: Union[dict, SlsaVerificationSummaryPolicy] = None
+    verification_result: Union[str, "SlsaVerificationResult"] = None
+    verified_levels: Union[Union[str, SlsaResultValue], list[Union[str, SlsaResultValue]]] = None
+    time_verified: Optional[Union[str, InTotoTimestamp]] = None
+    input_attestations: Optional[Union[Union[dict, SlsaVerificationSummaryInputAttestation], list[Union[dict, SlsaVerificationSummaryInputAttestation]]]] = empty_list()
+    organization_properties: Optional[Union[str, list[str]]] = empty_list()
+    dependency_levels: Optional[Union[Union[dict, SlsaDependencyLevelCount], list[Union[dict, SlsaDependencyLevelCount]]]] = empty_list()
+    slsa_version: Optional[str] = None
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.resource_uri):
+            self.MissingRequiredField("resource_uri")
+        if not isinstance(self.resource_uri, InTotoResourceUri):
+            self.resource_uri = InTotoResourceUri(self.resource_uri)
+
+        if self._is_empty(self.verifier):
+            self.MissingRequiredField("verifier")
+        if not isinstance(self.verifier, SlsaVerifier):
+            self.verifier = SlsaVerifier(**as_dict(self.verifier))
+
+        if self._is_empty(self.policy):
+            self.MissingRequiredField("policy")
+        if not isinstance(self.policy, SlsaVerificationSummaryPolicy):
+            self.policy = SlsaVerificationSummaryPolicy(**as_dict(self.policy))
+
+        if self._is_empty(self.verification_result):
+            self.MissingRequiredField("verification_result")
+        if not isinstance(self.verification_result, SlsaVerificationResult):
+            self.verification_result = SlsaVerificationResult(self.verification_result)
+
+        if self._is_empty(self.verified_levels):
+            self.MissingRequiredField("verified_levels")
+        if not isinstance(self.verified_levels, list):
+            self.verified_levels = [self.verified_levels] if self.verified_levels is not None else []
+        self.verified_levels = [v if isinstance(v, SlsaResultValue) else SlsaResultValue(v) for v in self.verified_levels]
+
+        if self.time_verified is not None and not isinstance(self.time_verified, InTotoTimestamp):
+            self.time_verified = InTotoTimestamp(self.time_verified)
+
+        if not isinstance(self.input_attestations, list):
+            self.input_attestations = [self.input_attestations] if self.input_attestations is not None else []
+        self.input_attestations = [v if isinstance(v, SlsaVerificationSummaryInputAttestation) else SlsaVerificationSummaryInputAttestation(**as_dict(v)) for v in self.input_attestations]
+
+        if not isinstance(self.organization_properties, list):
+            self.organization_properties = [self.organization_properties] if self.organization_properties is not None else []
+        self.organization_properties = [v if isinstance(v, str) else str(v) for v in self.organization_properties]
+
+        self._normalize_inlined_as_list(slot_name="dependency_levels", slot_type=SlsaDependencyLevelCount, key_name="verified_level", keyed=False)
+
+        if self.slsa_version is not None and not isinstance(self.slsa_version, str):
+            self.slsa_version = str(self.slsa_version)
+
+        super().__post_init__(**kwargs)
+        self.unknown_predicate_kind = str(self.class_name)
+
+
+@dataclass(repr=False)
+class SlsaSourceProvenance(SlsaPredicate):
+    """
+    Evidence from an SCS of how a revision came to exist and which technical controls were enforced when it did.
+    """
+    _inherited_slots: ClassVar[list[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = SLSA["SlsaSourceProvenance"]
+    class_class_curie: ClassVar[str] = "slsa:SlsaSourceProvenance"
+    class_name: ClassVar[str] = "SlsaSourceProvenance"
+    class_model_uri: ClassVar[URIRef] = SLSA.SlsaSourceProvenance
+
+    revision: Union[str, SlsaSourceRevisionRevisionId] = None
+    controls_enforced: Optional[Union[str, list[str]]] = empty_list()
+
+    def __post_init__(self, *_: str, **kwargs: Any):
+        if self._is_empty(self.revision):
+            self.MissingRequiredField("revision")
+        if not isinstance(self.revision, SlsaSourceRevisionRevisionId):
+            self.revision = SlsaSourceRevisionRevisionId(self.revision)
+
+        if not isinstance(self.controls_enforced, list):
+            self.controls_enforced = [self.controls_enforced] if self.controls_enforced is not None else []
+        self.controls_enforced = [v if isinstance(v, str) else str(v) for v in self.controls_enforced]
+
+        super().__post_init__(**kwargs)
+        self.unknown_predicate_kind = str(self.class_name)
 
 
 @dataclass(repr=False)
@@ -1484,33 +1578,6 @@ class SlsaBuildEnvironmentAttestation(SlsaPredicate):
 
         super().__post_init__(**kwargs)
         self.unknown_predicate_kind = str(self.class_name)
-
-
-@dataclass(repr=False)
-class SlsaAdoptionMetadata(YAMLRoot):
-    """
-    The adoption challenges a deployment meets and the strategies it applies, from the study's taxonomy.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = SLSA["SlsaAdoptionMetadata"]
-    class_class_curie: ClassVar[str] = "slsa:SlsaAdoptionMetadata"
-    class_name: ClassVar[str] = "SlsaAdoptionMetadata"
-    class_model_uri: ClassVar[URIRef] = SLSA.SlsaAdoptionMetadata
-
-    challenges: Optional[Union[Union[str, "SlsaAdoptionChallenge"], list[Union[str, "SlsaAdoptionChallenge"]]]] = empty_list()
-    strategies: Optional[Union[Union[str, "SlsaAdoptionStrategy"], list[Union[str, "SlsaAdoptionStrategy"]]]] = empty_list()
-
-    def __post_init__(self, *_: str, **kwargs: Any):
-        if not isinstance(self.challenges, list):
-            self.challenges = [self.challenges] if self.challenges is not None else []
-        self.challenges = [v if isinstance(v, SlsaAdoptionChallenge) else SlsaAdoptionChallenge(v) for v in self.challenges]
-
-        if not isinstance(self.strategies, list):
-            self.strategies = [self.strategies] if self.strategies is not None else []
-        self.strategies = [v if isinstance(v, SlsaAdoptionStrategy) else SlsaAdoptionStrategy(v) for v in self.strategies]
-
-        super().__post_init__(**kwargs)
 
 
 # Enumerations
@@ -1750,12 +1817,6 @@ class SlsaAdoptionStrategy(EnumDefinitionImpl):
 class slots:
     pass
 
-slots.resource_uri = Slot(uri=SLSA.resource_uri, name="resource_uri", curie=SLSA.curie('resource_uri'),
-                   model_uri=SLSA.resource_uri, domain=None, range=Optional[Union[str, URI]])
-
-slots.digest = Slot(uri=SLSA.digest, name="digest", curie=SLSA.curie('digest'),
-                   model_uri=SLSA.digest, domain=None, range=Optional[Union[dict, InTotoDigestSet]])
-
 slots.component_versions = Slot(uri=SLSA.component_versions, name="component_versions", curie=SLSA.curie('component_versions'),
                    model_uri=SLSA.component_versions, domain=None, range=Optional[Union[Union[dict, SlsaComponentVersion], list[Union[dict, SlsaComponentVersion]]]])
 
@@ -1774,8 +1835,17 @@ slots.revision = Slot(uri=SLSA.revision, name="revision", curie=SLSA.curie('revi
 slots.build_env_level = Slot(uri=SLSA.build_env_level, name="build_env_level", curie=SLSA.curie('build_env_level'),
                    model_uri=SLSA.build_env_level, domain=None, range=Optional[Union[str, "SlsaBuildEnvironmentLevel"]])
 
+slots.resource_uri = Slot(uri=IN_TOTO_LINKML.resource_uri, name="resource_uri", curie=IN_TOTO_LINKML.curie('resource_uri'),
+                   model_uri=SLSA.resource_uri, domain=None, range=Optional[Union[str, InTotoResourceUri]])
+
+slots.digest = Slot(uri=IN_TOTO_LINKML.digest, name="digest", curie=IN_TOTO_LINKML.curie('digest'),
+                   model_uri=SLSA.digest, domain=None, range=Optional[Union[dict, InTotoDigestSet]])
+
+slots.predicate = Slot(uri=IN_TOTO_LINKML.predicate, name="predicate", curie=IN_TOTO_LINKML.curie('predicate'),
+                   model_uri=SLSA.predicate, domain=None, range=Optional[Union[dict, InTotoPredicate]])
+
 slots.slsaDocument__attestations = Slot(uri=SLSA.attestations, name="slsaDocument__attestations", curie=SLSA.curie('attestations'),
-                   model_uri=SLSA.slsaDocument__attestations, domain=None, range=Optional[Union[Union[dict, InTotoStatement], list[Union[dict, InTotoStatement]]]])
+                   model_uri=SLSA.slsaDocument__attestations, domain=None, range=Optional[Union[Union[dict, SlsaStatement], list[Union[dict, SlsaStatement]]]])
 
 slots.slsaDocument__parties = Slot(uri=SLSA.parties, name="slsaDocument__parties", curie=SLSA.curie('parties'),
                    model_uri=SLSA.slsaDocument__parties, domain=None, range=Optional[Union[Union[dict, SlsaParty], list[Union[dict, SlsaParty]]]])
@@ -1813,159 +1883,14 @@ slots.slsaDocument__dependency_inventories = Slot(uri=SLSA.dependency_inventorie
 slots.slsaDocument__adoption_metadata = Slot(uri=SLSA.adoption_metadata, name="slsaDocument__adoption_metadata", curie=SLSA.curie('adoption_metadata'),
                    model_uri=SLSA.slsaDocument__adoption_metadata, domain=None, range=Optional[Union[dict, SlsaAdoptionMetadata]])
 
-slots.inTotoDigestSet__sha256 = Slot(uri=SLSA.sha256, name="inTotoDigestSet__sha256", curie=SLSA.curie('sha256'),
-                   model_uri=SLSA.inTotoDigestSet__sha256, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}$'))
+slots.slsaStatement__attestation_storage_uri = Slot(uri=SLSA.attestation_storage_uri, name="slsaStatement__attestation_storage_uri", curie=SLSA.curie('attestation_storage_uri'),
+                   model_uri=SLSA.slsaStatement__attestation_storage_uri, domain=None, range=Optional[Union[str, URI]])
 
-slots.inTotoDigestSet__sha224 = Slot(uri=SLSA.sha224, name="inTotoDigestSet__sha224", curie=SLSA.curie('sha224'),
-                   model_uri=SLSA.inTotoDigestSet__sha224, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{56}$'))
+slots.slsaStatement__signing_tool = Slot(uri=SLSA.signing_tool, name="slsaStatement__signing_tool", curie=SLSA.curie('signing_tool'),
+                   model_uri=SLSA.slsaStatement__signing_tool, domain=None, range=Optional[Union[str, URI]])
 
-slots.inTotoDigestSet__sha384 = Slot(uri=SLSA.sha384, name="inTotoDigestSet__sha384", curie=SLSA.curie('sha384'),
-                   model_uri=SLSA.inTotoDigestSet__sha384, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{96}$'))
-
-slots.inTotoDigestSet__sha512 = Slot(uri=SLSA.sha512, name="inTotoDigestSet__sha512", curie=SLSA.curie('sha512'),
-                   model_uri=SLSA.inTotoDigestSet__sha512, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{128}$'))
-
-slots.inTotoDigestSet__sha512_224 = Slot(uri=SLSA.sha512_224, name="inTotoDigestSet__sha512_224", curie=SLSA.curie('sha512_224'),
-                   model_uri=SLSA.inTotoDigestSet__sha512_224, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{56}$'))
-
-slots.inTotoDigestSet__sha512_256 = Slot(uri=SLSA.sha512_256, name="inTotoDigestSet__sha512_256", curie=SLSA.curie('sha512_256'),
-                   model_uri=SLSA.inTotoDigestSet__sha512_256, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}$'))
-
-slots.inTotoDigestSet__sha3_224 = Slot(uri=SLSA.sha3_224, name="inTotoDigestSet__sha3_224", curie=SLSA.curie('sha3_224'),
-                   model_uri=SLSA.inTotoDigestSet__sha3_224, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{56}$'))
-
-slots.inTotoDigestSet__sha3_256 = Slot(uri=SLSA.sha3_256, name="inTotoDigestSet__sha3_256", curie=SLSA.curie('sha3_256'),
-                   model_uri=SLSA.inTotoDigestSet__sha3_256, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}$'))
-
-slots.inTotoDigestSet__sha3_384 = Slot(uri=SLSA.sha3_384, name="inTotoDigestSet__sha3_384", curie=SLSA.curie('sha3_384'),
-                   model_uri=SLSA.inTotoDigestSet__sha3_384, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{96}$'))
-
-slots.inTotoDigestSet__sha3_512 = Slot(uri=SLSA.sha3_512, name="inTotoDigestSet__sha3_512", curie=SLSA.curie('sha3_512'),
-                   model_uri=SLSA.inTotoDigestSet__sha3_512, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{128}$'))
-
-slots.inTotoDigestSet__shake128 = Slot(uri=SLSA.shake128, name="inTotoDigestSet__shake128", curie=SLSA.curie('shake128'),
-                   model_uri=SLSA.inTotoDigestSet__shake128, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}([a-f0-9]{2})*$'))
-
-slots.inTotoDigestSet__shake256 = Slot(uri=SLSA.shake256, name="inTotoDigestSet__shake256", curie=SLSA.curie('shake256'),
-                   model_uri=SLSA.inTotoDigestSet__shake256, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}([a-f0-9]{2})*$'))
-
-slots.inTotoDigestSet__blake2b = Slot(uri=SLSA.blake2b, name="inTotoDigestSet__blake2b", curie=SLSA.curie('blake2b'),
-                   model_uri=SLSA.inTotoDigestSet__blake2b, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}([a-f0-9]{2}){0,32}$'))
-
-slots.inTotoDigestSet__blake2s = Slot(uri=SLSA.blake2s, name="inTotoDigestSet__blake2s", curie=SLSA.curie('blake2s'),
-                   model_uri=SLSA.inTotoDigestSet__blake2s, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}$'))
-
-slots.inTotoDigestSet__ripemd160 = Slot(uri=SLSA.ripemd160, name="inTotoDigestSet__ripemd160", curie=SLSA.curie('ripemd160'),
-                   model_uri=SLSA.inTotoDigestSet__ripemd160, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{40}$'))
-
-slots.inTotoDigestSet__sm3 = Slot(uri=SLSA.sm3, name="inTotoDigestSet__sm3", curie=SLSA.curie('sm3'),
-                   model_uri=SLSA.inTotoDigestSet__sm3, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}$'))
-
-slots.inTotoDigestSet__gost = Slot(uri=SLSA.gost, name="inTotoDigestSet__gost", curie=SLSA.curie('gost'),
-                   model_uri=SLSA.inTotoDigestSet__gost, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}([a-f0-9]{64})?$'))
-
-slots.inTotoDigestSet__sha1 = Slot(uri=SLSA.sha1, name="inTotoDigestSet__sha1", curie=SLSA.curie('sha1'),
-                   model_uri=SLSA.inTotoDigestSet__sha1, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{40}$'))
-
-slots.inTotoDigestSet__md5 = Slot(uri=SLSA.md5, name="inTotoDigestSet__md5", curie=SLSA.curie('md5'),
-                   model_uri=SLSA.inTotoDigestSet__md5, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{32}$'))
-
-slots.inTotoDigestSet__dir_hash = Slot(uri=SLSA.dir_hash, name="inTotoDigestSet__dir_hash", curie=SLSA.curie('dir_hash'),
-                   model_uri=SLSA.inTotoDigestSet__dir_hash, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{64}$'))
-
-slots.inTotoDigestSet__git_commit = Slot(uri=SLSA.git_commit, name="inTotoDigestSet__git_commit", curie=SLSA.curie('git_commit'),
-                   model_uri=SLSA.inTotoDigestSet__git_commit, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{40}([a-f0-9]{24})?$'))
-
-slots.inTotoDigestSet__git_tree = Slot(uri=SLSA.git_tree, name="inTotoDigestSet__git_tree", curie=SLSA.curie('git_tree'),
-                   model_uri=SLSA.inTotoDigestSet__git_tree, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{40}([a-f0-9]{24})?$'))
-
-slots.inTotoDigestSet__git_blob = Slot(uri=SLSA.git_blob, name="inTotoDigestSet__git_blob", curie=SLSA.curie('git_blob'),
-                   model_uri=SLSA.inTotoDigestSet__git_blob, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{40}([a-f0-9]{24})?$'))
-
-slots.inTotoDigestSet__git_tag = Slot(uri=SLSA.git_tag, name="inTotoDigestSet__git_tag", curie=SLSA.curie('git_tag'),
-                   model_uri=SLSA.inTotoDigestSet__git_tag, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[a-f0-9]{40}([a-f0-9]{24})?$'))
-
-slots.inTotoDigestSet__additional_digests = Slot(uri=SLSA.additional_digests, name="inTotoDigestSet__additional_digests", curie=SLSA.curie('additional_digests'),
-                   model_uri=SLSA.inTotoDigestSet__additional_digests, domain=None, range=Optional[Union[Union[dict, InTotoAdditionalDigest], list[Union[dict, InTotoAdditionalDigest]]]])
-
-slots.inTotoAdditionalDigest__algorithm = Slot(uri=SLSA.algorithm, name="inTotoAdditionalDigest__algorithm", curie=SLSA.curie('algorithm'),
-                   model_uri=SLSA.inTotoAdditionalDigest__algorithm, domain=None, range=str,
-                   pattern=re.compile(r'^[a-z][A-Za-z0-9_]*$'))
-
-slots.inTotoAdditionalDigest__value = Slot(uri=SLSA.value, name="inTotoAdditionalDigest__value", curie=SLSA.curie('value'),
-                   model_uri=SLSA.inTotoAdditionalDigest__value, domain=None, range=str,
-                   pattern=re.compile(r'^\S+$'))
-
-slots.inTotoAnnotation__annotation_key = Slot(uri=SLSA.annotation_key, name="inTotoAnnotation__annotation_key", curie=SLSA.curie('annotation_key'),
-                   model_uri=SLSA.inTotoAnnotation__annotation_key, domain=None, range=str)
-
-slots.inTotoAnnotation__annotation_values = Slot(uri=SLSA.annotation_values, name="inTotoAnnotation__annotation_values", curie=SLSA.curie('annotation_values'),
-                   model_uri=SLSA.inTotoAnnotation__annotation_values, domain=None, range=Optional[Union[str, list[str]]])
-
-slots.inTotoResourceDescriptor__resource_name = Slot(uri=SLSA.resource_name, name="inTotoResourceDescriptor__resource_name", curie=SLSA.curie('resource_name'),
-                   model_uri=SLSA.inTotoResourceDescriptor__resource_name, domain=None, range=Optional[str])
-
-slots.inTotoResourceDescriptor__download_location = Slot(uri=SLSA.download_location, name="inTotoResourceDescriptor__download_location", curie=SLSA.curie('download_location'),
-                   model_uri=SLSA.inTotoResourceDescriptor__download_location, domain=None, range=Optional[Union[str, URI]])
-
-slots.inTotoResourceDescriptor__media_type = Slot(uri=SLSA.media_type, name="inTotoResourceDescriptor__media_type", curie=SLSA.curie('media_type'),
-                   model_uri=SLSA.inTotoResourceDescriptor__media_type, domain=None, range=Optional[str])
-
-slots.inTotoResourceDescriptor__content = Slot(uri=SLSA.content, name="inTotoResourceDescriptor__content", curie=SLSA.curie('content'),
-                   model_uri=SLSA.inTotoResourceDescriptor__content, domain=None, range=Optional[str],
-                   pattern=re.compile(r'^[A-Za-z0-9+/_-]+={0,2}$'))
-
-slots.inTotoResourceDescriptor__annotations = Slot(uri=SLSA.annotations, name="inTotoResourceDescriptor__annotations", curie=SLSA.curie('annotations'),
-                   model_uri=SLSA.inTotoResourceDescriptor__annotations, domain=None, range=Optional[Union[Union[dict, InTotoAnnotation], list[Union[dict, InTotoAnnotation]]]])
-
-slots.inTotoStatement__statement_type = Slot(uri=SLSA.statement_type, name="inTotoStatement__statement_type", curie=SLSA.curie('statement_type'),
-                   model_uri=SLSA.inTotoStatement__statement_type, domain=None, range=Union[str, URI],
-                   pattern=re.compile(r'^https://in-toto\.io/Statement/v1$'))
-
-slots.inTotoStatement__subject = Slot(uri=SLSA.subject, name="inTotoStatement__subject", curie=SLSA.curie('subject'),
-                   model_uri=SLSA.inTotoStatement__subject, domain=None, range=Union[Union[dict, InTotoStatementSubject], list[Union[dict, InTotoStatementSubject]]])
-
-slots.inTotoStatement__predicate_type = Slot(uri=SLSA.predicate_type, name="inTotoStatement__predicate_type", curie=SLSA.curie('predicate_type'),
-                   model_uri=SLSA.inTotoStatement__predicate_type, domain=None, range=Union[str, URI])
-
-slots.inTotoStatement__predicate = Slot(uri=SLSA.predicate, name="inTotoStatement__predicate", curie=SLSA.curie('predicate'),
-                   model_uri=SLSA.inTotoStatement__predicate, domain=None, range=Optional[Union[dict, SlsaPredicate]])
-
-slots.inTotoStatement__attestation_storage_uri = Slot(uri=SLSA.attestation_storage_uri, name="inTotoStatement__attestation_storage_uri", curie=SLSA.curie('attestation_storage_uri'),
-                   model_uri=SLSA.inTotoStatement__attestation_storage_uri, domain=None, range=Optional[Union[str, URI]])
-
-slots.inTotoStatement__signing_tool = Slot(uri=SLSA.signing_tool, name="inTotoStatement__signing_tool", curie=SLSA.curie('signing_tool'),
-                   model_uri=SLSA.inTotoStatement__signing_tool, domain=None, range=Optional[Union[str, URI]])
-
-slots.inTotoStatement__transparency_log_entry = Slot(uri=SLSA.transparency_log_entry, name="inTotoStatement__transparency_log_entry", curie=SLSA.curie('transparency_log_entry'),
-                   model_uri=SLSA.inTotoStatement__transparency_log_entry, domain=None, range=Optional[Union[str, URI]])
-
-slots.slsaPredicate__predicate_kind = Slot(uri=SLSA.predicate_kind, name="slsaPredicate__predicate_kind", curie=SLSA.curie('predicate_kind'),
-                   model_uri=SLSA.slsaPredicate__predicate_kind, domain=None, range=Optional[str])
+slots.slsaStatement__transparency_log_entry = Slot(uri=SLSA.transparency_log_entry, name="slsaStatement__transparency_log_entry", curie=SLSA.curie('transparency_log_entry'),
+                   model_uri=SLSA.slsaStatement__transparency_log_entry, domain=None, range=Optional[Union[str, URI]])
 
 slots.slsaParty__party_type = Slot(uri=SLSA.party_type, name="slsaParty__party_type", curie=SLSA.curie('party_type'),
                    model_uri=SLSA.slsaParty__party_type, domain=None, range=Optional[str])
@@ -1974,7 +1899,7 @@ slots.slsaParty__party_name = Slot(uri=SLSA.party_name, name="slsaParty__party_n
                    model_uri=SLSA.slsaParty__party_name, domain=None, range=Optional[str])
 
 slots.slsaVerifier__verifier_id = Slot(uri=SLSA.verifier_id, name="slsaVerifier__verifier_id", curie=SLSA.curie('verifier_id'),
-                   model_uri=SLSA.slsaVerifier__verifier_id, domain=None, range=Union[str, URI])
+                   model_uri=SLSA.slsaVerifier__verifier_id, domain=None, range=Union[str, InTotoTypeUri])
 
 slots.slsaBuildPlatform__builder_id = Slot(uri=SLSA.builder_id, name="slsaBuildPlatform__builder_id", curie=SLSA.curie('builder_id'),
                    model_uri=SLSA.slsaBuildPlatform__builder_id, domain=None, range=URIRef)
@@ -2019,7 +1944,7 @@ slots.slsaBuildProvenance__run_details = Slot(uri=SLSA.run_details, name="slsaBu
                    model_uri=SLSA.slsaBuildProvenance__run_details, domain=None, range=Union[dict, SlsaRunDetails])
 
 slots.slsaBuildDefinition__build_type = Slot(uri=SLSA.build_type, name="slsaBuildDefinition__build_type", curie=SLSA.curie('build_type'),
-                   model_uri=SLSA.slsaBuildDefinition__build_type, domain=None, range=Union[str, URI])
+                   model_uri=SLSA.slsaBuildDefinition__build_type, domain=None, range=Union[str, InTotoTypeUri])
 
 slots.slsaBuildDefinition__external_parameters = Slot(uri=SLSA.external_parameters, name="slsaBuildDefinition__external_parameters", curie=SLSA.curie('external_parameters'),
                    model_uri=SLSA.slsaBuildDefinition__external_parameters, domain=None, range=Union[Union[dict, SlsaBuildParameter], list[Union[dict, SlsaBuildParameter]]])
@@ -2058,16 +1983,16 @@ slots.slsaBuildMetadata__invocation_id = Slot(uri=SLSA.invocation_id, name="slsa
                    model_uri=SLSA.slsaBuildMetadata__invocation_id, domain=None, range=Optional[str])
 
 slots.slsaBuildMetadata__started_on = Slot(uri=SLSA.started_on, name="slsaBuildMetadata__started_on", curie=SLSA.curie('started_on'),
-                   model_uri=SLSA.slsaBuildMetadata__started_on, domain=None, range=Optional[Union[str, XSDDateTime]])
+                   model_uri=SLSA.slsaBuildMetadata__started_on, domain=None, range=Optional[Union[str, InTotoTimestamp]])
 
 slots.slsaBuildMetadata__finished_on = Slot(uri=SLSA.finished_on, name="slsaBuildMetadata__finished_on", curie=SLSA.curie('finished_on'),
-                   model_uri=SLSA.slsaBuildMetadata__finished_on, domain=None, range=Optional[Union[str, XSDDateTime]])
+                   model_uri=SLSA.slsaBuildMetadata__finished_on, domain=None, range=Optional[Union[str, InTotoTimestamp]])
 
 slots.slsaVerificationSummary__verifier = Slot(uri=SLSA.verifier, name="slsaVerificationSummary__verifier", curie=SLSA.curie('verifier'),
                    model_uri=SLSA.slsaVerificationSummary__verifier, domain=None, range=Union[dict, SlsaVerifier])
 
 slots.slsaVerificationSummary__time_verified = Slot(uri=SLSA.time_verified, name="slsaVerificationSummary__time_verified", curie=SLSA.curie('time_verified'),
-                   model_uri=SLSA.slsaVerificationSummary__time_verified, domain=None, range=Optional[Union[str, XSDDateTime]])
+                   model_uri=SLSA.slsaVerificationSummary__time_verified, domain=None, range=Optional[Union[str, InTotoTimestamp]])
 
 slots.slsaVerificationSummary__policy = Slot(uri=SLSA.policy, name="slsaVerificationSummary__policy", curie=SLSA.curie('policy'),
                    model_uri=SLSA.slsaVerificationSummary__policy, domain=None, range=Union[dict, SlsaVerificationSummaryPolicy])
@@ -2175,23 +2100,165 @@ slots.slsaAdoptionMetadata__challenges = Slot(uri=SLSA.challenges, name="slsaAdo
 slots.slsaAdoptionMetadata__strategies = Slot(uri=SLSA.strategies, name="slsaAdoptionMetadata__strategies", curie=SLSA.curie('strategies'),
                    model_uri=SLSA.slsaAdoptionMetadata__strategies, domain=None, range=Optional[Union[Union[str, "SlsaAdoptionStrategy"], list[Union[str, "SlsaAdoptionStrategy"]]]])
 
-slots.InTotoStatementSubject_digest = Slot(uri=SLSA.digest, name="InTotoStatementSubject_digest", curie=SLSA.curie('digest'),
-                   model_uri=SLSA.InTotoStatementSubject_digest, domain=InTotoStatementSubject, range=Union[dict, InTotoDigestSet])
+slots.inTotoDigestSet__sha256 = Slot(uri=IN_TOTO_LINKML.sha256, name="inTotoDigestSet__sha256", curie=IN_TOTO_LINKML.curie('sha256'),
+                   model_uri=SLSA.inTotoDigestSet__sha256, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}$'))
 
-slots.SlsaVerificationSummary_resource_uri = Slot(uri=SLSA.resource_uri, name="SlsaVerificationSummary_resource_uri", curie=SLSA.curie('resource_uri'),
-                   model_uri=SLSA.SlsaVerificationSummary_resource_uri, domain=SlsaVerificationSummary, range=Union[str, URI])
+slots.inTotoDigestSet__sha224 = Slot(uri=IN_TOTO_LINKML.sha224, name="inTotoDigestSet__sha224", curie=IN_TOTO_LINKML.curie('sha224'),
+                   model_uri=SLSA.inTotoDigestSet__sha224, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{56}$'))
 
-slots.SlsaVerificationSummaryPolicy_resource_uri = Slot(uri=SLSA.resource_uri, name="SlsaVerificationSummaryPolicy_resource_uri", curie=SLSA.curie('resource_uri'),
-                   model_uri=SLSA.SlsaVerificationSummaryPolicy_resource_uri, domain=SlsaVerificationSummaryPolicy, range=Union[str, URI])
+slots.inTotoDigestSet__sha384 = Slot(uri=IN_TOTO_LINKML.sha384, name="inTotoDigestSet__sha384", curie=IN_TOTO_LINKML.curie('sha384'),
+                   model_uri=SLSA.inTotoDigestSet__sha384, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{96}$'))
 
-slots.SlsaVerificationSummaryPolicy_digest = Slot(uri=SLSA.digest, name="SlsaVerificationSummaryPolicy_digest", curie=SLSA.curie('digest'),
+slots.inTotoDigestSet__sha512 = Slot(uri=IN_TOTO_LINKML.sha512, name="inTotoDigestSet__sha512", curie=IN_TOTO_LINKML.curie('sha512'),
+                   model_uri=SLSA.inTotoDigestSet__sha512, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{128}$'))
+
+slots.inTotoDigestSet__sha512_224 = Slot(uri=IN_TOTO_LINKML.sha512_224, name="inTotoDigestSet__sha512_224", curie=IN_TOTO_LINKML.curie('sha512_224'),
+                   model_uri=SLSA.inTotoDigestSet__sha512_224, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{56}$'))
+
+slots.inTotoDigestSet__sha512_256 = Slot(uri=IN_TOTO_LINKML.sha512_256, name="inTotoDigestSet__sha512_256", curie=IN_TOTO_LINKML.curie('sha512_256'),
+                   model_uri=SLSA.inTotoDigestSet__sha512_256, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}$'))
+
+slots.inTotoDigestSet__sha3_224 = Slot(uri=IN_TOTO_LINKML.sha3_224, name="inTotoDigestSet__sha3_224", curie=IN_TOTO_LINKML.curie('sha3_224'),
+                   model_uri=SLSA.inTotoDigestSet__sha3_224, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{56}$'))
+
+slots.inTotoDigestSet__sha3_256 = Slot(uri=IN_TOTO_LINKML.sha3_256, name="inTotoDigestSet__sha3_256", curie=IN_TOTO_LINKML.curie('sha3_256'),
+                   model_uri=SLSA.inTotoDigestSet__sha3_256, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}$'))
+
+slots.inTotoDigestSet__sha3_384 = Slot(uri=IN_TOTO_LINKML.sha3_384, name="inTotoDigestSet__sha3_384", curie=IN_TOTO_LINKML.curie('sha3_384'),
+                   model_uri=SLSA.inTotoDigestSet__sha3_384, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{96}$'))
+
+slots.inTotoDigestSet__sha3_512 = Slot(uri=IN_TOTO_LINKML.sha3_512, name="inTotoDigestSet__sha3_512", curie=IN_TOTO_LINKML.curie('sha3_512'),
+                   model_uri=SLSA.inTotoDigestSet__sha3_512, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{128}$'))
+
+slots.inTotoDigestSet__shake128 = Slot(uri=IN_TOTO_LINKML.shake128, name="inTotoDigestSet__shake128", curie=IN_TOTO_LINKML.curie('shake128'),
+                   model_uri=SLSA.inTotoDigestSet__shake128, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}([a-f0-9]{2})*$'))
+
+slots.inTotoDigestSet__shake256 = Slot(uri=IN_TOTO_LINKML.shake256, name="inTotoDigestSet__shake256", curie=IN_TOTO_LINKML.curie('shake256'),
+                   model_uri=SLSA.inTotoDigestSet__shake256, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}([a-f0-9]{2})*$'))
+
+slots.inTotoDigestSet__blake2b = Slot(uri=IN_TOTO_LINKML.blake2b, name="inTotoDigestSet__blake2b", curie=IN_TOTO_LINKML.curie('blake2b'),
+                   model_uri=SLSA.inTotoDigestSet__blake2b, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}([a-f0-9]{2}){0,32}$'))
+
+slots.inTotoDigestSet__blake2s = Slot(uri=IN_TOTO_LINKML.blake2s, name="inTotoDigestSet__blake2s", curie=IN_TOTO_LINKML.curie('blake2s'),
+                   model_uri=SLSA.inTotoDigestSet__blake2s, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}$'))
+
+slots.inTotoDigestSet__ripemd160 = Slot(uri=IN_TOTO_LINKML.ripemd160, name="inTotoDigestSet__ripemd160", curie=IN_TOTO_LINKML.curie('ripemd160'),
+                   model_uri=SLSA.inTotoDigestSet__ripemd160, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{40}$'))
+
+slots.inTotoDigestSet__sm3 = Slot(uri=IN_TOTO_LINKML.sm3, name="inTotoDigestSet__sm3", curie=IN_TOTO_LINKML.curie('sm3'),
+                   model_uri=SLSA.inTotoDigestSet__sm3, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}$'))
+
+slots.inTotoDigestSet__gost = Slot(uri=IN_TOTO_LINKML.gost, name="inTotoDigestSet__gost", curie=IN_TOTO_LINKML.curie('gost'),
+                   model_uri=SLSA.inTotoDigestSet__gost, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}([a-f0-9]{64})?$'))
+
+slots.inTotoDigestSet__sha1 = Slot(uri=IN_TOTO_LINKML.sha1, name="inTotoDigestSet__sha1", curie=IN_TOTO_LINKML.curie('sha1'),
+                   model_uri=SLSA.inTotoDigestSet__sha1, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{40}$'))
+
+slots.inTotoDigestSet__md5 = Slot(uri=IN_TOTO_LINKML.md5, name="inTotoDigestSet__md5", curie=IN_TOTO_LINKML.curie('md5'),
+                   model_uri=SLSA.inTotoDigestSet__md5, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{32}$'))
+
+slots.inTotoDigestSet__dir_hash = Slot(uri=IN_TOTO_LINKML.dir_hash, name="inTotoDigestSet__dir_hash", curie=IN_TOTO_LINKML.curie('dir_hash'),
+                   model_uri=SLSA.inTotoDigestSet__dir_hash, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{64}$'))
+
+slots.inTotoDigestSet__git_commit = Slot(uri=IN_TOTO_LINKML.git_commit, name="inTotoDigestSet__git_commit", curie=IN_TOTO_LINKML.curie('git_commit'),
+                   model_uri=SLSA.inTotoDigestSet__git_commit, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{40}([a-f0-9]{24})?$'))
+
+slots.inTotoDigestSet__git_tree = Slot(uri=IN_TOTO_LINKML.git_tree, name="inTotoDigestSet__git_tree", curie=IN_TOTO_LINKML.curie('git_tree'),
+                   model_uri=SLSA.inTotoDigestSet__git_tree, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{40}([a-f0-9]{24})?$'))
+
+slots.inTotoDigestSet__git_blob = Slot(uri=IN_TOTO_LINKML.git_blob, name="inTotoDigestSet__git_blob", curie=IN_TOTO_LINKML.curie('git_blob'),
+                   model_uri=SLSA.inTotoDigestSet__git_blob, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{40}([a-f0-9]{24})?$'))
+
+slots.inTotoDigestSet__git_tag = Slot(uri=IN_TOTO_LINKML.git_tag, name="inTotoDigestSet__git_tag", curie=IN_TOTO_LINKML.curie('git_tag'),
+                   model_uri=SLSA.inTotoDigestSet__git_tag, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[a-f0-9]{40}([a-f0-9]{24})?$'))
+
+slots.inTotoDigestSet__additional_digests = Slot(uri=IN_TOTO_LINKML.additional_digests, name="inTotoDigestSet__additional_digests", curie=IN_TOTO_LINKML.curie('additional_digests'),
+                   model_uri=SLSA.inTotoDigestSet__additional_digests, domain=None, range=Optional[Union[Union[dict, InTotoAdditionalDigest], list[Union[dict, InTotoAdditionalDigest]]]])
+
+slots.inTotoAdditionalDigest__algorithm = Slot(uri=SPDX.algorithm, name="inTotoAdditionalDigest__algorithm", curie=SPDX.curie('algorithm'),
+                   model_uri=SLSA.inTotoAdditionalDigest__algorithm, domain=None, range=str,
+                   pattern=re.compile(r'^[a-z][A-Za-z0-9_.:-]*$'))
+
+slots.inTotoAdditionalDigest__value = Slot(uri=IN_TOTO_LINKML.value, name="inTotoAdditionalDigest__value", curie=IN_TOTO_LINKML.curie('value'),
+                   model_uri=SLSA.inTotoAdditionalDigest__value, domain=None, range=str,
+                   pattern=re.compile(r'^\S+$'))
+
+slots.inTotoAnnotation__annotation_key = Slot(uri=IN_TOTO_LINKML.annotation_key, name="inTotoAnnotation__annotation_key", curie=IN_TOTO_LINKML.curie('annotation_key'),
+                   model_uri=SLSA.inTotoAnnotation__annotation_key, domain=None, range=str)
+
+slots.inTotoAnnotation__annotation_values = Slot(uri=IN_TOTO_LINKML.annotation_values, name="inTotoAnnotation__annotation_values", curie=IN_TOTO_LINKML.curie('annotation_values'),
+                   model_uri=SLSA.inTotoAnnotation__annotation_values, domain=None, range=Optional[Union[str, list[str]]])
+
+slots.inTotoResourceDescriptor__resource_name = Slot(uri=IN_TOTO_LINKML.resource_name, name="inTotoResourceDescriptor__resource_name", curie=IN_TOTO_LINKML.curie('resource_name'),
+                   model_uri=SLSA.inTotoResourceDescriptor__resource_name, domain=None, range=Optional[str])
+
+slots.inTotoResourceDescriptor__download_location = Slot(uri=IN_TOTO_LINKML.download_location, name="inTotoResourceDescriptor__download_location", curie=IN_TOTO_LINKML.curie('download_location'),
+                   model_uri=SLSA.inTotoResourceDescriptor__download_location, domain=None, range=Optional[Union[str, InTotoResourceUri]])
+
+slots.inTotoResourceDescriptor__media_type = Slot(uri=DCAT.mediaType, name="inTotoResourceDescriptor__media_type", curie=DCAT.curie('mediaType'),
+                   model_uri=SLSA.inTotoResourceDescriptor__media_type, domain=None, range=Optional[str])
+
+slots.inTotoResourceDescriptor__content = Slot(uri=IN_TOTO_LINKML.content, name="inTotoResourceDescriptor__content", curie=IN_TOTO_LINKML.curie('content'),
+                   model_uri=SLSA.inTotoResourceDescriptor__content, domain=None, range=Optional[str],
+                   pattern=re.compile(r'^[A-Za-z0-9+/_-]+={0,2}$'))
+
+slots.inTotoResourceDescriptor__annotations = Slot(uri=IN_TOTO_LINKML.annotations, name="inTotoResourceDescriptor__annotations", curie=IN_TOTO_LINKML.curie('annotations'),
+                   model_uri=SLSA.inTotoResourceDescriptor__annotations, domain=None, range=Optional[Union[Union[dict, InTotoAnnotation], list[Union[dict, InTotoAnnotation]]]])
+
+slots.inTotoStatement__statement_type = Slot(uri=IN_TOTO_LINKML.statement_type, name="inTotoStatement__statement_type", curie=IN_TOTO_LINKML.curie('statement_type'),
+                   model_uri=SLSA.inTotoStatement__statement_type, domain=None, range=Union[str, InTotoTypeUri],
+                   pattern=re.compile(r'^https://in-toto\.io/Statement/v1$'))
+
+slots.inTotoStatement__subject = Slot(uri=IN_TOTO_LINKML.subject, name="inTotoStatement__subject", curie=IN_TOTO_LINKML.curie('subject'),
+                   model_uri=SLSA.inTotoStatement__subject, domain=None, range=Union[Union[dict, InTotoStatementSubject], list[Union[dict, InTotoStatementSubject]]])
+
+slots.inTotoStatement__predicate_type = Slot(uri=IN_TOTO_LINKML.predicate_type, name="inTotoStatement__predicate_type", curie=IN_TOTO_LINKML.curie('predicate_type'),
+                   model_uri=SLSA.inTotoStatement__predicate_type, domain=None, range=Union[str, InTotoTypeUri])
+
+slots.inTotoPredicate__predicate_kind = Slot(uri=IN_TOTO_LINKML.predicate_kind, name="inTotoPredicate__predicate_kind", curie=IN_TOTO_LINKML.curie('predicate_kind'),
+                   model_uri=SLSA.inTotoPredicate__predicate_kind, domain=None, range=Optional[str])
+
+slots.SlsaVerificationSummary_resource_uri = Slot(uri=IN_TOTO_LINKML.resource_uri, name="SlsaVerificationSummary_resource_uri", curie=IN_TOTO_LINKML.curie('resource_uri'),
+                   model_uri=SLSA.SlsaVerificationSummary_resource_uri, domain=SlsaVerificationSummary, range=Union[str, InTotoResourceUri])
+
+slots.SlsaVerificationSummaryPolicy_resource_uri = Slot(uri=IN_TOTO_LINKML.resource_uri, name="SlsaVerificationSummaryPolicy_resource_uri", curie=IN_TOTO_LINKML.curie('resource_uri'),
+                   model_uri=SLSA.SlsaVerificationSummaryPolicy_resource_uri, domain=SlsaVerificationSummaryPolicy, range=Union[str, InTotoResourceUri])
+
+slots.SlsaVerificationSummaryPolicy_digest = Slot(uri=IN_TOTO_LINKML.digest, name="SlsaVerificationSummaryPolicy_digest", curie=IN_TOTO_LINKML.curie('digest'),
                    model_uri=SLSA.SlsaVerificationSummaryPolicy_digest, domain=SlsaVerificationSummaryPolicy, range=Optional[Union[dict, InTotoDigestSet]])
 
-slots.SlsaVerificationSummaryInputAttestation_digest = Slot(uri=SLSA.digest, name="SlsaVerificationSummaryInputAttestation_digest", curie=SLSA.curie('digest'),
+slots.SlsaVerificationSummaryInputAttestation_digest = Slot(uri=IN_TOTO_LINKML.digest, name="SlsaVerificationSummaryInputAttestation_digest", curie=IN_TOTO_LINKML.curie('digest'),
                    model_uri=SLSA.SlsaVerificationSummaryInputAttestation_digest, domain=SlsaVerificationSummaryInputAttestation, range=Union[dict, InTotoDigestSet])
 
-slots.SlsaVerificationSummaryInputAttestation_resource_uri = Slot(uri=SLSA.resource_uri, name="SlsaVerificationSummaryInputAttestation_resource_uri", curie=SLSA.curie('resource_uri'),
-                   model_uri=SLSA.SlsaVerificationSummaryInputAttestation_resource_uri, domain=SlsaVerificationSummaryInputAttestation, range=Optional[Union[str, URI]])
+slots.SlsaVerificationSummaryInputAttestation_resource_uri = Slot(uri=IN_TOTO_LINKML.resource_uri, name="SlsaVerificationSummaryInputAttestation_resource_uri", curie=IN_TOTO_LINKML.curie('resource_uri'),
+                   model_uri=SLSA.SlsaVerificationSummaryInputAttestation_resource_uri, domain=SlsaVerificationSummaryInputAttestation, range=Optional[Union[str, InTotoResourceUri]])
 
 slots.SlsaSourceProvenance_revision = Slot(uri=SLSA.revision, name="SlsaSourceProvenance_revision", curie=SLSA.curie('revision'),
                    model_uri=SLSA.SlsaSourceProvenance_revision, domain=SlsaSourceProvenance, range=Union[str, SlsaSourceRevisionRevisionId])
+
+slots.InTotoStatementSubject_digest = Slot(uri=IN_TOTO_LINKML.digest, name="InTotoStatementSubject_digest", curie=IN_TOTO_LINKML.curie('digest'),
+                   model_uri=SLSA.InTotoStatementSubject_digest, domain=InTotoStatementSubject, range=Union[dict, InTotoDigestSet])

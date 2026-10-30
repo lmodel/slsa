@@ -3,520 +3,531 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix slsa: <https://w3id.org/lmodel/slsa/> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-slsa:InTotoAdditionalDigest a sh:NodeShape ;
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+<https://w3id.org/lmodel/in-toto/InTotoAdditionalDigest> a sh:NodeShape ;
 	rdfs:comment "One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n256 ;
-	sh:property _:c14n108 , _:c14n193 ;
-	sh:targetClass slsa:InTotoAdditionalDigest .
-slsa:InTotoAnnotation a sh:NodeShape ;
+	sh:ignoredProperties _:c14n11 ;
+	sh:property _:c14n121 , _:c14n233 ;
+	sh:targetClass <https://w3id.org/lmodel/in-toto/InTotoAdditionalDigest> .
+<https://w3id.org/lmodel/in-toto/InTotoAnnotation> a sh:NodeShape ;
 	rdfs:comment "One vendor-specific annotation on a resource descriptor: a key and its values." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n171 ;
-	sh:property _:c14n174 , _:c14n225 ;
-	sh:targetClass slsa:InTotoAnnotation .
-slsa:InTotoDigestSet a sh:NodeShape ;
+	sh:ignoredProperties _:c14n90 ;
+	sh:property _:c14n139 , _:c14n53 ;
+	sh:targetClass <https://w3id.org/lmodel/in-toto/InTotoAnnotation> .
+<https://w3id.org/lmodel/in-toto/InTotoDigestSet> a sh:NodeShape ;
 	rdfs:comment "A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n222 ;
-	sh:property _:c14n1 , _:c14n101 , _:c14n110 , _:c14n121 , _:c14n128 , _:c14n155 , _:c14n172 , _:c14n183 , _:c14n186 , _:c14n199 , _:c14n213 , _:c14n219 , _:c14n235 , _:c14n238 , _:c14n25 , _:c14n259 , _:c14n272 , _:c14n273 , _:c14n36 , _:c14n38 , _:c14n47 , _:c14n60 , _:c14n78 , _:c14n85 , _:c14n96 ;
-	sh:targetClass slsa:InTotoDigestSet .
-slsa:InTotoResourceDescriptor a sh:NodeShape ;
+	sh:ignoredProperties _:c14n177 ;
+	sh:property _:c14n113 , _:c14n116 , _:c14n120 , _:c14n138 , _:c14n149 , _:c14n15 , _:c14n159 , _:c14n170 , _:c14n172 , _:c14n184 , _:c14n186 , _:c14n190 , _:c14n198 , _:c14n202 , _:c14n228 , _:c14n232 , _:c14n239 , _:c14n242 , _:c14n243 , _:c14n258 , _:c14n262 , _:c14n44 , _:c14n5 , _:c14n78 , _:c14n82 ;
+	sh:targetClass <https://w3id.org/lmodel/in-toto/InTotoDigestSet> .
+<https://w3id.org/lmodel/in-toto/InTotoPredicate> a sh:NodeShape ;
+	rdfs:comment "The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind." ;
+	sh:closed false ;
+	sh:ignoredProperties _:c14n142 ;
+	sh:property _:c14n187 ;
+	sh:targetClass <https://w3id.org/lmodel/in-toto/InTotoPredicate> .
+<https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> a sh:NodeShape ;
 	rdfs:comment "A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n79 ;
-	sh:property _:c14n114 , _:c14n142 , _:c14n160 , _:c14n17 , _:c14n177 , _:c14n187 , _:c14n188 ;
-	sh:targetClass slsa:InTotoResourceDescriptor .
-slsa:InTotoStatement a sh:NodeShape ;
+	sh:ignoredProperties _:c14n101 ;
+	sh:property _:c14n112 , _:c14n13 , _:c14n148 , _:c14n152 , _:c14n176 , _:c14n212 , _:c14n41 ;
+	sh:targetClass <https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> .
+<https://w3id.org/lmodel/in-toto/InTotoStatement> a sh:NodeShape ;
 	rdfs:comment "The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n248 ;
-	sh:property _:c14n120 , _:c14n122 , _:c14n173 , _:c14n176 , _:c14n210 , _:c14n57 , _:c14n9 ;
-	sh:targetClass slsa:InTotoStatement .
-slsa:InTotoStatementSubject a sh:NodeShape ;
+	sh:ignoredProperties _:c14n221 ;
+	sh:property _:c14n0 , _:c14n195 , _:c14n36 , _:c14n73 ;
+	sh:targetClass <https://w3id.org/lmodel/in-toto/InTotoStatement> .
+<https://w3id.org/lmodel/in-toto/InTotoStatementSubject> a sh:NodeShape ;
 	rdfs:comment "One artifact an in-toto statement is about: a resource descriptor that carries a digest." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n182 ;
-	sh:property _:c14n113 , _:c14n20 , _:c14n202 , _:c14n33 , _:c14n63 , _:c14n76 , _:c14n90 ;
-	sh:targetClass slsa:InTotoStatementSubject .
+	sh:ignoredProperties _:c14n216 ;
+	sh:property _:c14n124 , _:c14n155 , _:c14n245 , _:c14n46 , _:c14n52 , _:c14n76 , _:c14n85 ;
+	sh:targetClass <https://w3id.org/lmodel/in-toto/InTotoStatementSubject> .
 slsa:SlsaAdoptionMetadata a sh:NodeShape ;
 	rdfs:comment "The adoption challenges a deployment meets and the strategies it applies, from the study's taxonomy." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n14 ;
-	sh:property _:c14n22 , _:c14n59 ;
+	sh:ignoredProperties _:c14n19 ;
+	sh:property _:c14n30 , _:c14n63 ;
 	sh:targetClass slsa:SlsaAdoptionMetadata .
 slsa:SlsaBranch a sh:NodeShape ;
 	rdfs:comment "A named reference that moves to track a line of development." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n77 ;
-	sh:property _:c14n10 , _:c14n12 , _:c14n169 , _:c14n24 , _:c14n97 ;
+	sh:ignoredProperties _:c14n81 ;
+	sh:property _:c14n14 , _:c14n17 , _:c14n171 , _:c14n34 , _:c14n98 ;
 	sh:targetClass slsa:SlsaBranch .
 slsa:SlsaBuildDefinition a sh:NodeShape ;
 	rdfs:comment "The inputs to a build, in enough detail to initialize it and begin execution; the builder vouches for their accuracy." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n39 ;
-	sh:property _:c14n103 , _:c14n104 , _:c14n223 , _:c14n251 , _:c14n31 , _:c14n6 , _:c14n70 ;
+	sh:ignoredProperties _:c14n45 ;
+	sh:property _:c14n102 , _:c14n103 , _:c14n143 , _:c14n214 , _:c14n241 , _:c14n74 , _:c14n9 ;
 	sh:targetClass slsa:SlsaBuildDefinition .
 slsa:SlsaBuildEnvironmentAttestation a sh:NodeShape ;
 	rdfs:comment "Evidence of the state of a build environment when a build was dispatched to it: the image it came from and the measurements taken at boot." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n137 ;
-	sh:property _:c14n150 , _:c14n167 , _:c14n204 , _:c14n89 , _:c14n93 ;
+	sh:ignoredProperties _:c14n136 ;
+	sh:property _:c14n150 , _:c14n168 , _:c14n24 , _:c14n91 , _:c14n95 ;
 	sh:targetClass slsa:SlsaBuildEnvironmentAttestation .
 slsa:SlsaBuildImage a sh:NodeShape ;
 	rdfs:comment "The template a build environment is instantiated from, such as a VM or container image: root filesystem, guest OS and packages, build executor and build agent." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n234 ;
-	sh:property _:c14n170 , _:c14n263 , _:c14n265 , _:c14n8 ;
+	sh:ignoredProperties _:c14n225 ;
+	sh:property _:c14n12 , _:c14n173 , _:c14n253 , _:c14n257 ;
 	sh:targetClass slsa:SlsaBuildImage .
 slsa:SlsaBuildImageProducer a sh:NodeShape ;
 	rdfs:comment "The party that creates and distributes build images; the hosted build platform itself, or a third party in a bring-your-own-image setting." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n68 ;
-	sh:property _:c14n111 , _:c14n151 ;
+	sh:ignoredProperties _:c14n70 ;
+	sh:property _:c14n109 , _:c14n151 ;
 	sh:targetClass slsa:SlsaBuildImageProducer .
 slsa:SlsaBuildMetadata a sh:NodeShape ;
 	rdfs:comment "Metadata about one execution of a build: its identifier and when it started and finished." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n135 ;
-	sh:property _:c14n209 , _:c14n261 , _:c14n87 ;
+	sh:ignoredProperties _:c14n134 ;
+	sh:property _:c14n126 , _:c14n88 , _:c14n93 ;
 	sh:targetClass slsa:SlsaBuildMetadata .
 slsa:SlsaBuildParameter a sh:NodeShape ;
 	rdfs:comment "One named input to a build, with a string value." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n226 ;
-	sh:property _:c14n262 , _:c14n28 ;
+	sh:ignoredProperties _:c14n219 ;
+	sh:property _:c14n252 , _:c14n38 ;
 	sh:targetClass slsa:SlsaBuildParameter .
 slsa:SlsaBuildPlatform a sh:NodeShape ;
 	rdfs:comment "The system that runs builds and records their provenance: the transitive closure of software, hardware, people and organizations trusted to do so. Provenance names it as the builder." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n42 ;
-	sh:property _:c14n105 , _:c14n11 , _:c14n205 , _:c14n32 , _:c14n34 ;
+	sh:ignoredProperties _:c14n49 ;
+	sh:property _:c14n104 , _:c14n16 , _:c14n40 , _:c14n42 , _:c14n8 ;
 	sh:targetClass slsa:SlsaBuildPlatform .
 slsa:SlsaBuildProvenance a sh:NodeShape ;
 	rdfs:comment "The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build met their expectations and others can rebuild it." ;
 	sh:closed true ;
 	sh:ignoredProperties _:c14n192 ;
-	sh:property _:c14n112 , _:c14n16 , _:c14n246 ;
+	sh:property _:c14n23 , _:c14n236 , _:c14n256 ;
 	sh:targetClass slsa:SlsaBuildProvenance .
 slsa:SlsaComponentVersion a sh:NodeShape ;
 	rdfs:comment "The version of one named component of a platform." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n132 ;
-	sh:property _:c14n157 , _:c14n236 ;
+	sh:ignoredProperties _:c14n128 ;
+	sh:property _:c14n157 , _:c14n226 ;
 	sh:targetClass slsa:SlsaComponentVersion .
 slsa:SlsaConsumer a sh:NodeShape ;
 	rdfs:comment "A party that uses software a producer provides, verifying its provenance itself or through a verifier." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n67 ;
-	sh:property _:c14n175 , _:c14n81 ;
+	sh:ignoredProperties _:c14n69 ;
+	sh:property _:c14n179 , _:c14n83 ;
 	sh:targetClass slsa:SlsaConsumer .
 slsa:SlsaControlPlane a sh:NodeShape ;
 	rdfs:comment "The component of a build platform that orchestrates each build and generates its provenance, outside the tenant's control." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n58 ;
-	sh:property _:c14n64 ;
+	sh:ignoredProperties _:c14n62 ;
+	sh:property _:c14n66 ;
 	sh:targetClass slsa:SlsaControlPlane .
 slsa:SlsaDependencyInventory a sh:NodeShape ;
 	rdfs:comment "The inventory of every third-party build dependency, direct and transitive, of one artifact version." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n27 ;
-	sh:property _:c14n15 , _:c14n229 , _:c14n233 ;
+	sh:ignoredProperties _:c14n37 ;
+	sh:property _:c14n106 , _:c14n119 , _:c14n20 ;
 	sh:targetClass slsa:SlsaDependencyInventory .
 slsa:SlsaDependencyLevelCount a sh:NodeShape ;
 	rdfs:comment "The number of an artifact's transitive dependencies verified at one level, each counted once per track at its highest level." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n26 ;
-	sh:property _:c14n207 , _:c14n247 ;
+	sh:ignoredProperties _:c14n35 ;
+	sh:property _:c14n204 , _:c14n237 ;
 	sh:targetClass slsa:SlsaDependencyLevelCount .
 slsa:SlsaDocument a sh:NodeShape ;
 	rdfs:comment "A document that holds SLSA attestations and the parties, platforms, packages, repositories and images they concern." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n75 ;
-	sh:property _:c14n0 , _:c14n131 , _:c14n144 , _:c14n18 , _:c14n184 , _:c14n190 , _:c14n191 , _:c14n197 , _:c14n206 , _:c14n216 , _:c14n267 , _:c14n5 , _:c14n55 ;
+	sh:ignoredProperties _:c14n80 ;
+	sh:property _:c14n1 , _:c14n127 , _:c14n141 , _:c14n183 , _:c14n185 , _:c14n188 , _:c14n191 , _:c14n196 , _:c14n203 , _:c14n210 , _:c14n26 , _:c14n260 , _:c14n7 ;
 	sh:targetClass slsa:SlsaDocument .
 slsa:SlsaInfrastructureProvider a sh:NodeShape ;
 	rdfs:comment "A party that provides software or services to the other roles, such as a package registry's or a build platform's maintainers." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n239 ;
-	sh:property _:c14n232 , _:c14n4 ;
+	sh:ignoredProperties _:c14n229 ;
+	sh:property _:c14n224 , _:c14n6 ;
 	sh:targetClass slsa:SlsaInfrastructureProvider .
 slsa:SlsaMeasurement a sh:NodeShape ;
 	rdfs:comment "The digest of one component or state of a build environment, to compare with its reference value." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n13 ;
-	sh:property _:c14n181 , _:c14n41 ;
+	sh:ignoredProperties _:c14n18 ;
+	sh:property _:c14n200 , _:c14n48 ;
 	sh:targetClass slsa:SlsaMeasurement .
 slsa:SlsaNamedReference a sh:NodeShape ;
 	rdfs:comment "A user-friendly name for a revision in a repository, such as main or v1.2.3; reference_type says whether it is a branch or a tag." ;
 	sh:closed true ;
 	sh:ignoredProperties _:c14n154 ;
-	sh:property _:c14n116 , _:c14n119 , _:c14n214 , _:c14n215 , _:c14n69 ;
+	sh:property _:c14n111 , _:c14n118 , _:c14n208 , _:c14n209 , _:c14n72 ;
 	sh:targetClass slsa:SlsaNamedReference .
 slsa:SlsaPackage a sh:NodeShape ;
 	rdfs:comment "A unit of software distributed under a package name, which is the primary security boundary SLSA protects. Its artifacts are the outputs of builds." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n30 ;
-	sh:property _:c14n168 , _:c14n180 , _:c14n212 , _:c14n243 , _:c14n40 , _:c14n84 ;
+	sh:ignoredProperties _:c14n39 ;
+	sh:property _:c14n169 , _:c14n174 , _:c14n182 , _:c14n205 , _:c14n234 , _:c14n47 ;
 	sh:targetClass slsa:SlsaPackage .
 slsa:SlsaPackageRegistry a sh:NodeShape ;
 	rdfs:comment "A distribution platform that resolves package names to immutable package artifacts within an ecosystem." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n164 ;
-	sh:property _:c14n66 , _:c14n92 ;
+	sh:ignoredProperties _:c14n165 ;
+	sh:property _:c14n68 , _:c14n94 ;
 	sh:targetClass slsa:SlsaPackageRegistry .
 slsa:SlsaParty a sh:NodeShape ;
 	rdfs:comment "A person or organization that takes part in a software supply chain, in one of the roles SLSA names." ;
 	sh:closed false ;
-	sh:ignoredProperties _:c14n52 ;
-	sh:property _:c14n162 , _:c14n237 ;
+	sh:ignoredProperties _:c14n58 ;
+	sh:property _:c14n161 , _:c14n227 ;
 	sh:targetClass slsa:SlsaParty .
 slsa:SlsaPredicate a sh:NodeShape ;
-	rdfs:comment "The base of every predicate this schema models; predicate_kind names the concrete kind." ;
+	rdfs:comment "The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind." ;
 	sh:closed false ;
-	sh:ignoredProperties _:c14n94 ;
-	sh:property _:c14n73 ;
+	sh:ignoredProperties _:c14n96 ;
+	sh:property _:c14n129 ;
 	sh:targetClass slsa:SlsaPredicate .
 slsa:SlsaProducer a sh:NodeShape ;
 	rdfs:comment "A party that creates software and provides it to others, choosing a build platform and distributing provenance." ;
 	sh:closed true ;
 	sh:ignoredProperties _:c14n86 ;
-	sh:property _:c14n240 , _:c14n65 , _:c14n72 ;
+	sh:property _:c14n230 , _:c14n67 , _:c14n77 ;
 	sh:targetClass slsa:SlsaProducer .
 slsa:SlsaRunDetails a sh:NodeShape ;
 	rdfs:comment "What is specific to one execution of a build: the platform that ran it, metadata about the run and its by-products." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n141 ;
-	sh:property _:c14n145 , _:c14n178 , _:c14n268 ;
+	sh:ignoredProperties _:c14n140 ;
+	sh:property _:c14n180 , _:c14n246 , _:c14n261 ;
 	sh:targetClass slsa:SlsaRunDetails .
 slsa:SlsaSourceControlSystem a sh:NodeShape ;
 	rdfs:comment "The platform or services that host a source repository and enforce its organization's policies on authentication, authorization and change management." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n43 ;
-	sh:property _:c14n21 ;
+	sh:ignoredProperties _:c14n50 ;
+	sh:property _:c14n29 ;
 	sh:targetClass slsa:SlsaSourceControlSystem .
 slsa:SlsaSourceProvenance a sh:NodeShape ;
 	rdfs:comment "Evidence from an SCS of how a revision came to exist and which technical controls were enforced when it did." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n115 ;
-	sh:property _:c14n106 , _:c14n139 , _:c14n54 ;
+	sh:ignoredProperties _:c14n110 ;
+	sh:property _:c14n105 , _:c14n137 , _:c14n238 ;
 	sh:targetClass slsa:SlsaSourceProvenance .
 slsa:SlsaSourceRepository a sh:NodeShape ;
 	rdfs:comment "A self-contained unit that holds a set of files, their revision history and metadata such as branches and tags." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n165 ;
-	sh:property _:c14n156 , _:c14n224 ;
+	sh:ignoredProperties _:c14n166 ;
+	sh:property _:c14n156 , _:c14n215 ;
 	sh:targetClass slsa:SlsaSourceRepository .
 slsa:SlsaSourceRevision a sh:NodeShape ;
 	rdfs:comment "A logically immutable snapshot of a repository's tracked files, with its version-control metadata: author, time and parent revisions." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n203 ;
-	sh:property _:c14n161 , _:c14n23 , _:c14n266 , _:c14n271 , _:c14n48 , _:c14n71 , _:c14n82 ;
+	sh:ignoredProperties _:c14n201 ;
+	sh:property _:c14n160 , _:c14n259 , _:c14n265 , _:c14n32 , _:c14n55 , _:c14n75 , _:c14n84 ;
 	sh:targetClass slsa:SlsaSourceRevision .
+slsa:SlsaStatement a sh:NodeShape ;
+	rdfs:comment "An in-toto statement with the fields this schema adds: where the signed attestation is stored, the tool that signed it and the transparency log entry that records the signature." ;
+	sh:closed true ;
+	sh:ignoredProperties _:c14n132 ;
+	sh:property _:c14n178 , _:c14n206 , _:c14n207 , _:c14n255 , _:c14n31 , _:c14n60 , _:c14n71 ;
+	sh:targetClass slsa:SlsaStatement .
 slsa:SlsaTag a sh:NodeShape ;
 	rdfs:comment "A named reference meant never to move once created." ;
 	sh:closed true ;
 	sh:ignoredProperties _:c14n3 ;
-	sh:property _:c14n2 , _:c14n220 , _:c14n255 , _:c14n51 , _:c14n95 ;
+	sh:property _:c14n2 , _:c14n213 , _:c14n248 , _:c14n57 , _:c14n97 ;
 	sh:targetClass slsa:SlsaTag .
 slsa:SlsaVerificationSummary a sh:NodeShape ;
 	rdfs:comment "The predicate in which a verifier records that it evaluated artifacts against a policy and the SLSA levels they met, so consumers can rely on the verifier instead of reading every underlying attestation." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n88 ;
-	sh:property _:c14n107 , _:c14n126 , _:c14n138 , _:c14n148 , _:c14n201 , _:c14n230 , _:c14n257 , _:c14n35 , _:c14n46 , _:c14n53 , _:c14n99 ;
+	sh:ignoredProperties _:c14n89 ;
+	sh:property _:c14n107 , _:c14n147 , _:c14n199 , _:c14n21 , _:c14n222 , _:c14n249 , _:c14n250 , _:c14n54 , _:c14n59 , _:c14n92 , _:c14n99 ;
 	sh:targetClass slsa:SlsaVerificationSummary .
 slsa:SlsaVerificationSummaryInputAttestation a sh:NodeShape ;
 	rdfs:comment "One attestation a verifier consulted: a resource descriptor that carries the attestation's digest." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n133 ;
-	sh:property _:c14n125 , _:c14n129 , _:c14n143 , _:c14n152 , _:c14n158 , _:c14n218 , _:c14n98 ;
+	sh:ignoredProperties _:c14n130 ;
+	sh:property _:c14n114 , _:c14n175 , _:c14n217 , _:c14n22 , _:c14n4 , _:c14n43 , _:c14n87 ;
 	sh:targetClass slsa:SlsaVerificationSummaryInputAttestation .
 slsa:SlsaVerificationSummaryPolicy a sh:NodeShape ;
 	rdfs:comment "The policy a verification summary applied: a resource descriptor that names the policy by URI." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n118 ;
-	sh:property _:c14n102 , _:c14n140 , _:c14n149 , _:c14n189 , _:c14n200 , _:c14n228 , _:c14n249 ;
+	sh:ignoredProperties _:c14n117 ;
+	sh:property _:c14n133 , _:c14n146 , _:c14n162 , _:c14n164 , _:c14n189 , _:c14n25 , _:c14n28 ;
 	sh:targetClass slsa:SlsaVerificationSummaryPolicy .
 slsa:SlsaVerifier a sh:NodeShape ;
 	rdfs:comment "A party that inspects provenance or other attestations and decides whether an artifact is authentic." ;
 	sh:closed true ;
-	sh:ignoredProperties _:c14n196 ;
-	sh:property _:c14n136 , _:c14n146 , _:c14n166 , _:c14n44 ;
+	sh:ignoredProperties _:c14n194 ;
+	sh:property _:c14n135 , _:c14n144 , _:c14n167 , _:c14n51 ;
 	sh:targetClass slsa:SlsaVerifier .
-_:c14n0 sh:class slsa:SlsaBuildPlatform ;
+_:c14n0 sh:class <https://w3id.org/lmodel/in-toto/InTotoPredicate> ;
+	sh:description "The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate> .
+_:c14n1 sh:class slsa:SlsaBuildPlatform ;
 	sh:description "The build platforms." ;
 	sh:nodeKind sh:IRI ;
 	sh:order 2 ;
 	sh:path slsa:build_platforms .
-_:c14n1 sh:datatype xsd:string ;
-	sh:description "The SM3 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 15 ;
-	sh:path slsa:sm3 ;
-	sh:pattern "^[a-f0-9]{64}$" .
-_:c14n10 sh:datatype xsd:string ;
-	sh:description "The kind of named reference, one of this class's descendants." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 2 ;
-	sh:path slsa:reference_type .
-_:c14n100 rdf:first slsa:dependency_levels ;
-	rdf:rest _:c14n50 .
-_:c14n101 sh:datatype xsd:string ;
-	sh:description "The SHA-224 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 1 ;
-	sh:path slsa:sha224 ;
-	sh:pattern "^[a-f0-9]{56}$" .
-_:c14n102 sh:datatype xsd:string ;
-	sh:description "The IANA media type of the resource's content." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 4 ;
-	sh:path slsa:media_type .
-_:c14n103 sh:description "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1." ;
+_:c14n10 rdf:first "SLSA_DEPENDENCY_LEVEL_4" ;
+	rdf:rest rdf:nil .
+_:c14n100 rdf:first slsa:transparency_log_entry ;
+	rdf:rest rdf:nil .
+_:c14n101 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n102 sh:description "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 0 ;
 	sh:path slsa:build_type .
-_:c14n104 sh:datatype xsd:boolean ;
+_:c14n103 sh:datatype xsd:boolean ;
 	sh:description "Whether the build could reach only the dependencies it declared, with no other network or filesystem access." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 4 ;
 	sh:path slsa:hermetic .
-_:c14n105 sh:datatype xsd:boolean ;
+_:c14n104 sh:datatype xsd:boolean ;
 	sh:description "Whether the platform is a hosted service on shared or dedicated infrastructure rather than an individual's workstation." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 3 ;
 	sh:path slsa:hosted .
-_:c14n106 sh:datatype xsd:string ;
+_:c14n105 sh:datatype xsd:string ;
 	sh:description "The technical controls the SCS enforced when the revision was created, as the organization documents them." ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:controls_enforced .
+_:c14n106 sh:class <https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> ;
+	sh:description "The dependencies, each as a resource descriptor." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:dependencies .
 _:c14n107 sh:class slsa:SlsaDependencyLevelCount ;
 	sh:description "How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 8 ;
 	sh:path slsa:dependency_levels .
-_:c14n108 sh:datatype xsd:string ;
-	sh:description "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 0 ;
-	sh:path slsa:algorithm ;
-	sh:pattern "^[a-z][A-Za-z0-9_]*$" .
-_:c14n109 rdf:first slsa:component_versions ;
-	rdf:rest _:c14n194 .
-_:c14n11 sh:description "The URI that identifies the platform and determines its SLSA Build level." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 1 ;
-	sh:path slsa:builder_id .
-_:c14n110 sh:datatype xsd:string ;
-	sh:description "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 19 ;
-	sh:path slsa:dir_hash ;
-	sh:pattern "^[a-f0-9]{64}$" .
-_:c14n111 sh:datatype xsd:string ;
+_:c14n108 rdf:first slsa:component_versions ;
+	rdf:rest _:c14n193 .
+_:c14n109 sh:datatype xsd:string ;
 	sh:description "The party's name." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:party_name .
-_:c14n112 sh:datatype xsd:string ;
-	sh:description "The kind of predicate, one of this class's descendants." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 2 ;
-	sh:path slsa:predicate_kind .
-_:c14n113 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 0 ;
-	sh:path slsa:resource_uri .
-_:c14n114 sh:class slsa:InTotoAnnotation ;
-	sh:description "Vendor-specific annotations on the resource, such as the source references a Source VSA records." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 6 ;
-	sh:path slsa:annotations .
-_:c14n115 rdf:first rdf:type ;
+_:c14n11 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n116 sh:class slsa:SlsaSourceRevision ;
+_:c14n110 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n111 sh:class slsa:SlsaSourceRevision ;
 	sh:description "The source revision this refers to." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 1 ;
 	sh:path slsa:revision .
-_:c14n117 rdf:first "COLLABORATE_WITH_COMMUNITY" ;
-	rdf:rest rdf:nil .
-_:c14n118 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n119 sh:class slsa:SlsaSourceRepository ;
-	sh:description "The source repository this belongs to." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 0 ;
-	sh:path slsa:repository .
-_:c14n12 sh:class slsa:SlsaSourceRepository ;
-	sh:description "The source repository this belongs to." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 0 ;
-	sh:path slsa:repository .
-_:c14n120 sh:class slsa:InTotoStatementSubject ;
-	sh:description "The artifacts the predicate is about, each with a digest." ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 1 ;
-	sh:path slsa:subject .
-_:c14n121 sh:datatype xsd:string ;
-	sh:description "The SHA-384 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 2 ;
-	sh:path slsa:sha384 ;
-	sh:pattern "^[a-f0-9]{96}$" .
-_:c14n122 sh:description "Where the signed attestation is stored or can be fetched." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 4 ;
-	sh:path slsa:attestation_storage_uri .
-_:c14n123 rdf:first "FAILED" ;
-	rdf:rest rdf:nil .
-_:c14n124 rdf:first "STREAMLINE_PROVENANCE_GENERATION" ;
-	rdf:rest _:c14n49 .
-_:c14n125 sh:datatype xsd:string ;
+_:c14n112 sh:datatype xsd:string ;
 	sh:description "The IANA media type of the resource's content." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 4 ;
-	sh:path slsa:media_type .
-_:c14n126 sh:datatype xsd:string ;
-	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:path dcat:mediaType .
+_:c14n113 sh:datatype xsd:string ;
+	sh:description "The git commit id of a source revision." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 10 ;
-	sh:path slsa:predicate_kind .
-_:c14n127 rdf:first "PASSED" ;
-	rdf:rest _:c14n123 .
-_:c14n128 sh:datatype xsd:string ;
-	sh:description "The SHA3-384 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 8 ;
-	sh:path slsa:sha3_384 ;
-	sh:pattern "^[a-f0-9]{96}$" .
-_:c14n129 sh:datatype xsd:string ;
+	sh:order 20 ;
+	sh:path <https://w3id.org/lmodel/in-toto/git_commit> ;
+	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n114 sh:datatype xsd:string ;
 	sh:description "A name for the resource within the attestation that carries it." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 2 ;
-	sh:path slsa:resource_name .
-_:c14n13 rdf:first rdf:type ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_name> .
+_:c14n115 rdf:first "COLLABORATE_WITH_COMMUNITY" ;
 	rdf:rest rdf:nil .
-_:c14n130 rdf:first slsa:run_details ;
-	rdf:rest _:c14n80 .
-_:c14n131 sh:class slsa:SlsaBuildImage ;
+_:c14n116 sh:datatype xsd:string ;
+	sh:description "The SHAKE128 digest of the artifact, of at least 32 bytes." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 10 ;
+	sh:path <https://w3id.org/lmodel/in-toto/shake128> ;
+	sh:pattern "^[a-f0-9]{64}([a-f0-9]{2})*$" .
+_:c14n117 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n118 sh:class slsa:SlsaSourceRepository ;
+	sh:description "The source repository this belongs to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:repository .
+_:c14n119 sh:class <https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> ;
+	sh:description "The artifact whose dependencies are inventoried." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:artifact .
+_:c14n12 sh:class slsa:SlsaBuildProvenance ;
+	sh:description "The build provenance of the image itself, required at Build Environment L1." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 2 ;
+	sh:path slsa:provenance .
+_:c14n120 sh:datatype xsd:string ;
+	sh:description "The GOST R 34.11 digest of the artifact, of 256 or 512 bits." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 16 ;
+	sh:path <https://w3id.org/lmodel/in-toto/gost> ;
+	sh:pattern "^[a-f0-9]{64}([a-f0-9]{64})?$" .
+_:c14n121 sh:datatype xsd:string ;
+	sh:description "The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path <http://spdx.org/rdf/terms#algorithm> ;
+	sh:pattern "^[a-z][A-Za-z0-9_.:-]*$" .
+_:c14n122 rdf:first "FAILED" ;
+	rdf:rest rdf:nil .
+_:c14n123 rdf:first "STREAMLINE_PROVENANCE_GENERATION" ;
+	rdf:rest _:c14n56 .
+_:c14n124 sh:datatype xsd:string ;
+	sh:description "A name for the resource within the attestation that carries it." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_name> .
+_:c14n125 rdf:first "PASSED" ;
+	rdf:rest _:c14n122 .
+_:c14n126 sh:datatype xsd:dateTime ;
+	sh:description "When the build finished." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:finished_on ;
+	sh:pattern "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" .
+_:c14n127 sh:class slsa:SlsaBuildImage ;
 	sh:description "The build images." ;
 	sh:nodeKind sh:IRI ;
 	sh:order 10 ;
 	sh:path slsa:build_images .
+_:c14n128 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n129 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate_kind> .
+_:c14n13 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 3 ;
+	sh:path <https://w3id.org/lmodel/in-toto/download_location> .
+_:c14n130 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n131 rdf:first "COMPLEX_IMPLEMENTATION" ;
+	rdf:rest _:c14n64 .
 _:c14n132 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n133 rdf:first rdf:type ;
+_:c14n133 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 3 ;
+	sh:path <https://w3id.org/lmodel/in-toto/download_location> .
+_:c14n134 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n134 rdf:first "COMPLEX_IMPLEMENTATION" ;
-	rdf:rest _:c14n61 .
-_:c14n135 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n136 sh:description "The URI that identifies the verifier." ;
+_:c14n135 sh:description "The URI that identifies the verifier." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 1 ;
 	sh:path slsa:verifier_id .
-_:c14n137 rdf:first rdf:type ;
+_:c14n136 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n138 sh:datatype xsd:dateTime ;
-	sh:description "When the verification happened." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 2 ;
-	sh:path slsa:time_verified .
-_:c14n139 sh:class slsa:SlsaSourceRevision ;
+_:c14n137 sh:class slsa:SlsaSourceRevision ;
 	sh:description "The source revision this refers to." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 0 ;
 	sh:path slsa:revision .
-_:c14n14 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n140 sh:datatype xsd:string ;
-	sh:description "A name for the resource within the attestation that carries it." ;
+_:c14n138 sh:datatype xsd:string ;
+	sh:description "The BLAKE2s digest of the artifact, at its full 32 bytes." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 13 ;
+	sh:path <https://w3id.org/lmodel/in-toto/blake2s> ;
+	sh:pattern "^[a-f0-9]{64}$" .
+_:c14n139 sh:datatype xsd:string ;
+	sh:description "The annotation's key." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/annotation_key> .
+_:c14n14 sh:datatype xsd:string ;
+	sh:description "The kind of named reference, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 2 ;
-	sh:path slsa:resource_name .
-_:c14n141 rdf:first rdf:type ;
+	sh:path slsa:reference_type .
+_:c14n140 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n142 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 3 ;
-	sh:path slsa:download_location .
-_:c14n143 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 0 ;
-	sh:path slsa:resource_uri .
-_:c14n144 sh:class slsa:SlsaAdoptionMetadata ;
+_:c14n141 sh:class slsa:SlsaAdoptionMetadata ;
 	sh:description "How the deployment the document describes fares against the adoption study's themes." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 12 ;
 	sh:path slsa:adoption_metadata .
-_:c14n145 sh:class slsa:InTotoResourceDescriptor ;
-	sh:description "Artifacts the build produced beside its outputs that may help debugging or incident response, such as logs." ;
+_:c14n142 rdf:first rdf:type ;
+	rdf:rest _:c14n283 .
+_:c14n143 sh:class <https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> ;
+	sh:description "The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 2 ;
-	sh:path slsa:byproducts .
-_:c14n146 sh:datatype xsd:string ;
+	sh:order 3 ;
+	sh:path slsa:resolved_dependencies .
+_:c14n144 sh:datatype xsd:string ;
 	sh:description "The role the party acts in, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 2 ;
 	sh:path slsa:party_type .
-_:c14n147 rdf:first "ENHANCE_ALIGNMENT_FLEXIBILITY" ;
-	rdf:rest _:c14n179 .
-_:c14n148 sh:class slsa:SlsaVerificationSummaryInputAttestation ;
+_:c14n145 rdf:first "ENHANCE_ALIGNMENT_FLEXIBILITY" ;
+	rdf:rest _:c14n181 .
+_:c14n146 sh:class <https://w3id.org/lmodel/in-toto/InTotoDigestSet> ;
+	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path <https://w3id.org/lmodel/in-toto/digest> .
+_:c14n147 sh:class slsa:SlsaVerificationSummaryInputAttestation ;
 	sh:description "Every attestation the verifier consulted, each with a digest; complete when present." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 4 ;
 	sh:path slsa:input_attestations .
+_:c14n148 sh:class <https://w3id.org/lmodel/in-toto/InTotoAnnotation> ;
+	sh:description "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 6 ;
+	sh:path <https://w3id.org/lmodel/in-toto/annotations> .
 _:c14n149 sh:datatype xsd:string ;
-	sh:description "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
+	sh:description "The git object id of an annotated tag." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 5 ;
-	sh:path slsa:content ;
-	sh:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
-_:c14n15 sh:description "The SLSA Dependency level the producer's process meets for this artifact." ;
-	sh:in _:c14n74 ;
+	sh:order 23 ;
+	sh:path <https://w3id.org/lmodel/in-toto/git_tag> ;
+	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n15 sh:datatype xsd:string ;
+	sh:description "The SHA3-384 digest of the artifact." ;
 	sh:maxCount 1 ;
-	sh:order 2 ;
-	sh:path slsa:dependency_level .
+	sh:nodeKind sh:Literal ;
+	sh:order 8 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha3_384> ;
+	sh:pattern "^[a-f0-9]{96}$" .
 _:c14n150 sh:description "The SLSA Build Environment level this meets." ;
-	sh:in _:c14n281 ;
+	sh:in _:c14n309 ;
 	sh:maxCount 1 ;
 	sh:order 0 ;
 	sh:path slsa:build_env_level .
@@ -526,24 +537,20 @@ _:c14n151 sh:datatype xsd:string ;
 	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
 	sh:path slsa:party_type .
-_:c14n152 sh:datatype xsd:string ;
-	sh:description "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
+_:c14n152 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
 	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 5 ;
-	sh:path slsa:content ;
-	sh:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_uri> .
 _:c14n153 rdf:first "SLSA_SOURCE_LEVEL_4" ;
 	rdf:rest rdf:nil .
 _:c14n154 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n155 sh:datatype xsd:string ;
-	sh:description "The git tree id of a source revision's content, or of any file tree." ;
+_:c14n155 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
 	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 21 ;
-	sh:path slsa:git_tree ;
-	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+	sh:nodeKind sh:IRI ;
+	sh:order 3 ;
+	sh:path <https://w3id.org/lmodel/in-toto/download_location> .
 _:c14n156 sh:description "The stable locator the SCS gives the repository." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
@@ -555,191 +562,195 @@ _:c14n157 sh:datatype xsd:string ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:component_version .
-_:c14n158 sh:class slsa:InTotoAnnotation ;
-	sh:description "Vendor-specific annotations on the resource, such as the source references a Source VSA records." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 6 ;
-	sh:path slsa:annotations .
-_:c14n159 rdf:first slsa:build_platform ;
-	rdf:rest _:c14n109 .
-_:c14n16 sh:class slsa:SlsaRunDetails ;
-	sh:description "What is specific to this execution of the build; required at Build L1." ;
+_:c14n158 rdf:first slsa:build_platform ;
+	rdf:rest _:c14n108 .
+_:c14n159 sh:datatype xsd:string ;
+	sh:description "The git blob id of a file's content." ;
 	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 1 ;
-	sh:path slsa:run_details .
-_:c14n160 sh:class slsa:InTotoDigestSet ;
-	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
+	sh:nodeKind sh:Literal ;
+	sh:order 22 ;
+	sh:path <https://w3id.org/lmodel/in-toto/git_blob> ;
+	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n16 sh:description "The URI that identifies the platform and determines its SLSA Build level." ;
 	sh:maxCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:nodeKind sh:IRI ;
 	sh:order 1 ;
-	sh:path slsa:digest .
-_:c14n161 sh:class slsa:SlsaSourceRevision ;
+	sh:path slsa:builder_id .
+_:c14n160 sh:class slsa:SlsaSourceRevision ;
 	sh:description "The revisions this one descends from, which together form the change history." ;
 	sh:nodeKind sh:IRI ;
 	sh:order 4 ;
 	sh:path slsa:parent_revisions .
-_:c14n162 sh:datatype xsd:string ;
+_:c14n161 sh:datatype xsd:string ;
 	sh:description "The party's name." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:party_name .
+_:c14n162 sh:datatype xsd:string ;
+	sh:description "A name for the resource within the attestation that carries it." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_name> .
 _:c14n163 rdf:first "AUTOMATED" ;
 	rdf:rest rdf:nil .
-_:c14n164 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
+_:c14n164 sh:datatype xsd:string ;
+	sh:description "The IANA media type of the resource's content." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path dcat:mediaType .
 _:c14n165 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n166 sh:class slsa:SlsaComponentVersion ;
+_:c14n166 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n167 sh:class slsa:SlsaComponentVersion ;
 	sh:description "The version of each named component of a platform." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 0 ;
 	sh:path slsa:component_versions .
-_:c14n167 sh:class slsa:SlsaBuildImage ;
+_:c14n168 sh:class slsa:SlsaBuildImage ;
 	sh:description "The image the environment was instantiated from." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 2 ;
 	sh:path slsa:build_image .
-_:c14n168 sh:datatype xsd:string ;
+_:c14n169 sh:datatype xsd:string ;
 	sh:description "The name consumers use to obtain the package within its ecosystem and registry." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:package_name .
-_:c14n169 sh:datatype xsd:boolean ;
+_:c14n17 sh:class slsa:SlsaSourceRepository ;
+	sh:description "The source repository this belongs to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:repository .
+_:c14n170 sh:datatype xsd:string ;
+	sh:description "The BLAKE2b digest of the artifact, of 32 to 64 bytes." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 12 ;
+	sh:path <https://w3id.org/lmodel/in-toto/blake2b> ;
+	sh:pattern "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$" .
+_:c14n171 sh:datatype xsd:boolean ;
 	sh:description "Whether the organization has the SCS enforce its technical controls on this reference." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 4 ;
 	sh:path slsa:protected .
-_:c14n17 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
+_:c14n172 sh:datatype xsd:string ;
+	sh:description "The SHA-256 digest of the artifact." ;
 	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
+	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
-	sh:path slsa:resource_uri .
-_:c14n170 sh:description "The SLSA Build Environment level this meets." ;
-	sh:in _:c14n277 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha256> ;
+	sh:pattern "^[a-f0-9]{64}$" .
+_:c14n173 sh:description "The SLSA Build Environment level this meets." ;
+	sh:in _:c14n305 ;
 	sh:maxCount 1 ;
 	sh:order 0 ;
 	sh:path slsa:build_env_level .
-_:c14n171 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n172 sh:datatype xsd:string ;
-	sh:description "The SHA3-256 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 7 ;
-	sh:path slsa:sha3_256 ;
-	sh:pattern "^[a-f0-9]{64}$" .
-_:c14n173 sh:class slsa:SlsaPredicate ;
-	sh:description "The predicate, one of the kinds this schema models; predicate_kind names which." ;
-	sh:maxCount 1 ;
+_:c14n174 sh:class <https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> ;
+	sh:description "The immutable artifacts the package name has resolved to." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 3 ;
-	sh:path slsa:predicate .
-_:c14n174 sh:datatype xsd:string ;
-	sh:description "The annotation's key." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 0 ;
-	sh:path slsa:annotation_key .
+	sh:path slsa:package_artifacts .
 _:c14n175 sh:datatype xsd:string ;
+	sh:description "The IANA media type of the resource's content." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path dcat:mediaType .
+_:c14n176 sh:class <https://w3id.org/lmodel/in-toto/InTotoDigestSet> ;
+	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path <https://w3id.org/lmodel/in-toto/digest> .
+_:c14n177 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n178 sh:description "The transparency log entry that records the signature, such as a Rekor entry." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 2 ;
+	sh:path slsa:transparency_log_entry .
+_:c14n179 sh:datatype xsd:string ;
 	sh:description "The role the party acts in, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
 	sh:path slsa:party_type .
-_:c14n176 sh:description "The in-toto statement type, always https://in-toto.io/Statement/v1." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 0 ;
-	sh:path slsa:statement_type ;
-	sh:pattern "^https://in-toto\\.io/Statement/v1$" .
-_:c14n177 sh:datatype xsd:string ;
-	sh:description "The IANA media type of the resource's content." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 4 ;
-	sh:path slsa:media_type .
-_:c14n178 sh:class slsa:SlsaBuildMetadata ;
+_:c14n18 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n180 sh:class slsa:SlsaBuildMetadata ;
 	sh:description "Metadata about this execution of the build." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 1 ;
 	sh:path slsa:build_metadata .
-_:c14n179 rdf:first "PROVIDE_DETAILED_DOCUMENTATION" ;
-	rdf:rest _:c14n124 .
-_:c14n18 sh:class slsa:SlsaParty ;
-	sh:description "The parties, each in its role." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 1 ;
-	sh:path slsa:parties .
-_:c14n180 sh:class slsa:SlsaPackageRegistry ;
+_:c14n181 rdf:first "PROVIDE_DETAILED_DOCUMENTATION" ;
+	rdf:rest _:c14n123 .
+_:c14n182 sh:class slsa:SlsaPackageRegistry ;
 	sh:description "The registry the package is published to." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 2 ;
 	sh:path slsa:registry .
-_:c14n181 sh:class slsa:InTotoDigestSet ;
-	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 0 ;
-	sh:path slsa:digest .
-_:c14n182 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n183 sh:datatype xsd:string ;
-	sh:description "The SHAKE256 digest of the artifact, of at least 32 bytes." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 11 ;
-	sh:path slsa:shake256 ;
-	sh:pattern "^[a-f0-9]{64}([a-f0-9]{2})*$" .
-_:c14n184 sh:class slsa:SlsaSourceRepository ;
+_:c14n183 sh:class slsa:SlsaSourceRepository ;
 	sh:description "The source repositories." ;
 	sh:nodeKind sh:IRI ;
 	sh:order 7 ;
 	sh:path slsa:source_repositories .
-_:c14n185 rdf:first slsa:time_verified ;
-	rdf:rest _:c14n195 .
-_:c14n186 sh:datatype xsd:string ;
-	sh:description "The SHA3-512 digest of the artifact." ;
+_:c14n184 sh:datatype xsd:string ;
+	sh:description "The SM3 digest of the artifact." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 9 ;
-	sh:path slsa:sha3_512 ;
-	sh:pattern "^[a-f0-9]{128}$" .
-_:c14n187 sh:datatype xsd:string ;
-	sh:description "A name for the resource within the attestation that carries it." ;
+	sh:order 15 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sm3> ;
+	sh:pattern "^[a-f0-9]{64}$" .
+_:c14n185 sh:class slsa:SlsaStatement ;
+	sh:description "The attestations, as in-toto statements with SLSA's fields." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:attestations .
+_:c14n186 sh:datatype xsd:string ;
+	sh:description "The SHA-384 digest of the artifact." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 2 ;
-	sh:path slsa:resource_name .
-_:c14n188 sh:datatype xsd:string ;
-	sh:description "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha384> ;
+	sh:pattern "^[a-f0-9]{96}$" .
+_:c14n187 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 5 ;
-	sh:path slsa:content ;
-	sh:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
-_:c14n189 sh:class slsa:InTotoAnnotation ;
-	sh:description "Vendor-specific annotations on the resource, such as the source references a Source VSA records." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 6 ;
-	sh:path slsa:annotations .
-_:c14n19 rdf:first "TWO_PARTY" ;
-	rdf:rest _:c14n217 .
-_:c14n190 sh:class slsa:SlsaNamedReference ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate_kind> .
+_:c14n188 sh:class slsa:SlsaNamedReference ;
 	sh:description "The branches and tags." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 9 ;
 	sh:path slsa:named_references .
+_:c14n189 sh:datatype xsd:string ;
+	sh:description "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 5 ;
+	sh:path <https://w3id.org/lmodel/in-toto/content> ;
+	sh:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
+_:c14n19 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n190 sh:datatype xsd:string ;
+	sh:description "The SHA3-256 digest of the artifact." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 7 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha3_256> ;
+	sh:pattern "^[a-f0-9]{64}$" .
 _:c14n191 sh:class slsa:SlsaDependencyInventory ;
 	sh:description "The dependency inventories." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
@@ -747,83 +758,69 @@ _:c14n191 sh:class slsa:SlsaDependencyInventory ;
 	sh:path slsa:dependency_inventories .
 _:c14n192 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n193 sh:datatype xsd:string ;
-	sh:description "The digest under that algorithm, in the encoding the algorithm documents." ;
-	sh:maxCount 1 ;
+_:c14n193 rdf:first slsa:verifier_id ;
+	rdf:rest rdf:nil .
+_:c14n194 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n195 sh:class <https://w3id.org/lmodel/in-toto/InTotoStatementSubject> ;
+	sh:description "The artifacts the predicate is about, each with a digest." ;
 	sh:minCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 1 ;
-	sh:path slsa:value ;
-	sh:pattern "^\\S+$" .
-_:c14n194 rdf:first slsa:verifier_id ;
-	rdf:rest rdf:nil .
-_:c14n195 rdf:first slsa:verification_result ;
-	rdf:rest _:c14n252 .
-_:c14n196 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n197 sh:class slsa:SlsaPackageRegistry ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 2 ;
+	sh:path <https://w3id.org/lmodel/in-toto/subject> .
+_:c14n196 sh:class slsa:SlsaPackageRegistry ;
 	sh:description "The package registries." ;
 	sh:nodeKind sh:IRI ;
 	sh:order 5 ;
 	sh:path slsa:package_registries .
-_:c14n198 rdf:first "SLSA_SOURCE_LEVEL_0" ;
-	rdf:rest _:c14n231 .
-_:c14n199 sh:class slsa:InTotoAdditionalDigest ;
-	sh:description "The digests under algorithms this class does not name." ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 24 ;
-	sh:path slsa:additional_digests .
-_:c14n2 sh:datatype xsd:boolean ;
-	sh:description "Whether the organization has the SCS enforce its technical controls on this reference." ;
+_:c14n197 rdf:first "SLSA_SOURCE_LEVEL_0" ;
+	rdf:rest _:c14n223 .
+_:c14n198 sh:datatype xsd:string ;
+	sh:description "The SHA-512 digest of the artifact." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 4 ;
-	sh:path slsa:protected .
-_:c14n20 sh:class slsa:InTotoDigestSet ;
-	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 1 ;
-	sh:path slsa:digest .
-_:c14n200 sh:class slsa:InTotoDigestSet ;
-	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 1 ;
-	sh:path slsa:digest .
-_:c14n201 sh:datatype xsd:string ;
+	sh:order 3 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha512> ;
+	sh:pattern "^[a-f0-9]{128}$" .
+_:c14n199 sh:datatype xsd:string ;
 	sh:description "The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it." ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 6 ;
 	sh:path slsa:verified_levels ;
 	sh:pattern "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$" .
-_:c14n202 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 3 ;
-	sh:path slsa:download_location .
-_:c14n203 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n204 sh:datatype xsd:string ;
-	sh:description "The kind of predicate, one of this class's descendants." ;
+_:c14n2 sh:datatype xsd:boolean ;
+	sh:description "Whether the organization has the SCS enforce its technical controls on this reference." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 4 ;
-	sh:path slsa:predicate_kind .
-_:c14n205 sh:class slsa:InTotoResourceDescriptor ;
-	sh:description "Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees." ;
+	sh:path slsa:protected .
+_:c14n20 sh:description "The SLSA Dependency level the producer's process meets for this artifact." ;
+	sh:in _:c14n79 ;
+	sh:maxCount 1 ;
+	sh:order 2 ;
+	sh:path slsa:dependency_level .
+_:c14n200 sh:class <https://w3id.org/lmodel/in-toto/InTotoDigestSet> ;
+	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
+	sh:maxCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 4 ;
-	sh:path slsa:builder_dependencies .
-_:c14n206 sh:class slsa:SlsaSourceRevision ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/digest> .
+_:c14n201 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n202 sh:datatype xsd:string ;
+	sh:description "The SHAKE256 digest of the artifact, of at least 32 bytes." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 11 ;
+	sh:path <https://w3id.org/lmodel/in-toto/shake256> ;
+	sh:pattern "^[a-f0-9]{64}([a-f0-9]{2})*$" .
+_:c14n203 sh:class slsa:SlsaSourceRevision ;
 	sh:description "The source revisions." ;
 	sh:nodeKind sh:IRI ;
 	sh:order 8 ;
 	sh:path slsa:source_revisions .
-_:c14n207 sh:datatype xsd:integer ;
+_:c14n204 sh:datatype xsd:integer ;
 	sh:description "How many dependencies were verified at that level." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
@@ -831,212 +828,178 @@ _:c14n207 sh:datatype xsd:integer ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:dependency_count .
-_:c14n208 rdf:first slsa:revision ;
-	rdf:rest _:c14n130 .
-_:c14n209 sh:datatype xsd:dateTime ;
-	sh:description "When the build finished." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 2 ;
-	sh:path slsa:finished_on .
-_:c14n21 sh:description "The URI that identifies the source control system." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 0 ;
-	sh:path slsa:scs_uri .
-_:c14n210 sh:description "The URI that names the predicate's type and so its schema, such as https://slsa.dev/provenance/v1." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 2 ;
-	sh:path slsa:predicate_type .
-_:c14n211 rdf:first slsa:build_id ;
-	rdf:rest _:c14n83 .
-_:c14n212 sh:datatype xsd:string ;
+_:c14n205 sh:datatype xsd:string ;
 	sh:description "The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
 	sh:path slsa:ecosystem .
-_:c14n213 sh:datatype xsd:string ;
-	sh:description "The SHA-256 digest of the artifact." ;
+_:c14n206 sh:description "Where the signed attestation is stored or can be fetched." ;
 	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
+	sh:nodeKind sh:IRI ;
 	sh:order 0 ;
-	sh:path slsa:sha256 ;
-	sh:pattern "^[a-f0-9]{64}$" .
-_:c14n214 sh:datatype xsd:string ;
+	sh:path slsa:attestation_storage_uri .
+_:c14n207 sh:description "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 6 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate_type> .
+_:c14n208 sh:datatype xsd:string ;
 	sh:description "The kind of named reference, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 2 ;
 	sh:path slsa:reference_type .
-_:c14n215 sh:datatype xsd:string ;
+_:c14n209 sh:datatype xsd:string ;
 	sh:description "The reference's name, fully qualified in git, such as refs/heads/main." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 3 ;
 	sh:path slsa:reference_name .
-_:c14n216 sh:class slsa:SlsaSourceControlSystem ;
+_:c14n21 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 10 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate_kind> .
+_:c14n210 sh:class slsa:SlsaSourceControlSystem ;
 	sh:description "The source control systems." ;
 	sh:nodeKind sh:IRI ;
 	sh:order 6 ;
 	sh:path slsa:source_control_systems .
-_:c14n217 rdf:first "PAIR_PROGRAMMING" ;
-	rdf:rest _:c14n241 .
-_:c14n218 sh:class slsa:InTotoDigestSet ;
-	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 1 ;
-	sh:path slsa:digest .
-_:c14n219 sh:datatype xsd:string ;
-	sh:description "The BLAKE2s digest of the artifact, at its full 32 bytes." ;
+_:c14n211 rdf:first "PAIR_PROGRAMMING" ;
+	rdf:rest _:c14n231 .
+_:c14n212 sh:datatype xsd:string ;
+	sh:description "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 13 ;
-	sh:path slsa:blake2s ;
-	sh:pattern "^[a-f0-9]{64}$" .
-_:c14n22 sh:description "The challenge themes that apply." ;
-	sh:in _:c14n134 ;
-	sh:order 0 ;
-	sh:path slsa:challenges .
-_:c14n220 sh:class slsa:SlsaSourceRevision ;
+	sh:order 5 ;
+	sh:path <https://w3id.org/lmodel/in-toto/content> ;
+	sh:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
+_:c14n213 sh:class slsa:SlsaSourceRevision ;
 	sh:description "The source revision this refers to." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 1 ;
 	sh:path slsa:revision .
-_:c14n221 rdf:first slsa:organization_properties ;
-	rdf:rest _:c14n260 .
-_:c14n222 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n223 sh:description "The CI/CD system that coordinated the build, named by URI, where it differs from the builder." ;
+_:c14n214 sh:description "The CI/CD system that coordinated the build, named by URI, where it differs from the builder." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 6 ;
 	sh:path slsa:pipeline_orchestrator .
-_:c14n224 sh:class slsa:SlsaSourceControlSystem ;
+_:c14n215 sh:class slsa:SlsaSourceControlSystem ;
 	sh:description "The source control system that hosts the repository." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 1 ;
 	sh:path slsa:hosted_by .
-_:c14n225 sh:datatype xsd:string ;
-	sh:description "The annotation's values." ;
-	sh:nodeKind sh:Literal ;
-	sh:order 1 ;
-	sh:path slsa:annotation_values .
-_:c14n226 rdf:first rdf:type ;
+_:c14n216 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n227 rdf:first "SLSA_DEPENDENCY_LEVEL_3" ;
-	rdf:rest _:c14n7 .
-_:c14n228 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 0 ;
-	sh:path slsa:resource_uri .
-_:c14n229 sh:class slsa:InTotoResourceDescriptor ;
-	sh:description "The artifact whose dependencies are inventoried." ;
+_:c14n217 sh:class <https://w3id.org/lmodel/in-toto/InTotoDigestSet> ;
+	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 0 ;
-	sh:path slsa:artifact .
-_:c14n23 sh:datatype xsd:string ;
-	sh:description "The identity of the person or automation that authored the revision." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 2 ;
-	sh:path slsa:authored_by .
-_:c14n230 sh:datatype xsd:string ;
+	sh:order 1 ;
+	sh:path <https://w3id.org/lmodel/in-toto/digest> .
+_:c14n218 rdf:first slsa:signing_tool ;
+	rdf:rest _:c14n100 .
+_:c14n219 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n22 sh:class <https://w3id.org/lmodel/in-toto/InTotoAnnotation> ;
+	sh:description "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 6 ;
+	sh:path <https://w3id.org/lmodel/in-toto/annotations> .
+_:c14n220 rdf:first "SLSA_DEPENDENCY_LEVEL_3" ;
+	rdf:rest _:c14n10 .
+_:c14n221 rdf:first rdf:type ;
+	rdf:rest _:c14n33 .
+_:c14n222 sh:datatype xsd:string ;
 	sh:description "The SLSA specification version the verifier applied, as MAJOR.MINOR." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 9 ;
 	sh:path slsa:slsa_version ;
 	sh:pattern "^[0-9]+\\.[0-9]+$" .
-_:c14n231 rdf:first "SLSA_SOURCE_LEVEL_1" ;
-	rdf:rest _:c14n258 .
-_:c14n232 sh:datatype xsd:string ;
+_:c14n223 rdf:first "SLSA_SOURCE_LEVEL_1" ;
+	rdf:rest _:c14n251 .
+_:c14n224 sh:datatype xsd:string ;
 	sh:description "The party's name." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:party_name .
-_:c14n233 sh:class slsa:InTotoResourceDescriptor ;
-	sh:description "The dependencies, each as a resource descriptor." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 1 ;
-	sh:path slsa:dependencies .
-_:c14n234 rdf:first rdf:type ;
+_:c14n225 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n235 sh:datatype xsd:string ;
-	sh:description "The git object id of an annotated tag." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 23 ;
-	sh:path slsa:git_tag ;
-	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
-_:c14n236 sh:datatype xsd:string ;
+_:c14n226 sh:datatype xsd:string ;
 	sh:description "The component's name." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
 	sh:path slsa:component .
-_:c14n237 sh:datatype xsd:string ;
+_:c14n227 sh:datatype xsd:string ;
 	sh:description "The role the party acts in, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
 	sh:path slsa:party_type .
-_:c14n238 sh:datatype xsd:string ;
-	sh:description "The MD5 digest of the artifact." ;
+_:c14n228 sh:datatype xsd:string ;
+	sh:description "The SHA-512/224 digest of the artifact." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 18 ;
-	sh:path slsa:md5 ;
-	sh:pattern "^[a-f0-9]{32}$" .
-_:c14n239 rdf:first rdf:type ;
+	sh:order 4 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha512_224> ;
+	sh:pattern "^[a-f0-9]{56}$" .
+_:c14n229 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n24 sh:datatype xsd:string ;
-	sh:description "The reference's name, fully qualified in git, such as refs/heads/main." ;
+_:c14n23 sh:class slsa:SlsaRunDetails ;
+	sh:description "What is specific to this execution of the build; required at Build L1." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 3 ;
-	sh:path slsa:reference_name .
-_:c14n240 sh:datatype xsd:string ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:run_details .
+_:c14n230 sh:datatype xsd:string ;
 	sh:description "The party's name." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 2 ;
 	sh:path slsa:party_name .
-_:c14n241 rdf:first "MOB_PROGRAMMING" ;
+_:c14n231 rdf:first "MOB_PROGRAMMING" ;
 	rdf:rest _:c14n163 .
-_:c14n242 rdf:first slsa:controls_enforced ;
-	rdf:rest _:c14n100 .
-_:c14n243 sh:description "Where a GUAC instance answers queries about the package's dependency and provenance graph." ;
+_:c14n232 sh:class <https://w3id.org/lmodel/in-toto/InTotoAdditionalDigest> ;
+	sh:description "The digests under algorithms this class does not name." ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 24 ;
+	sh:path <https://w3id.org/lmodel/in-toto/additional_digests> .
+_:c14n233 sh:datatype xsd:string ;
+	sh:description "The digest under that algorithm, in the encoding the algorithm documents." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path <https://w3id.org/lmodel/in-toto/value> ;
+	sh:pattern "^\\S+$" .
+_:c14n234 sh:description "Where a GUAC instance answers queries about the package's dependency and provenance graph." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 4 ;
 	sh:path slsa:guac_uri .
-_:c14n244 rdf:first slsa:verifier ;
-	rdf:rest rdf:nil .
-_:c14n245 rdf:first "SLSA_DEPENDENCY_LEVEL_1" ;
-	rdf:rest _:c14n270 .
-_:c14n246 sh:class slsa:SlsaBuildDefinition ;
+_:c14n235 rdf:first "SLSA_DEPENDENCY_LEVEL_1" ;
+	rdf:rest _:c14n264 .
+_:c14n236 sh:class slsa:SlsaBuildDefinition ;
 	sh:description "The inputs to the build; required at Build L1." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 0 ;
 	sh:path slsa:build_definition .
-_:c14n247 sh:datatype xsd:string ;
+_:c14n237 sh:datatype xsd:string ;
 	sh:description "The level the dependencies were verified at, or a result of the issuer's own." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
@@ -1044,496 +1007,626 @@ _:c14n247 sh:datatype xsd:string ;
 	sh:order 0 ;
 	sh:path slsa:verified_level ;
 	sh:pattern "^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$" .
-_:c14n248 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n249 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 3 ;
-	sh:path slsa:download_location .
-_:c14n25 sh:datatype xsd:string ;
-	sh:description "The BLAKE2b digest of the artifact, of 32 to 64 bytes." ;
+_:c14n238 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 12 ;
-	sh:path slsa:blake2b ;
-	sh:pattern "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$" .
-_:c14n250 rdf:first "SLSA_BUILD_LEVEL_1" ;
-	rdf:rest _:c14n269 .
-_:c14n251 sh:class slsa:SlsaBuildParameter ;
+	sh:order 2 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate_kind> .
+_:c14n239 sh:datatype xsd:string ;
+	sh:description "The SHA-224 digest of the artifact." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha224> ;
+	sh:pattern "^[a-f0-9]{56}$" .
+_:c14n24 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate_kind> .
+_:c14n240 rdf:first "SLSA_BUILD_LEVEL_1" ;
+	rdf:rest _:c14n263 .
+_:c14n241 sh:class slsa:SlsaBuildParameter ;
 	sh:description "The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 2 ;
 	sh:path slsa:internal_parameters .
-_:c14n252 rdf:first slsa:verified_levels ;
-	rdf:rest _:c14n244 .
-_:c14n253 rdf:first "UNCLEAR_RELEVANCE" ;
+_:c14n242 sh:datatype xsd:string ;
+	sh:description "The git tree id of a source revision's content, or of any file tree." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 21 ;
+	sh:path <https://w3id.org/lmodel/in-toto/git_tree> ;
+	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
+_:c14n243 sh:datatype xsd:string ;
+	sh:description "The SHA3-512 digest of the artifact." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 9 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha3_512> ;
+	sh:pattern "^[a-f0-9]{128}$" .
+_:c14n244 rdf:first "UNCLEAR_RELEVANCE" ;
 	rdf:rest rdf:nil .
-_:c14n254 rdf:first "SLSA_BUILD_LEVEL_3" ;
+_:c14n245 sh:datatype xsd:string ;
+	sh:description "The IANA media type of the resource's content." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 4 ;
+	sh:path dcat:mediaType .
+_:c14n246 sh:class <https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> ;
+	sh:description "Artifacts the build produced beside its outputs that may help debugging or incident response, such as logs." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 2 ;
+	sh:path slsa:byproducts .
+_:c14n247 rdf:first "SLSA_BUILD_LEVEL_3" ;
 	rdf:rest rdf:nil .
-_:c14n255 sh:class slsa:SlsaSourceRepository ;
+_:c14n248 sh:class slsa:SlsaSourceRepository ;
 	sh:description "The source repository this belongs to." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 0 ;
 	sh:path slsa:repository .
-_:c14n256 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n257 sh:datatype xsd:string ;
+_:c14n249 sh:description "The URI consumers fetch the artifact from, which the verifier verified it as." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_uri> .
+_:c14n25 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_uri> .
+_:c14n250 sh:datatype xsd:string ;
 	sh:description "Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers." ;
 	sh:nodeKind sh:Literal ;
 	sh:order 7 ;
 	sh:path slsa:organization_properties ;
 	sh:pattern "^ORG_SOURCE_" .
-_:c14n258 rdf:first "SLSA_SOURCE_LEVEL_2" ;
-	rdf:rest _:c14n264 .
-_:c14n259 sh:datatype xsd:string ;
-	sh:description "The SHA3-224 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 6 ;
-	sh:path slsa:sha3_224 ;
-	sh:pattern "^[a-f0-9]{56}$" .
-_:c14n26 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n260 rdf:first slsa:policy ;
-	rdf:rest _:c14n91 .
-_:c14n261 sh:datatype xsd:dateTime ;
-	sh:description "When the build started." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 1 ;
-	sh:path slsa:started_on .
-_:c14n262 sh:datatype xsd:string ;
+_:c14n251 rdf:first "SLSA_SOURCE_LEVEL_2" ;
+	rdf:rest _:c14n254 .
+_:c14n252 sh:datatype xsd:string ;
 	sh:description "The parameter's name." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
 	sh:path slsa:parameter_name .
-_:c14n263 sh:class slsa:SlsaBuildImageProducer ;
+_:c14n253 sh:class slsa:SlsaBuildImageProducer ;
 	sh:description "The party that created and distributes the image." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 3 ;
 	sh:path slsa:produced_by .
-_:c14n264 rdf:first "SLSA_SOURCE_LEVEL_3" ;
+_:c14n254 rdf:first "SLSA_SOURCE_LEVEL_3" ;
 	rdf:rest _:c14n153 .
-_:c14n265 sh:description "The URI that identifies the image version, such as an OCI reference with its digest." ;
+_:c14n255 sh:description "The in-toto statement type, always https://in-toto.io/Statement/v1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 4 ;
+	sh:path <https://w3id.org/lmodel/in-toto/statement_type> ;
+	sh:pattern "^https://in-toto\\.io/Statement/v1$" .
+_:c14n256 sh:datatype xsd:string ;
+	sh:description "The kind of predicate, one of this class's descendants." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate_kind> .
+_:c14n257 sh:description "The URI that identifies the image version, such as an OCI reference with its digest." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 1 ;
 	sh:path slsa:image_uri .
-_:c14n266 sh:description "The SLSA Source level the SCS asserts for the revision." ;
-	sh:in _:c14n198 ;
+_:c14n258 sh:datatype xsd:string ;
+	sh:description "The SHA-1 digest of the artifact." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 17 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha1> ;
+	sh:pattern "^[a-f0-9]{40}$" .
+_:c14n259 sh:description "The SLSA Source level the SCS asserts for the revision." ;
+	sh:in _:c14n197 ;
 	sh:maxCount 1 ;
 	sh:order 5 ;
 	sh:path slsa:source_level .
-_:c14n267 sh:class slsa:SlsaPackage ;
+_:c14n26 sh:class slsa:SlsaParty ;
+	sh:description "The parties, each in its role." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path slsa:parties .
+_:c14n260 sh:class slsa:SlsaPackage ;
 	sh:description "The packages." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 4 ;
 	sh:path slsa:packages .
-_:c14n268 sh:class slsa:SlsaBuildPlatform ;
+_:c14n261 sh:class slsa:SlsaBuildPlatform ;
 	sh:description "The build platform that ran the build and is trusted to have written this provenance; required at Build L1." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 0 ;
 	sh:path slsa:builder .
-_:c14n269 rdf:first "SLSA_BUILD_LEVEL_2" ;
-	rdf:rest _:c14n254 .
-_:c14n27 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n270 rdf:first "SLSA_DEPENDENCY_LEVEL_2" ;
-	rdf:rest _:c14n227 .
-_:c14n271 sh:description "The form of review that approved the revision." ;
-	sh:in _:c14n19 ;
-	sh:maxCount 1 ;
-	sh:order 6 ;
-	sh:path slsa:review_type .
-_:c14n272 sh:datatype xsd:string ;
-	sh:description "The SHA-512/224 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 4 ;
-	sh:path slsa:sha512_224 ;
-	sh:pattern "^[a-f0-9]{56}$" .
-_:c14n273 sh:datatype xsd:string ;
-	sh:description "The SHA-1 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 17 ;
-	sh:path slsa:sha1 ;
-	sh:pattern "^[a-f0-9]{40}$" .
-_:c14n274 rdf:first "SLSA_BUILD_ENV_LEVEL_2" ;
-	rdf:rest _:c14n275 .
-_:c14n275 rdf:first "SLSA_BUILD_ENV_LEVEL_3" ;
-	rdf:rest rdf:nil .
-_:c14n276 rdf:first "SLSA_BUILD_ENV_LEVEL_1" ;
-	rdf:rest _:c14n274 .
-_:c14n277 rdf:first "SLSA_BUILD_ENV_LEVEL_0" ;
-	rdf:rest _:c14n276 .
-_:c14n278 rdf:first "SLSA_BUILD_ENV_LEVEL_2" ;
-	rdf:rest _:c14n279 .
-_:c14n279 rdf:first "SLSA_BUILD_ENV_LEVEL_3" ;
-	rdf:rest rdf:nil .
-_:c14n28 sh:datatype xsd:string ;
-	sh:description "The parameter's value." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 1 ;
-	sh:path slsa:parameter_value .
-_:c14n280 rdf:first "SLSA_BUILD_ENV_LEVEL_1" ;
-	rdf:rest _:c14n278 .
-_:c14n281 rdf:first "SLSA_BUILD_ENV_LEVEL_0" ;
-	rdf:rest _:c14n280 .
-_:c14n29 rdf:first slsa:build_definition ;
-	rdf:rest _:c14n45 .
-_:c14n3 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n30 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n31 sh:class slsa:InTotoResourceDescriptor ;
-	sh:description "The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 3 ;
-	sh:path slsa:resolved_dependencies .
-_:c14n32 sh:class slsa:SlsaComponentVersion ;
-	sh:description "The version of each named component of a platform." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 0 ;
-	sh:path slsa:component_versions .
-_:c14n33 sh:datatype xsd:string ;
-	sh:description "The IANA media type of the resource's content." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 4 ;
-	sh:path slsa:media_type .
-_:c14n34 sh:description "The highest SLSA Build level the platform's provenance can meet." ;
-	sh:in _:c14n62 ;
-	sh:maxCount 1 ;
-	sh:order 2 ;
-	sh:path slsa:build_level .
-_:c14n35 sh:description "The URI consumers fetch the artifact from, which the verifier verified it as." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 0 ;
-	sh:path slsa:resource_uri .
-_:c14n36 sh:datatype xsd:string ;
+_:c14n262 sh:datatype xsd:string ;
 	sh:description "The RIPEMD-160 digest of the artifact." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 14 ;
-	sh:path slsa:ripemd160 ;
+	sh:path <https://w3id.org/lmodel/in-toto/ripemd160> ;
 	sh:pattern "^[a-f0-9]{40}$" .
-_:c14n37 rdf:first slsa:measurements ;
-	rdf:rest _:c14n221 .
-_:c14n38 sh:datatype xsd:string ;
-	sh:description "The GOST R 34.11 digest of the artifact, of 256 or 512 bits." ;
+_:c14n263 rdf:first "SLSA_BUILD_LEVEL_2" ;
+	rdf:rest _:c14n247 .
+_:c14n264 rdf:first "SLSA_DEPENDENCY_LEVEL_2" ;
+	rdf:rest _:c14n220 .
+_:c14n265 sh:description "The form of review that approved the revision." ;
+	sh:in _:c14n27 ;
 	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 16 ;
-	sh:path slsa:gost ;
-	sh:pattern "^[a-f0-9]{64}([a-f0-9]{64})?$" .
-_:c14n39 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n4 sh:datatype xsd:string ;
-	sh:description "The role the party acts in, one of this class's descendants." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 0 ;
-	sh:path slsa:party_type .
-_:c14n40 sh:description "The SECURITY-INSIGHTS.yml file of the project that produces the package." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 5 ;
-	sh:path slsa:security_insights_uri .
-_:c14n41 sh:datatype xsd:string ;
-	sh:description "The component or state that was measured, such as the bootloader, guest kernel, build agent or root filesystem." ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 1 ;
-	sh:path slsa:measured_component .
-_:c14n42 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n43 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n44 sh:datatype xsd:string ;
-	sh:description "The party's name." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 3 ;
-	sh:path slsa:party_name .
-_:c14n45 rdf:first slsa:build_env_level ;
+	sh:order 6 ;
+	sh:path slsa:review_type .
+_:c14n266 rdf:first slsa:build_definition ;
+	rdf:rest _:c14n267 .
+_:c14n267 rdf:first slsa:build_env_level ;
+	rdf:rest _:c14n268 .
+_:c14n268 rdf:first slsa:build_id ;
+	rdf:rest _:c14n269 .
+_:c14n269 rdf:first slsa:build_image ;
+	rdf:rest _:c14n270 .
+_:c14n27 rdf:first "TWO_PARTY" ;
 	rdf:rest _:c14n211 .
-_:c14n46 sh:description "Whether the subject passed the policy." ;
-	sh:in _:c14n127 ;
-	sh:maxCount 1 ;
-	sh:minCount 1 ;
-	sh:order 5 ;
-	sh:path slsa:verification_result .
-_:c14n47 sh:datatype xsd:string ;
-	sh:description "The SHA-512 digest of the artifact." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 3 ;
-	sh:path slsa:sha512 ;
-	sh:pattern "^[a-f0-9]{128}$" .
-_:c14n48 sh:class slsa:SlsaSourceRepository ;
-	sh:description "The source repository this belongs to." ;
+_:c14n270 rdf:first slsa:controls_enforced ;
+	rdf:rest _:c14n271 .
+_:c14n271 rdf:first slsa:dependency_levels ;
+	rdf:rest _:c14n272 .
+_:c14n272 rdf:first slsa:input_attestations ;
+	rdf:rest _:c14n273 .
+_:c14n273 rdf:first slsa:measurements ;
+	rdf:rest _:c14n274 .
+_:c14n274 rdf:first slsa:organization_properties ;
+	rdf:rest _:c14n275 .
+_:c14n275 rdf:first slsa:policy ;
+	rdf:rest _:c14n276 .
+_:c14n276 rdf:first slsa:revision ;
+	rdf:rest _:c14n277 .
+_:c14n277 rdf:first slsa:run_details ;
+	rdf:rest _:c14n278 .
+_:c14n278 rdf:first slsa:slsa_version ;
+	rdf:rest _:c14n279 .
+_:c14n279 rdf:first slsa:time_verified ;
+	rdf:rest _:c14n280 .
+_:c14n28 sh:class <https://w3id.org/lmodel/in-toto/InTotoAnnotation> ;
+	sh:description "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 6 ;
+	sh:path <https://w3id.org/lmodel/in-toto/annotations> .
+_:c14n280 rdf:first slsa:verification_result ;
+	rdf:rest _:c14n281 .
+_:c14n281 rdf:first slsa:verified_levels ;
+	rdf:rest _:c14n282 .
+_:c14n282 rdf:first slsa:verifier ;
+	rdf:rest rdf:nil .
+_:c14n283 rdf:first <https://w3id.org/lmodel/in-toto/resource_uri> ;
+	rdf:rest _:c14n266 .
+_:c14n284 rdf:first slsa:build_definition ;
+	rdf:rest _:c14n285 .
+_:c14n285 rdf:first slsa:build_env_level ;
+	rdf:rest _:c14n286 .
+_:c14n286 rdf:first slsa:build_id ;
+	rdf:rest _:c14n287 .
+_:c14n287 rdf:first slsa:build_image ;
+	rdf:rest _:c14n288 .
+_:c14n288 rdf:first slsa:controls_enforced ;
+	rdf:rest _:c14n289 .
+_:c14n289 rdf:first slsa:dependency_levels ;
+	rdf:rest _:c14n290 .
+_:c14n29 sh:description "The URI that identifies the source control system." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 0 ;
-	sh:path slsa:repository .
-_:c14n49 rdf:first "IMPROVE_VERIFICATION_PROCESS" ;
-	rdf:rest _:c14n117 .
-_:c14n5 sh:class slsa:SlsaControlPlane ;
-	sh:description "The control planes of the build platforms." ;
+	sh:path slsa:scs_uri .
+_:c14n290 rdf:first slsa:input_attestations ;
+	rdf:rest _:c14n291 .
+_:c14n291 rdf:first slsa:measurements ;
+	rdf:rest _:c14n292 .
+_:c14n292 rdf:first slsa:organization_properties ;
+	rdf:rest _:c14n293 .
+_:c14n293 rdf:first slsa:policy ;
+	rdf:rest _:c14n294 .
+_:c14n294 rdf:first slsa:revision ;
+	rdf:rest _:c14n295 .
+_:c14n295 rdf:first slsa:run_details ;
+	rdf:rest _:c14n296 .
+_:c14n296 rdf:first slsa:slsa_version ;
+	rdf:rest _:c14n297 .
+_:c14n297 rdf:first slsa:time_verified ;
+	rdf:rest _:c14n298 .
+_:c14n298 rdf:first slsa:verification_result ;
+	rdf:rest _:c14n299 .
+_:c14n299 rdf:first slsa:verified_levels ;
+	rdf:rest _:c14n300 .
+_:c14n3 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n30 sh:description "The challenge themes that apply." ;
+	sh:in _:c14n131 ;
+	sh:order 0 ;
+	sh:path slsa:challenges .
+_:c14n300 rdf:first slsa:verifier ;
+	rdf:rest rdf:nil .
+_:c14n301 rdf:first <https://w3id.org/lmodel/in-toto/resource_uri> ;
+	rdf:rest _:c14n284 .
+_:c14n302 rdf:first "SLSA_BUILD_ENV_LEVEL_2" ;
+	rdf:rest _:c14n303 .
+_:c14n303 rdf:first "SLSA_BUILD_ENV_LEVEL_3" ;
+	rdf:rest rdf:nil .
+_:c14n304 rdf:first "SLSA_BUILD_ENV_LEVEL_1" ;
+	rdf:rest _:c14n302 .
+_:c14n305 rdf:first "SLSA_BUILD_ENV_LEVEL_0" ;
+	rdf:rest _:c14n304 .
+_:c14n306 rdf:first "SLSA_BUILD_ENV_LEVEL_2" ;
+	rdf:rest _:c14n307 .
+_:c14n307 rdf:first "SLSA_BUILD_ENV_LEVEL_3" ;
+	rdf:rest rdf:nil .
+_:c14n308 rdf:first "SLSA_BUILD_ENV_LEVEL_1" ;
+	rdf:rest _:c14n306 .
+_:c14n309 rdf:first "SLSA_BUILD_ENV_LEVEL_0" ;
+	rdf:rest _:c14n308 .
+_:c14n31 sh:class <https://w3id.org/lmodel/in-toto/InTotoStatementSubject> ;
+	sh:description "The artifacts the predicate is about, each with a digest." ;
+	sh:minCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 3 ;
-	sh:path slsa:control_planes .
-_:c14n50 rdf:first slsa:input_attestations ;
-	rdf:rest _:c14n37 .
-_:c14n51 sh:datatype xsd:string ;
+	sh:order 5 ;
+	sh:path <https://w3id.org/lmodel/in-toto/subject> .
+_:c14n32 sh:datatype xsd:string ;
+	sh:description "The identity of the person or automation that authored the revision." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:authored_by .
+_:c14n33 rdf:first slsa:attestation_storage_uri ;
+	rdf:rest _:c14n218 .
+_:c14n34 sh:datatype xsd:string ;
 	sh:description "The reference's name, fully qualified in git, such as refs/heads/main." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 3 ;
 	sh:path slsa:reference_name .
-_:c14n52 rdf:first rdf:type ;
-	rdf:rest _:c14n159 .
-_:c14n53 sh:class slsa:SlsaVerifier ;
+_:c14n35 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n36 sh:description "The in-toto statement type, always https://in-toto.io/Statement/v1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 1 ;
+	sh:path <https://w3id.org/lmodel/in-toto/statement_type> ;
+	sh:pattern "^https://in-toto\\.io/Statement/v1$" .
+_:c14n37 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n38 sh:datatype xsd:string ;
+	sh:description "The parameter's value." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:parameter_value .
+_:c14n39 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n4 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 3 ;
+	sh:path <https://w3id.org/lmodel/in-toto/download_location> .
+_:c14n40 sh:class slsa:SlsaComponentVersion ;
+	sh:description "The version of each named component of a platform." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 0 ;
+	sh:path slsa:component_versions .
+_:c14n41 sh:datatype xsd:string ;
+	sh:description "A name for the resource within the attestation that carries it." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_name> .
+_:c14n42 sh:description "The highest SLSA Build level the platform's provenance can meet." ;
+	sh:in _:c14n65 ;
+	sh:maxCount 1 ;
+	sh:order 2 ;
+	sh:path slsa:build_level .
+_:c14n43 sh:datatype xsd:string ;
+	sh:description "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 5 ;
+	sh:path <https://w3id.org/lmodel/in-toto/content> ;
+	sh:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
+_:c14n44 sh:datatype xsd:string ;
+	sh:description "The SHA3-224 digest of the artifact." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 6 ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha3_224> ;
+	sh:pattern "^[a-f0-9]{56}$" .
+_:c14n45 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n46 sh:datatype xsd:string ;
+	sh:description "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 5 ;
+	sh:path <https://w3id.org/lmodel/in-toto/content> ;
+	sh:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
+_:c14n47 sh:description "The SECURITY-INSIGHTS.yml file of the project that produces the package." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 5 ;
+	sh:path slsa:security_insights_uri .
+_:c14n48 sh:datatype xsd:string ;
+	sh:description "The component or state that was measured, such as the bootloader, guest kernel, build agent or root filesystem." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:measured_component .
+_:c14n49 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n5 sh:datatype xsd:string ;
+	sh:description "The MD5 digest of the artifact." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 18 ;
+	sh:path <https://w3id.org/lmodel/in-toto/md5> ;
+	sh:pattern "^[a-f0-9]{32}$" .
+_:c14n50 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n51 sh:datatype xsd:string ;
+	sh:description "The party's name." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:party_name .
+_:c14n52 sh:class <https://w3id.org/lmodel/in-toto/InTotoAnnotation> ;
+	sh:description "Vendor-specific annotations on the resource, such as the source references a SLSA Source Verification Summary records." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 6 ;
+	sh:path <https://w3id.org/lmodel/in-toto/annotations> .
+_:c14n53 sh:datatype xsd:string ;
+	sh:description "The annotation's values." ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path <https://w3id.org/lmodel/in-toto/annotation_values> .
+_:c14n54 sh:description "Whether the subject passed the policy." ;
+	sh:in _:c14n125 ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:order 5 ;
+	sh:path slsa:verification_result .
+_:c14n55 sh:class slsa:SlsaSourceRepository ;
+	sh:description "The source repository this belongs to." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path slsa:repository .
+_:c14n56 rdf:first "IMPROVE_VERIFICATION_PROCESS" ;
+	rdf:rest _:c14n115 .
+_:c14n57 sh:datatype xsd:string ;
+	sh:description "The reference's name, fully qualified in git, such as refs/heads/main." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 3 ;
+	sh:path slsa:reference_name .
+_:c14n58 rdf:first rdf:type ;
+	rdf:rest _:c14n158 .
+_:c14n59 sh:class slsa:SlsaVerifier ;
 	sh:description "The verifier that made this determination." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 1 ;
 	sh:path slsa:verifier .
-_:c14n54 sh:datatype xsd:string ;
-	sh:description "The kind of predicate, one of this class's descendants." ;
+_:c14n6 sh:datatype xsd:string ;
+	sh:description "The role the party acts in, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 2 ;
-	sh:path slsa:predicate_kind .
-_:c14n55 sh:class slsa:InTotoStatement ;
-	sh:description "The attestations, as in-toto statements." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 0 ;
-	sh:path slsa:attestations .
-_:c14n56 rdf:first "LIMITED_FEASIBILITY" ;
-	rdf:rest _:c14n253 .
-_:c14n57 sh:description "The transparency log entry that records the signature, such as a Rekor entry." ;
+	sh:path slsa:party_type .
+_:c14n60 sh:description "The tool that signed the attestation, named by URI, such as Cosign or Notation." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
-	sh:order 6 ;
-	sh:path slsa:transparency_log_entry .
-_:c14n58 rdf:first rdf:type ;
+	sh:order 1 ;
+	sh:path slsa:signing_tool .
+_:c14n61 rdf:first "LIMITED_FEASIBILITY" ;
+	rdf:rest _:c14n244 .
+_:c14n62 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n59 sh:description "The strategy themes applied or recommended." ;
-	sh:in _:c14n147 ;
+_:c14n63 sh:description "The strategy themes applied or recommended." ;
+	sh:in _:c14n145 ;
 	sh:order 1 ;
 	sh:path slsa:strategies .
-_:c14n6 sh:description "The tool that generated this provenance, named by URI." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 5 ;
-	sh:path slsa:provenance_generation_tool .
-_:c14n60 sh:datatype xsd:string ;
-	sh:description "The git blob id of a file's content." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 22 ;
-	sh:path slsa:git_blob ;
-	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
-_:c14n61 rdf:first "UNCLEAR_COMMUNICATION" ;
-	rdf:rest _:c14n56 .
-_:c14n62 rdf:first "SLSA_BUILD_LEVEL_0" ;
-	rdf:rest _:c14n250 .
-_:c14n63 sh:datatype xsd:string ;
-	sh:description "A name for the resource within the attestation that carries it." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 2 ;
-	sh:path slsa:resource_name .
-_:c14n64 sh:class slsa:SlsaBuildPlatform ;
+_:c14n64 rdf:first "UNCLEAR_COMMUNICATION" ;
+	rdf:rest _:c14n61 .
+_:c14n65 rdf:first "SLSA_BUILD_LEVEL_0" ;
+	rdf:rest _:c14n240 .
+_:c14n66 sh:class slsa:SlsaBuildPlatform ;
 	sh:description "The build platform this party or component belongs to or uses." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 0 ;
 	sh:path slsa:build_platform .
-_:c14n65 sh:datatype xsd:string ;
+_:c14n67 sh:datatype xsd:string ;
 	sh:description "The role the party acts in, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:party_type .
-_:c14n66 sh:description "The URI that identifies the registry." ;
+_:c14n68 sh:description "The URI that identifies the registry." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 1 ;
 	sh:path slsa:registry_uri .
-_:c14n67 rdf:first rdf:type ;
+_:c14n69 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n68 rdf:first rdf:type ;
+_:c14n7 sh:class slsa:SlsaControlPlane ;
+	sh:description "The control planes of the build platforms." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path slsa:control_planes .
+_:c14n70 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n69 sh:datatype xsd:boolean ;
+_:c14n71 sh:class <https://w3id.org/lmodel/in-toto/InTotoPredicate> ;
+	sh:description "The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 3 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate> .
+_:c14n72 sh:datatype xsd:boolean ;
 	sh:description "Whether the organization has the SCS enforce its technical controls on this reference." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 4 ;
 	sh:path slsa:protected .
-_:c14n7 rdf:first "SLSA_DEPENDENCY_LEVEL_4" ;
-	rdf:rest rdf:nil .
-_:c14n70 sh:class slsa:SlsaBuildParameter ;
+_:c14n73 sh:description "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1." ;
+	sh:maxCount 1 ;
+	sh:minCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 3 ;
+	sh:path <https://w3id.org/lmodel/in-toto/predicate_type> .
+_:c14n74 sh:class slsa:SlsaBuildParameter ;
 	sh:description "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers." ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 1 ;
 	sh:path slsa:external_parameters .
-_:c14n71 sh:datatype xsd:dateTime ;
+_:c14n75 sh:datatype xsd:dateTime ;
 	sh:description "When the revision was created." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 3 ;
 	sh:path slsa:authored_at .
-_:c14n72 sh:class slsa:SlsaBuildPlatform ;
+_:c14n76 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_uri> .
+_:c14n77 sh:class slsa:SlsaBuildPlatform ;
 	sh:description "The build platform this party or component belongs to or uses." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 0 ;
 	sh:path slsa:build_platform .
-_:c14n73 sh:datatype xsd:string ;
-	sh:description "The kind of predicate, one of this class's descendants." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 0 ;
-	sh:path slsa:predicate_kind .
-_:c14n74 rdf:first "SLSA_DEPENDENCY_LEVEL_0" ;
-	rdf:rest _:c14n245 .
-_:c14n75 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n76 sh:datatype xsd:string ;
-	sh:description "The resource's content itself, base64-encoded, for a resource small enough to carry inline." ;
+_:c14n78 sh:datatype xsd:string ;
+	sh:description "The SHA-512/256 digest of the artifact." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 5 ;
-	sh:path slsa:content ;
-	sh:pattern "^[A-Za-z0-9+/_-]+={0,2}$" .
-_:c14n77 rdf:first rdf:type ;
+	sh:path <https://w3id.org/lmodel/in-toto/sha512_256> ;
+	sh:pattern "^[a-f0-9]{64}$" .
+_:c14n79 rdf:first "SLSA_DEPENDENCY_LEVEL_0" ;
+	rdf:rest _:c14n235 .
+_:c14n8 sh:class <https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> ;
+	sh:description "Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees." ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 4 ;
+	sh:path slsa:builder_dependencies .
+_:c14n80 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n78 sh:datatype xsd:string ;
-	sh:description "The git commit id of a source revision." ;
+_:c14n81 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n82 sh:datatype xsd:string ;
+	sh:description "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
-	sh:order 20 ;
-	sh:path slsa:git_commit ;
-	sh:pattern "^[a-f0-9]{40}([a-f0-9]{24})?$" .
-_:c14n79 rdf:first rdf:type ;
-	rdf:rest rdf:nil .
-_:c14n8 sh:class slsa:SlsaBuildProvenance ;
-	sh:description "The build provenance of the image itself, required at Build Environment L1." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 2 ;
-	sh:path slsa:provenance .
-_:c14n80 rdf:first slsa:slsa_version ;
-	rdf:rest _:c14n185 .
-_:c14n81 sh:datatype xsd:string ;
+	sh:order 19 ;
+	sh:path <https://w3id.org/lmodel/in-toto/dir_hash> ;
+	sh:pattern "^[a-f0-9]{64}$" .
+_:c14n83 sh:datatype xsd:string ;
 	sh:description "The party's name." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:party_name .
-_:c14n82 sh:datatype xsd:string ;
+_:c14n84 sh:datatype xsd:string ;
 	sh:description "The revision identifier the SCS assigns, such as a git commit id or a path- qualified sequence number." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:revision_id .
-_:c14n83 rdf:first slsa:build_image ;
-	rdf:rest _:c14n242 .
-_:c14n84 sh:class slsa:InTotoResourceDescriptor ;
-	sh:description "The immutable artifacts the package name has resolved to." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 3 ;
-	sh:path slsa:package_artifacts .
-_:c14n85 sh:datatype xsd:string ;
-	sh:description "The SHA-512/256 digest of the artifact." ;
+_:c14n85 sh:class <https://w3id.org/lmodel/in-toto/InTotoDigestSet> ;
+	sh:description "The cryptographic digests of a resource's content, keyed by algorithm." ;
 	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 5 ;
-	sh:path slsa:sha512_256 ;
-	sh:pattern "^[a-f0-9]{64}$" .
+	sh:minCount 1 ;
+	sh:nodeKind sh:BlankNodeOrIRI ;
+	sh:order 1 ;
+	sh:path <https://w3id.org/lmodel/in-toto/digest> .
 _:c14n86 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n87 sh:datatype xsd:string ;
+_:c14n87 sh:description "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 0 ;
+	sh:path <https://w3id.org/lmodel/in-toto/resource_uri> .
+_:c14n88 sh:datatype xsd:string ;
 	sh:description "An identifier for this build invocation, in a format the builder defines; useful for finding its logs." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
 	sh:path slsa:invocation_id .
-_:c14n88 rdf:first rdf:type ;
+_:c14n89 rdf:first rdf:type ;
 	rdf:rest rdf:nil .
-_:c14n89 sh:datatype xsd:string ;
+_:c14n9 sh:description "The tool that generated this provenance, named by URI." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:IRI ;
+	sh:order 5 ;
+	sh:path slsa:provenance_generation_tool .
+_:c14n90 rdf:first rdf:type ;
+	rdf:rest rdf:nil .
+_:c14n91 sh:datatype xsd:string ;
 	sh:description "The immutable identifier of the build execution the environment was assigned to." ;
 	sh:maxCount 1 ;
 	sh:minCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 1 ;
 	sh:path slsa:build_id .
-_:c14n9 sh:description "The tool that signed the attestation, named by URI, such as Cosign or Notation." ;
+_:c14n92 sh:datatype xsd:dateTime ;
+	sh:description "When the verification happened." ;
 	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 5 ;
-	sh:path slsa:signing_tool .
-_:c14n90 sh:class slsa:InTotoAnnotation ;
-	sh:description "Vendor-specific annotations on the resource, such as the source references a Source VSA records." ;
-	sh:nodeKind sh:BlankNodeOrIRI ;
-	sh:order 6 ;
-	sh:path slsa:annotations .
-_:c14n91 rdf:first slsa:resource_uri ;
-	rdf:rest _:c14n208 .
-_:c14n92 sh:datatype xsd:string ;
+	sh:nodeKind sh:Literal ;
+	sh:order 2 ;
+	sh:path slsa:time_verified ;
+	sh:pattern "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" .
+_:c14n93 sh:datatype xsd:dateTime ;
+	sh:description "When the build started." ;
+	sh:maxCount 1 ;
+	sh:nodeKind sh:Literal ;
+	sh:order 1 ;
+	sh:path slsa:started_on ;
+	sh:pattern "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" .
+_:c14n94 sh:datatype xsd:string ;
 	sh:description "The package ecosystem whose rules govern how a package is named and distributed, such as PyPA, npm or OCI." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 0 ;
 	sh:path slsa:ecosystem .
-_:c14n93 sh:class slsa:SlsaMeasurement ;
+_:c14n95 sh:class slsa:SlsaMeasurement ;
 	sh:description "The measurements of the environment's components taken during boot." ;
 	sh:nodeKind sh:BlankNodeOrIRI ;
 	sh:order 3 ;
 	sh:path slsa:measurements .
-_:c14n94 rdf:first rdf:type ;
-	rdf:rest _:c14n29 .
-_:c14n95 sh:datatype xsd:string ;
+_:c14n96 rdf:first rdf:type ;
+	rdf:rest _:c14n301 .
+_:c14n97 sh:datatype xsd:string ;
 	sh:description "The kind of named reference, one of this class's descendants." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:Literal ;
 	sh:order 2 ;
 	sh:path slsa:reference_type .
-_:c14n96 sh:datatype xsd:string ;
-	sh:description "The SHAKE128 digest of the artifact, of at least 32 bytes." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:Literal ;
-	sh:order 10 ;
-	sh:path slsa:shake128 ;
-	sh:pattern "^[a-f0-9]{64}([a-f0-9]{2})*$" .
-_:c14n97 sh:class slsa:SlsaSourceRevision ;
+_:c14n98 sh:class slsa:SlsaSourceRevision ;
 	sh:description "The source revision this refers to." ;
 	sh:maxCount 1 ;
 	sh:nodeKind sh:IRI ;
 	sh:order 1 ;
 	sh:path slsa:revision .
-_:c14n98 sh:description "Where the resource can be fetched, when that differs from its identifying URI." ;
-	sh:maxCount 1 ;
-	sh:nodeKind sh:IRI ;
-	sh:order 3 ;
-	sh:path slsa:download_location .
 _:c14n99 sh:class slsa:SlsaVerificationSummaryPolicy ;
 	sh:description "The policy the subject was verified against, by URI and preferably by digest too." ;
 	sh:maxCount 1 ;

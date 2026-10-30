@@ -1,9 +1,12 @@
 {
    "@context": {
       "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "in_toto_linkml": "https://w3id.org/lmodel/in-toto/",
       "linkml": "https://w3id.org/linkml/",
       "skos": "http://www.w3.org/2004/02/skos/core#",
       "slsa": "https://w3id.org/lmodel/slsa/",
+      "spdx": "http://spdx.org/rdf/terms#",
       "@vocab": "https://w3id.org/lmodel/slsa/",
       "build_env_level": {
          "@context": {
@@ -23,143 +26,134 @@
       },
       "digest": {
          "@type": "@id",
-         "@id": "digest"
+         "@id": "in_toto_linkml:digest"
       },
       "ecosystem": {
          "@id": "ecosystem"
       },
       "algorithm": {
-         "@id": "algorithm"
+         "@id": "spdx:algorithm"
       },
       "value": {
-         "@id": "value"
+         "@id": "in_toto_linkml:value"
       },
       "annotation_key": {
-         "@id": "annotation_key"
+         "@id": "in_toto_linkml:annotation_key"
       },
       "annotation_values": {
-         "@id": "annotation_values"
+         "@id": "in_toto_linkml:annotation_values"
       },
       "additional_digests": {
          "@type": "@id",
-         "@id": "additional_digests"
+         "@id": "in_toto_linkml:additional_digests"
       },
       "blake2b": {
-         "@id": "blake2b"
+         "@id": "in_toto_linkml:blake2b"
       },
       "blake2s": {
-         "@id": "blake2s"
+         "@id": "in_toto_linkml:blake2s"
       },
       "dir_hash": {
-         "@id": "dir_hash"
+         "@id": "in_toto_linkml:dir_hash"
       },
       "git_blob": {
-         "@id": "git_blob"
+         "@id": "in_toto_linkml:git_blob"
       },
       "git_commit": {
-         "@id": "git_commit"
+         "@id": "in_toto_linkml:git_commit"
       },
       "git_tag": {
-         "@id": "git_tag"
+         "@id": "in_toto_linkml:git_tag"
       },
       "git_tree": {
-         "@id": "git_tree"
+         "@id": "in_toto_linkml:git_tree"
       },
       "gost": {
-         "@id": "gost"
+         "@id": "in_toto_linkml:gost"
       },
       "md5": {
-         "@id": "md5"
+         "@id": "in_toto_linkml:md5"
       },
       "ripemd160": {
-         "@id": "ripemd160"
+         "@id": "in_toto_linkml:ripemd160"
       },
       "sha1": {
-         "@id": "sha1"
+         "@id": "in_toto_linkml:sha1"
       },
       "sha224": {
-         "@id": "sha224"
+         "@id": "in_toto_linkml:sha224"
       },
       "sha256": {
-         "@id": "sha256"
+         "@id": "in_toto_linkml:sha256"
       },
       "sha384": {
-         "@id": "sha384"
+         "@id": "in_toto_linkml:sha384"
       },
       "sha3_224": {
-         "@id": "sha3_224"
+         "@id": "in_toto_linkml:sha3_224"
       },
       "sha3_256": {
-         "@id": "sha3_256"
+         "@id": "in_toto_linkml:sha3_256"
       },
       "sha3_384": {
-         "@id": "sha3_384"
+         "@id": "in_toto_linkml:sha3_384"
       },
       "sha3_512": {
-         "@id": "sha3_512"
+         "@id": "in_toto_linkml:sha3_512"
       },
       "sha512": {
-         "@id": "sha512"
+         "@id": "in_toto_linkml:sha512"
       },
       "sha512_224": {
-         "@id": "sha512_224"
+         "@id": "in_toto_linkml:sha512_224"
       },
       "sha512_256": {
-         "@id": "sha512_256"
+         "@id": "in_toto_linkml:sha512_256"
       },
       "shake128": {
-         "@id": "shake128"
+         "@id": "in_toto_linkml:shake128"
       },
       "shake256": {
-         "@id": "shake256"
+         "@id": "in_toto_linkml:shake256"
       },
       "sm3": {
-         "@id": "sm3"
+         "@id": "in_toto_linkml:sm3"
+      },
+      "predicate_kind": {
+         "@id": "in_toto_linkml:predicate_kind"
       },
       "annotations": {
          "@type": "@id",
-         "@id": "annotations"
+         "@id": "in_toto_linkml:annotations"
       },
       "content": {
-         "@id": "content"
+         "@id": "in_toto_linkml:content"
       },
       "download_location": {
          "@type": "xsd:anyURI",
-         "@id": "download_location"
+         "@id": "in_toto_linkml:download_location"
       },
       "media_type": {
-         "@id": "media_type"
+         "@id": "dcat:mediaType"
       },
       "resource_name": {
-         "@id": "resource_name"
-      },
-      "attestation_storage_uri": {
-         "@type": "xsd:anyURI",
-         "@id": "attestation_storage_uri"
-      },
-      "predicate": {
-         "@type": "@id",
-         "@id": "predicate"
+         "@id": "in_toto_linkml:resource_name"
       },
       "predicate_type": {
          "@type": "xsd:anyURI",
-         "@id": "predicate_type"
-      },
-      "signing_tool": {
-         "@type": "xsd:anyURI",
-         "@id": "signing_tool"
+         "@id": "in_toto_linkml:predicate_type"
       },
       "statement_type": {
          "@type": "xsd:anyURI",
-         "@id": "statement_type"
+         "@id": "in_toto_linkml:statement_type"
       },
       "subject": {
          "@type": "@id",
-         "@id": "subject"
+         "@id": "in_toto_linkml:subject"
       },
-      "transparency_log_entry": {
-         "@type": "xsd:anyURI",
-         "@id": "transparency_log_entry"
+      "predicate": {
+         "@type": "@id",
+         "@id": "in_toto_linkml:predicate"
       },
       "repository": {
          "@type": "@id",
@@ -167,7 +161,7 @@
       },
       "resource_uri": {
          "@type": "xsd:anyURI",
-         "@id": "resource_uri"
+         "@id": "in_toto_linkml:resource_uri"
       },
       "revision": {
          "@type": "@id",
@@ -399,9 +393,6 @@
       "party_type": {
          "@id": "party_type"
       },
-      "predicate_kind": {
-         "@id": "predicate_kind"
-      },
       "build_metadata": {
          "@type": "@id",
          "@id": "build_metadata"
@@ -451,6 +442,18 @@
          },
          "@id": "source_level"
       },
+      "attestation_storage_uri": {
+         "@type": "xsd:anyURI",
+         "@id": "attestation_storage_uri"
+      },
+      "signing_tool": {
+         "@type": "xsd:anyURI",
+         "@id": "signing_tool"
+      },
+      "transparency_log_entry": {
+         "@type": "xsd:anyURI",
+         "@id": "transparency_log_entry"
+      },
       "dependency_levels": {
          "@type": "@id",
          "@id": "dependency_levels"
@@ -493,22 +496,25 @@
          "@id": "verifier_id"
       },
       "InTotoAdditionalDigest": {
-         "@id": "InTotoAdditionalDigest"
+         "@id": "in_toto_linkml:InTotoAdditionalDigest"
       },
       "InTotoAnnotation": {
-         "@id": "InTotoAnnotation"
+         "@id": "in_toto_linkml:InTotoAnnotation"
       },
       "InTotoDigestSet": {
-         "@id": "InTotoDigestSet"
+         "@id": "in_toto_linkml:InTotoDigestSet"
+      },
+      "InTotoPredicate": {
+         "@id": "in_toto_linkml:InTotoPredicate"
       },
       "InTotoResourceDescriptor": {
-         "@id": "InTotoResourceDescriptor"
+         "@id": "in_toto_linkml:InTotoResourceDescriptor"
       },
       "InTotoStatement": {
-         "@id": "InTotoStatement"
+         "@id": "in_toto_linkml:InTotoStatement"
       },
       "InTotoStatementSubject": {
-         "@id": "InTotoStatementSubject"
+         "@id": "in_toto_linkml:InTotoStatementSubject"
       },
       "SlsaAdoptionMetadata": {
          "@id": "SlsaAdoptionMetadata"
@@ -596,6 +602,9 @@
       },
       "SlsaSourceRevision": {
          "@id": "SlsaSourceRevision"
+      },
+      "SlsaStatement": {
+         "@id": "SlsaStatement"
       },
       "SlsaTag": {
          "@id": "SlsaTag"

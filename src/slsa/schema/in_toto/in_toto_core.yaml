@@ -1,0 +1,495 @@
+---
+id: https://w3id.org/lmodel/in-toto/in_toto_core
+name: in_toto_core
+title: in-toto attestation core
+description: >-
+  The layers of an in-toto attestation that every predicate shares: the
+  statement, the resource descriptor and the digest set, the framework's field
+  types, and the base class of every predicate.
+license: Apache-2.0
+see_also:
+  - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/README.md
+comments:
+  - >-
+    This module imports only the LinkML types, so a schema that models other
+    predicates, such as lmodel/slsa's, can import it alone.
+  - >-
+    Every attribute names its IRI in slot_uri, because `lokf adapt` folds an
+    imported module into the importer's copy without one, and the attribute
+    would then take the importer's default prefix (lokf issue 168).
+  - >-
+    Each type names the base its typeof already gives, because the SQL generator
+    reads base alone and reports a type without one.
+
+default_prefix: in_toto_linkml
+default_range: string
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  in_toto_linkml: https://w3id.org/lmodel/in-toto/
+  dcat: http://www.w3.org/ns/dcat#
+  spdx: http://spdx.org/rdf/terms#
+  xsd: http://www.w3.org/2001/XMLSchema#
+
+imports:
+  - linkml:types
+
+types:
+  in_toto_resource_uri:
+    typeof: uri
+    base: URI
+    description: >-
+      A URI that identifies or locates a resource, such as a package URL or a git
+      repository address, with its scheme and authority in lowercase.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+    comments:
+      - >-
+        The framework recommends a package URL (pkg:) or an SPDX download location
+        (git+https:), and allows one that does not resolve.
+    pattern: &in_toto_uri_pattern
+      "^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$"
+
+  in_toto_type_uri:
+    typeof: uri
+    base: URI
+    description: >-
+      A URI that names a type, such as a statement's or a predicate's, with its
+      scheme and authority in lowercase.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#typeuri
+    comments:
+      - >-
+        The framework asks that it carry a version and registers none, since the
+        namespace of a URI keeps two types apart.
+    pattern: *in_toto_uri_pattern
+
+  in_toto_timestamp:
+    typeof: string
+    base: str
+    uri: xsd:dateTime
+    description: >-
+      A point in time in RFC 3339 format in the UTC time zone, written with a
+      trailing Z, such as 1985-04-12T23:20:50.52Z.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#timestamp
+    comments:
+      - >-
+        It extends string rather than datetime, because the LinkML Python runtime
+        writes a datetime's Z as +00:00, which the framework does not allow.
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+
+slots:
+  resource_uri:
+    description: >-
+      The URI that identifies a resource, such as a package URL, a git repository
+      address or an OCI image reference.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+    slot_uri: in_toto_linkml:resource_uri
+    range: in_toto_resource_uri
+
+  digest:
+    description: The cryptographic digests of a resource's content, keyed by algorithm.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+    slot_uri: in_toto_linkml:digest
+    range: InTotoDigestSet
+    inlined: true
+
+  predicate:
+    description: >-
+      The predicate, one of the kinds this schema or an importing one models;
+      predicate_kind names which. Unset means the same as empty.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+    slot_uri: in_toto_linkml:predicate
+    range: InTotoPredicate
+    inlined: true
+    comments:
+      - >-
+        It is a slot of its own rather than an attribute of InTotoStatement, because
+        LOKF's predicate is a relation's type: `lokf adapt` renames a slot whose name
+        LOKF defines and keeps its IRI, so a copy beside LOKF calls it
+        in_toto_linkml_predicate.
+
+classes:
+  # ── Resource descriptors ────────────────────────────────────────────────
+
+  InTotoDigestSet:
+    description: >-
+      A set of one or more digests over one artifact, keyed by algorithm, from which a
+      consumer picks the algorithm it trusts.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+    comments:
+      - >-
+        The named algorithms take lowercase hexadecimal, and additional_digests holds
+        any other algorithm, such as an SCS's own revision type.
+      - >-
+        A consumer accepts only the algorithms it considers secure and ignores the
+        rest, and two sets match when any accepted algorithm matches.
+      - >-
+        SHAKE and BLAKE2 digests can be of any length, and this schema asks for at
+        least 32 bytes, since a shorter digest resists collisions too weakly to
+        identify an artifact.
+    notes:
+      - >-
+        Each condition in any_of names its range through a nested any_of, because the
+        JSON Schema generator leaves a condition's own range out, and a null value
+        would then count as present.
+    attributes:
+      sha256:
+        slot_uri: in_toto_linkml:sha256
+        description: The SHA-256 digest of the artifact.
+        pattern: "^[a-f0-9]{64}$"
+      sha224:
+        slot_uri: in_toto_linkml:sha224
+        description: The SHA-224 digest of the artifact.
+        pattern: "^[a-f0-9]{56}$"
+      sha384:
+        slot_uri: in_toto_linkml:sha384
+        description: The SHA-384 digest of the artifact.
+        pattern: "^[a-f0-9]{96}$"
+      sha512:
+        slot_uri: in_toto_linkml:sha512
+        description: The SHA-512 digest of the artifact.
+        pattern: "^[a-f0-9]{128}$"
+      sha512_224:
+        slot_uri: in_toto_linkml:sha512_224
+        description: The SHA-512/224 digest of the artifact.
+        pattern: "^[a-f0-9]{56}$"
+      sha512_256:
+        slot_uri: in_toto_linkml:sha512_256
+        description: The SHA-512/256 digest of the artifact.
+        pattern: "^[a-f0-9]{64}$"
+      sha3_224:
+        slot_uri: in_toto_linkml:sha3_224
+        description: The SHA3-224 digest of the artifact.
+        pattern: "^[a-f0-9]{56}$"
+      sha3_256:
+        slot_uri: in_toto_linkml:sha3_256
+        description: The SHA3-256 digest of the artifact.
+        pattern: "^[a-f0-9]{64}$"
+      sha3_384:
+        slot_uri: in_toto_linkml:sha3_384
+        description: The SHA3-384 digest of the artifact.
+        pattern: "^[a-f0-9]{96}$"
+      sha3_512:
+        slot_uri: in_toto_linkml:sha3_512
+        description: The SHA3-512 digest of the artifact.
+        pattern: "^[a-f0-9]{128}$"
+      shake128:
+        slot_uri: in_toto_linkml:shake128
+        description: The SHAKE128 digest of the artifact, of at least 32 bytes.
+        pattern: "^[a-f0-9]{64}([a-f0-9]{2})*$"
+      shake256:
+        slot_uri: in_toto_linkml:shake256
+        description: The SHAKE256 digest of the artifact, of at least 32 bytes.
+        pattern: "^[a-f0-9]{64}([a-f0-9]{2})*$"
+      blake2b:
+        slot_uri: in_toto_linkml:blake2b
+        description: The BLAKE2b digest of the artifact, of 32 to 64 bytes.
+        pattern: "^[a-f0-9]{64}([a-f0-9]{2}){0,32}$"
+      blake2s:
+        slot_uri: in_toto_linkml:blake2s
+        description: The BLAKE2s digest of the artifact, at its full 32 bytes.
+        pattern: "^[a-f0-9]{64}$"
+      ripemd160:
+        slot_uri: in_toto_linkml:ripemd160
+        description: The RIPEMD-160 digest of the artifact.
+        pattern: "^[a-f0-9]{40}$"
+      sm3:
+        slot_uri: in_toto_linkml:sm3
+        description: The SM3 digest of the artifact.
+        pattern: "^[a-f0-9]{64}$"
+      gost:
+        slot_uri: in_toto_linkml:gost
+        description: The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
+        pattern: "^[a-f0-9]{64}([a-f0-9]{64})?$"
+      sha1:
+        slot_uri: in_toto_linkml:sha1
+        description: The SHA-1 digest of the artifact.
+        pattern: "^[a-f0-9]{40}$"
+        comments:
+          - SHA-1 lacks collision resistance, so most consumers should not rely on it.
+      md5:
+        slot_uri: in_toto_linkml:md5
+        description: The MD5 digest of the artifact.
+        pattern: "^[a-f0-9]{32}$"
+        comments:
+          - MD5 lacks collision resistance, so most consumers should not accept it.
+      dir_hash:
+        slot_uri: in_toto_linkml:dir_hash
+        description: >-
+          A digest over a directory's content by the dirhash Hash1 function, in
+          lowercase hexadecimal rather than base64.
+        pattern: "^[a-f0-9]{64}$"
+      git_commit:
+        slot_uri: in_toto_linkml:git_commit
+        description: The git commit id of a source revision.
+        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
+      git_tree:
+        slot_uri: in_toto_linkml:git_tree
+        description: The git tree id of a source revision's content, or of any file tree.
+        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
+      git_blob:
+        slot_uri: in_toto_linkml:git_blob
+        description: The git blob id of a file's content.
+        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
+      git_tag:
+        slot_uri: in_toto_linkml:git_tag
+        description: The git object id of an annotated tag.
+        pattern: "^[a-f0-9]{40}([a-f0-9]{24})?$"
+      additional_digests:
+        slot_uri: in_toto_linkml:additional_digests
+        description: The digests under algorithms this class does not name.
+        range: InTotoAdditionalDigest
+        multivalued: true
+        minimum_cardinality: 1
+        inlined: true
+        inlined_as_list: true
+    # A digest set holds at least one digest.
+    any_of:
+      - slot_conditions: {sha256: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha224: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha384: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha512: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha512_224: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha512_256: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha3_224: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha3_256: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha3_384: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha3_512: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {shake128: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {shake256: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {blake2b: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {blake2s: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {ripemd160: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sm3: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {gost: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {sha1: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {md5: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {dir_hash: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {git_commit: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {git_tree: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {git_blob: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {git_tag: {required: true, any_of: [{range: string}]}}
+      - slot_conditions: {additional_digests: {required: true, multivalued: true}}
+
+  InTotoAdditionalDigest:
+    description: >-
+      One digest under an algorithm that InTotoDigestSet does not name, such as an
+      SCS's own revision type.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+    comments:
+      - >-
+        In the attestation's JSON the algorithm is a key of the digest set beside the
+        named ones, and an algorithm the framework does not define documents how its
+        value is encoded.
+      - >-
+        An SCS that does not use cryptographic digests defines a canonical revision
+        type of its own that includes the repository, such as svn_revision_id.
+      - >-
+        Each algorithm appears once in a list, since the attestation's JSON uses it as
+        a key; the validator does not check this.
+    attributes:
+      algorithm:
+        description: >-
+          The algorithm's name, as the key the attestation's JSON uses, such as
+          svn_revision_id.
+        slot_uri: spdx:algorithm
+        required: true
+        pattern: "^[a-z][A-Za-z0-9_.:-]*$"
+        none_of:
+          - equals_string_in:
+              - sha256
+              - sha224
+              - sha384
+              - sha512
+              - sha512_224
+              - sha512_256
+              - sha3_224
+              - sha3_256
+              - sha3_384
+              - sha3_512
+              - shake128
+              - shake256
+              - blake2b
+              - blake2s
+              - ripemd160
+              - sm3
+              - gost
+              - sha1
+              - md5
+              - dirHash
+              - gitCommit
+              - gitTree
+              - gitBlob
+              - gitTag
+              - dir_hash
+              - git_commit
+              - git_tree
+              - git_blob
+              - git_tag
+        comments:
+          - >-
+            An algorithm that InTotoDigestSet names, by its JSON key or by its field
+            name, goes in that field instead.
+          - >-
+            A name starts with a lowercase letter, as the framework's own names do,
+            so that SHA256 is not taken for sha256, and it may hold a colon, as
+            go-witness's gitoid:sha256 does. The framework itself sets no rule for
+            other names.
+      value:
+        slot_uri: in_toto_linkml:value
+        description: The digest under that algorithm, in the encoding the algorithm documents.
+        required: true
+        pattern: "^\\S+$"
+
+  InTotoAnnotation:
+    description: >-
+      One vendor-specific annotation on a resource descriptor: a key and its values.
+    comments:
+      - >-
+        The attestation's JSON allows any JSON value. A string becomes one value and an
+        array one value per item; any other value or item is written as its JSON
+        text, so one value cannot tell a string from a one-item array.
+      - >-
+        Each key appears once in a list, since the attestation's JSON uses it as a
+        key; the validator does not check this.
+    attributes:
+      annotation_key:
+        slot_uri: in_toto_linkml:annotation_key
+        description: The annotation's key.
+        required: true
+      annotation_values:
+        slot_uri: in_toto_linkml:annotation_values
+        description: The annotation's values.
+        multivalued: true
+
+  InTotoResourceDescriptor:
+    description: >-
+      A reference to a software artifact or other resource by URI or digest, or the
+      resource itself as content, with optional metadata.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/resource_descriptor.md
+    comments:
+      - >-
+        A descriptor carries at least one of a URI, a digest or its content; a field
+        that needs a particular one says so.
+    notes:
+      - >-
+        Each condition in any_of names its range through a nested any_of, because the
+        JSON Schema generator leaves a condition's own range out, and a null value
+        would then count as present.
+    slots:
+      - resource_uri
+      - digest
+    attributes:
+      resource_name:
+        slot_uri: in_toto_linkml:resource_name
+        description: A name for the resource within the attestation that carries it.
+      download_location:
+        slot_uri: in_toto_linkml:download_location
+        description: >-
+          Where the resource can be fetched, when that differs from its identifying URI.
+        range: in_toto_resource_uri
+      media_type:
+        description: The IANA media type of the resource's content.
+        slot_uri: dcat:mediaType
+      content:
+        slot_uri: in_toto_linkml:content
+        description: >-
+          The resource's content itself, base64-encoded, for a resource small enough to
+          carry inline.
+        pattern: "^[A-Za-z0-9+/_-]+={0,2}$"
+        comments:
+          - The in-toto framework asks for content under 1 KB, so that attestations stay small.
+      annotations:
+        slot_uri: in_toto_linkml:annotations
+        description: >-
+          Vendor-specific annotations on the resource, such as the source references a
+          SLSA Source Verification Summary records.
+        range: InTotoAnnotation
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+    any_of:
+      - slot_conditions: {resource_uri: {required: true, any_of: [{range: uri}]}}
+      - slot_conditions: {digest: {required: true, any_of: [{range: InTotoDigestSet}]}}
+      - slot_conditions: {content: {required: true, any_of: [{range: string}]}}
+
+  InTotoStatementSubject:
+    is_a: InTotoResourceDescriptor
+    description: >-
+      One artifact an in-toto statement is about: a resource descriptor that carries a
+      digest.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+    slot_usage:
+      digest:
+        required: true
+
+  # ── Attestation layer ────────────────────────────────────────────────────
+
+  InTotoStatement:
+    description: >-
+      The statement layer of an in-toto attestation: the subjects it is about,
+      the type of its predicate and the predicate itself.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+    comments:
+      - >-
+        The signature envelope around a statement, and the bundle that collects
+        signed statements, are outside this model.
+      - >-
+        A statement is the attestation, and its predicate is one kind of claim about
+        the subjects, such as a test result or build provenance.
+    slots:
+      - predicate
+    attributes:
+      statement_type:
+        slot_uri: in_toto_linkml:statement_type
+        description: The in-toto statement type, always https://in-toto.io/Statement/v1.
+        range: in_toto_type_uri
+        required: true
+        pattern: "^https://in-toto\\.io/Statement/v1$"
+      subject:
+        slot_uri: in_toto_linkml:subject
+        description: The artifacts the predicate is about, each with a digest.
+        range: InTotoStatementSubject
+        multivalued: true
+        required: true
+        minimum_cardinality: 1
+        inlined: true
+        inlined_as_list: true
+      predicate_type:
+        slot_uri: in_toto_linkml:predicate_type
+        description: >-
+          The URI that names the predicate's type and so its schema, such as
+          https://in-toto.io/attestation/test-result/v0.1.
+        range: in_toto_type_uri
+        required: true
+
+  # ── Predicate layer ─────────────────────────────────────────────────────
+
+  InTotoPredicate:
+    abstract: true
+    description: >-
+      The base of every predicate an in-toto statement can carry; predicate_kind
+      names the concrete kind.
+    see_also:
+      - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/predicate.md
+    comments:
+      - >-
+        The statement's predicate_type names the predicate's type by URI, and each
+        concrete class says which URI it renders. Nothing ties the two, since a
+        schema that imports this module may model a predicate under its own URI.
+    attributes:
+      predicate_kind:
+        slot_uri: in_toto_linkml:predicate_kind
+        description: The kind of predicate, one of this class's descendants.
+        designates_type: true
+        range: string

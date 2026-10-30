@@ -14,7 +14,7 @@ sources:
     title: the upstream copy of the whitepaper
 generated:
   by: process:ktl-librarian
-  at: "2026-10-23T22:17:38Z"
+  at: "2026-10-30T23:13:40Z"
 status: draft
 author:
   - type: Organization
@@ -23,7 +23,7 @@ author:
 license: https://creativecommons.org/licenses/by/4.0/
 verified:
   - by: process:ktl-librarian
-    at: "2026-10-27T12:57:54Z"
+    at: "2026-10-30T23:20:11Z"
 ---
 
 # CNCF Secure Software Factory whitepaper
@@ -33,7 +33,7 @@ The whitepaper is kept in the repository as `docs/Secure_Software_Factory_Whitep
 `docs/about.md` names what the schema takes from it, each in the `slsa_ssf` subset:
 
 - `pipeline_orchestrator` on a build definition;
-- `signing_tool` and `transparency_log_entry` on a statement;
+- `signing_tool` and `transparency_log_entry` on `SlsaStatement`;
 - `guac_uri` and `security_insights_uri` on a package, which point at the [OpenSSF](openssf-supply-chain.md) projects GUAC and Security Insights.
 
 The subset's description says that these elements are not part of the SLSA specification.
