@@ -6,7 +6,7 @@ The LinkML schema, as `slsa.yaml` and the modules it imports:
 | --- | --- |
 | `slsa.yaml` | The umbrella: imports every module and adds the `SlsaDocument` root. The project names this file. |
 | `slsa_core.yaml` | What every track shares: `SlsaStatement`, which adds SLSA's fields to an in-toto statement, `SlsaPredicate`, the roles, the build platform and the package model. Imports `in_toto/in_toto_core`. |
-| `in_toto/in_toto_core.yaml` | lmodel/in-toto's core module at v0.1.0, as `NOTICE` records: the in-toto statement layer, resource descriptors, digest sets and field types. Imports only `linkml:types`. Never edited here; `tests/test_in_toto_import.py` pins it. |
+| `in_toto/in_toto_core.yaml` | lmodel/in-toto's core module at v0.1.1, as `NOTICE` records: the in-toto statement layer, resource descriptors, digest sets and field types. Imports only `linkml:types`. Never edited here; `tests/test_in_toto_import.py` pins it. |
 | `slsa_build.yaml` | The Build track's provenance predicate. |
 | `slsa_verification.yaml` | The Verification Summary Attestation predicate, `SlsaResult` and the `slsa_result_value` type that verified levels take, which also admits an issuer's own results. |
 | `slsa_source.yaml` | The Source track: source control systems, repositories, revisions, named references and source provenance. |

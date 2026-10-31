@@ -110,8 +110,9 @@ slots:
       - >-
         It is a slot of its own rather than an attribute of InTotoStatement, because
         LOKF's predicate is a relation's type: `lokf adapt` renames a slot whose name
-        LOKF defines and keeps its IRI, so a copy beside LOKF calls it
-        in_toto_linkml_predicate.
+        LOKF defines, with the name of the schema it adapts as a prefix, and keeps its
+        IRI. This repository's copy calls it in_toto_linkml_predicate, and lmodel/slsa's
+        calls it slsa_predicate.
 
 classes:
   # ── Resource descriptors ────────────────────────────────────────────────

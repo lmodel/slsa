@@ -401,7 +401,8 @@
         "tests/test_schema_rules.py checks the pattern against SlsaResult."
       ],
       "comments": [
-        "An issuer's own result, such as an organization's ORG_SOURCE_ property, is printable ASCII with no spaces and does not start with SLSA_ in any letter case, so that it cannot pass for an SLSA result."
+        "An issuer's own result, such as an organization's ORG_SOURCE_ property, is printable ASCII with no spaces and does not start with SLSA_ in any letter case, so that it cannot pass for an SLSA result.",
+        "It names the base its typeof already gives, because the SQL generator reads base alone and reports a type without one."
       ],
       "in_subset": [
         "slsa_build_track",
@@ -1051,7 +1052,7 @@
       "definition_uri": "https://w3id.org/lmodel/in-toto/predicate",
       "description": "The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty.",
       "comments": [
-        "It is a slot of its own rather than an attribute of InTotoStatement, because LOKF's predicate is a relation's type: `lokf adapt` renames a slot whose name LOKF defines and keeps its IRI, so a copy beside LOKF calls it in_toto_linkml_predicate."
+        "It is a slot of its own rather than an attribute of InTotoStatement, because LOKF's predicate is a relation's type: `lokf adapt` renames a slot whose name LOKF defines, with the name of the schema it adapts as a prefix, and keeps its IRI. This repository's copy calls it in_toto_linkml_predicate, and lmodel/slsa's calls it slsa_predicate."
       ],
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [

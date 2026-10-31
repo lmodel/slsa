@@ -13,9 +13,9 @@ CORE = (
 )
 
 # The git object hash of src/in_toto_linkml/schema/in_toto_core.yaml in
-# lmodel/in-toto at v0.1.0, the release the copy was taken from. Move it with
+# lmodel/in-toto at v0.1.1, the release the copy was taken from. Move it with
 # the copy, from a later release of lmodel/in-toto.
-PINNED_BLOB = "3ffd841743df241e2948a2150caa8b03a024762f"
+PINNED_BLOB = "b3fd93ae11dc9d5461a21dcbdbe307e4c4c9b898"
 
 
 def test_the_core_is_the_pinned_file():

@@ -905,7 +905,9 @@ slots:
     comments:
     - 'It is a slot of its own rather than an attribute of InTotoStatement, because
       LOKF''s predicate is a relation''s type: `lokf adapt` renames a slot whose name
-      LOKF defines and keeps its IRI, so a copy beside LOKF calls it in_toto_linkml_predicate.'
+      LOKF defines, with the name of the schema it adapts as a prefix, and keeps its
+      IRI. This repository''s copy calls it in_toto_linkml_predicate, and lmodel/slsa''s
+      calls it slsa_predicate.'
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
@@ -4464,4 +4466,3 @@ metamodel_version: 1.12.0
 source_file: slsa.yaml
 source_file_date: '2026-10-30T16:19:28'
 source_file_size: 3821
-

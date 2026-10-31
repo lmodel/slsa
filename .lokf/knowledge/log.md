@@ -1,5 +1,9 @@
 # Change Log
 
+## 2026-10-31
+
+* **Changed**: the in-toto pages name lmodel/in-toto v0.1.1, whose core module the schema now vendors; only its comment on `predicate` changed.
+
 ## 2026-10-30
 
 * **Prose**: reworded 5 concept bodies in plain English. No fact, link, number or frontmatter changed.
