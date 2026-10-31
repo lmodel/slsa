@@ -145,7 +145,7 @@ xsd:dateTime a rdfs:Datatype ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md> ;
 	skos:definition "The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
-	skos:note "It is a slot of its own rather than an attribute of InTotoStatement, because LOKF's predicate is a relation's type: `lokf adapt` renames a slot whose name LOKF defines and keeps its IRI, so a copy beside LOKF calls it in_toto_linkml_predicate." .
+	skos:note "It is a slot of its own rather than an attribute of InTotoStatement, because LOKF's predicate is a relation's type: `lokf adapt` renames a slot whose name LOKF defines, with the name of the schema it adapts as a prefix, and keeps its IRI. This repository's copy calls it in_toto_linkml_predicate, and lmodel/slsa's calls it slsa_predicate." .
 <https://w3id.org/lmodel/in-toto/predicate_kind> a owl:DatatypeProperty ;
 	rdfs:label "predicate_kind" ;
 	skos:definition "The kind of predicate, one of this class's descendants." ;

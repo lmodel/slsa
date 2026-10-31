@@ -6,6 +6,10 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+### Fixed
+
+- **The vendored in-toto core is lmodel/in-toto v0.1.1's.** Its comment on `predicate` now says that this repository's adapt copy calls the slot `slsa_predicate`; v0.1.0's named only in-toto's own copy's name.
+
 ## [0.8.0] - 2026-10-30
 
 ### Changed

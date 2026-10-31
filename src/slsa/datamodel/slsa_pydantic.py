@@ -1454,9 +1454,10 @@ class InTotoStatement(ConfiguredBaseModel):
 
     predicate: Optional[Union[SlsaBuildProvenance,SlsaVerificationSummary,SlsaSourceProvenance,SlsaBuildEnvironmentAttestation]] = Field(default=None, description="""The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty.""", json_schema_extra = { "linkml_meta": {'comments': ['It is a slot of its own rather than an attribute of '
                       "InTotoStatement, because LOKF's predicate is a relation's type: "
-                      '`lokf adapt` renames a slot whose name LOKF defines and keeps '
-                      'its IRI, so a copy beside LOKF calls it '
-                      'in_toto_linkml_predicate.'],
+                      '`lokf adapt` renames a slot whose name LOKF defines, with the '
+                      'name of the schema it adapts as a prefix, and keeps its IRI. '
+                      "This repository's copy calls it in_toto_linkml_predicate, and "
+                      "lmodel/slsa's calls it slsa_predicate."],
          'domain_of': ['InTotoStatement'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md'],
          'slot_uri': 'in_toto_linkml:predicate'} })
@@ -1510,9 +1511,10 @@ class SlsaStatement(InTotoStatement):
     transparency_log_entry: Optional[str] = Field(default=None, description="""The transparency log entry that records the signature, such as a Rekor entry.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaStatement'], 'in_subset': ['slsa_ssf']} })
     predicate: Optional[Union[SlsaBuildProvenance,SlsaVerificationSummary,SlsaSourceProvenance,SlsaBuildEnvironmentAttestation]] = Field(default=None, description="""The predicate, one of the kinds this schema or an importing one models; predicate_kind names which. Unset means the same as empty.""", json_schema_extra = { "linkml_meta": {'comments': ['It is a slot of its own rather than an attribute of '
                       "InTotoStatement, because LOKF's predicate is a relation's type: "
-                      '`lokf adapt` renames a slot whose name LOKF defines and keeps '
-                      'its IRI, so a copy beside LOKF calls it '
-                      'in_toto_linkml_predicate.'],
+                      '`lokf adapt` renames a slot whose name LOKF defines, with the '
+                      'name of the schema it adapts as a prefix, and keeps its IRI. '
+                      "This repository's copy calls it in_toto_linkml_predicate, and "
+                      "lmodel/slsa's calls it slsa_predicate."],
          'domain_of': ['InTotoStatement'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md'],
          'slot_uri': 'in_toto_linkml:predicate'} })
