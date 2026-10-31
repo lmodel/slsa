@@ -33,7 +33,7 @@ sources:
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-30T23:20:11Z"
+  at: "2026-10-31T12:18:36Z"
 status: draft
 ---
 
@@ -64,7 +64,7 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `https://arxiv.org/abs/2409.05014` | `references/slsa-adoption-study` | re-read the title, the authors and the abstract's numbers |
 | `https://slsa.dev/spec/v1.2/` | `references/slsa-specification` | external authority: cite on change |
 | `https://github.com/in-toto/attestation` (`spec/v1/` at commit `7aefca35a0f74a6e0cb397a8c4a76558f54de571`) | `references/in-toto-attestation` | re-read `statement.md`, `resource_descriptor.md` and `digest_set.md` at the commit the specification copy links to; when a newer SLSA release links another commit, compare the supported algorithms and the MUST rules |
-| `src/slsa/schema/in_toto/in_toto_core.yaml`, `tests/test_in_toto_import.py`, the lmodel/in-toto section of `NOTICE`, `https://github.com/lmodel/in-toto/releases/tag/v0.1.0` | `references/in-toto-attestation`, the in-toto module in `datasets/slsa-linkml-schema`, the vendored-module step of `playbooks/regenerate-and-test` | compare `git hash-object` of the vendored file with the hash the test pins and with the file at the release tag; when the test pins a later release, re-read the module's classes, types and IRIs |
+| `src/slsa/schema/in_toto/in_toto_core.yaml`, `tests/test_in_toto_import.py`, the lmodel/in-toto section of `NOTICE`, `https://github.com/lmodel/in-toto/releases/tag/v0.1.1` | `references/in-toto-attestation`, the in-toto module in `datasets/slsa-linkml-schema`, the vendored-module step of `playbooks/regenerate-and-test` | compare `git hash-object` of the vendored file with the hash the test pins and with the file at the release tag; when the test pins a later release, re-read the module's classes, types and IRIs |
 
 These are not knowledge sources, and are left out on purpose:
 

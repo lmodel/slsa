@@ -3,7 +3,7 @@ type: Reference
 id: https://w3id.org/lmodel/slsa/knowledge/references/in-toto-attestation
 genre: reference
 title: in-toto attestation framework
-description: The in-toto attestation framework (spec v1), whose Statement, ResourceDescriptor and DigestSet layers carry SLSA provenance and verification summaries; the schema takes its InToto classes, InTotoPredicate and three field types from lmodel/in-toto's core module at v0.1.0, vendored unchanged in src/slsa/schema/in_toto/, with every digest algorithm the DigestSet page lists.
+description: The in-toto attestation framework (spec v1), whose Statement, ResourceDescriptor and DigestSet layers carry SLSA provenance and verification summaries; the schema takes its InToto classes, InTotoPredicate and three field types from lmodel/in-toto's core module at v0.1.1, vendored unchanged in src/slsa/schema/in_toto/, with every digest algorithm the DigestSet page lists.
 resource: https://github.com/in-toto/attestation/tree/7aefca35a0f74a6e0cb397a8c4a76558f54de571/spec/v1
 relatedTo:
   - https://w3id.org/lmodel/slsa/knowledge/references/slsa-specification
@@ -11,8 +11,8 @@ sources:
   - resource: src/slsa/schema/in_toto/in_toto_core.yaml
     id: in_toto_core.yaml
     title: lmodel/in-toto's core module as vendored, its classes, types, IRIs and links
-  - resource: https://github.com/lmodel/in-toto/releases/tag/v0.1.0
-    id: v0.1.0
+  - resource: https://github.com/lmodel/in-toto/releases/tag/v0.1.1
+    id: v0.1.1
     title: the lmodel/in-toto release the module was copied from
   - resource: NOTICE
     id: notice
@@ -34,7 +34,7 @@ sources:
     title: the DigestSet field type and its supported algorithms
 generated:
   by: process:ktl-librarian
-  at: "2026-10-30T23:13:40Z"
+  at: "2026-10-31T12:18:36Z"
 status: draft
 ---
 
@@ -46,7 +46,7 @@ The SLSA specification copy links these pages at commit `7aefca35a0f74a6e0cb397a
 
 ## The schema's copy
 
-`NOTICE` says that `src/slsa/schema/in_toto/in_toto_core.yaml` is the core module of the in-toto Attestation Framework's LinkML schema from lmodel/in-toto at v0.1.0, under the Apache License 2.0, copied unchanged.[^notice][^v0.1.0] `tests/test_in_toto_import.py` pins the copy to that file by its git object hash, `3ffd841743df241e2948a2150caa8b03a024762f`.[^test_in_toto_import.py]
+`NOTICE` says that `src/slsa/schema/in_toto/in_toto_core.yaml` is the core module of the in-toto Attestation Framework's LinkML schema from lmodel/in-toto at v0.1.1, under the Apache License 2.0, copied unchanged.[^notice][^v0.1.1] `tests/test_in_toto_import.py` pins the copy to that file by its git object hash, `b3fd93ae11dc9d5461a21dcbdbe307e4c4c9b898`.[^test_in_toto_import.py]
 
 The module links the framework's pages at in-toto/attestation's tag `v1.2.0`, not at the commit the SLSA copy links. Its classes and their keys take in-toto's IRIs, under `https://w3id.org/lmodel/in-toto/`, except `media_type`, which is `dcat:mediaType`, and `algorithm`, which is `spdx:algorithm`.[^in_toto_core.yaml]
 
@@ -69,7 +69,7 @@ The DigestSet page says that a consumer must accept only the algorithms it consi
 [^statement.md]: <https://github.com/in-toto/attestation/blob/7aefca35a0f74a6e0cb397a8c4a76558f54de571/spec/v1/statement.md>, the opening and `subject`
 [^verification_summary.md]: src/slsa/schema/spec/verification_summary.md, its in-toto links
 [^notice]: NOTICE, the lmodel/in-toto section
-[^v0.1.0]: <https://github.com/lmodel/in-toto/releases/tag/v0.1.0>, the release
+[^v0.1.1]: <https://github.com/lmodel/in-toto/releases/tag/v0.1.1>, the release
 [^test_in_toto_import.py]: tests/test_in_toto_import.py, `PINNED_BLOB`
 [^in_toto_core.yaml]: src/slsa/schema/in_toto/in_toto_core.yaml, `see_also`, `slot_uri` and `types`
 [^resource_descriptor.md]: <https://github.com/in-toto/attestation/blob/7aefca35a0f74a6e0cb397a8c4a76558f54de571/spec/v1/resource_descriptor.md>, Fields
