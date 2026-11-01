@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-01
+
 ### Added
 
 - **EARL outcomes and more SPDX Build mappings.** The VSA results `PASSED` and `FAILED` mean W3C EARL 1.0's `passed` and `failed`. Internal parameters are close to SPDX's `environment`, and the external parameters and resolved dependencies relate to SPDX's `configSource` fields, as SLSA's table for migrating from 0.2 places them; the build platform relates to SPDX's `Tool`.
