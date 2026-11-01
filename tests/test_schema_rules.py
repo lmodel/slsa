@@ -94,7 +94,12 @@ EXTERNAL_TERMS = {
     "https://spdx.org/rdf/3.0.1/terms/Build/buildStartTime",
     "https://spdx.org/rdf/3.0.1/terms/Build/buildEndTime",
     "https://spdx.org/rdf/3.0.1/terms/Build/parameter",
+    "https://spdx.org/rdf/3.0.1/terms/Build/environment",
+    "https://spdx.org/rdf/3.0.1/terms/Build/configSourceEntrypoint",
+    "https://spdx.org/rdf/3.0.1/terms/Build/configSourceUri",
+    "https://spdx.org/rdf/3.0.1/terms/Build/configSourceDigest",
     "https://spdx.org/rdf/3.0.1/terms/Core/Agent",
+    "https://spdx.org/rdf/3.0.1/terms/Core/Tool",
     "https://spdx.org/rdf/3.0.1/terms/Core/DictionaryEntry",
     "https://spdx.org/rdf/3.0.1/terms/Core/key",
     "https://spdx.org/rdf/3.0.1/terms/Core/value",
@@ -148,6 +153,29 @@ def test_mappings_use_a_bound_prefix_and_a_known_term():
         else:
             assert iri in EXTERNAL_TERMS, (module, name, iri)
     assert EXTERNAL_TERMS | set(PREDICATE_TYPE_PAGES) == seen
+
+
+# The outcome values of W3C's EARL 1.0, as its schema, earl.rdf, names them.
+EARL = "http://www.w3.org/ns/earl#"
+EARL_OUTCOMES = {EARL + name for name in ("passed", "failed", "cantTell", "inapplicable", "untested")}
+
+
+def test_only_the_results_take_a_meaning_and_it_is_earls():
+    """PASSED and FAILED mean EARL's outcomes of the same names, in both enums
+    that hold them; no vocabulary names a level or a verified property."""
+    sv = SchemaView(str(SCHEMA))
+    meanings = {
+        (enum.name, name): value.meaning
+        for enum in sv.all_enums().values()
+        for name, value in enum.permissible_values.items()
+        if value.meaning
+    }
+    assert meanings == {
+        ("SlsaVerificationResult", "PASSED"): EARL + "passed",
+        ("SlsaVerificationResult", "FAILED"): EARL + "failed",
+        ("SlsaResult", "FAILED"): EARL + "failed",
+    }
+    assert set(meanings.values()) <= EARL_OUTCOMES
 
 
 def _aliases(class_names):
