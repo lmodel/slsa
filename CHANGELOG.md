@@ -6,6 +6,8 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-01
+
 ### Added
 
 - **Mappings to SLSA's predicate type URIs, SPDX 3.0.1, DOAP and PROV-O.** The two predicate classes map exactly to their predicate types; the build provenance's fields map closely to SPDX's Build profile, and packages, parties and repositories to SPDX, PROV-O and DOAP terms, by the project's own comparison.
