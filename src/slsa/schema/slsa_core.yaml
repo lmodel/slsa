@@ -8,9 +8,22 @@ description: >-
   supply-chain roles, the build platform and the package model. The in-toto
   attestation layer itself comes from lmodel/in-toto's core module.
 license: Apache-2.0
+in_language: en
+keywords:
+  - SLSA
+  - supply chain roles
+  - build platform
+  - package
+  - package registry
 see_also:
   - https://slsa.dev/spec/v1.2/terminology
   - https://slsa.dev/spec/v1.2/attestation-model
+comments:
+  - >-
+    The mappings to SPDX 3.0.1 and W3C PROV-O are this project's own, made by
+    comparing each term's definition; SLSA publishes no alignment of its own.
+    The aliases are the keys the attestation's JSON uses where they differ from
+    the field's name.
 
 default_prefix: slsa
 default_range: string
@@ -18,6 +31,9 @@ default_range: string
 prefixes:
   linkml: https://w3id.org/linkml/
   slsa: https://w3id.org/lmodel/slsa/
+  spdx_core: https://spdx.org/rdf/3.0.1/terms/Core/
+  spdx_software: https://spdx.org/rdf/3.0.1/terms/Software/
+  prov: http://www.w3.org/ns/prov#
 
 imports:
   - linkml:types
@@ -54,6 +70,8 @@ subsets:
 slots:
   component_versions:
     description: The version of each named component of a platform.
+    aliases:
+      - version
     slot_uri: slsa:component_versions
     range: SlsaComponentVersion
     multivalued: true
@@ -144,6 +162,11 @@ classes:
     description: >-
       The base of every predicate this schema models; the predicate_kind it takes from
       InTotoPredicate names the concrete kind.
+    comments:
+      - >-
+        Each predicate is of one kind only, which children_are_mutually_disjoint
+        states for the ontology.
+    children_are_mutually_disjoint: true
     in_subset:
       - slsa_build_track
       - slsa_source_track
@@ -156,6 +179,9 @@ classes:
     description: >-
       A person or organization that takes part in a software supply chain, in one of the
       roles SLSA names.
+    broad_mappings:
+      - spdx_core:Agent
+      - prov:Agent
     see_also:
       - https://slsa.dev/spec/v1.2/terminology#roles
     comments:
@@ -204,6 +230,8 @@ classes:
     attributes:
       verifier_id:
         description: The URI that identifies the verifier.
+        aliases:
+          - id
         range: in_toto_type_uri
         required: true
     in_subset:
@@ -240,6 +268,8 @@ classes:
         identifier: true
         description: >-
           The URI that identifies the platform and determines its SLSA Build level.
+        aliases:
+          - id
         range: in_toto_type_uri
       build_level:
         description: The highest SLSA Build level the platform's provenance can meet.
@@ -255,6 +285,8 @@ classes:
         description: >-
           Dependencies of the platform's orchestrator that do not run inside the build
           but may affect provenance generation or its guarantees.
+        aliases:
+          - builderDependencies
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true
@@ -311,6 +343,8 @@ classes:
     description: >-
       A unit of software distributed under a package name, which is the primary
       security boundary SLSA protects. Its artifacts are the outputs of builds.
+    close_mappings:
+      - spdx_software:Package
     see_also:
       - https://slsa.dev/spec/v1.2/terminology#distribution-model
     slots:

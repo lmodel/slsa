@@ -7,10 +7,19 @@
     "slsa_core imports only the LinkML types, each track module imports the core, and this file adds only the document root, so an importer can take one module."
   ],
   "source": "https://slsa.dev/spec/v1.2",
+  "in_language": "en",
   "see_also": [
     "https://lmodel.github.io/slsa",
     "https://slsa.dev/spec/v1.2/",
     "https://github.com/slsa-framework/slsa"
+  ],
+  "keywords": [
+    "supply chain security",
+    "software supply chain",
+    "SLSA",
+    "build provenance",
+    "verification summary",
+    "in-toto"
   ],
   "id": "https://w3id.org/lmodel/slsa",
   "version": "1.2.0",
@@ -886,6 +895,9 @@
         "slsa_build_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "aliases": [
+        "version"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/slsa/component_versions"
       ],
@@ -1012,6 +1024,9 @@
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
+      ],
+      "aliases": [
+        "uri"
       ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/resource_uri"
@@ -1361,6 +1376,9 @@
       "name": "slsaVerifier__verifier_id",
       "description": "The URI that identifies the verifier.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "aliases": [
+        "id"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/verifier_id",
       "alias": "verifier_id",
       "owner": "SlsaVerifier",
@@ -1375,6 +1393,9 @@
       "name": "slsaBuildPlatform__builder_id",
       "description": "The URI that identifies the platform and determines its SLSA Build level.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "aliases": [
+        "id"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/builder_id",
       "identifier": true,
       "alias": "builder_id",
@@ -1419,6 +1440,9 @@
       "name": "slsaBuildPlatform__builder_dependencies",
       "description": "Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "aliases": [
+        "builderDependencies"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/builder_dependencies",
       "alias": "builder_dependencies",
       "owner": "SlsaBuildPlatform",
@@ -1552,6 +1576,9 @@
       "name": "slsaBuildProvenance__build_definition",
       "description": "The inputs to the build; required at Build L1.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "buildDefinition"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/build_definition",
       "alias": "build_definition",
       "owner": "SlsaBuildProvenance",
@@ -1568,6 +1595,9 @@
       "name": "slsaBuildProvenance__run_details",
       "description": "What is specific to this execution of the build; required at Build L1.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "runDetails"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/run_details",
       "alias": "run_details",
       "owner": "SlsaBuildProvenance",
@@ -1584,6 +1614,12 @@
       "name": "slsaBuildDefinition__build_type",
       "description": "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "buildType"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/buildType"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/build_type",
       "alias": "build_type",
       "owner": "SlsaBuildDefinition",
@@ -1601,6 +1637,12 @@
         "Verifiers reject parameters they do not recognize here."
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "externalParameters"
+      ],
+      "broad_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/parameter"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/external_parameters",
       "alias": "external_parameters",
       "owner": "SlsaBuildDefinition",
@@ -1618,7 +1660,16 @@
     {
       "name": "slsaBuildDefinition__internal_parameters",
       "description": "The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.",
+      "comments": [
+        "Related, not narrower: SPDX's parameter is an input provided to the builder, and an internal parameter is one the platform sets itself."
+      ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "internalParameters"
+      ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/parameter"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/internal_parameters",
       "alias": "internal_parameters",
       "owner": "SlsaBuildDefinition",
@@ -1635,6 +1686,9 @@
       "name": "slsaBuildDefinition__resolved_dependencies",
       "description": "The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "resolvedDependencies"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/resolved_dependencies",
       "alias": "resolved_dependencies",
       "owner": "SlsaBuildDefinition",
@@ -1709,6 +1763,9 @@
       "name": "slsaBuildParameter__parameter_name",
       "description": "The parameter's name.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "broad_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/key"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/parameter_name",
       "alias": "parameter_name",
       "owner": "SlsaBuildParameter",
@@ -1723,6 +1780,9 @@
       "name": "slsaBuildParameter__parameter_value",
       "description": "The parameter's value.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "broad_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/value"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/parameter_value",
       "alias": "parameter_value",
       "owner": "SlsaBuildParameter",
@@ -1751,6 +1811,9 @@
       "name": "slsaRunDetails__build_metadata",
       "description": "Metadata about this execution of the build.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "metadata"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/build_metadata",
       "alias": "build_metadata",
       "owner": "SlsaRunDetails",
@@ -1782,6 +1845,12 @@
       "name": "slsaBuildMetadata__invocation_id",
       "description": "An identifier for this build invocation, in a format the builder defines; useful for finding its logs.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "invocationId"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/buildId"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/invocation_id",
       "alias": "invocation_id",
       "owner": "SlsaBuildMetadata",
@@ -1795,6 +1864,12 @@
       "name": "slsaBuildMetadata__started_on",
       "description": "When the build started.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "startedOn"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/buildStartTime"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/started_on",
       "alias": "started_on",
       "owner": "SlsaBuildMetadata",
@@ -1808,6 +1883,12 @@
       "name": "slsaBuildMetadata__finished_on",
       "description": "When the build finished.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "finishedOn"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/buildEndTime"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/finished_on",
       "alias": "finished_on",
       "owner": "SlsaBuildMetadata",
@@ -1837,6 +1918,9 @@
       "name": "slsaVerificationSummary__time_verified",
       "description": "When the verification happened.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "timeVerified"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/time_verified",
       "alias": "time_verified",
       "owner": "SlsaVerificationSummary",
@@ -1866,6 +1950,9 @@
       "name": "slsaVerificationSummary__input_attestations",
       "description": "Every attestation the verifier consulted, each with a digest; complete when present.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "inputAttestations"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/input_attestations",
       "alias": "input_attestations",
       "owner": "SlsaVerificationSummary",
@@ -1882,6 +1969,9 @@
       "name": "slsaVerificationSummary__verification_result",
       "description": "Whether the subject passed the policy.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "verificationResult"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/verification_result",
       "alias": "verification_result",
       "owner": "SlsaVerificationSummary",
@@ -1899,6 +1989,9 @@
         "A VSA lists at most one level per track, and only FAILED when verification failed; the validator checks neither."
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "verifiedLevels"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/verified_levels",
       "alias": "verified_levels",
       "owner": "SlsaVerificationSummary",
@@ -1939,6 +2032,9 @@
         "The attestation's JSON tells an empty map (no dependencies) from an absent one (no claim); this list cannot, so an empty list reads as no claim."
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "dependencyLevels"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/dependency_levels",
       "alias": "dependency_levels",
       "owner": "SlsaVerificationSummary",
@@ -1955,6 +2051,9 @@
       "name": "slsaVerificationSummary__slsa_version",
       "description": "The SLSA specification version the verifier applied, as MAJOR.MINOR.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "slsaVersion"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/slsa_version",
       "alias": "slsa_version",
       "owner": "SlsaVerificationSummary",
@@ -2014,6 +2113,9 @@
       "name": "slsaSourceRepository__repository_uri",
       "description": "The stable locator the SCS gives the repository.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_source",
+      "close_mappings": [
+        "http://usefulinc.com/ns/doap#location"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/repository_uri",
       "identifier": true,
       "alias": "repository_uri",
@@ -2362,6 +2464,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha256"
       ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha256"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha256",
       "alias": "sha256",
       "owner": "InTotoDigestSet",
@@ -2378,6 +2483,9 @@
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha224"
+      ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha224"
       ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha224",
       "alias": "sha224",
@@ -2396,6 +2504,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha384"
       ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha384"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha384",
       "alias": "sha384",
       "owner": "InTotoDigestSet",
@@ -2412,6 +2523,9 @@
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha512"
+      ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha512"
       ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha512",
       "alias": "sha512",
@@ -2464,6 +2578,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha3_224"
       ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha3_224"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha3_224",
       "alias": "sha3_224",
       "owner": "InTotoDigestSet",
@@ -2480,6 +2597,9 @@
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha3_256"
+      ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha3_256"
       ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha3_256",
       "alias": "sha3_256",
@@ -2498,6 +2618,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha3_384"
       ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha3_384"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha3_384",
       "alias": "sha3_384",
       "owner": "InTotoDigestSet",
@@ -2514,6 +2637,9 @@
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha3_512"
+      ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha3_512"
       ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha3_512",
       "alias": "sha3_512",
@@ -2654,6 +2780,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/sha1"
       ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha1"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/sha1",
       "alias": "sha1",
       "owner": "InTotoDigestSet",
@@ -2674,6 +2803,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/md5"
       ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/md5"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/md5",
       "alias": "md5",
       "owner": "InTotoDigestSet",
@@ -2688,6 +2820,9 @@
       "name": "inTotoDigestSet__dir_hash",
       "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "dirHash"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/dir_hash"
       ],
@@ -2705,6 +2840,9 @@
       "name": "inTotoDigestSet__git_commit",
       "description": "The git commit id of a source revision.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "gitCommit"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/git_commit"
       ],
@@ -2722,6 +2860,9 @@
       "name": "inTotoDigestSet__git_tree",
       "description": "The git tree id of a source revision's content, or of any file tree.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "gitTree"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/git_tree"
       ],
@@ -2739,6 +2880,9 @@
       "name": "inTotoDigestSet__git_blob",
       "description": "The git blob id of a file's content.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "gitBlob"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/git_blob"
       ],
@@ -2756,6 +2900,9 @@
       "name": "inTotoDigestSet__git_tag",
       "description": "The git object id of an annotated tag.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "gitTag"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/git_tag"
       ],
@@ -2854,6 +3001,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/value"
       ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/hashValue"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/value",
       "alias": "value",
       "owner": "InTotoAdditionalDigest",
@@ -2872,6 +3022,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/annotation_key"
       ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/key"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/annotation_key",
       "alias": "annotation_key",
       "owner": "InTotoAnnotation",
@@ -2889,6 +3042,9 @@
       "mappings": [
         "https://w3id.org/lmodel/in-toto/annotation_values"
       ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/value"
+      ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/annotation_values",
       "alias": "annotation_values",
       "owner": "InTotoAnnotation",
@@ -2903,6 +3059,9 @@
       "name": "inTotoResourceDescriptor__resource_name",
       "description": "A name for the resource within the attestation that carries it.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "name"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/resource_name"
       ],
@@ -2919,8 +3078,15 @@
       "name": "inTotoResourceDescriptor__download_location",
       "description": "Where the resource can be fetched, when that differs from its identifying URI.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "downloadLocation"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/download_location"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Software/downloadLocation",
+        "http://www.w3.org/ns/dcat#downloadURL"
       ],
       "slot_uri": "https://w3id.org/lmodel/in-toto/download_location",
       "alias": "download_location",
@@ -2935,8 +3101,14 @@
       "name": "inTotoResourceDescriptor__media_type",
       "description": "The IANA media type of the resource's content.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "mediaType"
+      ],
       "mappings": [
         "http://www.w3.org/ns/dcat#mediaType"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/contentType"
       ],
       "slot_uri": "http://www.w3.org/ns/dcat#mediaType",
       "alias": "media_type",
@@ -2990,6 +3162,9 @@
       "name": "inTotoStatement__statement_type",
       "description": "The in-toto statement type, always https://in-toto.io/Statement/v1.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "_type"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/statement_type"
       ],
@@ -3029,6 +3204,9 @@
       "name": "inTotoStatement__predicate_type",
       "description": "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.",
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "aliases": [
+        "predicateType"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/predicate_type"
       ],
@@ -3067,6 +3245,9 @@
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
       ],
+      "aliases": [
+        "uri"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/resource_uri"
       ],
@@ -3091,6 +3272,9 @@
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
+      ],
+      "aliases": [
+        "uri"
       ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/resource_uri"
@@ -3170,6 +3354,9 @@
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri"
+      ],
+      "aliases": [
+        "uri"
       ],
       "mappings": [
         "https://w3id.org/lmodel/in-toto/resource_uri"
@@ -3453,6 +3640,9 @@
       "name": "SlsaPredicate",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaPredicate",
       "description": "The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.",
+      "comments": [
+        "Each predicate is of one kind only, which children_are_mutually_disjoint states for the ontology."
+      ],
       "in_subset": [
         "slsa_build_track",
         "slsa_source_track",
@@ -3466,6 +3656,7 @@
       ],
       "slot_usage": {},
       "class_uri": "https://w3id.org/lmodel/slsa/SlsaPredicate",
+      "children_are_mutually_disjoint": true,
       "@type": "ClassDefinition"
     },
     {
@@ -3482,6 +3673,10 @@
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "see_also": [
         "https://slsa.dev/spec/v1.2/terminology#roles"
+      ],
+      "broad_mappings": [
+        "spdx_core:Agent",
+        "prov:Agent"
       ],
       "abstract": true,
       "slots": [
@@ -3569,6 +3764,9 @@
         {
           "name": "verifier_id",
           "description": "The URI that identifies the verifier.",
+          "aliases": [
+            "id"
+          ],
           "range": "in_toto_type_uri",
           "required": true,
           "@type": "SlotDefinition"
@@ -3622,6 +3820,9 @@
         {
           "name": "builder_id",
           "description": "The URI that identifies the platform and determines its SLSA Build level.",
+          "aliases": [
+            "id"
+          ],
           "identifier": true,
           "range": "in_toto_type_uri",
           "@type": "SlotDefinition"
@@ -3644,6 +3845,9 @@
         {
           "name": "builder_dependencies",
           "description": "Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.",
+          "aliases": [
+            "builderDependencies"
+          ],
           "range": "InTotoResourceDescriptor",
           "multivalued": true,
           "inlined": true,
@@ -3745,6 +3949,9 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/terminology#distribution-model"
       ],
+      "close_mappings": [
+        "spdx_software:Package"
+      ],
       "slots": [
         "ecosystem",
         "slsaPackage__package_name",
@@ -3813,6 +4020,12 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/build-provenance#provenance"
       ],
+      "exact_mappings": [
+        "slsa_dev:provenance/v1"
+      ],
+      "close_mappings": [
+        "spdx_build:Build"
+      ],
       "is_a": "SlsaPredicate",
       "slots": [
         "inTotoPredicate__predicate_kind",
@@ -3824,6 +4037,9 @@
         {
           "name": "build_definition",
           "description": "The inputs to the build; required at Build L1.",
+          "aliases": [
+            "buildDefinition"
+          ],
           "range": "SlsaBuildDefinition",
           "required": true,
           "inlined": true,
@@ -3832,6 +4048,9 @@
         {
           "name": "run_details",
           "description": "What is specific to this execution of the build; required at Build L1.",
+          "aliases": [
+            "runDetails"
+          ],
           "range": "SlsaRunDetails",
           "required": true,
           "inlined": true,
@@ -3866,6 +4085,12 @@
         {
           "name": "build_type",
           "description": "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.",
+          "aliases": [
+            "buildType"
+          ],
+          "close_mappings": [
+            "spdx_build:buildType"
+          ],
           "range": "in_toto_type_uri",
           "required": true,
           "@type": "SlotDefinition"
@@ -3875,6 +4100,12 @@
           "description": "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.",
           "comments": [
             "Verifiers reject parameters they do not recognize here."
+          ],
+          "aliases": [
+            "externalParameters"
+          ],
+          "broad_mappings": [
+            "spdx_build:parameter"
           ],
           "range": "SlsaBuildParameter",
           "required": true,
@@ -3887,6 +4118,15 @@
         {
           "name": "internal_parameters",
           "description": "The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.",
+          "comments": [
+            "Related, not narrower: SPDX's parameter is an input provided to the builder, and an internal parameter is one the platform sets itself."
+          ],
+          "aliases": [
+            "internalParameters"
+          ],
+          "related_mappings": [
+            "spdx_build:parameter"
+          ],
           "range": "SlsaBuildParameter",
           "multivalued": true,
           "inlined": true,
@@ -3896,6 +4136,9 @@
         {
           "name": "resolved_dependencies",
           "description": "The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.",
+          "aliases": [
+            "resolvedDependencies"
+          ],
           "range": "InTotoResourceDescriptor",
           "multivalued": true,
           "inlined": true,
@@ -3955,6 +4198,9 @@
         "slsa_build_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "broad_mappings": [
+        "spdx_core:DictionaryEntry"
+      ],
       "slots": [
         "slsaBuildParameter__parameter_name",
         "slsaBuildParameter__parameter_value"
@@ -3964,12 +4210,18 @@
         {
           "name": "parameter_name",
           "description": "The parameter's name.",
+          "broad_mappings": [
+            "spdx_core:key"
+          ],
           "required": true,
           "@type": "SlotDefinition"
         },
         {
           "name": "parameter_value",
           "description": "The parameter's value.",
+          "broad_mappings": [
+            "spdx_core:value"
+          ],
           "@type": "SlotDefinition"
         }
       ],
@@ -4005,6 +4257,9 @@
         {
           "name": "build_metadata",
           "description": "Metadata about this execution of the build.",
+          "aliases": [
+            "metadata"
+          ],
           "range": "SlsaBuildMetadata",
           "inlined": true,
           "@type": "SlotDefinition"
@@ -4043,17 +4298,35 @@
         {
           "name": "invocation_id",
           "description": "An identifier for this build invocation, in a format the builder defines; useful for finding its logs.",
+          "aliases": [
+            "invocationId"
+          ],
+          "close_mappings": [
+            "spdx_build:buildId"
+          ],
           "@type": "SlotDefinition"
         },
         {
           "name": "started_on",
           "description": "When the build started.",
+          "aliases": [
+            "startedOn"
+          ],
+          "close_mappings": [
+            "spdx_build:buildStartTime"
+          ],
           "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         },
         {
           "name": "finished_on",
           "description": "When the build finished.",
+          "aliases": [
+            "finishedOn"
+          ],
+          "close_mappings": [
+            "spdx_build:buildEndTime"
+          ],
           "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         }
@@ -4078,6 +4351,9 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/verification_summary",
         "https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation"
+      ],
+      "exact_mappings": [
+        "slsa_dev:verification_summary/v1"
       ],
       "is_a": "SlsaPredicate",
       "slots": [
@@ -4106,6 +4382,9 @@
         {
           "name": "time_verified",
           "description": "When the verification happened.",
+          "aliases": [
+            "timeVerified"
+          ],
           "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         },
@@ -4120,6 +4399,9 @@
         {
           "name": "input_attestations",
           "description": "Every attestation the verifier consulted, each with a digest; complete when present.",
+          "aliases": [
+            "inputAttestations"
+          ],
           "range": "SlsaVerificationSummaryInputAttestation",
           "multivalued": true,
           "inlined": true,
@@ -4129,6 +4411,9 @@
         {
           "name": "verification_result",
           "description": "Whether the subject passed the policy.",
+          "aliases": [
+            "verificationResult"
+          ],
           "range": "SlsaVerificationResult",
           "required": true,
           "@type": "SlotDefinition"
@@ -4138,6 +4423,9 @@
           "description": "The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.",
           "comments": [
             "A VSA lists at most one level per track, and only FAILED when verification failed; the validator checks neither."
+          ],
+          "aliases": [
+            "verifiedLevels"
           ],
           "range": "slsa_result_value",
           "required": true,
@@ -4164,6 +4452,9 @@
           "comments": [
             "The attestation's JSON tells an empty map (no dependencies) from an absent one (no claim); this list cannot, so an empty list reads as no claim."
           ],
+          "aliases": [
+            "dependencyLevels"
+          ],
           "range": "SlsaDependencyLevelCount",
           "multivalued": true,
           "inlined": true,
@@ -4173,6 +4464,9 @@
         {
           "name": "slsa_version",
           "description": "The SLSA specification version the verifier applied, as MAJOR.MINOR.",
+          "aliases": [
+            "slsaVersion"
+          ],
           "pattern": "^[0-9]+\\.[0-9]+$",
           "@type": "SlotDefinition"
         }
@@ -4313,6 +4607,9 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/source-requirements#definitions"
       ],
+      "close_mappings": [
+        "doap:Repository"
+      ],
       "slots": [
         "slsaSourceRepository__repository_uri",
         "slsaSourceRepository__hosted_by"
@@ -4322,6 +4619,9 @@
         {
           "name": "repository_uri",
           "description": "The stable locator the SCS gives the repository.",
+          "close_mappings": [
+            "doap:location"
+          ],
           "identifier": true,
           "range": "uri",
           "@type": "SlotDefinition"
@@ -4408,6 +4708,9 @@
       "name": "SlsaNamedReference",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaNamedReference",
       "description": "A user-friendly name for a revision in a repository, such as main or v1.2.3; reference_type says whether it is a branch or a tag.",
+      "comments": [
+        "A branch moves and a tag never does, so no named reference is both, which children_are_mutually_disjoint states for the ontology."
+      ],
       "in_subset": [
         "slsa_source_track"
       ],
@@ -4445,6 +4748,7 @@
         }
       ],
       "class_uri": "https://w3id.org/lmodel/slsa/SlsaNamedReference",
+      "children_are_mutually_disjoint": true,
       "@type": "ClassDefinition"
     },
     {
@@ -4455,6 +4759,9 @@
         "slsa_source_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_source",
+      "narrow_mappings": [
+        "doap:GitBranch"
+      ],
       "is_a": "SlsaNamedReference",
       "slots": [
         "repository",
@@ -4764,6 +5071,7 @@
         "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present."
       ],
       "comments": [
+        "A field named after an algorithm that SPDX 3 also names relates to SPDX's individual for it. BLAKE2b is left unmapped: the framework allows any length from 32 to 64 bytes, where SPDX names three fixed lengths.",
         "The named algorithms take lowercase hexadecimal, and additional_digests holds any other algorithm, such as an SCS's own revision type.",
         "A consumer accepts only the algorithms it considers secure and ignores the rest, and two sets match when any accepted algorithm matches.",
         "SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least 32 bytes, since a shorter digest resists collisions too weakly to identify an artifact."
@@ -4771,6 +5079,9 @@
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md"
+      ],
+      "aliases": [
+        "DigestSet"
       ],
       "slots": [
         "inTotoDigestSet__sha256",
@@ -4804,6 +5115,9 @@
         {
           "name": "sha256",
           "description": "The SHA-256 digest of the artifact.",
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha256"
+          ],
           "slot_uri": "in_toto_linkml:sha256",
           "pattern": "^[a-f0-9]{64}$",
           "@type": "SlotDefinition"
@@ -4811,6 +5125,9 @@
         {
           "name": "sha224",
           "description": "The SHA-224 digest of the artifact.",
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha224"
+          ],
           "slot_uri": "in_toto_linkml:sha224",
           "pattern": "^[a-f0-9]{56}$",
           "@type": "SlotDefinition"
@@ -4818,6 +5135,9 @@
         {
           "name": "sha384",
           "description": "The SHA-384 digest of the artifact.",
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha384"
+          ],
           "slot_uri": "in_toto_linkml:sha384",
           "pattern": "^[a-f0-9]{96}$",
           "@type": "SlotDefinition"
@@ -4825,6 +5145,9 @@
         {
           "name": "sha512",
           "description": "The SHA-512 digest of the artifact.",
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha512"
+          ],
           "slot_uri": "in_toto_linkml:sha512",
           "pattern": "^[a-f0-9]{128}$",
           "@type": "SlotDefinition"
@@ -4846,6 +5169,9 @@
         {
           "name": "sha3_224",
           "description": "The SHA3-224 digest of the artifact.",
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha3_224"
+          ],
           "slot_uri": "in_toto_linkml:sha3_224",
           "pattern": "^[a-f0-9]{56}$",
           "@type": "SlotDefinition"
@@ -4853,6 +5179,9 @@
         {
           "name": "sha3_256",
           "description": "The SHA3-256 digest of the artifact.",
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha3_256"
+          ],
           "slot_uri": "in_toto_linkml:sha3_256",
           "pattern": "^[a-f0-9]{64}$",
           "@type": "SlotDefinition"
@@ -4860,6 +5189,9 @@
         {
           "name": "sha3_384",
           "description": "The SHA3-384 digest of the artifact.",
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha3_384"
+          ],
           "slot_uri": "in_toto_linkml:sha3_384",
           "pattern": "^[a-f0-9]{96}$",
           "@type": "SlotDefinition"
@@ -4867,6 +5199,9 @@
         {
           "name": "sha3_512",
           "description": "The SHA3-512 digest of the artifact.",
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha3_512"
+          ],
           "slot_uri": "in_toto_linkml:sha3_512",
           "pattern": "^[a-f0-9]{128}$",
           "@type": "SlotDefinition"
@@ -4926,6 +5261,9 @@
           "comments": [
             "SHA-1 lacks collision resistance, so most consumers should not rely on it."
           ],
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/sha1"
+          ],
           "slot_uri": "in_toto_linkml:sha1",
           "pattern": "^[a-f0-9]{40}$",
           "@type": "SlotDefinition"
@@ -4936,6 +5274,9 @@
           "comments": [
             "MD5 lacks collision resistance, so most consumers should not accept it."
           ],
+          "related_mappings": [
+            "spdx_core:HashAlgorithm/md5"
+          ],
           "slot_uri": "in_toto_linkml:md5",
           "pattern": "^[a-f0-9]{32}$",
           "@type": "SlotDefinition"
@@ -4943,6 +5284,9 @@
         {
           "name": "dir_hash",
           "description": "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.",
+          "aliases": [
+            "dirHash"
+          ],
           "slot_uri": "in_toto_linkml:dir_hash",
           "pattern": "^[a-f0-9]{64}$",
           "@type": "SlotDefinition"
@@ -4950,6 +5294,9 @@
         {
           "name": "git_commit",
           "description": "The git commit id of a source revision.",
+          "aliases": [
+            "gitCommit"
+          ],
           "slot_uri": "in_toto_linkml:git_commit",
           "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
           "@type": "SlotDefinition"
@@ -4957,6 +5304,9 @@
         {
           "name": "git_tree",
           "description": "The git tree id of a source revision's content, or of any file tree.",
+          "aliases": [
+            "gitTree"
+          ],
           "slot_uri": "in_toto_linkml:git_tree",
           "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
           "@type": "SlotDefinition"
@@ -4964,6 +5314,9 @@
         {
           "name": "git_blob",
           "description": "The git blob id of a file's content.",
+          "aliases": [
+            "gitBlob"
+          ],
           "slot_uri": "in_toto_linkml:git_blob",
           "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
           "@type": "SlotDefinition"
@@ -4971,6 +5324,9 @@
         {
           "name": "git_tag",
           "description": "The git object id of an annotated tag.",
+          "aliases": [
+            "gitTag"
+          ],
           "slot_uri": "in_toto_linkml:git_tag",
           "pattern": "^[a-f0-9]{40}([a-f0-9]{24})?$",
           "@type": "SlotDefinition"
@@ -5394,11 +5750,15 @@
       "comments": [
         "In the attestation's JSON the algorithm is a key of the digest set beside the named ones, and an algorithm the framework does not define documents how its value is encoded.",
         "An SCS that does not use cryptographic digests defines a canonical revision type of its own that includes the repository, such as svn_revision_id.",
-        "Each algorithm appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
+        "Each algorithm appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this.",
+        "It is related to, not the same as, an SPDX 3 Hash, whose algorithm comes from a closed list, where this one's may be a revision type rather than a digest."
       ],
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md"
+      ],
+      "related_mappings": [
+        "spdx_core:Hash"
       ],
       "slots": [
         "inTotoAdditionalDigest__algorithm",
@@ -5457,6 +5817,9 @@
         {
           "name": "value",
           "description": "The digest under that algorithm, in the encoding the algorithm documents.",
+          "related_mappings": [
+            "spdx_core:hashValue"
+          ],
           "slot_uri": "in_toto_linkml:value",
           "required": true,
           "pattern": "^\\S+$",
@@ -5475,6 +5838,9 @@
         "Each key appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this."
       ],
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
+      "close_mappings": [
+        "spdx_core:DictionaryEntry"
+      ],
       "slots": [
         "inTotoAnnotation__annotation_key",
         "inTotoAnnotation__annotation_values"
@@ -5484,6 +5850,9 @@
         {
           "name": "annotation_key",
           "description": "The annotation's key.",
+          "close_mappings": [
+            "spdx_core:key"
+          ],
           "slot_uri": "in_toto_linkml:annotation_key",
           "required": true,
           "@type": "SlotDefinition"
@@ -5491,6 +5860,9 @@
         {
           "name": "annotation_values",
           "description": "The annotation's values.",
+          "close_mappings": [
+            "spdx_core:value"
+          ],
           "slot_uri": "in_toto_linkml:annotation_values",
           "multivalued": true,
           "@type": "SlotDefinition"
@@ -5507,11 +5879,18 @@
         "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present."
       ],
       "comments": [
-        "A descriptor carries at least one of a URI, a digest or its content; a field that needs a particular one says so."
+        "A descriptor carries at least one of a URI, a digest or its content; a field that needs a particular one says so.",
+        "It describes an artifact, where an SPDX 3 Artifact is the artifact itself, so the two are related rather than the same."
       ],
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/resource_descriptor.md"
+      ],
+      "aliases": [
+        "ResourceDescriptor"
+      ],
+      "related_mappings": [
+        "spdx_core:Artifact"
       ],
       "slots": [
         "resource_uri",
@@ -5527,12 +5906,22 @@
         {
           "name": "resource_name",
           "description": "A name for the resource within the attestation that carries it.",
+          "aliases": [
+            "name"
+          ],
           "slot_uri": "in_toto_linkml:resource_name",
           "@type": "SlotDefinition"
         },
         {
           "name": "download_location",
           "description": "Where the resource can be fetched, when that differs from its identifying URI.",
+          "aliases": [
+            "downloadLocation"
+          ],
+          "close_mappings": [
+            "spdx_software:downloadLocation",
+            "dcat:downloadURL"
+          ],
           "slot_uri": "in_toto_linkml:download_location",
           "range": "in_toto_resource_uri",
           "@type": "SlotDefinition"
@@ -5540,6 +5929,12 @@
         {
           "name": "media_type",
           "description": "The IANA media type of the resource's content.",
+          "aliases": [
+            "mediaType"
+          ],
+          "close_mappings": [
+            "spdx_core:contentType"
+          ],
           "slot_uri": "dcat:mediaType",
           "@type": "SlotDefinition"
         },
@@ -5645,11 +6040,18 @@
       "description": "The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.",
       "comments": [
         "The signature envelope around a statement, and the bundle that collects signed statements, are outside this model.",
-        "A statement is the attestation, and its predicate is one kind of claim about the subjects, such as a test result or build provenance."
+        "A statement is the attestation, and its predicate is one kind of claim about the subjects, such as a test result or build provenance.",
+        "Its exact mapping is the type URI its statement_type holds, as each predicate class maps to its predicate_type."
       ],
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md"
+      ],
+      "aliases": [
+        "Statement"
+      ],
+      "exact_mappings": [
+        "in_toto_io:Statement/v1"
       ],
       "slots": [
         "predicate",
@@ -5662,6 +6064,9 @@
         {
           "name": "statement_type",
           "description": "The in-toto statement type, always https://in-toto.io/Statement/v1.",
+          "aliases": [
+            "_type"
+          ],
           "slot_uri": "in_toto_linkml:statement_type",
           "range": "in_toto_type_uri",
           "required": true,
@@ -5683,6 +6088,9 @@
         {
           "name": "predicate_type",
           "description": "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.",
+          "aliases": [
+            "predicateType"
+          ],
           "slot_uri": "in_toto_linkml:predicate_type",
           "range": "in_toto_type_uri",
           "required": true,
@@ -5697,11 +6105,15 @@
       "definition_uri": "https://w3id.org/lmodel/in-toto/InTotoPredicate",
       "description": "The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind.",
       "comments": [
-        "The statement's predicate_type names the predicate's type by URI, and each concrete class says which URI it renders. Nothing ties the two, since a schema that imports this module may model a predicate under its own URI."
+        "The statement's predicate_type names the predicate's type by URI, and each concrete class says which URI it renders. Nothing ties the two, since a schema that imports this module may model a predicate under its own URI.",
+        "A predicate is of one kind only, so the kinds that extend this class are mutually disjoint."
       ],
       "from_schema": "https://w3id.org/lmodel/in-toto/in_toto_core",
       "see_also": [
         "https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/predicate.md"
+      ],
+      "aliases": [
+        "Predicate"
       ],
       "abstract": true,
       "slots": [
@@ -5719,13 +6131,14 @@
         }
       ],
       "class_uri": "https://w3id.org/lmodel/in-toto/InTotoPredicate",
+      "children_are_mutually_disjoint": true,
       "@type": "ClassDefinition"
     }
   ],
   "metamodel_version": "1.12.0",
   "source_file": "slsa.yaml",
-  "source_file_date": "2026-10-30T16:19:28",
-  "source_file_size": 3821,
+  "source_file_date": "2026-11-01T00:24:57",
+  "source_file_size": 3966,
   "@type": "SchemaDefinition",
   "@context": [
     "project/jsonld/slsa.context.jsonld",

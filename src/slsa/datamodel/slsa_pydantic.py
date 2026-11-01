@@ -88,6 +88,13 @@ linkml_meta = LinkMLMeta({'comments': ['The version is the SLSA specification ve
                  './slsa_dependency',
                  './slsa_build_environment',
                  './slsa_adoption'],
+     'in_language': 'en',
+     'keywords': ['supply chain security',
+                  'software supply chain',
+                  'SLSA',
+                  'build provenance',
+                  'verification summary',
+                  'in-toto'],
      'license': 'Apache-2.0',
      'name': 'slsa',
      'prefixes': {'linkml': {'prefix_prefix': 'linkml',
@@ -349,6 +356,7 @@ class SlsaParty(ConfiguredBaseModel):
     A person or organization that takes part in a software supply chain, in one of the roles SLSA names.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
+         'broad_mappings': ['spdx_core:Agent', 'prov:Agent'],
          'comments': ['One party may act in several roles, and several parties may '
                       'share one role.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
@@ -393,10 +401,11 @@ class SlsaVerifier(SlsaParty):
          'in_subset': ['slsa_build_track', 'slsa_source_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/verification_summary#verifier']})
 
-    component_versions: Optional[list[SlsaComponentVersion]] = Field(default=None, description="""The version of each named component of a platform.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerifier', 'SlsaBuildPlatform'],
+    component_versions: Optional[list[SlsaComponentVersion]] = Field(default=None, description="""The version of each named component of a platform.""", json_schema_extra = { "linkml_meta": {'aliases': ['version'],
+         'domain_of': ['SlsaVerifier', 'SlsaBuildPlatform'],
          'in_subset': ['slsa_build_track'],
          'slot_uri': 'slsa:component_versions'} })
-    verifier_id: URI = Field(default=..., description="""The URI that identifies the verifier.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerifier']} })
+    verifier_id: URI = Field(default=..., description="""The URI that identifies the verifier.""", json_schema_extra = { "linkml_meta": {'aliases': ['id'], 'domain_of': ['SlsaVerifier']} })
     party_type: Literal["SlsaVerifier"] = Field(default="SlsaVerifier", description="""The role the party acts in, one of this class's descendants.""", json_schema_extra = { "linkml_meta": {'designates_type': True, 'domain_of': ['SlsaParty']} })
     party_name: Optional[str] = Field(default=None, description="""The party's name.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaParty']} })
 
@@ -423,14 +432,15 @@ class SlsaBuildPlatform(ConfiguredBaseModel):
          'see_also': ['https://slsa.dev/spec/v1.2/terminology#build-model',
                       'https://slsa.dev/spec/v1.2/build-provenance#builder']})
 
-    component_versions: Optional[list[SlsaComponentVersion]] = Field(default=None, description="""The version of each named component of a platform.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerifier', 'SlsaBuildPlatform'],
+    component_versions: Optional[list[SlsaComponentVersion]] = Field(default=None, description="""The version of each named component of a platform.""", json_schema_extra = { "linkml_meta": {'aliases': ['version'],
+         'domain_of': ['SlsaVerifier', 'SlsaBuildPlatform'],
          'in_subset': ['slsa_build_track'],
          'slot_uri': 'slsa:component_versions'} })
-    builder_id: URI = Field(default=..., description="""The URI that identifies the platform and determines its SLSA Build level.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildPlatform']} })
+    builder_id: URI = Field(default=..., description="""The URI that identifies the platform and determines its SLSA Build level.""", json_schema_extra = { "linkml_meta": {'aliases': ['id'], 'domain_of': ['SlsaBuildPlatform']} })
     build_level: Optional[SlsaBuildLevel] = Field(default=None, description="""The highest SLSA Build level the platform's provenance can meet.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildPlatform']} })
     hosted: Optional[bool] = Field(default=None, description="""Whether the platform is a hosted service on shared or dedicated infrastructure rather than an individual's workstation.""", json_schema_extra = { "linkml_meta": {'comments': ['Build L2 and above require a hosted platform.'],
          'domain_of': ['SlsaBuildPlatform']} })
-    builder_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildPlatform']} })
+    builder_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.""", json_schema_extra = { "linkml_meta": {'aliases': ['builderDependencies'], 'domain_of': ['SlsaBuildPlatform']} })
 
 
 class SlsaControlPlane(ConfiguredBaseModel):
@@ -482,7 +492,8 @@ class SlsaPackage(ConfiguredBaseModel):
     """
     A unit of software distributed under a package name, which is the primary security boundary SLSA protects. Its artifacts are the outputs of builds.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'close_mappings': ['spdx_software:Package'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track', 'slsa_dependency_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/terminology#distribution-model']})
 
@@ -508,11 +519,20 @@ class SlsaBuildDefinition(ConfiguredBaseModel):
          'in_subset': ['slsa_build_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#builddefinition']})
 
-    build_type: URI = Field(default=..., description="""The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
-    external_parameters: list[SlsaBuildParameter] = Field(default=..., description="""The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.""", min_length=1, json_schema_extra = { "linkml_meta": {'comments': ['Verifiers reject parameters they do not recognize here.'],
+    build_type: URI = Field(default=..., description="""The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.""", json_schema_extra = { "linkml_meta": {'aliases': ['buildType'],
+         'close_mappings': ['spdx_build:buildType'],
          'domain_of': ['SlsaBuildDefinition']} })
-    internal_parameters: Optional[list[SlsaBuildParameter]] = Field(default=None, description="""The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
-    resolved_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
+    external_parameters: list[SlsaBuildParameter] = Field(default=..., description="""The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.""", min_length=1, json_schema_extra = { "linkml_meta": {'aliases': ['externalParameters'],
+         'broad_mappings': ['spdx_build:parameter'],
+         'comments': ['Verifiers reject parameters they do not recognize here.'],
+         'domain_of': ['SlsaBuildDefinition']} })
+    internal_parameters: Optional[list[SlsaBuildParameter]] = Field(default=None, description="""The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.""", json_schema_extra = { "linkml_meta": {'aliases': ['internalParameters'],
+         'comments': ["Related, not narrower: SPDX's parameter is an input provided to "
+                      'the builder, and an internal parameter is one the platform sets '
+                      'itself.'],
+         'domain_of': ['SlsaBuildDefinition'],
+         'related_mappings': ['spdx_build:parameter']} })
+    resolved_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.""", json_schema_extra = { "linkml_meta": {'aliases': ['resolvedDependencies'], 'domain_of': ['SlsaBuildDefinition']} })
     hermetic: Optional[bool] = Field(default=None, description="""Whether the build could reach only the dependencies it declared, with no other network or filesystem access.""", json_schema_extra = { "linkml_meta": {'comments': ["SLSA v1.2 does not require hermetic builds; Build L3's "
                       'isolation is a different property, and hermeticity is a '
                       'candidate for a future Build L4.',
@@ -537,15 +557,16 @@ class SlsaBuildParameter(ConfiguredBaseModel):
     """
     One named input to a build, with a string value.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['The specification recommends string values; a structured value '
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'broad_mappings': ['spdx_core:DictionaryEntry'],
+         'comments': ['The specification recommends string values; a structured value '
                       'is written as its JSON text.',
                       "Each name appears once in a list, since the attestation's JSON "
                       'uses it as a key; the validator does not check this.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_build',
          'in_subset': ['slsa_build_track']})
 
-    parameter_name: str = Field(default=..., description="""The parameter's name.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildParameter']} })
-    parameter_value: Optional[str] = Field(default=None, description="""The parameter's value.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildParameter']} })
+    parameter_name: str = Field(default=..., description="""The parameter's name.""", json_schema_extra = { "linkml_meta": {'broad_mappings': ['spdx_core:key'], 'domain_of': ['SlsaBuildParameter']} })
+    parameter_value: Optional[str] = Field(default=None, description="""The parameter's value.""", json_schema_extra = { "linkml_meta": {'broad_mappings': ['spdx_core:value'], 'domain_of': ['SlsaBuildParameter']} })
 
 
 class SlsaRunDetails(ConfiguredBaseModel):
@@ -557,7 +578,7 @@ class SlsaRunDetails(ConfiguredBaseModel):
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#rundetails']})
 
     builder: SlsaBuildPlatform = Field(default=..., description="""The build platform that ran the build and is trusted to have written this provenance; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaRunDetails']} })
-    build_metadata: Optional[SlsaBuildMetadata] = Field(default=None, description="""Metadata about this execution of the build.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaRunDetails']} })
+    build_metadata: Optional[SlsaBuildMetadata] = Field(default=None, description="""Metadata about this execution of the build.""", json_schema_extra = { "linkml_meta": {'aliases': ['metadata'], 'domain_of': ['SlsaRunDetails']} })
     byproducts: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""Artifacts the build produced beside its outputs that may help debugging or incident response, such as logs.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaRunDetails']} })
 
 
@@ -569,9 +590,15 @@ class SlsaBuildMetadata(ConfiguredBaseModel):
          'in_subset': ['slsa_build_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#buildmetadata']})
 
-    invocation_id: Optional[str] = Field(default=None, description="""An identifier for this build invocation, in a format the builder defines; useful for finding its logs.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildMetadata']} })
-    started_on: Optional[str] = Field(default=None, description="""When the build started.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildMetadata']} })
-    finished_on: Optional[str] = Field(default=None, description="""When the build finished.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildMetadata']} })
+    invocation_id: Optional[str] = Field(default=None, description="""An identifier for this build invocation, in a format the builder defines; useful for finding its logs.""", json_schema_extra = { "linkml_meta": {'aliases': ['invocationId'],
+         'close_mappings': ['spdx_build:buildId'],
+         'domain_of': ['SlsaBuildMetadata']} })
+    started_on: Optional[str] = Field(default=None, description="""When the build started.""", json_schema_extra = { "linkml_meta": {'aliases': ['startedOn'],
+         'close_mappings': ['spdx_build:buildStartTime'],
+         'domain_of': ['SlsaBuildMetadata']} })
+    finished_on: Optional[str] = Field(default=None, description="""When the build finished.""", json_schema_extra = { "linkml_meta": {'aliases': ['finishedOn'],
+         'close_mappings': ['spdx_build:buildEndTime'],
+         'domain_of': ['SlsaBuildMetadata']} })
 
 
 class SlsaDependencyLevelCount(ConfiguredBaseModel):
@@ -617,11 +644,12 @@ class SlsaSourceRepository(ConfiguredBaseModel):
     """
     A self-contained unit that holds a set of files, their revision history and metadata such as branches and tags.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'close_mappings': ['doap:Repository'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
          'in_subset': ['slsa_source_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/source-requirements#definitions']})
 
-    repository_uri: str = Field(default=..., description="""The stable locator the SCS gives the repository.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaSourceRepository']} })
+    repository_uri: str = Field(default=..., description="""The stable locator the SCS gives the repository.""", json_schema_extra = { "linkml_meta": {'close_mappings': ['doap:location'], 'domain_of': ['SlsaSourceRepository']} })
     hosted_by: Optional[str] = Field(default=None, description="""The source control system that hosts the repository.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaSourceRepository']} })
 
 
@@ -651,7 +679,11 @@ class SlsaNamedReference(ConfiguredBaseModel):
     """
     A user-friendly name for a revision in a repository, such as main or v1.2.3; reference_type says whether it is a branch or a tag.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'children_are_mutually_disjoint': True,
+         'comments': ['A branch moves and a tag never does, so no named reference is '
+                      'both, which children_are_mutually_disjoint states for the '
+                      'ontology.'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
          'in_subset': ['slsa_source_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/source-requirements#definitions']})
 
@@ -671,7 +703,8 @@ class SlsaBranch(SlsaNamedReference):
     A named reference that moves to track a line of development.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
-         'in_subset': ['slsa_source_track']})
+         'in_subset': ['slsa_source_track'],
+         'narrow_mappings': ['doap:GitBranch']})
 
     repository: Optional[str] = Field(default=None, description="""The source repository this belongs to.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaSourceRevision', 'SlsaNamedReference'],
          'in_subset': ['slsa_source_track'],
@@ -725,7 +758,8 @@ class InTotoDigestSet(ConfiguredBaseModel):
     """
     A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'any_of': [{'slot_conditions': {'sha256': {'any_of': [{'range': 'string'}],
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'aliases': ['DigestSet'],
+         'any_of': [{'slot_conditions': {'sha256': {'any_of': [{'range': 'string'}],
                                                     'name': 'sha256',
                                                     'required': True}}},
                     {'slot_conditions': {'sha224': {'any_of': [{'range': 'string'}],
@@ -800,7 +834,11 @@ class InTotoDigestSet(ConfiguredBaseModel):
                     {'slot_conditions': {'additional_digests': {'multivalued': True,
                                                                 'name': 'additional_digests',
                                                                 'required': True}}}],
-         'comments': ['The named algorithms take lowercase hexadecimal, and '
+         'comments': ['A field named after an algorithm that SPDX 3 also names relates '
+                      "to SPDX's individual for it. BLAKE2b is left unmapped: the "
+                      'framework allows any length from 32 to 64 bytes, where SPDX '
+                      'names three fixed lengths.',
+                      'The named algorithms take lowercase hexadecimal, and '
                       "additional_digests holds any other algorithm, such as an SCS's "
                       'own revision type.',
                       'A consumer accepts only the algorithms it considers secure and '
@@ -815,16 +853,32 @@ class InTotoDigestSet(ConfiguredBaseModel):
                    'out, and a null value would then count as present.'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md']})
 
-    sha256: Optional[str] = Field(default=None, description="""The SHA-256 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha256'} })
-    sha224: Optional[str] = Field(default=None, description="""The SHA-224 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha224'} })
-    sha384: Optional[str] = Field(default=None, description="""The SHA-384 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha384'} })
-    sha512: Optional[str] = Field(default=None, description="""The SHA-512 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha512'} })
+    sha256: Optional[str] = Field(default=None, description="""The SHA-256 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha256'],
+         'slot_uri': 'in_toto_linkml:sha256'} })
+    sha224: Optional[str] = Field(default=None, description="""The SHA-224 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha224'],
+         'slot_uri': 'in_toto_linkml:sha224'} })
+    sha384: Optional[str] = Field(default=None, description="""The SHA-384 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha384'],
+         'slot_uri': 'in_toto_linkml:sha384'} })
+    sha512: Optional[str] = Field(default=None, description="""The SHA-512 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha512'],
+         'slot_uri': 'in_toto_linkml:sha512'} })
     sha512_224: Optional[str] = Field(default=None, description="""The SHA-512/224 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha512_224'} })
     sha512_256: Optional[str] = Field(default=None, description="""The SHA-512/256 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha512_256'} })
-    sha3_224: Optional[str] = Field(default=None, description="""The SHA3-224 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha3_224'} })
-    sha3_256: Optional[str] = Field(default=None, description="""The SHA3-256 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha3_256'} })
-    sha3_384: Optional[str] = Field(default=None, description="""The SHA3-384 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha3_384'} })
-    sha3_512: Optional[str] = Field(default=None, description="""The SHA3-512 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:sha3_512'} })
+    sha3_224: Optional[str] = Field(default=None, description="""The SHA3-224 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha3_224'],
+         'slot_uri': 'in_toto_linkml:sha3_224'} })
+    sha3_256: Optional[str] = Field(default=None, description="""The SHA3-256 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha3_256'],
+         'slot_uri': 'in_toto_linkml:sha3_256'} })
+    sha3_384: Optional[str] = Field(default=None, description="""The SHA3-384 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha3_384'],
+         'slot_uri': 'in_toto_linkml:sha3_384'} })
+    sha3_512: Optional[str] = Field(default=None, description="""The SHA3-512 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha3_512'],
+         'slot_uri': 'in_toto_linkml:sha3_512'} })
     shake128: Optional[str] = Field(default=None, description="""The SHAKE128 digest of the artifact, of at least 32 bytes.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:shake128'} })
     shake256: Optional[str] = Field(default=None, description="""The SHAKE256 digest of the artifact, of at least 32 bytes.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:shake256'} })
     blake2b: Optional[str] = Field(default=None, description="""The BLAKE2b digest of the artifact, of 32 to 64 bytes.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:blake2b'} })
@@ -835,16 +889,28 @@ class InTotoDigestSet(ConfiguredBaseModel):
     sha1: Optional[str] = Field(default=None, description="""The SHA-1 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'comments': ['SHA-1 lacks collision resistance, so most consumers should not '
                       'rely on it.'],
          'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/sha1'],
          'slot_uri': 'in_toto_linkml:sha1'} })
     md5: Optional[str] = Field(default=None, description="""The MD5 digest of the artifact.""", json_schema_extra = { "linkml_meta": {'comments': ['MD5 lacks collision resistance, so most consumers should not '
                       'accept it.'],
          'domain_of': ['InTotoDigestSet'],
+         'related_mappings': ['spdx_core:HashAlgorithm/md5'],
          'slot_uri': 'in_toto_linkml:md5'} })
-    dir_hash: Optional[str] = Field(default=None, description="""A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:dir_hash'} })
-    git_commit: Optional[str] = Field(default=None, description="""The git commit id of a source revision.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:git_commit'} })
-    git_tree: Optional[str] = Field(default=None, description="""The git tree id of a source revision's content, or of any file tree.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:git_tree'} })
-    git_blob: Optional[str] = Field(default=None, description="""The git blob id of a file's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:git_blob'} })
-    git_tag: Optional[str] = Field(default=None, description="""The git object id of an annotated tag.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'], 'slot_uri': 'in_toto_linkml:git_tag'} })
+    dir_hash: Optional[str] = Field(default=None, description="""A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64.""", json_schema_extra = { "linkml_meta": {'aliases': ['dirHash'],
+         'domain_of': ['InTotoDigestSet'],
+         'slot_uri': 'in_toto_linkml:dir_hash'} })
+    git_commit: Optional[str] = Field(default=None, description="""The git commit id of a source revision.""", json_schema_extra = { "linkml_meta": {'aliases': ['gitCommit'],
+         'domain_of': ['InTotoDigestSet'],
+         'slot_uri': 'in_toto_linkml:git_commit'} })
+    git_tree: Optional[str] = Field(default=None, description="""The git tree id of a source revision's content, or of any file tree.""", json_schema_extra = { "linkml_meta": {'aliases': ['gitTree'],
+         'domain_of': ['InTotoDigestSet'],
+         'slot_uri': 'in_toto_linkml:git_tree'} })
+    git_blob: Optional[str] = Field(default=None, description="""The git blob id of a file's content.""", json_schema_extra = { "linkml_meta": {'aliases': ['gitBlob'],
+         'domain_of': ['InTotoDigestSet'],
+         'slot_uri': 'in_toto_linkml:git_blob'} })
+    git_tag: Optional[str] = Field(default=None, description="""The git object id of an annotated tag.""", json_schema_extra = { "linkml_meta": {'aliases': ['gitTag'],
+         'domain_of': ['InTotoDigestSet'],
+         'slot_uri': 'in_toto_linkml:git_tag'} })
     additional_digests: Optional[list[InTotoAdditionalDigest]] = Field(default=None, description="""The digests under algorithms this class does not name.""", min_length=1, json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoDigestSet'],
          'slot_uri': 'in_toto_linkml:additional_digests'} })
 
@@ -1172,8 +1238,12 @@ class InTotoAdditionalDigest(ConfiguredBaseModel):
                       'canonical revision type of its own that includes the '
                       'repository, such as svn_revision_id.',
                       "Each algorithm appears once in a list, since the attestation's "
-                      'JSON uses it as a key; the validator does not check this.'],
+                      'JSON uses it as a key; the validator does not check this.',
+                      'It is related to, not the same as, an SPDX 3 Hash, whose '
+                      "algorithm comes from a closed list, where this one's may be a "
+                      'revision type rather than a digest.'],
          'from_schema': 'https://w3id.org/lmodel/in-toto/in_toto_core',
+         'related_mappings': ['spdx_core:Hash'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md']})
 
     algorithm: str = Field(default=..., description="""The algorithm's name, as the key the attestation's JSON uses, such as svn_revision_id.""", json_schema_extra = { "linkml_meta": {'comments': ['An algorithm that InTotoDigestSet names, by its JSON key or by '
@@ -1213,7 +1283,9 @@ class InTotoAdditionalDigest(ConfiguredBaseModel):
                                            'git_blob',
                                            'git_tag']}],
          'slot_uri': 'spdx:algorithm'} })
-    value: str = Field(default=..., description="""The digest under that algorithm, in the encoding the algorithm documents.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoAdditionalDigest'], 'slot_uri': 'in_toto_linkml:value'} })
+    value: str = Field(default=..., description="""The digest under that algorithm, in the encoding the algorithm documents.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoAdditionalDigest'],
+         'related_mappings': ['spdx_core:hashValue'],
+         'slot_uri': 'in_toto_linkml:value'} })
 
     @field_validator('algorithm')
     def pattern_algorithm(cls, v):
@@ -1246,7 +1318,8 @@ class InTotoAnnotation(ConfiguredBaseModel):
     """
     One vendor-specific annotation on a resource descriptor: a key and its values.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ["The attestation's JSON allows any JSON value. A string becomes "
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'close_mappings': ['spdx_core:DictionaryEntry'],
+         'comments': ["The attestation's JSON allows any JSON value. A string becomes "
                       'one value and an array one value per item; any other value or '
                       'item is written as its JSON text, so one value cannot tell a '
                       'string from a one-item array.',
@@ -1254,8 +1327,11 @@ class InTotoAnnotation(ConfiguredBaseModel):
                       'uses it as a key; the validator does not check this.'],
          'from_schema': 'https://w3id.org/lmodel/in-toto/in_toto_core'})
 
-    annotation_key: str = Field(default=..., description="""The annotation's key.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoAnnotation'], 'slot_uri': 'in_toto_linkml:annotation_key'} })
-    annotation_values: Optional[list[str]] = Field(default=None, description="""The annotation's values.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoAnnotation'],
+    annotation_key: str = Field(default=..., description="""The annotation's key.""", json_schema_extra = { "linkml_meta": {'close_mappings': ['spdx_core:key'],
+         'domain_of': ['InTotoAnnotation'],
+         'slot_uri': 'in_toto_linkml:annotation_key'} })
+    annotation_values: Optional[list[str]] = Field(default=None, description="""The annotation's values.""", json_schema_extra = { "linkml_meta": {'close_mappings': ['spdx_core:value'],
+         'domain_of': ['InTotoAnnotation'],
          'slot_uri': 'in_toto_linkml:annotation_values'} })
 
 
@@ -1263,7 +1339,8 @@ class InTotoResourceDescriptor(ConfiguredBaseModel):
     """
     A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'any_of': [{'slot_conditions': {'resource_uri': {'any_of': [{'range': 'uri'}],
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'aliases': ['ResourceDescriptor'],
+         'any_of': [{'slot_conditions': {'resource_uri': {'any_of': [{'range': 'uri'}],
                                                           'name': 'resource_uri',
                                                           'required': True}}},
                     {'slot_conditions': {'digest': {'any_of': [{'range': 'InTotoDigestSet'}],
@@ -1273,24 +1350,34 @@ class InTotoResourceDescriptor(ConfiguredBaseModel):
                                                      'name': 'content',
                                                      'required': True}}}],
          'comments': ['A descriptor carries at least one of a URI, a digest or its '
-                      'content; a field that needs a particular one says so.'],
+                      'content; a field that needs a particular one says so.',
+                      'It describes an artifact, where an SPDX 3 Artifact is the '
+                      'artifact itself, so the two are related rather than the same.'],
          'from_schema': 'https://w3id.org/lmodel/in-toto/in_toto_core',
          'notes': ['Each condition in any_of names its range through a nested any_of, '
                    "because the JSON Schema generator leaves a condition's own range "
                    'out, and a null value would then count as present.'],
+         'related_mappings': ['spdx_core:Artifact'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/resource_descriptor.md']})
 
-    resource_uri: Optional[URI] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
+    resource_uri: Optional[URI] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'aliases': ['uri'],
+         'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri'],
          'slot_uri': 'in_toto_linkml:resource_uri'} })
     digest: Optional[InTotoDigestSet] = Field(default=None, description="""The cryptographic digests of a resource's content, keyed by algorithm.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaMeasurement'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md'],
          'slot_uri': 'in_toto_linkml:digest'} })
-    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'],
+    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'aliases': ['name'],
+         'domain_of': ['InTotoResourceDescriptor'],
          'slot_uri': 'in_toto_linkml:resource_name'} })
-    download_location: Optional[URI] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'],
+    download_location: Optional[URI] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'aliases': ['downloadLocation'],
+         'close_mappings': ['spdx_software:downloadLocation', 'dcat:downloadURL'],
+         'domain_of': ['InTotoResourceDescriptor'],
          'slot_uri': 'in_toto_linkml:download_location'} })
-    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'], 'slot_uri': 'dcat:mediaType'} })
+    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'aliases': ['mediaType'],
+         'close_mappings': ['spdx_core:contentType'],
+         'domain_of': ['InTotoResourceDescriptor'],
+         'slot_uri': 'dcat:mediaType'} })
     content: Optional[str] = Field(default=None, description="""The resource's content itself, base64-encoded, for a resource small enough to carry inline.""", json_schema_extra = { "linkml_meta": {'comments': ['The in-toto framework asks for content under 1 KB, so that '
                       'attestations stay small.'],
          'domain_of': ['InTotoResourceDescriptor'],
@@ -1324,18 +1411,25 @@ class SlsaVerificationSummaryPolicy(InTotoResourceDescriptor):
          'slot_usage': {'digest': {'name': 'digest', 'recommended': True},
                         'resource_uri': {'name': 'resource_uri', 'required': True}}})
 
-    resource_uri: URI = Field(default=..., description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
+    resource_uri: URI = Field(default=..., description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'aliases': ['uri'],
+         'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri'],
          'slot_uri': 'in_toto_linkml:resource_uri'} })
     digest: Optional[InTotoDigestSet] = Field(default=None, description="""The cryptographic digests of a resource's content, keyed by algorithm.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaMeasurement'],
          'recommended': True,
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md'],
          'slot_uri': 'in_toto_linkml:digest'} })
-    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'],
+    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'aliases': ['name'],
+         'domain_of': ['InTotoResourceDescriptor'],
          'slot_uri': 'in_toto_linkml:resource_name'} })
-    download_location: Optional[URI] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'],
+    download_location: Optional[URI] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'aliases': ['downloadLocation'],
+         'close_mappings': ['spdx_software:downloadLocation', 'dcat:downloadURL'],
+         'domain_of': ['InTotoResourceDescriptor'],
          'slot_uri': 'in_toto_linkml:download_location'} })
-    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'], 'slot_uri': 'dcat:mediaType'} })
+    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'aliases': ['mediaType'],
+         'close_mappings': ['spdx_core:contentType'],
+         'domain_of': ['InTotoResourceDescriptor'],
+         'slot_uri': 'dcat:mediaType'} })
     content: Optional[str] = Field(default=None, description="""The resource's content itself, base64-encoded, for a resource small enough to carry inline.""", json_schema_extra = { "linkml_meta": {'comments': ['The in-toto framework asks for content under 1 KB, so that '
                       'attestations stay small.'],
          'domain_of': ['InTotoResourceDescriptor'],
@@ -1367,18 +1461,25 @@ class SlsaVerificationSummaryInputAttestation(InTotoResourceDescriptor):
          'slot_usage': {'digest': {'name': 'digest', 'required': True},
                         'resource_uri': {'name': 'resource_uri', 'recommended': True}}})
 
-    resource_uri: Optional[URI] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
+    resource_uri: Optional[URI] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'aliases': ['uri'],
+         'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
          'recommended': True,
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri'],
          'slot_uri': 'in_toto_linkml:resource_uri'} })
     digest: InTotoDigestSet = Field(default=..., description="""The cryptographic digests of a resource's content, keyed by algorithm.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaMeasurement'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md'],
          'slot_uri': 'in_toto_linkml:digest'} })
-    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'],
+    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'aliases': ['name'],
+         'domain_of': ['InTotoResourceDescriptor'],
          'slot_uri': 'in_toto_linkml:resource_name'} })
-    download_location: Optional[URI] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'],
+    download_location: Optional[URI] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'aliases': ['downloadLocation'],
+         'close_mappings': ['spdx_software:downloadLocation', 'dcat:downloadURL'],
+         'domain_of': ['InTotoResourceDescriptor'],
          'slot_uri': 'in_toto_linkml:download_location'} })
-    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'], 'slot_uri': 'dcat:mediaType'} })
+    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'aliases': ['mediaType'],
+         'close_mappings': ['spdx_core:contentType'],
+         'domain_of': ['InTotoResourceDescriptor'],
+         'slot_uri': 'dcat:mediaType'} })
     content: Optional[str] = Field(default=None, description="""The resource's content itself, base64-encoded, for a resource small enough to carry inline.""", json_schema_extra = { "linkml_meta": {'comments': ['The in-toto framework asks for content under 1 KB, so that '
                       'attestations stay small.'],
          'domain_of': ['InTotoResourceDescriptor'],
@@ -1408,17 +1509,24 @@ class InTotoStatementSubject(InTotoResourceDescriptor):
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md'],
          'slot_usage': {'digest': {'name': 'digest', 'required': True}}})
 
-    resource_uri: Optional[URI] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
+    resource_uri: Optional[URI] = Field(default=None, description="""The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference.""", json_schema_extra = { "linkml_meta": {'aliases': ['uri'],
+         'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri'],
          'slot_uri': 'in_toto_linkml:resource_uri'} })
     digest: InTotoDigestSet = Field(default=..., description="""The cryptographic digests of a resource's content, keyed by algorithm.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor', 'SlsaMeasurement'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md'],
          'slot_uri': 'in_toto_linkml:digest'} })
-    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'],
+    resource_name: Optional[str] = Field(default=None, description="""A name for the resource within the attestation that carries it.""", json_schema_extra = { "linkml_meta": {'aliases': ['name'],
+         'domain_of': ['InTotoResourceDescriptor'],
          'slot_uri': 'in_toto_linkml:resource_name'} })
-    download_location: Optional[URI] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'],
+    download_location: Optional[URI] = Field(default=None, description="""Where the resource can be fetched, when that differs from its identifying URI.""", json_schema_extra = { "linkml_meta": {'aliases': ['downloadLocation'],
+         'close_mappings': ['spdx_software:downloadLocation', 'dcat:downloadURL'],
+         'domain_of': ['InTotoResourceDescriptor'],
          'slot_uri': 'in_toto_linkml:download_location'} })
-    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoResourceDescriptor'], 'slot_uri': 'dcat:mediaType'} })
+    media_type: Optional[str] = Field(default=None, description="""The IANA media type of the resource's content.""", json_schema_extra = { "linkml_meta": {'aliases': ['mediaType'],
+         'close_mappings': ['spdx_core:contentType'],
+         'domain_of': ['InTotoResourceDescriptor'],
+         'slot_uri': 'dcat:mediaType'} })
     content: Optional[str] = Field(default=None, description="""The resource's content itself, base64-encoded, for a resource small enough to carry inline.""", json_schema_extra = { "linkml_meta": {'comments': ['The in-toto framework asks for content under 1 KB, so that '
                       'attestations stay small.'],
          'domain_of': ['InTotoResourceDescriptor'],
@@ -1444,11 +1552,15 @@ class InTotoStatement(ConfiguredBaseModel):
     """
     The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['The signature envelope around a statement, and the bundle that '
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'aliases': ['Statement'],
+         'comments': ['The signature envelope around a statement, and the bundle that '
                       'collects signed statements, are outside this model.',
                       'A statement is the attestation, and its predicate is one kind '
                       'of claim about the subjects, such as a test result or build '
-                      'provenance.'],
+                      'provenance.',
+                      'Its exact mapping is the type URI its statement_type holds, as '
+                      'each predicate class maps to its predicate_type.'],
+         'exact_mappings': ['in_toto_io:Statement/v1'],
          'from_schema': 'https://w3id.org/lmodel/in-toto/in_toto_core',
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md']})
 
@@ -1461,9 +1573,13 @@ class InTotoStatement(ConfiguredBaseModel):
          'domain_of': ['InTotoStatement'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md'],
          'slot_uri': 'in_toto_linkml:predicate'} })
-    statement_type: URI = Field(default=..., description="""The in-toto statement type, always https://in-toto.io/Statement/v1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement'], 'slot_uri': 'in_toto_linkml:statement_type'} })
+    statement_type: URI = Field(default=..., description="""The in-toto statement type, always https://in-toto.io/Statement/v1.""", json_schema_extra = { "linkml_meta": {'aliases': ['_type'],
+         'domain_of': ['InTotoStatement'],
+         'slot_uri': 'in_toto_linkml:statement_type'} })
     subject: list[InTotoStatementSubject] = Field(default=..., description="""The artifacts the predicate is about, each with a digest.""", min_length=1, json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement'], 'slot_uri': 'in_toto_linkml:subject'} })
-    predicate_type: URI = Field(default=..., description="""The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement'], 'slot_uri': 'in_toto_linkml:predicate_type'} })
+    predicate_type: URI = Field(default=..., description="""The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.""", json_schema_extra = { "linkml_meta": {'aliases': ['predicateType'],
+         'domain_of': ['InTotoStatement'],
+         'slot_uri': 'in_toto_linkml:predicate_type'} })
 
     @field_validator('statement_type')
     def pattern_statement_type(cls, v):
@@ -1518,9 +1634,13 @@ class SlsaStatement(InTotoStatement):
          'domain_of': ['InTotoStatement'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md'],
          'slot_uri': 'in_toto_linkml:predicate'} })
-    statement_type: URI = Field(default=..., description="""The in-toto statement type, always https://in-toto.io/Statement/v1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement'], 'slot_uri': 'in_toto_linkml:statement_type'} })
+    statement_type: URI = Field(default=..., description="""The in-toto statement type, always https://in-toto.io/Statement/v1.""", json_schema_extra = { "linkml_meta": {'aliases': ['_type'],
+         'domain_of': ['InTotoStatement'],
+         'slot_uri': 'in_toto_linkml:statement_type'} })
     subject: list[InTotoStatementSubject] = Field(default=..., description="""The artifacts the predicate is about, each with a digest.""", min_length=1, json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement'], 'slot_uri': 'in_toto_linkml:subject'} })
-    predicate_type: URI = Field(default=..., description="""The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['InTotoStatement'], 'slot_uri': 'in_toto_linkml:predicate_type'} })
+    predicate_type: URI = Field(default=..., description="""The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1.""", json_schema_extra = { "linkml_meta": {'aliases': ['predicateType'],
+         'domain_of': ['InTotoStatement'],
+         'slot_uri': 'in_toto_linkml:predicate_type'} })
 
     @field_validator('statement_type')
     def pattern_statement_type(cls, v):
@@ -1541,10 +1661,14 @@ class InTotoPredicate(ConfiguredBaseModel):
     The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
+         'aliases': ['Predicate'],
+         'children_are_mutually_disjoint': True,
          'comments': ["The statement's predicate_type names the predicate's type by "
                       'URI, and each concrete class says which URI it renders. Nothing '
                       'ties the two, since a schema that imports this module may model '
-                      'a predicate under its own URI.'],
+                      'a predicate under its own URI.',
+                      'A predicate is of one kind only, so the kinds that extend this '
+                      'class are mutually disjoint.'],
          'from_schema': 'https://w3id.org/lmodel/in-toto/in_toto_core',
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/predicate.md']})
 
@@ -1558,6 +1682,9 @@ class SlsaPredicate(InTotoPredicate):
     The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
+         'children_are_mutually_disjoint': True,
+         'comments': ['Each predicate is of one kind only, which '
+                      'children_are_mutually_disjoint states for the ontology.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track',
                        'slsa_source_track',
@@ -1572,16 +1699,18 @@ class SlsaBuildProvenance(SlsaPredicate):
     """
     The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build met their expectations and others can rebuild it.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['The statement that carries it has predicate_type '
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'close_mappings': ['spdx_build:Build'],
+         'comments': ['The statement that carries it has predicate_type '
                       'https://slsa.dev/provenance/v1.',
                       'Complicated provenance generation was the challenge with the '
                       'most issues in the study (Tamanna et al., 2024, CI.1).'],
+         'exact_mappings': ['slsa_dev:provenance/v1'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_build',
          'in_subset': ['slsa_build_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#provenance']})
 
-    build_definition: SlsaBuildDefinition = Field(default=..., description="""The inputs to the build; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildProvenance']} })
-    run_details: SlsaRunDetails = Field(default=..., description="""What is specific to this execution of the build; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildProvenance']} })
+    build_definition: SlsaBuildDefinition = Field(default=..., description="""The inputs to the build; required at Build L1.""", json_schema_extra = { "linkml_meta": {'aliases': ['buildDefinition'], 'domain_of': ['SlsaBuildProvenance']} })
+    run_details: SlsaRunDetails = Field(default=..., description="""What is specific to this execution of the build; required at Build L1.""", json_schema_extra = { "linkml_meta": {'aliases': ['runDetails'], 'domain_of': ['SlsaBuildProvenance']} })
     predicate_kind: Literal["SlsaBuildProvenance"] = Field(default="SlsaBuildProvenance", description="""The kind of predicate, one of this class's descendants.""", json_schema_extra = { "linkml_meta": {'designates_type': True,
          'domain_of': ['InTotoPredicate'],
          'slot_uri': 'in_toto_linkml:predicate_kind'} })
@@ -1598,6 +1727,7 @@ class SlsaVerificationSummary(SlsaPredicate):
                       'Verification tooling and the places attestations are stored '
                       'were an adoption difficulty practitioners reported (Tamanna et '
                       'al., 2024, LF.1).'],
+         'exact_mappings': ['slsa_dev:verification_summary/v1'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_verification',
          'in_subset': ['slsa_build_track', 'slsa_source_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/verification_summary',
@@ -1608,15 +1738,17 @@ class SlsaVerificationSummary(SlsaPredicate):
                                          'name': 'resource_uri',
                                          'required': True}}})
 
-    resource_uri: URI = Field(default=..., description="""The URI consumers fetch the artifact from, which the verifier verified it as.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
+    resource_uri: URI = Field(default=..., description="""The URI consumers fetch the artifact from, which the verifier verified it as.""", json_schema_extra = { "linkml_meta": {'aliases': ['uri'],
+         'domain_of': ['SlsaVerificationSummary', 'InTotoResourceDescriptor'],
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri'],
          'slot_uri': 'in_toto_linkml:resource_uri'} })
     verifier: SlsaVerifier = Field(default=..., description="""The verifier that made this determination.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    time_verified: Optional[str] = Field(default=None, description="""When the verification happened.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
+    time_verified: Optional[str] = Field(default=None, description="""When the verification happened.""", json_schema_extra = { "linkml_meta": {'aliases': ['timeVerified'], 'domain_of': ['SlsaVerificationSummary']} })
     policy: SlsaVerificationSummaryPolicy = Field(default=..., description="""The policy the subject was verified against, by URI and preferably by digest too.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    input_attestations: Optional[list[SlsaVerificationSummaryInputAttestation]] = Field(default=None, description="""Every attestation the verifier consulted, each with a digest; complete when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    verification_result: SlsaVerificationResult = Field(default=..., description="""Whether the subject passed the policy.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    verified_levels: list[str] = Field(default=..., description="""The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.""", min_length=1, json_schema_extra = { "linkml_meta": {'comments': ['A VSA lists at most one level per track, and only FAILED when '
+    input_attestations: Optional[list[SlsaVerificationSummaryInputAttestation]] = Field(default=None, description="""Every attestation the verifier consulted, each with a digest; complete when present.""", json_schema_extra = { "linkml_meta": {'aliases': ['inputAttestations'], 'domain_of': ['SlsaVerificationSummary']} })
+    verification_result: SlsaVerificationResult = Field(default=..., description="""Whether the subject passed the policy.""", json_schema_extra = { "linkml_meta": {'aliases': ['verificationResult'], 'domain_of': ['SlsaVerificationSummary']} })
+    verified_levels: list[str] = Field(default=..., description="""The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.""", min_length=1, json_schema_extra = { "linkml_meta": {'aliases': ['verifiedLevels'],
+         'comments': ['A VSA lists at most one level per track, and only FAILED when '
                       'verification failed; the validator checks neither.'],
          'domain_of': ['SlsaVerificationSummary']} })
     organization_properties: Optional[list[str]] = Field(default=None, description="""Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.""", json_schema_extra = { "linkml_meta": {'deprecated': 'Write these properties in verified_levels, where the '
@@ -1625,11 +1757,12 @@ class SlsaVerificationSummary(SlsaPredicate):
          'deprecated_element_has_possible_replacement': 'slsa:verified_levels',
          'domain_of': ['SlsaVerificationSummary'],
          'in_subset': ['slsa_source_track']} })
-    dependency_levels: Optional[list[SlsaDependencyLevelCount]] = Field(default=None, description="""How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.""", json_schema_extra = { "linkml_meta": {'comments': ["The attestation's JSON tells an empty map (no dependencies) "
+    dependency_levels: Optional[list[SlsaDependencyLevelCount]] = Field(default=None, description="""How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.""", json_schema_extra = { "linkml_meta": {'aliases': ['dependencyLevels'],
+         'comments': ["The attestation's JSON tells an empty map (no dependencies) "
                       'from an absent one (no claim); this list cannot, so an empty '
                       'list reads as no claim.'],
          'domain_of': ['SlsaVerificationSummary']} })
-    slsa_version: Optional[str] = Field(default=None, description="""The SLSA specification version the verifier applied, as MAJOR.MINOR.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
+    slsa_version: Optional[str] = Field(default=None, description="""The SLSA specification version the verifier applied, as MAJOR.MINOR.""", json_schema_extra = { "linkml_meta": {'aliases': ['slsaVersion'], 'domain_of': ['SlsaVerificationSummary']} })
     predicate_kind: Literal["SlsaVerificationSummary"] = Field(default="SlsaVerificationSummary", description="""The kind of predicate, one of this class's descendants.""", json_schema_extra = { "linkml_meta": {'designates_type': True,
          'domain_of': ['InTotoPredicate'],
          'slot_uri': 'in_toto_linkml:predicate_kind'} })

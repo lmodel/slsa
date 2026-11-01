@@ -6,6 +6,13 @@ description: >-
   The SLSA Build Environment track, a working-draft track for the integrity of
   the build images and compute that hosted builds run on.
 license: Apache-2.0
+in_language: en
+keywords:
+  - SLSA
+  - build environment
+  - build image
+  - measurement
+  - attestation
 see_also:
   - https://slsa.dev/spec/draft/build-env-track-basics
 

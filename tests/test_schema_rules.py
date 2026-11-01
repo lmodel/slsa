@@ -4,6 +4,7 @@ import itertools
 import re
 from pathlib import Path
 
+import yaml
 from linkml_runtime.utils.schemaview import SchemaView
 
 SCHEMA = Path(__file__).parent.parent / "src" / "slsa" / "schema" / "slsa.yaml"
@@ -69,3 +70,117 @@ def test_result_pattern_admits_slsa_results_and_safe_values_of_an_issuer():
     }
     for value in samples:
         assert bool(pattern.search(value)) == admitted(value), repr(value)
+
+
+SCHEMA_DIR = SCHEMA.parent
+SPEC = SCHEMA_DIR / "spec"
+MODULES = sorted(SCHEMA_DIR.glob("slsa*.yaml"))
+MAPPING_KEYS = (
+    "exact_mappings",
+    "close_mappings",
+    "narrow_mappings",
+    "broad_mappings",
+    "related_mappings",
+)
+
+# The terms of other vocabularies that the mappings name, each checked in the
+# file that defines it: SPDX 3.0.1's spdx-model.ttl (as lmodel/spdx vendors
+# it), DOAP's schema/doap.rdf at d164b82 and W3C's prov-o.ttl. Add a term here
+# only after finding it there.
+EXTERNAL_TERMS = {
+    "https://spdx.org/rdf/3.0.1/terms/Build/Build",
+    "https://spdx.org/rdf/3.0.1/terms/Build/buildType",
+    "https://spdx.org/rdf/3.0.1/terms/Build/buildId",
+    "https://spdx.org/rdf/3.0.1/terms/Build/buildStartTime",
+    "https://spdx.org/rdf/3.0.1/terms/Build/buildEndTime",
+    "https://spdx.org/rdf/3.0.1/terms/Build/parameter",
+    "https://spdx.org/rdf/3.0.1/terms/Core/Agent",
+    "https://spdx.org/rdf/3.0.1/terms/Core/DictionaryEntry",
+    "https://spdx.org/rdf/3.0.1/terms/Core/key",
+    "https://spdx.org/rdf/3.0.1/terms/Core/value",
+    "https://spdx.org/rdf/3.0.1/terms/Software/Package",
+    "http://usefulinc.com/ns/doap#Repository",
+    "http://usefulinc.com/ns/doap#location",
+    "http://usefulinc.com/ns/doap#GitBranch",
+    "http://www.w3.org/ns/prov#Agent",
+}
+
+# The vendored specification file that names each predicate type.
+PREDICATE_TYPE_PAGES = {
+    "https://slsa.dev/provenance/v1": "build-provenance.md",
+    "https://slsa.dev/verification_summary/v1": "verification_summary.md",
+}
+
+
+def _elements(doc):
+    """Yield each class, slot, attribute and enum of a module with its name."""
+    for kind in ("classes", "slots", "enums", "types"):
+        for name, element in (doc.get(kind) or {}).items():
+            element = element or {}
+            yield name, element
+            for attr, value in (element.get("attributes") or {}).items():
+                yield f"{name}.{attr}", value or {}
+
+
+def _mappings():
+    """Yield the module, element and expanded IRI of every mapping."""
+    for module in MODULES:
+        doc = yaml.safe_load(module.read_text())
+        prefixes = doc.get("prefixes") or {}
+        for name, element in _elements(doc):
+            for key in MAPPING_KEYS:
+                values = element.get(key) or []
+                for curie in [values] if isinstance(values, str) else values:
+                    prefix, _, local = curie.partition(":")
+                    assert prefix in prefixes, (module.name, name, curie)
+                    yield module.name, name, prefixes[prefix] + local
+
+
+def test_mappings_use_a_bound_prefix_and_a_known_term():
+    """Every mapping expands through its own module's prefixes to a term that
+    exists: a predicate type SLSA's pages name, or a checked external term."""
+    seen = set()
+    for module, name, iri in _mappings():
+        seen.add(iri)
+        if iri in PREDICATE_TYPE_PAGES:
+            page = (SPEC / PREDICATE_TYPE_PAGES[iri]).read_text()
+            assert f'"predicateType": "{iri}"' in page, (module, name, iri)
+        else:
+            assert iri in EXTERNAL_TERMS, (module, name, iri)
+    assert EXTERNAL_TERMS | set(PREDICATE_TYPE_PAGES) == seen
+
+
+def _aliases(class_names):
+    sv = SchemaView(str(SCHEMA))
+    for cls in class_names:
+        for slot in sv.class_induced_slots(cls):
+            for alias in slot.aliases:
+                yield cls, slot.name, alias
+
+
+def test_provenance_aliases_are_keys_of_the_provenance_format():
+    """Each alias on the provenance's parts is a key of SLSA's provenance.cue."""
+    keys = set(
+        re.findall(r'"(\w+)":', (SPEC / "schema" / "provenance.cue").read_text())
+    )
+    classes = (
+        "SlsaBuildProvenance",
+        "SlsaBuildDefinition",
+        "SlsaRunDetails",
+        "SlsaBuildPlatform",
+        "SlsaBuildMetadata",
+    )
+    aliases = list(_aliases(classes))
+    assert aliases
+    for cls, slot, alias in aliases:
+        assert alias in keys, (cls, slot, alias)
+
+
+def test_summary_aliases_are_keys_of_the_summary_format():
+    """Each alias on the VSA's parts is a key of the VSA's schema block."""
+    page = (SPEC / "verification_summary.md").read_text()
+    keys = set(re.findall(r'"(\w+)":', page))
+    aliases = list(_aliases(("SlsaVerificationSummary", "SlsaVerifier")))
+    assert aliases
+    for cls, slot, alias in aliases:
+        assert alias in keys, (cls, slot, alias)

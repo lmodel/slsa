@@ -63,10 +63,17 @@ version = "1.2.0"
 
 # Namespaces
 DCAT = CurieNamespace('dcat', 'http://www.w3.org/ns/dcat#')
+DOAP = CurieNamespace('doap', 'http://usefulinc.com/ns/doap#')
+IN_TOTO_IO = CurieNamespace('in_toto_io', 'https://in-toto.io/')
 IN_TOTO_LINKML = CurieNamespace('in_toto_linkml', 'https://w3id.org/lmodel/in-toto/')
 LINKML = CurieNamespace('linkml', 'https://w3id.org/linkml/')
+PROV = CurieNamespace('prov', 'http://www.w3.org/ns/prov#')
 SLSA = CurieNamespace('slsa', 'https://w3id.org/lmodel/slsa/')
+SLSA_DEV = CurieNamespace('slsa_dev', 'https://slsa.dev/')
 SPDX = CurieNamespace('spdx', 'http://spdx.org/rdf/terms#')
+SPDX_BUILD = CurieNamespace('spdx_build', 'https://spdx.org/rdf/3.0.1/terms/Build/')
+SPDX_CORE = CurieNamespace('spdx_core', 'https://spdx.org/rdf/3.0.1/terms/Core/')
+SPDX_SOFTWARE = CurieNamespace('spdx_software', 'https://spdx.org/rdf/3.0.1/terms/Software/')
 XSD = CurieNamespace('xsd', 'http://www.w3.org/2001/XMLSchema#')
 DEFAULT_ = SLSA
 

@@ -10,10 +10,18 @@ comments:
 - slsa_core imports only the LinkML types, each track module imports the core, and
   this file adds only the document root, so an importer can take one module.
 source: https://slsa.dev/spec/v1.2
+in_language: en
 see_also:
 - https://lmodel.github.io/slsa
 - https://slsa.dev/spec/v1.2/
 - https://github.com/slsa-framework/slsa
+keywords:
+- supply chain security
+- software supply chain
+- SLSA
+- build provenance
+- verification summary
+- in-toto
 id: https://w3id.org/lmodel/slsa
 version: 1.2.0
 license: Apache-2.0
@@ -33,6 +41,36 @@ prefixes:
   schema:
     prefix_prefix: schema
     prefix_reference: http://schema.org/
+  spdx_core:
+    prefix_prefix: spdx_core
+    prefix_reference: https://spdx.org/rdf/3.0.1/terms/Core/
+  spdx_software:
+    prefix_prefix: spdx_software
+    prefix_reference: https://spdx.org/rdf/3.0.1/terms/Software/
+  prov:
+    prefix_prefix: prov
+    prefix_reference: http://www.w3.org/ns/prov#
+  slsa_dev:
+    prefix_prefix: slsa_dev
+    prefix_reference: https://slsa.dev/
+  spdx_build:
+    prefix_prefix: spdx_build
+    prefix_reference: https://spdx.org/rdf/3.0.1/terms/Build/
+  doap:
+    prefix_prefix: doap
+    prefix_reference: http://usefulinc.com/ns/doap#
+  in_toto_linkml:
+    prefix_prefix: in_toto_linkml
+    prefix_reference: https://w3id.org/lmodel/in-toto/
+  dcat:
+    prefix_prefix: dcat
+    prefix_reference: http://www.w3.org/ns/dcat#
+  in_toto_io:
+    prefix_prefix: in_toto_io
+    prefix_reference: https://in-toto.io/
+  spdx:
+    prefix_prefix: spdx
+    prefix_reference: http://spdx.org/rdf/terms#
 default_prefix: slsa
 default_range: string
 subsets:
@@ -314,6 +352,8 @@ types:
     - An issuer's own result, such as an organization's ORG_SOURCE_ property, is printable
       ASCII with no spaces and does not start with SLSA_ in any letter case, so that
       it cannot pass for an SLSA result.
+    - It names the base its typeof already gives, because the SQL generator reads
+      base alone and reports a type without one.
     in_subset:
     - slsa_build_track
     - slsa_source_track
@@ -321,7 +361,48 @@ types:
     see_also:
     - https://slsa.dev/spec/v1.2/verification_summary#slsaresult
     typeof: string
+    base: str
     pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
+  in_toto_resource_uri:
+    name: in_toto_resource_uri
+    description: A URI that identifies or locates a resource, such as a package URL
+      or a git repository address, with its scheme and authority in lowercase.
+    comments:
+    - The framework recommends a package URL (pkg:) or an SPDX download location (git+https:),
+      and allows one that does not resolve.
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+    typeof: uri
+    base: URI
+    pattern: ^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$
+  in_toto_type_uri:
+    name: in_toto_type_uri
+    description: A URI that names a type, such as a statement's or a predicate's,
+      with its scheme and authority in lowercase.
+    comments:
+    - The framework asks that it carry a version and registers none, since the namespace
+      of a URI keeps two types apart.
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#typeuri
+    typeof: uri
+    base: URI
+    pattern: ^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$
+  in_toto_timestamp:
+    name: in_toto_timestamp
+    description: A point in time in RFC 3339 format in the UTC time zone, written
+      with a trailing Z, such as 1985-04-12T23:20:50.52Z.
+    comments:
+    - It extends string rather than datetime, because the LinkML Python runtime writes
+      a datetime's Z as +00:00, which the framework does not allow.
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#timestamp
+    typeof: string
+    base: str
+    uri: xsd:dateTime
+    pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?Z$
 enums:
   SlsaBuildLevel:
     name: SlsaBuildLevel
@@ -659,38 +740,14 @@ enums:
             tag: study_theme
             value: S5
 slots:
-  resource_uri:
-    name: resource_uri
-    description: The URI that identifies a resource, such as a package URL, a git
-      repository address or an OCI image reference.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    slot_uri: slsa:resource_uri
-    domain_of:
-    - InTotoResourceDescriptor
-    - SlsaVerificationSummary
-    range: uri
-  digest:
-    name: digest
-    description: The cryptographic digests of a resource's content, keyed by algorithm.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    slot_uri: slsa:digest
-    domain_of:
-    - InTotoResourceDescriptor
-    - SlsaMeasurement
-    range: InTotoDigestSet
-    inlined: true
   component_versions:
     name: component_versions
     description: The version of each named component of a platform.
     in_subset:
     - slsa_build_track
     from_schema: https://w3id.org/lmodel/slsa
+    aliases:
+    - version
     slot_uri: slsa:component_versions
     domain_of:
     - SlsaVerifier
@@ -748,6 +805,50 @@ slots:
     - SlsaNamedReference
     - SlsaSourceProvenance
     range: SlsaSourceRevision
+  resource_uri:
+    name: resource_uri
+    description: The URI that identifies a resource, such as a package URL, a git
+      repository address or an OCI image reference.
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+    aliases:
+    - uri
+    slot_uri: in_toto_linkml:resource_uri
+    domain_of:
+    - SlsaVerificationSummary
+    - InTotoResourceDescriptor
+    range: in_toto_resource_uri
+  digest:
+    name: digest
+    description: The cryptographic digests of a resource's content, keyed by algorithm.
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+    slot_uri: in_toto_linkml:digest
+    domain_of:
+    - InTotoResourceDescriptor
+    - SlsaMeasurement
+    range: InTotoDigestSet
+    inlined: true
+  predicate:
+    name: predicate
+    description: The predicate, one of the kinds this schema or an importing one models;
+      predicate_kind names which. Unset means the same as empty.
+    comments:
+    - 'It is a slot of its own rather than an attribute of InTotoStatement, because
+      LOKF''s predicate is a relation''s type: `lokf adapt` renames a slot whose name
+      LOKF defines, with the name of the schema it adapts as a prefix, and keeps its
+      IRI. This repository''s copy calls it in_toto_linkml_predicate, and lmodel/slsa''s
+      calls it slsa_predicate.'
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+    slot_uri: in_toto_linkml:predicate
+    domain_of:
+    - InTotoStatement
+    range: InTotoPredicate
+    inlined: true
   build_env_level:
     name: build_env_level
     description: The SLSA Build Environment level this meets.
@@ -768,12 +869,12 @@ classes:
     attributes:
       attestations:
         name: attestations
-        description: The attestations, as in-toto statements.
+        description: The attestations, as in-toto statements with SLSA's fields.
         from_schema: https://w3id.org/lmodel/slsa
         owner: SlsaDocument
         domain_of:
         - SlsaDocument
-        range: InTotoStatement
+        range: SlsaStatement
         multivalued: true
         inlined: true
         inlined_as_list: true
@@ -909,6 +1010,1765 @@ classes:
         range: SlsaAdoptionMetadata
         inlined: true
     tree_root: true
+  SlsaStatement:
+    name: SlsaStatement
+    description: 'An in-toto statement with the fields this schema adds: where the
+      signed attestation is stored, the tool that signed it and the transparency log
+      entry that records the signature.'
+    comments:
+    - InTotoStatement comes from lmodel/in-toto and holds only what the in-toto specification
+      defines, so the fields SLSA's adoption study and the Secure Software Factory
+      add live on this subclass. A statement without them is a valid SlsaStatement
+      too.
+    - Attestation and provenance are often confused; a statement is the attestation,
+      and build provenance is one kind of predicate it may carry (Tamanna et al.,
+      2024, UC.1).
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    - slsa_build_environment_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/attestation-model
+    - https://slsa.dev/spec/v1.2/distributing-provenance
+    is_a: InTotoStatement
+    attributes:
+      attestation_storage_uri:
+        name: attestation_storage_uri
+        description: Where the signed attestation is stored or can be fetched.
+        comments:
+        - 'SLSA asks producers to publish attestations in at least one place and preferably
+          more: beside the source repository''s releases, beside the artifact in its
+          package registry, which it prefers in the long term, or elsewhere with an
+          entry in a transparency log.'
+        - Where to store attestations was an open question for practitioners (Tamanna
+          et al., 2024, LF.1).
+        in_subset:
+        - slsa_adoption_study
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaStatement
+        domain_of:
+        - SlsaStatement
+        range: uri
+      signing_tool:
+        name: signing_tool
+        description: The tool that signed the attestation, named by URI, such as Cosign
+          or Notation.
+        in_subset:
+        - slsa_ssf
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaStatement
+        domain_of:
+        - SlsaStatement
+        range: uri
+      transparency_log_entry:
+        name: transparency_log_entry
+        description: The transparency log entry that records the signature, such as
+          a Rekor entry.
+        in_subset:
+        - slsa_ssf
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaStatement
+        domain_of:
+        - SlsaStatement
+        range: uri
+      predicate:
+        name: predicate
+        description: The predicate, one of the kinds this schema or an importing one
+          models; predicate_kind names which. Unset means the same as empty.
+        comments:
+        - 'It is a slot of its own rather than an attribute of InTotoStatement, because
+          LOKF''s predicate is a relation''s type: `lokf adapt` renames a slot whose
+          name LOKF defines, with the name of the schema it adapts as a prefix, and
+          keeps its IRI. This repository''s copy calls it in_toto_linkml_predicate,
+          and lmodel/slsa''s calls it slsa_predicate.'
+        from_schema: https://w3id.org/lmodel/slsa
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+        slot_uri: in_toto_linkml:predicate
+        owner: SlsaStatement
+        domain_of:
+        - InTotoStatement
+        range: InTotoPredicate
+        inlined: true
+      statement_type:
+        name: statement_type
+        description: The in-toto statement type, always https://in-toto.io/Statement/v1.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - _type
+        slot_uri: in_toto_linkml:statement_type
+        owner: SlsaStatement
+        domain_of:
+        - InTotoStatement
+        range: in_toto_type_uri
+        required: true
+        pattern: ^https://in-toto\.io/Statement/v1$
+      subject:
+        name: subject
+        description: The artifacts the predicate is about, each with a digest.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:subject
+        owner: SlsaStatement
+        domain_of:
+        - InTotoStatement
+        range: InTotoStatementSubject
+        required: true
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+        minimum_cardinality: 1
+      predicate_type:
+        name: predicate_type
+        description: The URI that names the predicate's type and so its schema, such
+          as https://in-toto.io/attestation/test-result/v0.1.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - predicateType
+        slot_uri: in_toto_linkml:predicate_type
+        owner: SlsaStatement
+        domain_of:
+        - InTotoStatement
+        range: in_toto_type_uri
+        required: true
+  SlsaPredicate:
+    name: SlsaPredicate
+    description: The base of every predicate this schema models; the predicate_kind
+      it takes from InTotoPredicate names the concrete kind.
+    comments:
+    - Each predicate is of one kind only, which children_are_mutually_disjoint states
+      for the ontology.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    - slsa_build_environment_track
+    from_schema: https://w3id.org/lmodel/slsa
+    is_a: InTotoPredicate
+    abstract: true
+    attributes:
+      predicate_kind:
+        name: predicate_kind
+        description: The kind of predicate, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:predicate_kind
+        designates_type: true
+        owner: SlsaPredicate
+        domain_of:
+        - InTotoPredicate
+        range: string
+    children_are_mutually_disjoint: true
+  SlsaParty:
+    name: SlsaParty
+    description: A person or organization that takes part in a software supply chain,
+      in one of the roles SLSA names.
+    comments:
+    - One party may act in several roles, and several parties may share one role.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/terminology#roles
+    broad_mappings:
+    - spdx_core:Agent
+    - prov:Agent
+    abstract: true
+    attributes:
+      party_type:
+        name: party_type
+        description: The role the party acts in, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        designates_type: true
+        owner: SlsaParty
+        domain_of:
+        - SlsaParty
+        range: string
+      party_name:
+        name: party_name
+        description: The party's name.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaParty
+        domain_of:
+        - SlsaParty
+        range: string
+  SlsaProducer:
+    name: SlsaProducer
+    description: A party that creates software and provides it to others, choosing
+      a build platform and distributing provenance.
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    is_a: SlsaParty
+    slots:
+    - build_platform
+    attributes:
+      build_platform:
+        name: build_platform
+        description: The build platform this party or component belongs to or uses.
+        in_subset:
+        - slsa_build_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:build_platform
+        owner: SlsaProducer
+        domain_of:
+        - SlsaProducer
+        - SlsaControlPlane
+        range: SlsaBuildPlatform
+      party_type:
+        name: party_type
+        description: The role the party acts in, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        designates_type: true
+        owner: SlsaProducer
+        domain_of:
+        - SlsaParty
+        range: string
+      party_name:
+        name: party_name
+        description: The party's name.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaProducer
+        domain_of:
+        - SlsaParty
+        range: string
+  SlsaConsumer:
+    name: SlsaConsumer
+    description: A party that uses software a producer provides, verifying its provenance
+      itself or through a verifier.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    is_a: SlsaParty
+    attributes:
+      party_type:
+        name: party_type
+        description: The role the party acts in, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        designates_type: true
+        owner: SlsaConsumer
+        domain_of:
+        - SlsaParty
+        range: string
+      party_name:
+        name: party_name
+        description: The party's name.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaConsumer
+        domain_of:
+        - SlsaParty
+        range: string
+  SlsaVerifier:
+    name: SlsaVerifier
+    description: A party that inspects provenance or other attestations and decides
+      whether an artifact is authentic.
+    comments:
+    - Consumers accept only specific signer and verifier pairs.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/verification_summary#verifier
+    is_a: SlsaParty
+    slots:
+    - component_versions
+    attributes:
+      verifier_id:
+        name: verifier_id
+        description: The URI that identifies the verifier.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        aliases:
+        - id
+        owner: SlsaVerifier
+        domain_of:
+        - SlsaVerifier
+        range: in_toto_type_uri
+        required: true
+      component_versions:
+        name: component_versions
+        description: The version of each named component of a platform.
+        in_subset:
+        - slsa_build_track
+        from_schema: https://w3id.org/lmodel/slsa
+        aliases:
+        - version
+        slot_uri: slsa:component_versions
+        owner: SlsaVerifier
+        domain_of:
+        - SlsaVerifier
+        - SlsaBuildPlatform
+        range: SlsaComponentVersion
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      party_type:
+        name: party_type
+        description: The role the party acts in, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        designates_type: true
+        owner: SlsaVerifier
+        domain_of:
+        - SlsaParty
+        range: string
+      party_name:
+        name: party_name
+        description: The party's name.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaVerifier
+        domain_of:
+        - SlsaParty
+        range: string
+  SlsaInfrastructureProvider:
+    name: SlsaInfrastructureProvider
+    description: A party that provides software or services to the other roles, such
+      as a package registry's or a build platform's maintainers.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    is_a: SlsaParty
+    attributes:
+      party_type:
+        name: party_type
+        description: The role the party acts in, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        designates_type: true
+        owner: SlsaInfrastructureProvider
+        domain_of:
+        - SlsaParty
+        range: string
+      party_name:
+        name: party_name
+        description: The party's name.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaInfrastructureProvider
+        domain_of:
+        - SlsaParty
+        range: string
+  SlsaBuildPlatform:
+    name: SlsaBuildPlatform
+    description: 'The system that runs builds and records their provenance: the transitive
+      closure of software, hardware, people and organizations trusted to do so. Provenance
+      names it as the builder.'
+    comments:
+    - A platform with several modes of operation at different levels has a different
+      builder_id for each.
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/terminology#build-model
+    - https://slsa.dev/spec/v1.2/build-provenance#builder
+    slots:
+    - component_versions
+    attributes:
+      builder_id:
+        name: builder_id
+        description: The URI that identifies the platform and determines its SLSA
+          Build level.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        aliases:
+        - id
+        identifier: true
+        owner: SlsaBuildPlatform
+        domain_of:
+        - SlsaBuildPlatform
+        range: in_toto_type_uri
+        required: true
+      build_level:
+        name: build_level
+        description: The highest SLSA Build level the platform's provenance can meet.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaBuildPlatform
+        domain_of:
+        - SlsaBuildPlatform
+        range: SlsaBuildLevel
+      hosted:
+        name: hosted
+        description: Whether the platform is a hosted service on shared or dedicated
+          infrastructure rather than an individual's workstation.
+        comments:
+        - Build L2 and above require a hosted platform.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaBuildPlatform
+        domain_of:
+        - SlsaBuildPlatform
+        range: boolean
+      builder_dependencies:
+        name: builder_dependencies
+        description: Dependencies of the platform's orchestrator that do not run inside
+          the build but may affect provenance generation or its guarantees.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        aliases:
+        - builderDependencies
+        owner: SlsaBuildPlatform
+        domain_of:
+        - SlsaBuildPlatform
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      component_versions:
+        name: component_versions
+        description: The version of each named component of a platform.
+        in_subset:
+        - slsa_build_track
+        from_schema: https://w3id.org/lmodel/slsa
+        aliases:
+        - version
+        slot_uri: slsa:component_versions
+        owner: SlsaBuildPlatform
+        domain_of:
+        - SlsaVerifier
+        - SlsaBuildPlatform
+        range: SlsaComponentVersion
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+  SlsaControlPlane:
+    name: SlsaControlPlane
+    description: The component of a build platform that orchestrates each build and
+      generates its provenance, outside the tenant's control.
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/terminology#build-model
+    slots:
+    - build_platform
+    attributes:
+      build_platform:
+        name: build_platform
+        description: The build platform this party or component belongs to or uses.
+        in_subset:
+        - slsa_build_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:build_platform
+        owner: SlsaControlPlane
+        domain_of:
+        - SlsaProducer
+        - SlsaControlPlane
+        range: SlsaBuildPlatform
+  SlsaComponentVersion:
+    name: SlsaComponentVersion
+    description: The version of one named component of a platform.
+    comments:
+    - Each component appears once in a list, since the attestation's JSON uses its
+      name as a key; the validator does not check this.
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    attributes:
+      component:
+        name: component
+        description: The component's name.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaComponentVersion
+        domain_of:
+        - SlsaComponentVersion
+        range: string
+        required: true
+      component_version:
+        name: component_version
+        description: The component's version string.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaComponentVersion
+        domain_of:
+        - SlsaComponentVersion
+        range: string
+  SlsaPackageRegistry:
+    name: SlsaPackageRegistry
+    description: A distribution platform that resolves package names to immutable
+      package artifacts within an ecosystem.
+    in_subset:
+    - slsa_build_track
+    - slsa_dependency_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/terminology#distribution-model
+    slots:
+    - ecosystem
+    attributes:
+      registry_uri:
+        name: registry_uri
+        description: The URI that identifies the registry.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        identifier: true
+        owner: SlsaPackageRegistry
+        domain_of:
+        - SlsaPackageRegistry
+        range: uri
+        required: true
+      ecosystem:
+        name: ecosystem
+        description: The package ecosystem whose rules govern how a package is named
+          and distributed, such as PyPA, npm or OCI.
+        comments:
+        - One ecosystem's tools can name the same package differently, which the study
+          found affects attestations and provenance, so verifiers match provenance
+          to package names with care (Tamanna et al., 2024, UR.1).
+        in_subset:
+        - slsa_build_track
+        - slsa_dependency_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:ecosystem
+        owner: SlsaPackageRegistry
+        domain_of:
+        - SlsaPackageRegistry
+        - SlsaPackage
+        range: string
+  SlsaPackage:
+    name: SlsaPackage
+    description: A unit of software distributed under a package name, which is the
+      primary security boundary SLSA protects. Its artifacts are the outputs of builds.
+    in_subset:
+    - slsa_build_track
+    - slsa_dependency_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/terminology#distribution-model
+    close_mappings:
+    - spdx_software:Package
+    slots:
+    - ecosystem
+    attributes:
+      package_name:
+        name: package_name
+        description: The name consumers use to obtain the package within its ecosystem
+          and registry.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaPackage
+        domain_of:
+        - SlsaPackage
+        range: string
+        required: true
+      registry:
+        name: registry
+        description: The registry the package is published to.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaPackage
+        domain_of:
+        - SlsaPackage
+        range: SlsaPackageRegistry
+      package_artifacts:
+        name: package_artifacts
+        description: The immutable artifacts the package name has resolved to.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaPackage
+        domain_of:
+        - SlsaPackage
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      guac_uri:
+        name: guac_uri
+        description: Where a GUAC instance answers queries about the package's dependency
+          and provenance graph.
+        in_subset:
+        - slsa_ssf
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaPackage
+        domain_of:
+        - SlsaPackage
+        range: uri
+      security_insights_uri:
+        name: security_insights_uri
+        description: The SECURITY-INSIGHTS.yml file of the project that produces the
+          package.
+        in_subset:
+        - slsa_ssf
+        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        owner: SlsaPackage
+        domain_of:
+        - SlsaPackage
+        range: uri
+      ecosystem:
+        name: ecosystem
+        description: The package ecosystem whose rules govern how a package is named
+          and distributed, such as PyPA, npm or OCI.
+        comments:
+        - One ecosystem's tools can name the same package differently, which the study
+          found affects attestations and provenance, so verifiers match provenance
+          to package names with care (Tamanna et al., 2024, UR.1).
+        in_subset:
+        - slsa_build_track
+        - slsa_dependency_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:ecosystem
+        owner: SlsaPackage
+        domain_of:
+        - SlsaPackageRegistry
+        - SlsaPackage
+        range: string
+  SlsaBuildProvenance:
+    name: SlsaBuildProvenance
+    description: The predicate that says how a build platform produced a set of artifacts,
+      so that consumers can verify the build met their expectations and others can
+      rebuild it.
+    comments:
+    - The statement that carries it has predicate_type https://slsa.dev/provenance/v1.
+    - Complicated provenance generation was the challenge with the most issues in
+      the study (Tamanna et al., 2024, CI.1).
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/build-provenance#provenance
+    exact_mappings:
+    - slsa_dev:provenance/v1
+    close_mappings:
+    - spdx_build:Build
+    is_a: SlsaPredicate
+    attributes:
+      build_definition:
+        name: build_definition
+        description: The inputs to the build; required at Build L1.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - buildDefinition
+        owner: SlsaBuildProvenance
+        domain_of:
+        - SlsaBuildProvenance
+        range: SlsaBuildDefinition
+        required: true
+        inlined: true
+      run_details:
+        name: run_details
+        description: What is specific to this execution of the build; required at
+          Build L1.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - runDetails
+        owner: SlsaBuildProvenance
+        domain_of:
+        - SlsaBuildProvenance
+        range: SlsaRunDetails
+        required: true
+        inlined: true
+      predicate_kind:
+        name: predicate_kind
+        description: The kind of predicate, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:predicate_kind
+        designates_type: true
+        owner: SlsaBuildProvenance
+        domain_of:
+        - InTotoPredicate
+        range: string
+  SlsaBuildDefinition:
+    name: SlsaBuildDefinition
+    description: The inputs to a build, in enough detail to initialize it and begin
+      execution; the builder vouches for their accuracy.
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/build-provenance#builddefinition
+    attributes:
+      build_type:
+        name: build_type
+        description: The URI of the template that says how to run the build and read
+          its parameters and dependencies; required at Build L1.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - buildType
+        close_mappings:
+        - spdx_build:buildType
+        owner: SlsaBuildDefinition
+        domain_of:
+        - SlsaBuildDefinition
+        range: in_toto_type_uri
+        required: true
+      external_parameters:
+        name: external_parameters
+        description: The inputs under the tenant's control; required at Build L1,
+          complete at Build L3 and verified by consumers.
+        comments:
+        - Verifiers reject parameters they do not recognize here.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - externalParameters
+        broad_mappings:
+        - spdx_build:parameter
+        owner: SlsaBuildDefinition
+        domain_of:
+        - SlsaBuildDefinition
+        range: SlsaBuildParameter
+        required: true
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+        minimum_cardinality: 1
+      internal_parameters:
+        name: internal_parameters
+        description: The inputs the platform sets itself; kept for debugging, incident
+          response and reproduction, and not verified by consumers.
+        comments:
+        - 'Related, not narrower: SPDX''s parameter is an input provided to the builder,
+          and an internal parameter is one the platform sets itself.'
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - internalParameters
+        related_mappings:
+        - spdx_build:parameter
+        owner: SlsaBuildDefinition
+        domain_of:
+        - SlsaBuildDefinition
+        range: SlsaBuildParameter
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      resolved_dependencies:
+        name: resolved_dependencies
+        description: The artifacts fetched during the build, as far as the platform
+          knows them; completeness is best effort through Build L3.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - resolvedDependencies
+        owner: SlsaBuildDefinition
+        domain_of:
+        - SlsaBuildDefinition
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      hermetic:
+        name: hermetic
+        description: Whether the build could reach only the dependencies it declared,
+          with no other network or filesystem access.
+        comments:
+        - SLSA v1.2 does not require hermetic builds; Build L3's isolation is a different
+          property, and hermeticity is a candidate for a future Build L4.
+        - The study cites a 2023 industry survey in which over half the participants
+          found hermetic builds hard to implement, and lists "hermetic build" among
+          SLSA's unclear terms (Tamanna et al., 2024, UC.1).
+        in_subset:
+        - slsa_adoption_study
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        owner: SlsaBuildDefinition
+        domain_of:
+        - SlsaBuildDefinition
+        range: boolean
+      provenance_generation_tool:
+        name: provenance_generation_tool
+        description: The tool that generated this provenance, named by URI.
+        comments:
+        - Naming the generator supports the strategy of standardizing provenance generation
+          (Tamanna et al., 2024, S3.1).
+        in_subset:
+        - slsa_adoption_study
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        owner: SlsaBuildDefinition
+        domain_of:
+        - SlsaBuildDefinition
+        range: uri
+      pipeline_orchestrator:
+        name: pipeline_orchestrator
+        description: The CI/CD system that coordinated the build, named by URI, where
+          it differs from the builder.
+        comments:
+        - In the Secure Software Factory architecture this is the Build Service layer,
+          distinct from the provenance-generating builder.
+        in_subset:
+        - slsa_ssf
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        owner: SlsaBuildDefinition
+        domain_of:
+        - SlsaBuildDefinition
+        range: uri
+  SlsaBuildParameter:
+    name: SlsaBuildParameter
+    description: One named input to a build, with a string value.
+    comments:
+    - The specification recommends string values; a structured value is written as
+      its JSON text.
+    - Each name appears once in a list, since the attestation's JSON uses it as a
+      key; the validator does not check this.
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    broad_mappings:
+    - spdx_core:DictionaryEntry
+    attributes:
+      parameter_name:
+        name: parameter_name
+        description: The parameter's name.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        broad_mappings:
+        - spdx_core:key
+        owner: SlsaBuildParameter
+        domain_of:
+        - SlsaBuildParameter
+        range: string
+        required: true
+      parameter_value:
+        name: parameter_value
+        description: The parameter's value.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        broad_mappings:
+        - spdx_core:value
+        owner: SlsaBuildParameter
+        domain_of:
+        - SlsaBuildParameter
+        range: string
+  SlsaRunDetails:
+    name: SlsaRunDetails
+    description: 'What is specific to one execution of a build: the platform that
+      ran it, metadata about the run and its by-products.'
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/build-provenance#rundetails
+    attributes:
+      builder:
+        name: builder
+        description: The build platform that ran the build and is trusted to have
+          written this provenance; required at Build L1.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        owner: SlsaRunDetails
+        domain_of:
+        - SlsaRunDetails
+        range: SlsaBuildPlatform
+        required: true
+        inlined: true
+      build_metadata:
+        name: build_metadata
+        description: Metadata about this execution of the build.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - metadata
+        owner: SlsaRunDetails
+        domain_of:
+        - SlsaRunDetails
+        range: SlsaBuildMetadata
+        inlined: true
+      byproducts:
+        name: byproducts
+        description: Artifacts the build produced beside its outputs that may help
+          debugging or incident response, such as logs.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        owner: SlsaRunDetails
+        domain_of:
+        - SlsaRunDetails
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+  SlsaBuildMetadata:
+    name: SlsaBuildMetadata
+    description: 'Metadata about one execution of a build: its identifier and when
+      it started and finished.'
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/build-provenance#buildmetadata
+    attributes:
+      invocation_id:
+        name: invocation_id
+        description: An identifier for this build invocation, in a format the builder
+          defines; useful for finding its logs.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - invocationId
+        close_mappings:
+        - spdx_build:buildId
+        owner: SlsaBuildMetadata
+        domain_of:
+        - SlsaBuildMetadata
+        range: string
+      started_on:
+        name: started_on
+        description: When the build started.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - startedOn
+        close_mappings:
+        - spdx_build:buildStartTime
+        owner: SlsaBuildMetadata
+        domain_of:
+        - SlsaBuildMetadata
+        range: in_toto_timestamp
+      finished_on:
+        name: finished_on
+        description: When the build finished.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_build
+        aliases:
+        - finishedOn
+        close_mappings:
+        - spdx_build:buildEndTime
+        owner: SlsaBuildMetadata
+        domain_of:
+        - SlsaBuildMetadata
+        range: in_toto_timestamp
+  SlsaVerificationSummary:
+    name: SlsaVerificationSummary
+    description: The predicate in which a verifier records that it evaluated artifacts
+      against a policy and the SLSA levels they met, so consumers can rely on the
+      verifier instead of reading every underlying attestation.
+    comments:
+    - The statement that carries it has predicate_type https://slsa.dev/verification_summary/v1.
+    - A Source VSA is this predicate with the repository as resource_uri and the revision
+      id in the subject's digest.
+    - Verification tooling and the places attestations are stored were an adoption
+      difficulty practitioners reported (Tamanna et al., 2024, LF.1).
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/verification_summary
+    - https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation
+    exact_mappings:
+    - slsa_dev:verification_summary/v1
+    is_a: SlsaPredicate
+    slots:
+    - resource_uri
+    slot_usage:
+      resource_uri:
+        name: resource_uri
+        description: The URI consumers fetch the artifact from, which the verifier
+          verified it as.
+        required: true
+    attributes:
+      verifier:
+        name: verifier
+        description: The verifier that made this determination.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: SlsaVerifier
+        required: true
+        inlined: true
+      time_verified:
+        name: time_verified
+        description: When the verification happened.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        aliases:
+        - timeVerified
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: in_toto_timestamp
+      policy:
+        name: policy
+        description: The policy the subject was verified against, by URI and preferably
+          by digest too.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: SlsaVerificationSummaryPolicy
+        required: true
+        inlined: true
+      input_attestations:
+        name: input_attestations
+        description: Every attestation the verifier consulted, each with a digest;
+          complete when present.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        aliases:
+        - inputAttestations
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: SlsaVerificationSummaryInputAttestation
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      verification_result:
+        name: verification_result
+        description: Whether the subject passed the policy.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        aliases:
+        - verificationResult
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: SlsaVerificationResult
+        required: true
+      verified_levels:
+        name: verified_levels
+        description: The highest level verified in each track, any verified property,
+          and any result of the issuer's own; a level implies the levels below it.
+        comments:
+        - A VSA lists at most one level per track, and only FAILED when verification
+          failed; the validator checks neither.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        aliases:
+        - verifiedLevels
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: slsa_result_value
+        required: true
+        multivalued: true
+        pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
+        minimum_cardinality: 1
+      organization_properties:
+        name: organization_properties
+        description: Properties the organization defines for the revision, each prefixed
+          ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.
+        deprecated: Write these properties in verified_levels, where the attestation's
+          JSON puts them; this field goes in a later release.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        deprecated_element_has_possible_replacement: slsa:verified_levels
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: string
+        multivalued: true
+        pattern: ^ORG_SOURCE_
+      dependency_levels:
+        name: dependency_levels
+        description: How many transitive dependencies were verified at each level;
+          absent when the verifier makes no claim about dependencies.
+        comments:
+        - The attestation's JSON tells an empty map (no dependencies) from an absent
+          one (no claim); this list cannot, so an empty list reads as no claim.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        aliases:
+        - dependencyLevels
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: SlsaDependencyLevelCount
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      slsa_version:
+        name: slsa_version
+        description: The SLSA specification version the verifier applied, as MAJOR.MINOR.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        aliases:
+        - slsaVersion
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        range: string
+        pattern: ^[0-9]+\.[0-9]+$
+      resource_uri:
+        name: resource_uri
+        description: The URI consumers fetch the artifact from, which the verifier
+          verified it as.
+        from_schema: https://w3id.org/lmodel/slsa
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+        aliases:
+        - uri
+        slot_uri: in_toto_linkml:resource_uri
+        owner: SlsaVerificationSummary
+        domain_of:
+        - SlsaVerificationSummary
+        - InTotoResourceDescriptor
+        range: in_toto_resource_uri
+        required: true
+      predicate_kind:
+        name: predicate_kind
+        description: The kind of predicate, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:predicate_kind
+        designates_type: true
+        owner: SlsaVerificationSummary
+        domain_of:
+        - InTotoPredicate
+        range: string
+  SlsaDependencyLevelCount:
+    name: SlsaDependencyLevelCount
+    description: The number of an artifact's transitive dependencies verified at one
+      level, each counted once per track at its highest level.
+    comments:
+    - Each level appears once in a list, since the attestation's JSON uses it as a
+      key; the validator does not check this.
+    in_subset:
+    - slsa_build_track
+    from_schema: https://w3id.org/lmodel/slsa
+    attributes:
+      verified_level:
+        name: verified_level
+        description: The level the dependencies were verified at, or a result of the
+          issuer's own.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        owner: SlsaDependencyLevelCount
+        domain_of:
+        - SlsaDependencyLevelCount
+        range: slsa_result_value
+        required: true
+        pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
+      dependency_count:
+        name: dependency_count
+        description: How many dependencies were verified at that level.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+        owner: SlsaDependencyLevelCount
+        domain_of:
+        - SlsaDependencyLevelCount
+        range: integer
+        required: true
+        minimum_value: 0
+  SlsaVerificationSummaryPolicy:
+    name: SlsaVerificationSummaryPolicy
+    description: 'The policy a verification summary applied: a resource descriptor
+      that names the policy by URI.'
+    comments:
+    - A digest is recommended as well, to pin the exact version of the policy.
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/verification_summary#policy
+    is_a: InTotoResourceDescriptor
+    slot_usage:
+      resource_uri:
+        name: resource_uri
+        required: true
+      digest:
+        name: digest
+        recommended: true
+    attributes:
+      resource_uri:
+        name: resource_uri
+        description: The URI that identifies a resource, such as a package URL, a
+          git repository address or an OCI image reference.
+        from_schema: https://w3id.org/lmodel/slsa
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+        aliases:
+        - uri
+        slot_uri: in_toto_linkml:resource_uri
+        owner: SlsaVerificationSummaryPolicy
+        domain_of:
+        - SlsaVerificationSummary
+        - InTotoResourceDescriptor
+        range: in_toto_resource_uri
+        required: true
+      digest:
+        name: digest
+        description: The cryptographic digests of a resource's content, keyed by algorithm.
+        from_schema: https://w3id.org/lmodel/slsa
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+        slot_uri: in_toto_linkml:digest
+        owner: SlsaVerificationSummaryPolicy
+        domain_of:
+        - InTotoResourceDescriptor
+        - SlsaMeasurement
+        range: InTotoDigestSet
+        recommended: true
+        inlined: true
+      resource_name:
+        name: resource_name
+        description: A name for the resource within the attestation that carries it.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - name
+        slot_uri: in_toto_linkml:resource_name
+        owner: SlsaVerificationSummaryPolicy
+        domain_of:
+        - InTotoResourceDescriptor
+        range: string
+      download_location:
+        name: download_location
+        description: Where the resource can be fetched, when that differs from its
+          identifying URI.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - downloadLocation
+        close_mappings:
+        - spdx_software:downloadLocation
+        - dcat:downloadURL
+        slot_uri: in_toto_linkml:download_location
+        owner: SlsaVerificationSummaryPolicy
+        domain_of:
+        - InTotoResourceDescriptor
+        range: in_toto_resource_uri
+      media_type:
+        name: media_type
+        description: The IANA media type of the resource's content.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - mediaType
+        close_mappings:
+        - spdx_core:contentType
+        slot_uri: dcat:mediaType
+        owner: SlsaVerificationSummaryPolicy
+        domain_of:
+        - InTotoResourceDescriptor
+        range: string
+      content:
+        name: content
+        description: The resource's content itself, base64-encoded, for a resource
+          small enough to carry inline.
+        comments:
+        - The in-toto framework asks for content under 1 KB, so that attestations
+          stay small.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:content
+        owner: SlsaVerificationSummaryPolicy
+        domain_of:
+        - InTotoResourceDescriptor
+        range: string
+        pattern: ^[A-Za-z0-9+/_-]+={0,2}$
+      annotations:
+        name: annotations
+        description: Vendor-specific annotations on the resource, such as the source
+          references a SLSA Source Verification Summary records.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:annotations
+        owner: SlsaVerificationSummaryPolicy
+        domain_of:
+        - InTotoResourceDescriptor
+        range: InTotoAnnotation
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+  SlsaVerificationSummaryInputAttestation:
+    name: SlsaVerificationSummaryInputAttestation
+    description: 'One attestation a verifier consulted: a resource descriptor that
+      carries the attestation''s digest.'
+    in_subset:
+    - slsa_build_track
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/verification_summary#inputAttestations
+    is_a: InTotoResourceDescriptor
+    slot_usage:
+      digest:
+        name: digest
+        required: true
+      resource_uri:
+        name: resource_uri
+        recommended: true
+    attributes:
+      resource_uri:
+        name: resource_uri
+        description: The URI that identifies a resource, such as a package URL, a
+          git repository address or an OCI image reference.
+        from_schema: https://w3id.org/lmodel/slsa
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+        aliases:
+        - uri
+        slot_uri: in_toto_linkml:resource_uri
+        owner: SlsaVerificationSummaryInputAttestation
+        domain_of:
+        - SlsaVerificationSummary
+        - InTotoResourceDescriptor
+        range: in_toto_resource_uri
+        recommended: true
+      digest:
+        name: digest
+        description: The cryptographic digests of a resource's content, keyed by algorithm.
+        from_schema: https://w3id.org/lmodel/slsa
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+        slot_uri: in_toto_linkml:digest
+        owner: SlsaVerificationSummaryInputAttestation
+        domain_of:
+        - InTotoResourceDescriptor
+        - SlsaMeasurement
+        range: InTotoDigestSet
+        required: true
+        inlined: true
+      resource_name:
+        name: resource_name
+        description: A name for the resource within the attestation that carries it.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - name
+        slot_uri: in_toto_linkml:resource_name
+        owner: SlsaVerificationSummaryInputAttestation
+        domain_of:
+        - InTotoResourceDescriptor
+        range: string
+      download_location:
+        name: download_location
+        description: Where the resource can be fetched, when that differs from its
+          identifying URI.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - downloadLocation
+        close_mappings:
+        - spdx_software:downloadLocation
+        - dcat:downloadURL
+        slot_uri: in_toto_linkml:download_location
+        owner: SlsaVerificationSummaryInputAttestation
+        domain_of:
+        - InTotoResourceDescriptor
+        range: in_toto_resource_uri
+      media_type:
+        name: media_type
+        description: The IANA media type of the resource's content.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - mediaType
+        close_mappings:
+        - spdx_core:contentType
+        slot_uri: dcat:mediaType
+        owner: SlsaVerificationSummaryInputAttestation
+        domain_of:
+        - InTotoResourceDescriptor
+        range: string
+      content:
+        name: content
+        description: The resource's content itself, base64-encoded, for a resource
+          small enough to carry inline.
+        comments:
+        - The in-toto framework asks for content under 1 KB, so that attestations
+          stay small.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:content
+        owner: SlsaVerificationSummaryInputAttestation
+        domain_of:
+        - InTotoResourceDescriptor
+        range: string
+        pattern: ^[A-Za-z0-9+/_-]+={0,2}$
+      annotations:
+        name: annotations
+        description: Vendor-specific annotations on the resource, such as the source
+          references a SLSA Source Verification Summary records.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:annotations
+        owner: SlsaVerificationSummaryInputAttestation
+        domain_of:
+        - InTotoResourceDescriptor
+        range: InTotoAnnotation
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+  SlsaSourceControlSystem:
+    name: SlsaSourceControlSystem
+    description: The platform or services that host a source repository and enforce
+      its organization's policies on authentication, authorization and change management.
+    comments:
+    - The SCS issues the Source VSAs and source provenance for the revisions it hosts.
+    in_subset:
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    attributes:
+      scs_uri:
+        name: scs_uri
+        description: The URI that identifies the source control system.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        identifier: true
+        owner: SlsaSourceControlSystem
+        domain_of:
+        - SlsaSourceControlSystem
+        range: uri
+        required: true
+  SlsaSourceRepository:
+    name: SlsaSourceRepository
+    description: A self-contained unit that holds a set of files, their revision history
+      and metadata such as branches and tags.
+    in_subset:
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    close_mappings:
+    - doap:Repository
+    attributes:
+      repository_uri:
+        name: repository_uri
+        description: The stable locator the SCS gives the repository.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        close_mappings:
+        - doap:location
+        identifier: true
+        owner: SlsaSourceRepository
+        domain_of:
+        - SlsaSourceRepository
+        range: uri
+        required: true
+      hosted_by:
+        name: hosted_by
+        description: The source control system that hosts the repository.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaSourceRepository
+        domain_of:
+        - SlsaSourceRepository
+        range: SlsaSourceControlSystem
+  SlsaSourceRevision:
+    name: SlsaSourceRevision
+    description: 'A logically immutable snapshot of a repository''s tracked files,
+      with its version-control metadata: author, time and parent revisions.'
+    comments:
+    - A revision id is unique within its repository and may recur in another; a document
+      that holds revisions from several repositories qualifies them.
+    in_subset:
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    slots:
+    - repository
+    attributes:
+      revision_id:
+        name: revision_id
+        description: The revision identifier the SCS assigns, such as a git commit
+          id or a path- qualified sequence number.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        identifier: true
+        owner: SlsaSourceRevision
+        domain_of:
+        - SlsaSourceRevision
+        range: string
+        required: true
+      authored_by:
+        name: authored_by
+        description: The identity of the person or automation that authored the revision.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaSourceRevision
+        domain_of:
+        - SlsaSourceRevision
+        range: string
+      authored_at:
+        name: authored_at
+        description: When the revision was created.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaSourceRevision
+        domain_of:
+        - SlsaSourceRevision
+        range: datetime
+      parent_revisions:
+        name: parent_revisions
+        description: The revisions this one descends from, which together form the
+          change history.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaSourceRevision
+        domain_of:
+        - SlsaSourceRevision
+        range: SlsaSourceRevision
+        multivalued: true
+      source_level:
+        name: source_level
+        description: The SLSA Source level the SCS asserts for the revision.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaSourceRevision
+        domain_of:
+        - SlsaSourceRevision
+        range: SlsaSourceLevel
+      review_type:
+        name: review_type
+        description: The form of review that approved the revision.
+        in_subset:
+        - slsa_adoption_study
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaSourceRevision
+        domain_of:
+        - SlsaSourceRevision
+        range: SlsaReviewType
+      repository:
+        name: repository
+        description: The source repository this belongs to.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:repository
+        owner: SlsaSourceRevision
+        domain_of:
+        - SlsaSourceRevision
+        - SlsaNamedReference
+        range: SlsaSourceRepository
+  SlsaNamedReference:
+    name: SlsaNamedReference
+    description: A user-friendly name for a revision in a repository, such as main
+      or v1.2.3; reference_type says whether it is a branch or a tag.
+    comments:
+    - A branch moves and a tag never does, so no named reference is both, which children_are_mutually_disjoint
+      states for the ontology.
+    in_subset:
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    slots:
+    - repository
+    - revision
+    attributes:
+      reference_type:
+        name: reference_type
+        description: The kind of named reference, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        designates_type: true
+        owner: SlsaNamedReference
+        domain_of:
+        - SlsaNamedReference
+        range: string
+      reference_name:
+        name: reference_name
+        description: The reference's name, fully qualified in git, such as refs/heads/main.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaNamedReference
+        domain_of:
+        - SlsaNamedReference
+        range: string
+        required: true
+      protected:
+        name: protected
+        description: Whether the organization has the SCS enforce its technical controls
+          on this reference.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaNamedReference
+        domain_of:
+        - SlsaNamedReference
+        range: boolean
+      repository:
+        name: repository
+        description: The source repository this belongs to.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:repository
+        owner: SlsaNamedReference
+        domain_of:
+        - SlsaSourceRevision
+        - SlsaNamedReference
+        range: SlsaSourceRepository
+      revision:
+        name: revision
+        description: The source revision this refers to.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:revision
+        owner: SlsaNamedReference
+        domain_of:
+        - SlsaNamedReference
+        - SlsaSourceProvenance
+        range: SlsaSourceRevision
+    children_are_mutually_disjoint: true
+  SlsaBranch:
+    name: SlsaBranch
+    description: A named reference that moves to track a line of development.
+    in_subset:
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    narrow_mappings:
+    - doap:GitBranch
+    is_a: SlsaNamedReference
+    attributes:
+      repository:
+        name: repository
+        description: The source repository this belongs to.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:repository
+        owner: SlsaBranch
+        domain_of:
+        - SlsaSourceRevision
+        - SlsaNamedReference
+        range: SlsaSourceRepository
+      revision:
+        name: revision
+        description: The source revision this refers to.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:revision
+        owner: SlsaBranch
+        domain_of:
+        - SlsaNamedReference
+        - SlsaSourceProvenance
+        range: SlsaSourceRevision
+      reference_type:
+        name: reference_type
+        description: The kind of named reference, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        designates_type: true
+        owner: SlsaBranch
+        domain_of:
+        - SlsaNamedReference
+        range: string
+      reference_name:
+        name: reference_name
+        description: The reference's name, fully qualified in git, such as refs/heads/main.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaBranch
+        domain_of:
+        - SlsaNamedReference
+        range: string
+        required: true
+      protected:
+        name: protected
+        description: Whether the organization has the SCS enforce its technical controls
+          on this reference.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaBranch
+        domain_of:
+        - SlsaNamedReference
+        range: boolean
+  SlsaTag:
+    name: SlsaTag
+    description: A named reference meant never to move once created.
+    comments:
+    - A version-control tag that is allowed to move, such as latest, is a named reference
+      and not a tag in this sense.
+    in_subset:
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    is_a: SlsaNamedReference
+    attributes:
+      repository:
+        name: repository
+        description: The source repository this belongs to.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:repository
+        owner: SlsaTag
+        domain_of:
+        - SlsaSourceRevision
+        - SlsaNamedReference
+        range: SlsaSourceRepository
+      revision:
+        name: revision
+        description: The source revision this refers to.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:revision
+        owner: SlsaTag
+        domain_of:
+        - SlsaNamedReference
+        - SlsaSourceProvenance
+        range: SlsaSourceRevision
+      reference_type:
+        name: reference_type
+        description: The kind of named reference, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        designates_type: true
+        owner: SlsaTag
+        domain_of:
+        - SlsaNamedReference
+        range: string
+      reference_name:
+        name: reference_name
+        description: The reference's name, fully qualified in git, such as refs/heads/main.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaTag
+        domain_of:
+        - SlsaNamedReference
+        range: string
+        required: true
+      protected:
+        name: protected
+        description: Whether the organization has the SCS enforce its technical controls
+          on this reference.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaTag
+        domain_of:
+        - SlsaNamedReference
+        range: boolean
+  SlsaSourceProvenance:
+    name: SlsaSourceProvenance
+    description: Evidence from an SCS of how a revision came to exist and which technical
+      controls were enforced when it did.
+    comments:
+    - SLSA leaves the format of source provenance to each SCS and defines no predicate
+      type for it; this class holds what the specification says such provenance conveys.
+    - Source L2 and above require the SCS to issue it with each new revision.
+    in_subset:
+    - slsa_source_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/v1.2/source-requirements#source-provenance-attestations
+    is_a: SlsaPredicate
+    slots:
+    - revision
+    slot_usage:
+      revision:
+        name: revision
+        required: true
+    attributes:
+      controls_enforced:
+        name: controls_enforced
+        description: The technical controls the SCS enforced when the revision was
+          created, as the organization documents them.
+        comments:
+        - Two-party review is a control many single-maintainer projects cannot meet
+          (Tamanna et al., 2024, LF.2).
+        from_schema: https://w3id.org/lmodel/slsa/slsa_source
+        owner: SlsaSourceProvenance
+        domain_of:
+        - SlsaSourceProvenance
+        range: string
+        multivalued: true
+      revision:
+        name: revision
+        description: The source revision this refers to.
+        in_subset:
+        - slsa_source_track
+        from_schema: https://w3id.org/lmodel/slsa
+        slot_uri: slsa:revision
+        owner: SlsaSourceProvenance
+        domain_of:
+        - SlsaNamedReference
+        - SlsaSourceProvenance
+        range: SlsaSourceRevision
+        required: true
+      predicate_kind:
+        name: predicate_kind
+        description: The kind of predicate, one of this class's descendants.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:predicate_kind
+        designates_type: true
+        owner: SlsaSourceProvenance
+        domain_of:
+        - InTotoPredicate
+        range: string
+  SlsaDependencyInventory:
+    name: SlsaDependencyInventory
+    description: The inventory of every third-party build dependency, direct and transitive,
+      of one artifact version.
+    comments:
+    - The Dependency track is a working draft and not part of the SLSA v1.2 release.
+    - A build-time SBOM or a lock file with hashes is a common form of the inventory.
+    in_subset:
+    - slsa_dependency_track
+    from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://slsa.dev/spec/draft/dependency-track
+    attributes:
+      artifact:
+        name: artifact
+        description: The artifact whose dependencies are inventoried.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_dependency
+        owner: SlsaDependencyInventory
+        domain_of:
+        - SlsaDependencyInventory
+        range: InTotoResourceDescriptor
+        required: true
+        inlined: true
+      dependencies:
+        name: dependencies
+        description: The dependencies, each as a resource descriptor.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_dependency
+        owner: SlsaDependencyInventory
+        domain_of:
+        - SlsaDependencyInventory
+        range: InTotoResourceDescriptor
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      dependency_level:
+        name: dependency_level
+        description: The SLSA Dependency level the producer's process meets for this
+          artifact.
+        from_schema: https://w3id.org/lmodel/slsa/slsa_dependency
+        owner: SlsaDependencyInventory
+        domain_of:
+        - SlsaDependencyInventory
+        range: SlsaDependencyLevel
   InTotoDigestSet:
     name: InTotoDigestSet
     description: A set of one or more digests over one artifact, keyed by algorithm,
@@ -918,6 +2778,9 @@ classes:
       JSON Schema generator leaves a condition's own range out, and a null value would
       then count as present.
     comments:
+    - 'A field named after an algorithm that SPDX 3 also names relates to SPDX''s
+      individual for it. BLAKE2b is left unmapped: the framework allows any length
+      from 32 to 64 bytes, where SPDX names three fixed lengths.'
     - The named algorithms take lowercase hexadecimal, and additional_digests holds
       any other algorithm, such as an SCS's own revision type.
     - A consumer accepts only the algorithms it considers secure and ignores the rest,
@@ -925,17 +2788,19 @@ classes:
     - SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least
       32 bytes, since a shorter digest resists collisions too weakly to identify an
       artifact.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
     from_schema: https://w3id.org/lmodel/slsa
     see_also:
-    - https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+    aliases:
+    - DigestSet
     attributes:
       sha256:
         name: sha256
         description: The SHA-256 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha256
+        slot_uri: in_toto_linkml:sha256
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -944,7 +2809,10 @@ classes:
       sha224:
         name: sha224
         description: The SHA-224 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha224
+        slot_uri: in_toto_linkml:sha224
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -953,7 +2821,10 @@ classes:
       sha384:
         name: sha384
         description: The SHA-384 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha384
+        slot_uri: in_toto_linkml:sha384
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -962,7 +2833,10 @@ classes:
       sha512:
         name: sha512
         description: The SHA-512 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha512
+        slot_uri: in_toto_linkml:sha512
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -971,7 +2845,8 @@ classes:
       sha512_224:
         name: sha512_224
         description: The SHA-512/224 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:sha512_224
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -980,7 +2855,8 @@ classes:
       sha512_256:
         name: sha512_256
         description: The SHA-512/256 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:sha512_256
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -989,7 +2865,10 @@ classes:
       sha3_224:
         name: sha3_224
         description: The SHA3-224 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha3_224
+        slot_uri: in_toto_linkml:sha3_224
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -998,7 +2877,10 @@ classes:
       sha3_256:
         name: sha3_256
         description: The SHA3-256 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha3_256
+        slot_uri: in_toto_linkml:sha3_256
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1007,7 +2889,10 @@ classes:
       sha3_384:
         name: sha3_384
         description: The SHA3-384 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha3_384
+        slot_uri: in_toto_linkml:sha3_384
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1016,7 +2901,10 @@ classes:
       sha3_512:
         name: sha3_512
         description: The SHA3-512 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha3_512
+        slot_uri: in_toto_linkml:sha3_512
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1025,7 +2913,8 @@ classes:
       shake128:
         name: shake128
         description: The SHAKE128 digest of the artifact, of at least 32 bytes.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:shake128
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1034,7 +2923,8 @@ classes:
       shake256:
         name: shake256
         description: The SHAKE256 digest of the artifact, of at least 32 bytes.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:shake256
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1043,7 +2933,8 @@ classes:
       blake2b:
         name: blake2b
         description: The BLAKE2b digest of the artifact, of 32 to 64 bytes.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:blake2b
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1052,7 +2943,8 @@ classes:
       blake2s:
         name: blake2s
         description: The BLAKE2s digest of the artifact, at its full 32 bytes.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:blake2s
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1061,7 +2953,8 @@ classes:
       ripemd160:
         name: ripemd160
         description: The RIPEMD-160 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:ripemd160
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1070,7 +2963,8 @@ classes:
       sm3:
         name: sm3
         description: The SM3 digest of the artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:sm3
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1079,7 +2973,8 @@ classes:
       gost:
         name: gost
         description: The GOST R 34.11 digest of the artifact, of 256 or 512 bits.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:gost
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1090,7 +2985,10 @@ classes:
         description: The SHA-1 digest of the artifact.
         comments:
         - SHA-1 lacks collision resistance, so most consumers should not rely on it.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha1
+        slot_uri: in_toto_linkml:sha1
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1101,7 +2999,10 @@ classes:
         description: The MD5 digest of the artifact.
         comments:
         - MD5 lacks collision resistance, so most consumers should not accept it.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:HashAlgorithm/md5
+        slot_uri: in_toto_linkml:md5
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1111,7 +3012,10 @@ classes:
         name: dir_hash
         description: A digest over a directory's content by the dirhash Hash1 function,
           in lowercase hexadecimal rather than base64.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - dirHash
+        slot_uri: in_toto_linkml:dir_hash
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1120,7 +3024,10 @@ classes:
       git_commit:
         name: git_commit
         description: The git commit id of a source revision.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - gitCommit
+        slot_uri: in_toto_linkml:git_commit
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1130,7 +3037,10 @@ classes:
         name: git_tree
         description: The git tree id of a source revision's content, or of any file
           tree.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - gitTree
+        slot_uri: in_toto_linkml:git_tree
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1139,7 +3049,10 @@ classes:
       git_blob:
         name: git_blob
         description: The git blob id of a file's content.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - gitBlob
+        slot_uri: in_toto_linkml:git_blob
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1148,7 +3061,10 @@ classes:
       git_tag:
         name: git_tag
         description: The git object id of an annotated tag.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - gitTag
+        slot_uri: in_toto_linkml:git_tag
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1157,7 +3073,8 @@ classes:
       additional_digests:
         name: additional_digests
         description: The digests under algorithms this class does not name.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:additional_digests
         owner: InTotoDigestSet
         domain_of:
         - InTotoDigestSet
@@ -1328,13 +3245,13 @@ classes:
       type of its own that includes the repository, such as svn_revision_id.
     - Each algorithm appears once in a list, since the attestation's JSON uses it
       as a key; the validator does not check this.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
+    - It is related to, not the same as, an SPDX 3 Hash, whose algorithm comes from
+      a closed list, where this one's may be a revision type rather than a digest.
     from_schema: https://w3id.org/lmodel/slsa
     see_also:
-    - https://github.com/in-toto/attestation/blob/main/spec/v1/digest_set.md
-    - https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+    related_mappings:
+    - spdx_core:Hash
     attributes:
       algorithm:
         name: algorithm
@@ -1343,13 +3260,17 @@ classes:
         comments:
         - An algorithm that InTotoDigestSet names, by its JSON key or by its field
           name, goes in that field instead.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        - A name starts with a lowercase letter, as the framework's own names do,
+          so that SHA256 is not taken for sha256, and it may hold a colon, as go-witness's
+          gitoid:sha256 does. The framework itself sets no rule for other names.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: spdx:algorithm
         owner: InTotoAdditionalDigest
         domain_of:
         - InTotoAdditionalDigest
         range: string
         required: true
-        pattern: ^[a-z][A-Za-z0-9_]*$
+        pattern: ^[a-z][A-Za-z0-9_.:-]*$
         none_of:
         - equals_string_in:
           - sha256
@@ -1385,7 +3306,10 @@ classes:
         name: value
         description: The digest under that algorithm, in the encoding the algorithm
           documents.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        related_mappings:
+        - spdx_core:hashValue
+        slot_uri: in_toto_linkml:value
         owner: InTotoAdditionalDigest
         domain_of:
         - InTotoAdditionalDigest
@@ -1402,15 +3326,17 @@ classes:
       text, so one value cannot tell a string from a one-item array.
     - Each key appears once in a list, since the attestation's JSON uses it as a key;
       the validator does not check this.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
     from_schema: https://w3id.org/lmodel/slsa
+    close_mappings:
+    - spdx_core:DictionaryEntry
     attributes:
       annotation_key:
         name: annotation_key
         description: The annotation's key.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        close_mappings:
+        - spdx_core:key
+        slot_uri: in_toto_linkml:annotation_key
         owner: InTotoAnnotation
         domain_of:
         - InTotoAnnotation
@@ -1419,7 +3345,10 @@ classes:
       annotation_values:
         name: annotation_values
         description: The annotation's values.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        close_mappings:
+        - spdx_core:value
+        slot_uri: in_toto_linkml:annotation_values
         owner: InTotoAnnotation
         domain_of:
         - InTotoAnnotation
@@ -1436,14 +3365,15 @@ classes:
     comments:
     - A descriptor carries at least one of a URI, a digest or its content; a field
       that needs a particular one says so.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    - slsa_dependency_track
-    - slsa_build_environment_track
+    - It describes an artifact, where an SPDX 3 Artifact is the artifact itself, so
+      the two are related rather than the same.
     from_schema: https://w3id.org/lmodel/slsa
     see_also:
-    - https://github.com/in-toto/attestation/blob/main/spec/v1/resource_descriptor.md
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/resource_descriptor.md
+    aliases:
+    - ResourceDescriptor
+    related_mappings:
+    - spdx_core:Artifact
     slots:
     - resource_uri
     - digest
@@ -1451,7 +3381,10 @@ classes:
       resource_name:
         name: resource_name
         description: A name for the resource within the attestation that carries it.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - name
+        slot_uri: in_toto_linkml:resource_name
         owner: InTotoResourceDescriptor
         domain_of:
         - InTotoResourceDescriptor
@@ -1460,15 +3393,26 @@ classes:
         name: download_location
         description: Where the resource can be fetched, when that differs from its
           identifying URI.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - downloadLocation
+        close_mappings:
+        - spdx_software:downloadLocation
+        - dcat:downloadURL
+        slot_uri: in_toto_linkml:download_location
         owner: InTotoResourceDescriptor
         domain_of:
         - InTotoResourceDescriptor
-        range: uri
+        range: in_toto_resource_uri
       media_type:
         name: media_type
         description: The IANA media type of the resource's content.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - mediaType
+        close_mappings:
+        - spdx_core:contentType
+        slot_uri: dcat:mediaType
         owner: InTotoResourceDescriptor
         domain_of:
         - InTotoResourceDescriptor
@@ -1480,7 +3424,8 @@ classes:
         comments:
         - The in-toto framework asks for content under 1 KB, so that attestations
           stay small.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:content
         owner: InTotoResourceDescriptor
         domain_of:
         - InTotoResourceDescriptor
@@ -1489,8 +3434,9 @@ classes:
       annotations:
         name: annotations
         description: Vendor-specific annotations on the resource, such as the source
-          references a Source VSA records.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+          references a SLSA Source Verification Summary records.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:annotations
         owner: InTotoResourceDescriptor
         domain_of:
         - InTotoResourceDescriptor
@@ -1502,24 +3448,24 @@ classes:
         name: resource_uri
         description: The URI that identifies a resource, such as a package URL, a
           git repository address or an OCI image reference.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
         from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:resource_uri
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+        aliases:
+        - uri
+        slot_uri: in_toto_linkml:resource_uri
         owner: InTotoResourceDescriptor
         domain_of:
-        - InTotoResourceDescriptor
         - SlsaVerificationSummary
-        range: uri
+        - InTotoResourceDescriptor
+        range: in_toto_resource_uri
       digest:
         name: digest
         description: The cryptographic digests of a resource's content, keyed by algorithm.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
         from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:digest
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+        slot_uri: in_toto_linkml:digest
         owner: InTotoResourceDescriptor
         domain_of:
         - InTotoResourceDescriptor
@@ -1549,13 +3495,9 @@ classes:
     name: InTotoStatementSubject
     description: 'One artifact an in-toto statement is about: a resource descriptor
       that carries a digest.'
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    - slsa_build_environment_track
     from_schema: https://w3id.org/lmodel/slsa
     see_also:
-    - https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
     is_a: InTotoResourceDescriptor
     slot_usage:
       digest:
@@ -1566,24 +3508,24 @@ classes:
         name: resource_uri
         description: The URI that identifies a resource, such as a package URL, a
           git repository address or an OCI image reference.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
         from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:resource_uri
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+        aliases:
+        - uri
+        slot_uri: in_toto_linkml:resource_uri
         owner: InTotoStatementSubject
         domain_of:
-        - InTotoResourceDescriptor
         - SlsaVerificationSummary
-        range: uri
+        - InTotoResourceDescriptor
+        range: in_toto_resource_uri
       digest:
         name: digest
         description: The cryptographic digests of a resource's content, keyed by algorithm.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
         from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:digest
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+        slot_uri: in_toto_linkml:digest
         owner: InTotoStatementSubject
         domain_of:
         - InTotoResourceDescriptor
@@ -1594,7 +3536,10 @@ classes:
       resource_name:
         name: resource_name
         description: A name for the resource within the attestation that carries it.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - name
+        slot_uri: in_toto_linkml:resource_name
         owner: InTotoStatementSubject
         domain_of:
         - InTotoResourceDescriptor
@@ -1603,15 +3548,26 @@ classes:
         name: download_location
         description: Where the resource can be fetched, when that differs from its
           identifying URI.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - downloadLocation
+        close_mappings:
+        - spdx_software:downloadLocation
+        - dcat:downloadURL
+        slot_uri: in_toto_linkml:download_location
         owner: InTotoStatementSubject
         domain_of:
         - InTotoResourceDescriptor
-        range: uri
+        range: in_toto_resource_uri
       media_type:
         name: media_type
         description: The IANA media type of the resource's content.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - mediaType
+        close_mappings:
+        - spdx_core:contentType
+        slot_uri: dcat:mediaType
         owner: InTotoStatementSubject
         domain_of:
         - InTotoResourceDescriptor
@@ -1623,7 +3579,8 @@ classes:
         comments:
         - The in-toto framework asks for content under 1 KB, so that attestations
           stay small.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:content
         owner: InTotoStatementSubject
         domain_of:
         - InTotoResourceDescriptor
@@ -1632,8 +3589,9 @@ classes:
       annotations:
         name: annotations
         description: Vendor-specific annotations on the resource, such as the source
-          references a Source VSA records.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+          references a SLSA Source Verification Summary records.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:annotations
         owner: InTotoStatementSubject
         domain_of:
         - InTotoResourceDescriptor
@@ -1646,33 +3604,40 @@ classes:
     description: 'The statement layer of an in-toto attestation: the subjects it is
       about, the type of its predicate and the predicate itself.'
     comments:
-    - The signature envelope around a statement is outside this model.
-    - Attestation and provenance are often confused; a statement is the attestation,
-      and build provenance is one kind of predicate it may carry (Tamanna et al.,
-      2024, UC.1).
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    - slsa_build_environment_track
+    - The signature envelope around a statement, and the bundle that collects signed
+      statements, are outside this model.
+    - A statement is the attestation, and its predicate is one kind of claim about
+      the subjects, such as a test result or build provenance.
+    - Its exact mapping is the type URI its statement_type holds, as each predicate
+      class maps to its predicate_type.
     from_schema: https://w3id.org/lmodel/slsa
     see_also:
-    - https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md
-    - https://slsa.dev/spec/v1.2/attestation-model
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+    aliases:
+    - Statement
+    exact_mappings:
+    - in_toto_io:Statement/v1
+    slots:
+    - predicate
     attributes:
       statement_type:
         name: statement_type
         description: The in-toto statement type, always https://in-toto.io/Statement/v1.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - _type
+        slot_uri: in_toto_linkml:statement_type
         owner: InTotoStatement
         domain_of:
         - InTotoStatement
-        range: uri
+        range: in_toto_type_uri
         required: true
         pattern: ^https://in-toto\.io/Statement/v1$
       subject:
         name: subject
         description: The artifacts the predicate is about, each with a digest.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:subject
         owner: InTotoStatement
         domain_of:
         - InTotoStatement
@@ -1685,1574 +3650,63 @@ classes:
       predicate_type:
         name: predicate_type
         description: The URI that names the predicate's type and so its schema, such
-          as https://slsa.dev/provenance/v1.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+          as https://in-toto.io/attestation/test-result/v0.1.
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        aliases:
+        - predicateType
+        slot_uri: in_toto_linkml:predicate_type
         owner: InTotoStatement
         domain_of:
         - InTotoStatement
-        range: uri
+        range: in_toto_type_uri
         required: true
       predicate:
         name: predicate
-        description: The predicate, one of the kinds this schema models; predicate_kind
-          names which.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: InTotoStatement
-        domain_of:
-        - InTotoStatement
-        range: SlsaPredicate
-        inlined: true
-      attestation_storage_uri:
-        name: attestation_storage_uri
-        description: Where the signed attestation is stored or can be fetched.
+        description: The predicate, one of the kinds this schema or an importing one
+          models; predicate_kind names which. Unset means the same as empty.
         comments:
-        - 'SLSA asks producers to publish attestations in at least one place and preferably
-          more: beside the source repository''s releases, beside the artifact in its
-          package registry, which it prefers in the long term, or elsewhere with an
-          entry in a transparency log.'
-        - Where to store attestations was an open question for practitioners (Tamanna
-          et al., 2024, LF.1).
-        in_subset:
-        - slsa_adoption_study
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        - 'It is a slot of its own rather than an attribute of InTotoStatement, because
+          LOKF''s predicate is a relation''s type: `lokf adapt` renames a slot whose
+          name LOKF defines, with the name of the schema it adapts as a prefix, and
+          keeps its IRI. This repository''s copy calls it in_toto_linkml_predicate,
+          and lmodel/slsa''s calls it slsa_predicate.'
+        from_schema: https://w3id.org/lmodel/slsa
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+        slot_uri: in_toto_linkml:predicate
         owner: InTotoStatement
         domain_of:
         - InTotoStatement
-        range: uri
-      signing_tool:
-        name: signing_tool
-        description: The tool that signed the attestation, named by URI, such as Cosign
-          or Notation.
-        in_subset:
-        - slsa_ssf
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: InTotoStatement
-        domain_of:
-        - InTotoStatement
-        range: uri
-      transparency_log_entry:
-        name: transparency_log_entry
-        description: The transparency log entry that records the signature, such as
-          a Rekor entry.
-        in_subset:
-        - slsa_ssf
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: InTotoStatement
-        domain_of:
-        - InTotoStatement
-        range: uri
-  SlsaPredicate:
-    name: SlsaPredicate
-    description: The base of every predicate this schema models; predicate_kind names
-      the concrete kind.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    - slsa_build_environment_track
+        range: InTotoPredicate
+        inlined: true
+  InTotoPredicate:
+    name: InTotoPredicate
+    description: The base of every predicate an in-toto statement can carry; predicate_kind
+      names the concrete kind.
+    comments:
+    - The statement's predicate_type names the predicate's type by URI, and each concrete
+      class says which URI it renders. Nothing ties the two, since a schema that imports
+      this module may model a predicate under its own URI.
+    - A predicate is of one kind only, so the kinds that extend this class are mutually
+      disjoint.
     from_schema: https://w3id.org/lmodel/slsa
+    see_also:
+    - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/predicate.md
+    aliases:
+    - Predicate
     abstract: true
     attributes:
       predicate_kind:
         name: predicate_kind
         description: The kind of predicate, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:predicate_kind
         designates_type: true
-        owner: SlsaPredicate
+        owner: InTotoPredicate
         domain_of:
-        - SlsaPredicate
+        - InTotoPredicate
         range: string
-  SlsaParty:
-    name: SlsaParty
-    description: A person or organization that takes part in a software supply chain,
-      in one of the roles SLSA names.
-    comments:
-    - One party may act in several roles, and several parties may share one role.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/terminology#roles
-    abstract: true
-    attributes:
-      party_type:
-        name: party_type
-        description: The role the party acts in, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        designates_type: true
-        owner: SlsaParty
-        domain_of:
-        - SlsaParty
-        range: string
-      party_name:
-        name: party_name
-        description: The party's name.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaParty
-        domain_of:
-        - SlsaParty
-        range: string
-  SlsaProducer:
-    name: SlsaProducer
-    description: A party that creates software and provides it to others, choosing
-      a build platform and distributing provenance.
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    is_a: SlsaParty
-    slots:
-    - build_platform
-    attributes:
-      build_platform:
-        name: build_platform
-        description: The build platform this party or component belongs to or uses.
-        in_subset:
-        - slsa_build_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:build_platform
-        owner: SlsaProducer
-        domain_of:
-        - SlsaProducer
-        - SlsaControlPlane
-        range: SlsaBuildPlatform
-      party_type:
-        name: party_type
-        description: The role the party acts in, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        designates_type: true
-        owner: SlsaProducer
-        domain_of:
-        - SlsaParty
-        range: string
-      party_name:
-        name: party_name
-        description: The party's name.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaProducer
-        domain_of:
-        - SlsaParty
-        range: string
-  SlsaConsumer:
-    name: SlsaConsumer
-    description: A party that uses software a producer provides, verifying its provenance
-      itself or through a verifier.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    is_a: SlsaParty
-    attributes:
-      party_type:
-        name: party_type
-        description: The role the party acts in, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        designates_type: true
-        owner: SlsaConsumer
-        domain_of:
-        - SlsaParty
-        range: string
-      party_name:
-        name: party_name
-        description: The party's name.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaConsumer
-        domain_of:
-        - SlsaParty
-        range: string
-  SlsaVerifier:
-    name: SlsaVerifier
-    description: A party that inspects provenance or other attestations and decides
-      whether an artifact is authentic.
-    comments:
-    - Consumers accept only specific signer and verifier pairs.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/verification_summary#verifier
-    is_a: SlsaParty
-    slots:
-    - component_versions
-    attributes:
-      verifier_id:
-        name: verifier_id
-        description: The URI that identifies the verifier.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerifier
-        domain_of:
-        - SlsaVerifier
-        range: uri
-        required: true
-      component_versions:
-        name: component_versions
-        description: The version of each named component of a platform.
-        in_subset:
-        - slsa_build_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:component_versions
-        owner: SlsaVerifier
-        domain_of:
-        - SlsaVerifier
-        - SlsaBuildPlatform
-        range: SlsaComponentVersion
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-      party_type:
-        name: party_type
-        description: The role the party acts in, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        designates_type: true
-        owner: SlsaVerifier
-        domain_of:
-        - SlsaParty
-        range: string
-      party_name:
-        name: party_name
-        description: The party's name.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerifier
-        domain_of:
-        - SlsaParty
-        range: string
-  SlsaInfrastructureProvider:
-    name: SlsaInfrastructureProvider
-    description: A party that provides software or services to the other roles, such
-      as a package registry's or a build platform's maintainers.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    is_a: SlsaParty
-    attributes:
-      party_type:
-        name: party_type
-        description: The role the party acts in, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        designates_type: true
-        owner: SlsaInfrastructureProvider
-        domain_of:
-        - SlsaParty
-        range: string
-      party_name:
-        name: party_name
-        description: The party's name.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaInfrastructureProvider
-        domain_of:
-        - SlsaParty
-        range: string
-  SlsaBuildPlatform:
-    name: SlsaBuildPlatform
-    description: 'The system that runs builds and records their provenance: the transitive
-      closure of software, hardware, people and organizations trusted to do so. Provenance
-      names it as the builder.'
-    comments:
-    - A platform with several modes of operation at different levels has a different
-      builder_id for each.
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/terminology#build-model
-    - https://slsa.dev/spec/v1.2/build-provenance#builder
-    slots:
-    - component_versions
-    attributes:
-      builder_id:
-        name: builder_id
-        description: The URI that identifies the platform and determines its SLSA
-          Build level.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        identifier: true
-        owner: SlsaBuildPlatform
-        domain_of:
-        - SlsaBuildPlatform
-        range: uri
-        required: true
-      build_level:
-        name: build_level
-        description: The highest SLSA Build level the platform's provenance can meet.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaBuildPlatform
-        domain_of:
-        - SlsaBuildPlatform
-        range: SlsaBuildLevel
-      hosted:
-        name: hosted
-        description: Whether the platform is a hosted service on shared or dedicated
-          infrastructure rather than an individual's workstation.
-        comments:
-        - Build L2 and above require a hosted platform.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaBuildPlatform
-        domain_of:
-        - SlsaBuildPlatform
-        range: boolean
-      builder_dependencies:
-        name: builder_dependencies
-        description: Dependencies of the platform's orchestrator that do not run inside
-          the build but may affect provenance generation or its guarantees.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaBuildPlatform
-        domain_of:
-        - SlsaBuildPlatform
-        range: InTotoResourceDescriptor
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-      component_versions:
-        name: component_versions
-        description: The version of each named component of a platform.
-        in_subset:
-        - slsa_build_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:component_versions
-        owner: SlsaBuildPlatform
-        domain_of:
-        - SlsaVerifier
-        - SlsaBuildPlatform
-        range: SlsaComponentVersion
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-  SlsaControlPlane:
-    name: SlsaControlPlane
-    description: The component of a build platform that orchestrates each build and
-      generates its provenance, outside the tenant's control.
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/terminology#build-model
-    slots:
-    - build_platform
-    attributes:
-      build_platform:
-        name: build_platform
-        description: The build platform this party or component belongs to or uses.
-        in_subset:
-        - slsa_build_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:build_platform
-        owner: SlsaControlPlane
-        domain_of:
-        - SlsaProducer
-        - SlsaControlPlane
-        range: SlsaBuildPlatform
-  SlsaComponentVersion:
-    name: SlsaComponentVersion
-    description: The version of one named component of a platform.
-    comments:
-    - Each component appears once in a list, since the attestation's JSON uses its
-      name as a key; the validator does not check this.
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    attributes:
-      component:
-        name: component
-        description: The component's name.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaComponentVersion
-        domain_of:
-        - SlsaComponentVersion
-        range: string
-        required: true
-      component_version:
-        name: component_version
-        description: The component's version string.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaComponentVersion
-        domain_of:
-        - SlsaComponentVersion
-        range: string
-  SlsaPackageRegistry:
-    name: SlsaPackageRegistry
-    description: A distribution platform that resolves package names to immutable
-      package artifacts within an ecosystem.
-    in_subset:
-    - slsa_build_track
-    - slsa_dependency_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/terminology#distribution-model
-    slots:
-    - ecosystem
-    attributes:
-      registry_uri:
-        name: registry_uri
-        description: The URI that identifies the registry.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        identifier: true
-        owner: SlsaPackageRegistry
-        domain_of:
-        - SlsaPackageRegistry
-        range: uri
-        required: true
-      ecosystem:
-        name: ecosystem
-        description: The package ecosystem whose rules govern how a package is named
-          and distributed, such as PyPA, npm or OCI.
-        comments:
-        - One ecosystem's tools can name the same package differently, which the study
-          found affects attestations and provenance, so verifiers match provenance
-          to package names with care (Tamanna et al., 2024, UR.1).
-        in_subset:
-        - slsa_build_track
-        - slsa_dependency_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:ecosystem
-        owner: SlsaPackageRegistry
-        domain_of:
-        - SlsaPackageRegistry
-        - SlsaPackage
-        range: string
-  SlsaPackage:
-    name: SlsaPackage
-    description: A unit of software distributed under a package name, which is the
-      primary security boundary SLSA protects. Its artifacts are the outputs of builds.
-    in_subset:
-    - slsa_build_track
-    - slsa_dependency_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/terminology#distribution-model
-    slots:
-    - ecosystem
-    attributes:
-      package_name:
-        name: package_name
-        description: The name consumers use to obtain the package within its ecosystem
-          and registry.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaPackage
-        domain_of:
-        - SlsaPackage
-        range: string
-        required: true
-      registry:
-        name: registry
-        description: The registry the package is published to.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaPackage
-        domain_of:
-        - SlsaPackage
-        range: SlsaPackageRegistry
-      package_artifacts:
-        name: package_artifacts
-        description: The immutable artifacts the package name has resolved to.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaPackage
-        domain_of:
-        - SlsaPackage
-        range: InTotoResourceDescriptor
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-      guac_uri:
-        name: guac_uri
-        description: Where a GUAC instance answers queries about the package's dependency
-          and provenance graph.
-        in_subset:
-        - slsa_ssf
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaPackage
-        domain_of:
-        - SlsaPackage
-        range: uri
-      security_insights_uri:
-        name: security_insights_uri
-        description: The SECURITY-INSIGHTS.yml file of the project that produces the
-          package.
-        in_subset:
-        - slsa_ssf
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaPackage
-        domain_of:
-        - SlsaPackage
-        range: uri
-      ecosystem:
-        name: ecosystem
-        description: The package ecosystem whose rules govern how a package is named
-          and distributed, such as PyPA, npm or OCI.
-        comments:
-        - One ecosystem's tools can name the same package differently, which the study
-          found affects attestations and provenance, so verifiers match provenance
-          to package names with care (Tamanna et al., 2024, UR.1).
-        in_subset:
-        - slsa_build_track
-        - slsa_dependency_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:ecosystem
-        owner: SlsaPackage
-        domain_of:
-        - SlsaPackageRegistry
-        - SlsaPackage
-        range: string
-  SlsaBuildProvenance:
-    name: SlsaBuildProvenance
-    description: The predicate that says how a build platform produced a set of artifacts,
-      so that consumers can verify the build met their expectations and others can
-      rebuild it.
-    comments:
-    - The statement that carries it has predicate_type https://slsa.dev/provenance/v1.
-    - Complicated provenance generation was the challenge with the most issues in
-      the study (Tamanna et al., 2024, CI.1).
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/build-provenance#provenance
-    is_a: SlsaPredicate
-    attributes:
-      build_definition:
-        name: build_definition
-        description: The inputs to the build; required at Build L1.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildProvenance
-        domain_of:
-        - SlsaBuildProvenance
-        range: SlsaBuildDefinition
-        required: true
-        inlined: true
-      run_details:
-        name: run_details
-        description: What is specific to this execution of the build; required at
-          Build L1.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildProvenance
-        domain_of:
-        - SlsaBuildProvenance
-        range: SlsaRunDetails
-        required: true
-        inlined: true
-      predicate_kind:
-        name: predicate_kind
-        description: The kind of predicate, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        designates_type: true
-        owner: SlsaBuildProvenance
-        domain_of:
-        - SlsaPredicate
-        range: string
-  SlsaBuildDefinition:
-    name: SlsaBuildDefinition
-    description: The inputs to a build, in enough detail to initialize it and begin
-      execution; the builder vouches for their accuracy.
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/build-provenance#builddefinition
-    attributes:
-      build_type:
-        name: build_type
-        description: The URI of the template that says how to run the build and read
-          its parameters and dependencies; required at Build L1.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildDefinition
-        domain_of:
-        - SlsaBuildDefinition
-        range: uri
-        required: true
-      external_parameters:
-        name: external_parameters
-        description: The inputs under the tenant's control; required at Build L1,
-          complete at Build L3 and verified by consumers.
-        comments:
-        - Verifiers reject parameters they do not recognize here.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildDefinition
-        domain_of:
-        - SlsaBuildDefinition
-        range: SlsaBuildParameter
-        required: true
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-        minimum_cardinality: 1
-      internal_parameters:
-        name: internal_parameters
-        description: The inputs the platform sets itself; kept for debugging, incident
-          response and reproduction, and not verified by consumers.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildDefinition
-        domain_of:
-        - SlsaBuildDefinition
-        range: SlsaBuildParameter
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-      resolved_dependencies:
-        name: resolved_dependencies
-        description: The artifacts fetched during the build, as far as the platform
-          knows them; completeness is best effort through Build L3.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildDefinition
-        domain_of:
-        - SlsaBuildDefinition
-        range: InTotoResourceDescriptor
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-      hermetic:
-        name: hermetic
-        description: Whether the build could reach only the dependencies it declared,
-          with no other network or filesystem access.
-        comments:
-        - SLSA v1.2 does not require hermetic builds; Build L3's isolation is a different
-          property, and hermeticity is a candidate for a future Build L4.
-        - The study cites a 2023 industry survey in which over half the participants
-          found hermetic builds hard to implement, and lists "hermetic build" among
-          SLSA's unclear terms (Tamanna et al., 2024, UC.1).
-        in_subset:
-        - slsa_adoption_study
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildDefinition
-        domain_of:
-        - SlsaBuildDefinition
-        range: boolean
-      provenance_generation_tool:
-        name: provenance_generation_tool
-        description: The tool that generated this provenance, named by URI.
-        comments:
-        - Naming the generator supports the strategy of standardizing provenance generation
-          (Tamanna et al., 2024, S3.1).
-        in_subset:
-        - slsa_adoption_study
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildDefinition
-        domain_of:
-        - SlsaBuildDefinition
-        range: uri
-      pipeline_orchestrator:
-        name: pipeline_orchestrator
-        description: The CI/CD system that coordinated the build, named by URI, where
-          it differs from the builder.
-        comments:
-        - In the Secure Software Factory architecture this is the Build Service layer,
-          distinct from the provenance-generating builder.
-        in_subset:
-        - slsa_ssf
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildDefinition
-        domain_of:
-        - SlsaBuildDefinition
-        range: uri
-  SlsaBuildParameter:
-    name: SlsaBuildParameter
-    description: One named input to a build, with a string value.
-    comments:
-    - The specification recommends string values; a structured value is written as
-      its JSON text.
-    - Each name appears once in a list, since the attestation's JSON uses it as a
-      key; the validator does not check this.
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    attributes:
-      parameter_name:
-        name: parameter_name
-        description: The parameter's name.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildParameter
-        domain_of:
-        - SlsaBuildParameter
-        range: string
-        required: true
-      parameter_value:
-        name: parameter_value
-        description: The parameter's value.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildParameter
-        domain_of:
-        - SlsaBuildParameter
-        range: string
-  SlsaRunDetails:
-    name: SlsaRunDetails
-    description: 'What is specific to one execution of a build: the platform that
-      ran it, metadata about the run and its by-products.'
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/build-provenance#rundetails
-    attributes:
-      builder:
-        name: builder
-        description: The build platform that ran the build and is trusted to have
-          written this provenance; required at Build L1.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaRunDetails
-        domain_of:
-        - SlsaRunDetails
-        range: SlsaBuildPlatform
-        required: true
-        inlined: true
-      build_metadata:
-        name: build_metadata
-        description: Metadata about this execution of the build.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaRunDetails
-        domain_of:
-        - SlsaRunDetails
-        range: SlsaBuildMetadata
-        inlined: true
-      byproducts:
-        name: byproducts
-        description: Artifacts the build produced beside its outputs that may help
-          debugging or incident response, such as logs.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaRunDetails
-        domain_of:
-        - SlsaRunDetails
-        range: InTotoResourceDescriptor
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-  SlsaBuildMetadata:
-    name: SlsaBuildMetadata
-    description: 'Metadata about one execution of a build: its identifier and when
-      it started and finished.'
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/build-provenance#buildmetadata
-    attributes:
-      invocation_id:
-        name: invocation_id
-        description: An identifier for this build invocation, in a format the builder
-          defines; useful for finding its logs.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildMetadata
-        domain_of:
-        - SlsaBuildMetadata
-        range: string
-      started_on:
-        name: started_on
-        description: When the build started.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildMetadata
-        domain_of:
-        - SlsaBuildMetadata
-        range: datetime
-      finished_on:
-        name: finished_on
-        description: When the build finished.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_build
-        owner: SlsaBuildMetadata
-        domain_of:
-        - SlsaBuildMetadata
-        range: datetime
-  SlsaVerificationSummary:
-    name: SlsaVerificationSummary
-    description: The predicate in which a verifier records that it evaluated artifacts
-      against a policy and the SLSA levels they met, so consumers can rely on the
-      verifier instead of reading every underlying attestation.
-    comments:
-    - The statement that carries it has predicate_type https://slsa.dev/verification_summary/v1.
-    - A Source VSA is this predicate with the repository as resource_uri and the revision
-      id in the subject's digest.
-    - Verification tooling and the places attestations are stored were an adoption
-      difficulty practitioners reported (Tamanna et al., 2024, LF.1).
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/verification_summary
-    - https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation
-    is_a: SlsaPredicate
-    slots:
-    - resource_uri
-    slot_usage:
-      resource_uri:
-        name: resource_uri
-        description: The URI consumers fetch the artifact from, which the verifier
-          verified it as.
-        required: true
-    attributes:
-      verifier:
-        name: verifier
-        description: The verifier that made this determination.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: SlsaVerifier
-        required: true
-        inlined: true
-      time_verified:
-        name: time_verified
-        description: When the verification happened.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: datetime
-      policy:
-        name: policy
-        description: The policy the subject was verified against, by URI and preferably
-          by digest too.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: SlsaVerificationSummaryPolicy
-        required: true
-        inlined: true
-      input_attestations:
-        name: input_attestations
-        description: Every attestation the verifier consulted, each with a digest;
-          complete when present.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: SlsaVerificationSummaryInputAttestation
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-      verification_result:
-        name: verification_result
-        description: Whether the subject passed the policy.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: SlsaVerificationResult
-        required: true
-      verified_levels:
-        name: verified_levels
-        description: The highest level verified in each track, any verified property,
-          and any result of the issuer's own; a level implies the levels below it.
-        comments:
-        - A VSA lists at most one level per track, and only FAILED when verification
-          failed; the validator checks neither.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: slsa_result_value
-        required: true
-        multivalued: true
-        pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
-        minimum_cardinality: 1
-      organization_properties:
-        name: organization_properties
-        description: Properties the organization defines for the revision, each prefixed
-          ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.
-        deprecated: Write these properties in verified_levels, where the attestation's
-          JSON puts them; this field goes in a later release.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        deprecated_element_has_possible_replacement: slsa:verified_levels
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: string
-        multivalued: true
-        pattern: ^ORG_SOURCE_
-      dependency_levels:
-        name: dependency_levels
-        description: How many transitive dependencies were verified at each level;
-          absent when the verifier makes no claim about dependencies.
-        comments:
-        - The attestation's JSON tells an empty map (no dependencies) from an absent
-          one (no claim); this list cannot, so an empty list reads as no claim.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: SlsaDependencyLevelCount
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-      slsa_version:
-        name: slsa_version
-        description: The SLSA specification version the verifier applied, as MAJOR.MINOR.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaVerificationSummary
-        range: string
-        pattern: ^[0-9]+\.[0-9]+$
-      resource_uri:
-        name: resource_uri
-        description: The URI consumers fetch the artifact from, which the verifier
-          verified it as.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:resource_uri
-        owner: SlsaVerificationSummary
-        domain_of:
-        - InTotoResourceDescriptor
-        - SlsaVerificationSummary
-        range: uri
-        required: true
-      predicate_kind:
-        name: predicate_kind
-        description: The kind of predicate, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        designates_type: true
-        owner: SlsaVerificationSummary
-        domain_of:
-        - SlsaPredicate
-        range: string
-  SlsaDependencyLevelCount:
-    name: SlsaDependencyLevelCount
-    description: The number of an artifact's transitive dependencies verified at one
-      level, each counted once per track at its highest level.
-    comments:
-    - Each level appears once in a list, since the attestation's JSON uses it as a
-      key; the validator does not check this.
-    in_subset:
-    - slsa_build_track
-    from_schema: https://w3id.org/lmodel/slsa
-    attributes:
-      verified_level:
-        name: verified_level
-        description: The level the dependencies were verified at, or a result of the
-          issuer's own.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaDependencyLevelCount
-        domain_of:
-        - SlsaDependencyLevelCount
-        range: slsa_result_value
-        required: true
-        pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
-      dependency_count:
-        name: dependency_count
-        description: How many dependencies were verified at that level.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_verification
-        owner: SlsaDependencyLevelCount
-        domain_of:
-        - SlsaDependencyLevelCount
-        range: integer
-        required: true
-        minimum_value: 0
-  SlsaVerificationSummaryPolicy:
-    name: SlsaVerificationSummaryPolicy
-    description: 'The policy a verification summary applied: a resource descriptor
-      that names the policy by URI.'
-    comments:
-    - A digest is recommended as well, to pin the exact version of the policy.
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/verification_summary#policy
-    is_a: InTotoResourceDescriptor
-    slot_usage:
-      resource_uri:
-        name: resource_uri
-        required: true
-      digest:
-        name: digest
-        recommended: true
-    attributes:
-      resource_uri:
-        name: resource_uri
-        description: The URI that identifies a resource, such as a package URL, a
-          git repository address or an OCI image reference.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:resource_uri
-        owner: SlsaVerificationSummaryPolicy
-        domain_of:
-        - InTotoResourceDescriptor
-        - SlsaVerificationSummary
-        range: uri
-        required: true
-      digest:
-        name: digest
-        description: The cryptographic digests of a resource's content, keyed by algorithm.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:digest
-        owner: SlsaVerificationSummaryPolicy
-        domain_of:
-        - InTotoResourceDescriptor
-        - SlsaMeasurement
-        range: InTotoDigestSet
-        recommended: true
-        inlined: true
-      resource_name:
-        name: resource_name
-        description: A name for the resource within the attestation that carries it.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryPolicy
-        domain_of:
-        - InTotoResourceDescriptor
-        range: string
-      download_location:
-        name: download_location
-        description: Where the resource can be fetched, when that differs from its
-          identifying URI.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryPolicy
-        domain_of:
-        - InTotoResourceDescriptor
-        range: uri
-      media_type:
-        name: media_type
-        description: The IANA media type of the resource's content.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryPolicy
-        domain_of:
-        - InTotoResourceDescriptor
-        range: string
-      content:
-        name: content
-        description: The resource's content itself, base64-encoded, for a resource
-          small enough to carry inline.
-        comments:
-        - The in-toto framework asks for content under 1 KB, so that attestations
-          stay small.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryPolicy
-        domain_of:
-        - InTotoResourceDescriptor
-        range: string
-        pattern: ^[A-Za-z0-9+/_-]+={0,2}$
-      annotations:
-        name: annotations
-        description: Vendor-specific annotations on the resource, such as the source
-          references a Source VSA records.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryPolicy
-        domain_of:
-        - InTotoResourceDescriptor
-        range: InTotoAnnotation
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-  SlsaVerificationSummaryInputAttestation:
-    name: SlsaVerificationSummaryInputAttestation
-    description: 'One attestation a verifier consulted: a resource descriptor that
-      carries the attestation''s digest.'
-    in_subset:
-    - slsa_build_track
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/verification_summary#inputAttestations
-    is_a: InTotoResourceDescriptor
-    slot_usage:
-      digest:
-        name: digest
-        required: true
-      resource_uri:
-        name: resource_uri
-        recommended: true
-    attributes:
-      resource_uri:
-        name: resource_uri
-        description: The URI that identifies a resource, such as a package URL, a
-          git repository address or an OCI image reference.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:resource_uri
-        owner: SlsaVerificationSummaryInputAttestation
-        domain_of:
-        - InTotoResourceDescriptor
-        - SlsaVerificationSummary
-        range: uri
-        recommended: true
-      digest:
-        name: digest
-        description: The cryptographic digests of a resource's content, keyed by algorithm.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:digest
-        owner: SlsaVerificationSummaryInputAttestation
-        domain_of:
-        - InTotoResourceDescriptor
-        - SlsaMeasurement
-        range: InTotoDigestSet
-        required: true
-        inlined: true
-      resource_name:
-        name: resource_name
-        description: A name for the resource within the attestation that carries it.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryInputAttestation
-        domain_of:
-        - InTotoResourceDescriptor
-        range: string
-      download_location:
-        name: download_location
-        description: Where the resource can be fetched, when that differs from its
-          identifying URI.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryInputAttestation
-        domain_of:
-        - InTotoResourceDescriptor
-        range: uri
-      media_type:
-        name: media_type
-        description: The IANA media type of the resource's content.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryInputAttestation
-        domain_of:
-        - InTotoResourceDescriptor
-        range: string
-      content:
-        name: content
-        description: The resource's content itself, base64-encoded, for a resource
-          small enough to carry inline.
-        comments:
-        - The in-toto framework asks for content under 1 KB, so that attestations
-          stay small.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryInputAttestation
-        domain_of:
-        - InTotoResourceDescriptor
-        range: string
-        pattern: ^[A-Za-z0-9+/_-]+={0,2}$
-      annotations:
-        name: annotations
-        description: Vendor-specific annotations on the resource, such as the source
-          references a Source VSA records.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        owner: SlsaVerificationSummaryInputAttestation
-        domain_of:
-        - InTotoResourceDescriptor
-        range: InTotoAnnotation
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-  SlsaSourceControlSystem:
-    name: SlsaSourceControlSystem
-    description: The platform or services that host a source repository and enforce
-      its organization's policies on authentication, authorization and change management.
-    comments:
-    - The SCS issues the Source VSAs and source provenance for the revisions it hosts.
-    in_subset:
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/source-requirements#definitions
-    attributes:
-      scs_uri:
-        name: scs_uri
-        description: The URI that identifies the source control system.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        identifier: true
-        owner: SlsaSourceControlSystem
-        domain_of:
-        - SlsaSourceControlSystem
-        range: uri
-        required: true
-  SlsaSourceRepository:
-    name: SlsaSourceRepository
-    description: A self-contained unit that holds a set of files, their revision history
-      and metadata such as branches and tags.
-    in_subset:
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/source-requirements#definitions
-    attributes:
-      repository_uri:
-        name: repository_uri
-        description: The stable locator the SCS gives the repository.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        identifier: true
-        owner: SlsaSourceRepository
-        domain_of:
-        - SlsaSourceRepository
-        range: uri
-        required: true
-      hosted_by:
-        name: hosted_by
-        description: The source control system that hosts the repository.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaSourceRepository
-        domain_of:
-        - SlsaSourceRepository
-        range: SlsaSourceControlSystem
-  SlsaSourceRevision:
-    name: SlsaSourceRevision
-    description: 'A logically immutable snapshot of a repository''s tracked files,
-      with its version-control metadata: author, time and parent revisions.'
-    comments:
-    - A revision id is unique within its repository and may recur in another; a document
-      that holds revisions from several repositories qualifies them.
-    in_subset:
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/source-requirements#definitions
-    slots:
-    - repository
-    attributes:
-      revision_id:
-        name: revision_id
-        description: The revision identifier the SCS assigns, such as a git commit
-          id or a path- qualified sequence number.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        identifier: true
-        owner: SlsaSourceRevision
-        domain_of:
-        - SlsaSourceRevision
-        range: string
-        required: true
-      authored_by:
-        name: authored_by
-        description: The identity of the person or automation that authored the revision.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaSourceRevision
-        domain_of:
-        - SlsaSourceRevision
-        range: string
-      authored_at:
-        name: authored_at
-        description: When the revision was created.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaSourceRevision
-        domain_of:
-        - SlsaSourceRevision
-        range: datetime
-      parent_revisions:
-        name: parent_revisions
-        description: The revisions this one descends from, which together form the
-          change history.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaSourceRevision
-        domain_of:
-        - SlsaSourceRevision
-        range: SlsaSourceRevision
-        multivalued: true
-      source_level:
-        name: source_level
-        description: The SLSA Source level the SCS asserts for the revision.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaSourceRevision
-        domain_of:
-        - SlsaSourceRevision
-        range: SlsaSourceLevel
-      review_type:
-        name: review_type
-        description: The form of review that approved the revision.
-        in_subset:
-        - slsa_adoption_study
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaSourceRevision
-        domain_of:
-        - SlsaSourceRevision
-        range: SlsaReviewType
-      repository:
-        name: repository
-        description: The source repository this belongs to.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:repository
-        owner: SlsaSourceRevision
-        domain_of:
-        - SlsaSourceRevision
-        - SlsaNamedReference
-        range: SlsaSourceRepository
-  SlsaNamedReference:
-    name: SlsaNamedReference
-    description: A user-friendly name for a revision in a repository, such as main
-      or v1.2.3; reference_type says whether it is a branch or a tag.
-    in_subset:
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/source-requirements#definitions
-    slots:
-    - repository
-    - revision
-    attributes:
-      reference_type:
-        name: reference_type
-        description: The kind of named reference, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        designates_type: true
-        owner: SlsaNamedReference
-        domain_of:
-        - SlsaNamedReference
-        range: string
-      reference_name:
-        name: reference_name
-        description: The reference's name, fully qualified in git, such as refs/heads/main.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaNamedReference
-        domain_of:
-        - SlsaNamedReference
-        range: string
-        required: true
-      protected:
-        name: protected
-        description: Whether the organization has the SCS enforce its technical controls
-          on this reference.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaNamedReference
-        domain_of:
-        - SlsaNamedReference
-        range: boolean
-      repository:
-        name: repository
-        description: The source repository this belongs to.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:repository
-        owner: SlsaNamedReference
-        domain_of:
-        - SlsaSourceRevision
-        - SlsaNamedReference
-        range: SlsaSourceRepository
-      revision:
-        name: revision
-        description: The source revision this refers to.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:revision
-        owner: SlsaNamedReference
-        domain_of:
-        - SlsaNamedReference
-        - SlsaSourceProvenance
-        range: SlsaSourceRevision
-  SlsaBranch:
-    name: SlsaBranch
-    description: A named reference that moves to track a line of development.
-    in_subset:
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    is_a: SlsaNamedReference
-    attributes:
-      repository:
-        name: repository
-        description: The source repository this belongs to.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:repository
-        owner: SlsaBranch
-        domain_of:
-        - SlsaSourceRevision
-        - SlsaNamedReference
-        range: SlsaSourceRepository
-      revision:
-        name: revision
-        description: The source revision this refers to.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:revision
-        owner: SlsaBranch
-        domain_of:
-        - SlsaNamedReference
-        - SlsaSourceProvenance
-        range: SlsaSourceRevision
-      reference_type:
-        name: reference_type
-        description: The kind of named reference, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        designates_type: true
-        owner: SlsaBranch
-        domain_of:
-        - SlsaNamedReference
-        range: string
-      reference_name:
-        name: reference_name
-        description: The reference's name, fully qualified in git, such as refs/heads/main.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaBranch
-        domain_of:
-        - SlsaNamedReference
-        range: string
-        required: true
-      protected:
-        name: protected
-        description: Whether the organization has the SCS enforce its technical controls
-          on this reference.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaBranch
-        domain_of:
-        - SlsaNamedReference
-        range: boolean
-  SlsaTag:
-    name: SlsaTag
-    description: A named reference meant never to move once created.
-    comments:
-    - A version-control tag that is allowed to move, such as latest, is a named reference
-      and not a tag in this sense.
-    in_subset:
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    is_a: SlsaNamedReference
-    attributes:
-      repository:
-        name: repository
-        description: The source repository this belongs to.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:repository
-        owner: SlsaTag
-        domain_of:
-        - SlsaSourceRevision
-        - SlsaNamedReference
-        range: SlsaSourceRepository
-      revision:
-        name: revision
-        description: The source revision this refers to.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:revision
-        owner: SlsaTag
-        domain_of:
-        - SlsaNamedReference
-        - SlsaSourceProvenance
-        range: SlsaSourceRevision
-      reference_type:
-        name: reference_type
-        description: The kind of named reference, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        designates_type: true
-        owner: SlsaTag
-        domain_of:
-        - SlsaNamedReference
-        range: string
-      reference_name:
-        name: reference_name
-        description: The reference's name, fully qualified in git, such as refs/heads/main.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaTag
-        domain_of:
-        - SlsaNamedReference
-        range: string
-        required: true
-      protected:
-        name: protected
-        description: Whether the organization has the SCS enforce its technical controls
-          on this reference.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaTag
-        domain_of:
-        - SlsaNamedReference
-        range: boolean
-  SlsaSourceProvenance:
-    name: SlsaSourceProvenance
-    description: Evidence from an SCS of how a revision came to exist and which technical
-      controls were enforced when it did.
-    comments:
-    - SLSA leaves the format of source provenance to each SCS and defines no predicate
-      type for it; this class holds what the specification says such provenance conveys.
-    - Source L2 and above require the SCS to issue it with each new revision.
-    in_subset:
-    - slsa_source_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/v1.2/source-requirements#source-provenance-attestations
-    is_a: SlsaPredicate
-    slots:
-    - revision
-    slot_usage:
-      revision:
-        name: revision
-        required: true
-    attributes:
-      controls_enforced:
-        name: controls_enforced
-        description: The technical controls the SCS enforced when the revision was
-          created, as the organization documents them.
-        comments:
-        - Two-party review is a control many single-maintainer projects cannot meet
-          (Tamanna et al., 2024, LF.2).
-        from_schema: https://w3id.org/lmodel/slsa/slsa_source
-        owner: SlsaSourceProvenance
-        domain_of:
-        - SlsaSourceProvenance
-        range: string
-        multivalued: true
-      revision:
-        name: revision
-        description: The source revision this refers to.
-        in_subset:
-        - slsa_source_track
-        from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:revision
-        owner: SlsaSourceProvenance
-        domain_of:
-        - SlsaNamedReference
-        - SlsaSourceProvenance
-        range: SlsaSourceRevision
-        required: true
-      predicate_kind:
-        name: predicate_kind
-        description: The kind of predicate, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
-        designates_type: true
-        owner: SlsaSourceProvenance
-        domain_of:
-        - SlsaPredicate
-        range: string
-  SlsaDependencyInventory:
-    name: SlsaDependencyInventory
-    description: The inventory of every third-party build dependency, direct and transitive,
-      of one artifact version.
-    comments:
-    - The Dependency track is a working draft and not part of the SLSA v1.2 release.
-    - A build-time SBOM or a lock file with hashes is a common form of the inventory.
-    in_subset:
-    - slsa_dependency_track
-    from_schema: https://w3id.org/lmodel/slsa
-    see_also:
-    - https://slsa.dev/spec/draft/dependency-track
-    attributes:
-      artifact:
-        name: artifact
-        description: The artifact whose dependencies are inventoried.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_dependency
-        owner: SlsaDependencyInventory
-        domain_of:
-        - SlsaDependencyInventory
-        range: InTotoResourceDescriptor
-        required: true
-        inlined: true
-      dependencies:
-        name: dependencies
-        description: The dependencies, each as a resource descriptor.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_dependency
-        owner: SlsaDependencyInventory
-        domain_of:
-        - SlsaDependencyInventory
-        range: InTotoResourceDescriptor
-        multivalued: true
-        inlined: true
-        inlined_as_list: true
-      dependency_level:
-        name: dependency_level
-        description: The SLSA Dependency level the producer's process meets for this
-          artifact.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_dependency
-        owner: SlsaDependencyInventory
-        domain_of:
-        - SlsaDependencyInventory
-        range: SlsaDependencyLevel
+    children_are_mutually_disjoint: true
   SlsaBuildImageProducer:
     name: SlsaBuildImageProducer
     description: The party that creates and distributes build images; the hosted build
@@ -3364,11 +3818,10 @@ classes:
       digest:
         name: digest
         description: The cryptographic digests of a resource's content, keyed by algorithm.
-        in_subset:
-        - slsa_build_track
-        - slsa_source_track
         from_schema: https://w3id.org/lmodel/slsa
-        slot_uri: slsa:digest
+        see_also:
+        - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+        slot_uri: in_toto_linkml:digest
         owner: SlsaMeasurement
         domain_of:
         - InTotoResourceDescriptor
@@ -3436,11 +3889,12 @@ classes:
       predicate_kind:
         name: predicate_kind
         description: The kind of predicate, one of this class's descendants.
-        from_schema: https://w3id.org/lmodel/slsa/slsa_core
+        from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+        slot_uri: in_toto_linkml:predicate_kind
         designates_type: true
         owner: SlsaBuildEnvironmentAttestation
         domain_of:
-        - SlsaPredicate
+        - InTotoPredicate
         range: string
   SlsaAdoptionMetadata:
     name: SlsaAdoptionMetadata

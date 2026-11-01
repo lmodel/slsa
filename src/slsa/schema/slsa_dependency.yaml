@@ -6,6 +6,12 @@ description: >-
   The SLSA Dependency track, a working-draft track in which a producer
   inventories, triages and controls its third-party build dependencies.
 license: Apache-2.0
+in_language: en
+keywords:
+  - SLSA
+  - dependency track
+  - build dependencies
+  - dependency inventory
 see_also:
   - https://slsa.dev/spec/draft/dependency-track
 

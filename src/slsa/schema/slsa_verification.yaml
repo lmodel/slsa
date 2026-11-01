@@ -7,8 +7,19 @@ description: >-
   (https://slsa.dev/verification_summary/v1): a trusted verifier's statement of
   the SLSA levels an artifact was verified at.
 license: Apache-2.0
+in_language: en
+keywords:
+  - SLSA
+  - verification summary attestation
+  - VSA
+  - SLSA levels
+  - policy
 see_also:
   - https://slsa.dev/spec/v1.2/verification_summary
+comments:
+  - >-
+    The aliases are the keys the attestation's JSON uses where they differ from
+    the field's name.
 
 default_prefix: slsa
 default_range: string
@@ -16,6 +27,7 @@ default_range: string
 prefixes:
   linkml: https://w3id.org/linkml/
   slsa: https://w3id.org/lmodel/slsa/
+  slsa_dev: https://slsa.dev/
 
 imports:
   - linkml:types
@@ -60,6 +72,8 @@ classes:
       The predicate in which a verifier records that it evaluated artifacts
       against a policy and the SLSA levels they met, so consumers can rely on
       the verifier instead of reading every underlying attestation.
+    exact_mappings:
+      - slsa_dev:verification_summary/v1
     see_also:
       - https://slsa.dev/spec/v1.2/verification_summary
       - https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation
@@ -88,6 +102,8 @@ classes:
         inlined: true
       time_verified:
         description: When the verification happened.
+        aliases:
+          - timeVerified
         range: in_toto_timestamp
       policy:
         description: >-
@@ -100,18 +116,24 @@ classes:
         description: >-
           Every attestation the verifier consulted, each with a digest; complete when
           present.
+        aliases:
+          - inputAttestations
         range: SlsaVerificationSummaryInputAttestation
         multivalued: true
         inlined: true
         inlined_as_list: true
       verification_result:
         description: Whether the subject passed the policy.
+        aliases:
+          - verificationResult
         range: SlsaVerificationResult
         required: true
       verified_levels:
         description: >-
           The highest level verified in each track, any verified property, and any
           result of the issuer's own; a level implies the levels below it.
+        aliases:
+          - verifiedLevels
         range: slsa_result_value
         pattern: *slsa_result_pattern
         multivalued: true
@@ -137,6 +159,8 @@ classes:
         description: >-
           How many transitive dependencies were verified at each level; absent when the
           verifier makes no claim about dependencies.
+        aliases:
+          - dependencyLevels
         range: SlsaDependencyLevelCount
         multivalued: true
         inlined: true
@@ -148,6 +172,8 @@ classes:
       slsa_version:
         description: >-
           The SLSA specification version the verifier applied, as MAJOR.MINOR.
+        aliases:
+          - slsaVersion
         pattern: "^[0-9]+\\.[0-9]+$"
     in_subset:
       - slsa_build_track

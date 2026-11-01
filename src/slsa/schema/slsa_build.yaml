@@ -6,8 +6,23 @@ description: >-
   The SLSA Build track's provenance predicate (https://slsa.dev/provenance/v1):
   what a build platform ran and what it took in.
 license: Apache-2.0
+in_language: en
+keywords:
+  - SLSA
+  - build provenance
+  - build definition
+  - build parameters
+  - resolved dependencies
 see_also:
   - https://slsa.dev/spec/v1.2/build-provenance
+comments:
+  - >-
+    The mappings to SPDX 3.0.1's Build profile are this project's own, made by
+    comparing each term's definition; SPDX's description of buildType refers
+    to SLSA's. They are close rather than exact, because SPDX gives every field
+    to the build itself, where SLSA spreads them over the parts of its
+    provenance. The aliases are the keys the attestation's JSON uses where they
+    differ from the field's name.
 
 default_prefix: slsa
 default_range: string
@@ -15,6 +30,9 @@ default_range: string
 prefixes:
   linkml: https://w3id.org/linkml/
   slsa: https://w3id.org/lmodel/slsa/
+  slsa_dev: https://slsa.dev/
+  spdx_core: https://spdx.org/rdf/3.0.1/terms/Core/
+  spdx_build: https://spdx.org/rdf/3.0.1/terms/Build/
 
 imports:
   - linkml:types
@@ -27,6 +45,10 @@ classes:
       The predicate that says how a build platform produced a set of artifacts,
       so that consumers can verify the build met their expectations and others
       can rebuild it.
+    exact_mappings:
+      - slsa_dev:provenance/v1
+    close_mappings:
+      - spdx_build:Build
     see_also:
       - https://slsa.dev/spec/v1.2/build-provenance#provenance
     comments:
@@ -37,12 +59,16 @@ classes:
     attributes:
       build_definition:
         description: The inputs to the build; required at Build L1.
+        aliases:
+          - buildDefinition
         range: SlsaBuildDefinition
         required: true
         inlined: true
       run_details:
         description: >-
           What is specific to this execution of the build; required at Build L1.
+        aliases:
+          - runDetails
         range: SlsaRunDetails
         required: true
         inlined: true
@@ -60,12 +86,20 @@ classes:
         description: >-
           The URI of the template that says how to run the build and read its parameters
           and dependencies; required at Build L1.
+        aliases:
+          - buildType
+        close_mappings:
+          - spdx_build:buildType
         range: in_toto_type_uri
         required: true
       external_parameters:
         description: >-
           The inputs under the tenant's control; required at Build L1, complete at
           Build L3 and verified by consumers.
+        aliases:
+          - externalParameters
+        broad_mappings:
+          - spdx_build:parameter
         range: SlsaBuildParameter
         multivalued: true
         required: true
@@ -78,6 +112,14 @@ classes:
         description: >-
           The inputs the platform sets itself; kept for debugging, incident response and
           reproduction, and not verified by consumers.
+        aliases:
+          - internalParameters
+        related_mappings:
+          - spdx_build:parameter
+        comments:
+          - >-
+            Related, not narrower: SPDX's parameter is an input provided to the
+            builder, and an internal parameter is one the platform sets itself.
         range: SlsaBuildParameter
         multivalued: true
         inlined: true
@@ -86,6 +128,8 @@ classes:
         description: >-
           The artifacts fetched during the build, as far as the platform knows them;
           completeness is best effort through Build L3.
+        aliases:
+          - resolvedDependencies
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true
@@ -130,6 +174,8 @@ classes:
 
   SlsaBuildParameter:
     description: One named input to a build, with a string value.
+    broad_mappings:
+      - spdx_core:DictionaryEntry
     comments:
       - >-
         The specification recommends string values; a structured value is written as its
@@ -140,9 +186,13 @@ classes:
     attributes:
       parameter_name:
         description: The parameter's name.
+        broad_mappings:
+          - spdx_core:key
         required: true
       parameter_value:
         description: The parameter's value.
+        broad_mappings:
+          - spdx_core:value
     in_subset:
       - slsa_build_track
 
@@ -162,6 +212,8 @@ classes:
         inlined: true
       build_metadata:
         description: Metadata about this execution of the build.
+        aliases:
+          - metadata
         range: SlsaBuildMetadata
         inlined: true
       byproducts:
@@ -186,11 +238,23 @@ classes:
         description: >-
           An identifier for this build invocation, in a format the builder defines;
           useful for finding its logs.
+        aliases:
+          - invocationId
+        close_mappings:
+          - spdx_build:buildId
       started_on:
         description: When the build started.
+        aliases:
+          - startedOn
+        close_mappings:
+          - spdx_build:buildStartTime
         range: in_toto_timestamp
       finished_on:
         description: When the build finished.
+        aliases:
+          - finishedOn
+        close_mappings:
+          - spdx_build:buildEndTime
         range: in_toto_timestamp
     in_subset:
       - slsa_build_track
