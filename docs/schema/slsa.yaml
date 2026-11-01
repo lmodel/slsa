@@ -467,17 +467,27 @@ enums:
     name: SlsaVerificationResult
     definition_uri: https://w3id.org/lmodel/slsa/SlsaVerificationResult
     description: The outcome of verifying an artifact against a policy.
+    comments:
+    - PASSED and FAILED mean the outcomes of the same names in W3C's Evaluation and
+      Report Language (EARL) 1.0, for which a policy is a test criterion; the mapping
+      is this project's own.
+    - The meanings are full addresses, because the Python generator writes no namespace
+      for a prefix that only an enum's meaning uses.
     in_subset:
     - slsa_build_track
     - slsa_source_track
     from_schema: https://w3id.org/lmodel/slsa/slsa_verification
+    see_also:
+    - https://www.w3.org/TR/EARL10-Schema/
     permissible_values:
       PASSED:
         text: PASSED
         description: The artifact met the policy.
+        meaning: http://www.w3.org/ns/earl#passed
       FAILED:
         text: FAILED
         description: The artifact did not meet the policy.
+        meaning: http://www.w3.org/ns/earl#failed
   SlsaResult:
     name: SlsaResult
     definition_uri: https://w3id.org/lmodel/slsa/SlsaResult
@@ -490,6 +500,9 @@ enums:
       takes, admits both.
     - The working-draft Dependency and Build Environment tracks name no results yet,
       so none are listed for them.
+    - 'Only FAILED has a public term: it means EARL''s failed, as SlsaVerificationResult''s
+      FAILED does, since a VSA lists it only when verification failed. No vocabulary
+      names SLSA''s levels or verified properties.'
     in_subset:
     - slsa_build_track
     - slsa_source_track
@@ -542,6 +555,7 @@ enums:
       FAILED:
         text: FAILED
         description: Policy evaluation failed.
+        meaning: http://www.w3.org/ns/earl#failed
   SlsaSourceLevel:
     name: SlsaSourceLevel
     definition_uri: https://w3id.org/lmodel/slsa/SlsaSourceLevel
@@ -1380,9 +1394,15 @@ slots:
       at Build L3 and verified by consumers.
     comments:
     - Verifiers reject parameters they do not recognize here.
+    - SPDX's configSource fields name the three parts of SLSA 0.2's configSource,
+      which SLSA 1.0 records as external parameters for its entry point and URI, and
+      as a resolved dependency for its URI and digest.
     from_schema: https://w3id.org/lmodel/slsa/slsa_build
     aliases:
     - externalParameters
+    related_mappings:
+    - spdx_build:configSourceEntrypoint
+    - spdx_build:configSourceUri
     broad_mappings:
     - spdx_build:parameter
     slot_uri: slsa:external_parameters
@@ -1401,11 +1421,15 @@ slots:
     description: The inputs the platform sets itself; kept for debugging, incident
       response and reproduction, and not verified by consumers.
     comments:
+    - 'Close to SPDX''s environment, the session the build ran in: SLSA 1.0 renamed
+      0.2''s environment to internalParameters, with a slight change in meaning.'
     - 'Related, not narrower: SPDX''s parameter is an input provided to the builder,
       and an internal parameter is one the platform sets itself.'
     from_schema: https://w3id.org/lmodel/slsa/slsa_build
     aliases:
     - internalParameters
+    close_mappings:
+    - spdx_build:environment
     related_mappings:
     - spdx_build:parameter
     slot_uri: slsa:internal_parameters
@@ -1424,6 +1448,9 @@ slots:
     from_schema: https://w3id.org/lmodel/slsa/slsa_build
     aliases:
     - resolvedDependencies
+    related_mappings:
+    - spdx_build:configSourceUri
+    - spdx_build:configSourceDigest
     slot_uri: slsa:resolved_dependencies
     alias: resolved_dependencies
     owner: SlsaBuildDefinition
@@ -3111,12 +3138,17 @@ classes:
     comments:
     - A platform with several modes of operation at different levels has a different
       builder_id for each.
+    - 'Related to SPDX''s Tool, hardware or software that carries out a function:
+      the platform''s software and hardware are tools, and the people and organizations
+      trusted to run it are not.'
     in_subset:
     - slsa_build_track
     from_schema: https://w3id.org/lmodel/slsa/slsa_core
     see_also:
     - https://slsa.dev/spec/v1.2/terminology#build-model
     - https://slsa.dev/spec/v1.2/build-provenance#builder
+    related_mappings:
+    - spdx_core:Tool
     slots:
     - component_versions
     - slsaBuildPlatform__builder_id
@@ -3340,8 +3372,14 @@ classes:
           complete at Build L3 and verified by consumers.
         comments:
         - Verifiers reject parameters they do not recognize here.
+        - SPDX's configSource fields name the three parts of SLSA 0.2's configSource,
+          which SLSA 1.0 records as external parameters for its entry point and URI,
+          and as a resolved dependency for its URI and digest.
         aliases:
         - externalParameters
+        related_mappings:
+        - spdx_build:configSourceEntrypoint
+        - spdx_build:configSourceUri
         broad_mappings:
         - spdx_build:parameter
         range: SlsaBuildParameter
@@ -3355,10 +3393,14 @@ classes:
         description: The inputs the platform sets itself; kept for debugging, incident
           response and reproduction, and not verified by consumers.
         comments:
+        - 'Close to SPDX''s environment, the session the build ran in: SLSA 1.0 renamed
+          0.2''s environment to internalParameters, with a slight change in meaning.'
         - 'Related, not narrower: SPDX''s parameter is an input provided to the builder,
           and an internal parameter is one the platform sets itself.'
         aliases:
         - internalParameters
+        close_mappings:
+        - spdx_build:environment
         related_mappings:
         - spdx_build:parameter
         range: SlsaBuildParameter
@@ -3371,6 +3413,9 @@ classes:
           knows them; completeness is best effort through Build L3.
         aliases:
         - resolvedDependencies
+        related_mappings:
+        - spdx_build:configSourceUri
+        - spdx_build:configSourceDigest
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true

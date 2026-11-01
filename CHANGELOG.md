@@ -6,6 +6,10 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+### Added
+
+- **EARL outcomes and more SPDX Build mappings.** The VSA results `PASSED` and `FAILED` mean W3C EARL 1.0's `passed` and `failed`. Internal parameters are close to SPDX's `environment`, and the external parameters and resolved dependencies relate to SPDX's `configSource` fields, as SLSA's table for migrating from 0.2 places them; the build platform relates to SPDX's `Tool`.
+
 ### Fixed
 
 - **The Pydantic model imports.** The vendored in-toto core is lmodel/in-toto v0.2.1's, whose two URI types no longer set `base: URI`, which `gen-pydantic` wrote as an annotation it never imported.

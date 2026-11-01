@@ -476,8 +476,7 @@ in_toto_linkml:InTotoStatementSubject CLOSED {
           <time_verified> @in_toto_linkml:InTotoTimestamp ? ;
           <policy> @<SlsaVerificationSummaryPolicy> ;
           <input_attestations> @<SlsaVerificationSummaryInputAttestation> * ;
-          <verification_result> [ <https://w3id.org/lmodel/slsa/SlsaVerificationResult#PASSED>
-             <https://w3id.org/lmodel/slsa/SlsaVerificationResult#FAILED> ] ;
+          <verification_result> [ <http://www.w3.org/ns/earl#passed> <http://www.w3.org/ns/earl#failed> ] ;
           <verified_levels> @<SlsaResultValue> + ;
           <organization_properties> @linkml:String * ;
           <dependency_levels> @<SlsaDependencyLevelCount> * ;

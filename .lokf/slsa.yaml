@@ -685,11 +685,15 @@ classes:
   SlsaBuildPlatform:
     description: 'The system that runs builds and records their provenance: the transitive closure of
       software, hardware, people and organizations trusted to do so. Provenance names it as the builder.'
+    related_mappings:
+    - spdx_core:Tool
     see_also:
     - https://slsa.dev/spec/v1.2/terminology#build-model
     - https://slsa.dev/spec/v1.2/build-provenance#builder
     comments:
     - A platform with several modes of operation at different levels has a different builder_id for each.
+    - 'Related to SPDX''s Tool, hardware or software that carries out a function: the platform''s software
+      and hardware are tools, and the people and organizations trusted to run it are not.'
     slots:
     - component_versions
     - id
@@ -841,6 +845,9 @@ classes:
         - externalParameters
         broad_mappings:
         - spdx_build:parameter
+        related_mappings:
+        - spdx_build:configSourceEntrypoint
+        - spdx_build:configSourceUri
         range: SlsaBuildParameter
         multivalued: true
         required: true
@@ -849,14 +856,21 @@ classes:
         inlined_as_list: true
         comments:
         - Verifiers reject parameters they do not recognize here.
+        - SPDX's configSource fields name the three parts of SLSA 0.2's configSource, which SLSA 1.0 records
+          as external parameters for its entry point and URI, and as a resolved dependency for its URI
+          and digest.
       internal_parameters:
         description: The inputs the platform sets itself; kept for debugging, incident response and reproduction,
           and not verified by consumers.
         aliases:
         - internalParameters
+        close_mappings:
+        - spdx_build:environment
         related_mappings:
         - spdx_build:parameter
         comments:
+        - 'Close to SPDX''s environment, the session the build ran in: SLSA 1.0 renamed 0.2''s environment
+          to internalParameters, with a slight change in meaning.'
         - 'Related, not narrower: SPDX''s parameter is an input provided to the builder, and an internal
           parameter is one the platform sets itself.'
         range: SlsaBuildParameter
@@ -868,6 +882,9 @@ classes:
           is best effort through Build L3.
         aliases:
         - resolvedDependencies
+        related_mappings:
+        - spdx_build:configSourceUri
+        - spdx_build:configSourceDigest
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true
@@ -1606,11 +1623,20 @@ enums:
     - slsa_build_track
   SlsaVerificationResult:
     description: The outcome of verifying an artifact against a policy.
+    see_also:
+    - https://www.w3.org/TR/EARL10-Schema/
+    comments:
+    - PASSED and FAILED mean the outcomes of the same names in W3C's Evaluation and Report Language (EARL)
+      1.0, for which a policy is a test criterion; the mapping is this project's own.
+    - The meanings are full addresses, because the Python generator writes no namespace for a prefix that
+      only an enum's meaning uses.
     permissible_values:
       PASSED:
         description: The artifact met the policy.
+        meaning: http://www.w3.org/ns/earl#passed
       FAILED:
         description: The artifact did not meet the policy.
+        meaning: http://www.w3.org/ns/earl#failed
     in_subset:
     - slsa_build_track
     - slsa_source_track
@@ -1625,6 +1651,9 @@ enums:
       values, and slsa_result_value, which verified_levels takes, admits both.
     - The working-draft Dependency and Build Environment tracks name no results yet, so none are listed
       for them.
+    - 'Only FAILED has a public term: it means EARL''s failed, as SlsaVerificationResult''s FAILED does,
+      since a VSA lists it only when verification failed. No vocabulary names SLSA''s levels or verified
+      properties.'
     permissible_values:
       SLSA_BUILD_LEVEL_UNEVALUATED:
         description: The issuer makes no claim about the Build track level.
@@ -1656,6 +1685,7 @@ enums:
           artifact.
       FAILED:
         description: Policy evaluation failed.
+        meaning: http://www.w3.org/ns/earl#failed
     in_subset:
     - slsa_build_track
     - slsa_source_track

@@ -426,9 +426,13 @@ class SlsaBuildPlatform(ConfiguredBaseModel):
     The system that runs builds and records their provenance: the transitive closure of software, hardware, people and organizations trusted to do so. Provenance names it as the builder.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['A platform with several modes of operation at different levels '
-                      'has a different builder_id for each.'],
+                      'has a different builder_id for each.',
+                      "Related to SPDX's Tool, hardware or software that carries out a "
+                      "function: the platform's software and hardware are tools, and "
+                      'the people and organizations trusted to run it are not.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track'],
+         'related_mappings': ['spdx_core:Tool'],
          'see_also': ['https://slsa.dev/spec/v1.2/terminology#build-model',
                       'https://slsa.dev/spec/v1.2/build-provenance#builder']})
 
@@ -524,15 +528,28 @@ class SlsaBuildDefinition(ConfiguredBaseModel):
          'domain_of': ['SlsaBuildDefinition']} })
     external_parameters: list[SlsaBuildParameter] = Field(default=..., description="""The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.""", min_length=1, json_schema_extra = { "linkml_meta": {'aliases': ['externalParameters'],
          'broad_mappings': ['spdx_build:parameter'],
-         'comments': ['Verifiers reject parameters they do not recognize here.'],
-         'domain_of': ['SlsaBuildDefinition']} })
+         'comments': ['Verifiers reject parameters they do not recognize here.',
+                      "SPDX's configSource fields name the three parts of SLSA 0.2's "
+                      'configSource, which SLSA 1.0 records as external parameters for '
+                      'its entry point and URI, and as a resolved dependency for its '
+                      'URI and digest.'],
+         'domain_of': ['SlsaBuildDefinition'],
+         'related_mappings': ['spdx_build:configSourceEntrypoint',
+                              'spdx_build:configSourceUri']} })
     internal_parameters: Optional[list[SlsaBuildParameter]] = Field(default=None, description="""The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.""", json_schema_extra = { "linkml_meta": {'aliases': ['internalParameters'],
-         'comments': ["Related, not narrower: SPDX's parameter is an input provided to "
+         'close_mappings': ['spdx_build:environment'],
+         'comments': ["Close to SPDX's environment, the session the build ran in: SLSA "
+                      "1.0 renamed 0.2's environment to internalParameters, with a "
+                      'slight change in meaning.',
+                      "Related, not narrower: SPDX's parameter is an input provided to "
                       'the builder, and an internal parameter is one the platform sets '
                       'itself.'],
          'domain_of': ['SlsaBuildDefinition'],
          'related_mappings': ['spdx_build:parameter']} })
-    resolved_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.""", json_schema_extra = { "linkml_meta": {'aliases': ['resolvedDependencies'], 'domain_of': ['SlsaBuildDefinition']} })
+    resolved_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.""", json_schema_extra = { "linkml_meta": {'aliases': ['resolvedDependencies'],
+         'domain_of': ['SlsaBuildDefinition'],
+         'related_mappings': ['spdx_build:configSourceUri',
+                              'spdx_build:configSourceDigest']} })
     hermetic: Optional[bool] = Field(default=None, description="""Whether the build could reach only the dependencies it declared, with no other network or filesystem access.""", json_schema_extra = { "linkml_meta": {'comments': ["SLSA v1.2 does not require hermetic builds; Build L3's "
                       'isolation is a different property, and hermeticity is a '
                       'candidate for a future Build L4.',

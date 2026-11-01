@@ -100,6 +100,9 @@ classes:
           - externalParameters
         broad_mappings:
           - spdx_build:parameter
+        related_mappings:
+          - spdx_build:configSourceEntrypoint
+          - spdx_build:configSourceUri
         range: SlsaBuildParameter
         multivalued: true
         required: true
@@ -108,15 +111,25 @@ classes:
         inlined_as_list: true
         comments:
           - Verifiers reject parameters they do not recognize here.
+          - >-
+            SPDX's configSource fields name the three parts of SLSA 0.2's
+            configSource, which SLSA 1.0 records as external parameters for its entry
+            point and URI, and as a resolved dependency for its URI and digest.
       internal_parameters:
         description: >-
           The inputs the platform sets itself; kept for debugging, incident response and
           reproduction, and not verified by consumers.
         aliases:
           - internalParameters
+        close_mappings:
+          - spdx_build:environment
         related_mappings:
           - spdx_build:parameter
         comments:
+          - >-
+            Close to SPDX's environment, the session the build ran in: SLSA 1.0
+            renamed 0.2's environment to internalParameters, with a slight change
+            in meaning.
           - >-
             Related, not narrower: SPDX's parameter is an input provided to the
             builder, and an internal parameter is one the platform sets itself.
@@ -130,6 +143,9 @@ classes:
           completeness is best effort through Build L3.
         aliases:
           - resolvedDependencies
+        related_mappings:
+          - spdx_build:configSourceUri
+          - spdx_build:configSourceDigest
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true
