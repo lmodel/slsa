@@ -1616,10 +1616,12 @@ class SlsaVerificationResult(EnumDefinitionImpl):
     """
     PASSED = PermissibleValue(
         text="PASSED",
-        description="The artifact met the policy.")
+        description="The artifact met the policy.",
+        meaning=None)
     FAILED = PermissibleValue(
         text="FAILED",
-        description="The artifact did not meet the policy.")
+        description="The artifact did not meet the policy.",
+        meaning=None)
 
     _defn = EnumDefinition(
         name="SlsaVerificationResult",
@@ -1672,7 +1674,8 @@ class SlsaResult(EnumDefinitionImpl):
         description="The verified property that two or more independent build platforms reproduced the artifact.")
     FAILED = PermissibleValue(
         text="FAILED",
-        description="Policy evaluation failed.")
+        description="Policy evaluation failed.",
+        meaning=None)
 
     _defn = EnumDefinition(
         name="SlsaResult",

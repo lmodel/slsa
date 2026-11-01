@@ -522,19 +522,28 @@
       "name": "SlsaVerificationResult",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaVerificationResult",
       "description": "The outcome of verifying an artifact against a policy.",
+      "comments": [
+        "PASSED and FAILED mean the outcomes of the same names in W3C's Evaluation and Report Language (EARL) 1.0, for which a policy is a test criterion; the mapping is this project's own.",
+        "The meanings are full addresses with no prefix bound for them, because the Python generator writes no namespace for a prefix bound only in an imported module, and shortens a full address to any prefix that covers it. The Python model holds no meaning for them; the other generators keep it."
+      ],
       "in_subset": [
         "slsa_build_track",
         "slsa_source_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "see_also": [
+        "https://www.w3.org/TR/EARL10-Schema/"
+      ],
       "permissible_values": [
         {
           "text": "PASSED",
-          "description": "The artifact met the policy."
+          "description": "The artifact met the policy.",
+          "meaning": "http://www.w3.org/ns/earl#passed"
         },
         {
           "text": "FAILED",
-          "description": "The artifact did not meet the policy."
+          "description": "The artifact did not meet the policy.",
+          "meaning": "http://www.w3.org/ns/earl#failed"
         }
       ]
     },
@@ -544,7 +553,8 @@
       "description": "A result of evaluating an artifact against SLSA: a track level, a verified property, or a failure. A level implies the levels below it in the same track.",
       "comments": [
         "Issuers may add values of their own, but none that start with SLSA_; this enum lists the SLSA-defined values, and slsa_result_value, which verified_levels takes, admits both.",
-        "The working-draft Dependency and Build Environment tracks name no results yet, so none are listed for them."
+        "The working-draft Dependency and Build Environment tracks name no results yet, so none are listed for them.",
+        "Only FAILED has a public term: it means EARL's failed, as SlsaVerificationResult's FAILED does, since a VSA lists it only when verification failed. No vocabulary names SLSA's levels or verified properties."
       ],
       "in_subset": [
         "slsa_build_track",
@@ -610,7 +620,8 @@
         },
         {
           "text": "FAILED",
-          "description": "Policy evaluation failed."
+          "description": "Policy evaluation failed.",
+          "meaning": "http://www.w3.org/ns/earl#failed"
         }
       ]
     },
@@ -1634,11 +1645,16 @@
       "name": "slsaBuildDefinition__external_parameters",
       "description": "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.",
       "comments": [
-        "Verifiers reject parameters they do not recognize here."
+        "Verifiers reject parameters they do not recognize here.",
+        "SPDX's configSource fields name the three parts of SLSA 0.2's configSource, which SLSA 1.0 records as external parameters for its entry point and URI, and as a resolved dependency for its URI and digest."
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
       "aliases": [
         "externalParameters"
+      ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/configSourceEntrypoint",
+        "https://spdx.org/rdf/3.0.1/terms/Build/configSourceUri"
       ],
       "broad_mappings": [
         "https://spdx.org/rdf/3.0.1/terms/Build/parameter"
@@ -1661,11 +1677,15 @@
       "name": "slsaBuildDefinition__internal_parameters",
       "description": "The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.",
       "comments": [
+        "Close to SPDX's environment, the session the build ran in: SLSA 1.0 renamed 0.2's environment to internalParameters, with a slight change in meaning.",
         "Related, not narrower: SPDX's parameter is an input provided to the builder, and an internal parameter is one the platform sets itself."
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
       "aliases": [
         "internalParameters"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/environment"
       ],
       "related_mappings": [
         "https://spdx.org/rdf/3.0.1/terms/Build/parameter"
@@ -1688,6 +1708,10 @@
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
       "aliases": [
         "resolvedDependencies"
+      ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/configSourceUri",
+        "https://spdx.org/rdf/3.0.1/terms/Build/configSourceDigest"
       ],
       "slot_uri": "https://w3id.org/lmodel/slsa/resolved_dependencies",
       "alias": "resolved_dependencies",
@@ -3798,7 +3822,8 @@
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaBuildPlatform",
       "description": "The system that runs builds and records their provenance: the transitive closure of software, hardware, people and organizations trusted to do so. Provenance names it as the builder.",
       "comments": [
-        "A platform with several modes of operation at different levels has a different builder_id for each."
+        "A platform with several modes of operation at different levels has a different builder_id for each.",
+        "Related to SPDX's Tool, hardware or software that carries out a function: the platform's software and hardware are tools, and the people and organizations trusted to run it are not."
       ],
       "in_subset": [
         "slsa_build_track"
@@ -3807,6 +3832,9 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/terminology#build-model",
         "https://slsa.dev/spec/v1.2/build-provenance#builder"
+      ],
+      "related_mappings": [
+        "spdx_core:Tool"
       ],
       "slots": [
         "component_versions",
@@ -4099,10 +4127,15 @@
           "name": "external_parameters",
           "description": "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.",
           "comments": [
-            "Verifiers reject parameters they do not recognize here."
+            "Verifiers reject parameters they do not recognize here.",
+            "SPDX's configSource fields name the three parts of SLSA 0.2's configSource, which SLSA 1.0 records as external parameters for its entry point and URI, and as a resolved dependency for its URI and digest."
           ],
           "aliases": [
             "externalParameters"
+          ],
+          "related_mappings": [
+            "spdx_build:configSourceEntrypoint",
+            "spdx_build:configSourceUri"
           ],
           "broad_mappings": [
             "spdx_build:parameter"
@@ -4119,10 +4152,14 @@
           "name": "internal_parameters",
           "description": "The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.",
           "comments": [
+            "Close to SPDX's environment, the session the build ran in: SLSA 1.0 renamed 0.2's environment to internalParameters, with a slight change in meaning.",
             "Related, not narrower: SPDX's parameter is an input provided to the builder, and an internal parameter is one the platform sets itself."
           ],
           "aliases": [
             "internalParameters"
+          ],
+          "close_mappings": [
+            "spdx_build:environment"
           ],
           "related_mappings": [
             "spdx_build:parameter"
@@ -4138,6 +4175,10 @@
           "description": "The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.",
           "aliases": [
             "resolvedDependencies"
+          ],
+          "related_mappings": [
+            "spdx_build:configSourceUri",
+            "spdx_build:configSourceDigest"
           ],
           "range": "InTotoResourceDescriptor",
           "multivalued": true,
@@ -6137,7 +6178,7 @@
   ],
   "metamodel_version": "1.12.0",
   "source_file": "slsa.yaml",
-  "source_file_date": "2026-11-01T00:24:57",
+  "source_file_date": "2026-11-01T18:08:52",
   "source_file_size": 3966,
   "@type": "SchemaDefinition",
   "@context": [

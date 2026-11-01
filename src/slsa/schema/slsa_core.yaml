@@ -254,6 +254,8 @@ classes:
       The system that runs builds and records their provenance: the transitive
       closure of software, hardware, people and organizations trusted to do so.
       Provenance names it as the builder.
+    related_mappings:
+      - spdx_core:Tool
     see_also:
       - https://slsa.dev/spec/v1.2/terminology#build-model
       - https://slsa.dev/spec/v1.2/build-provenance#builder
@@ -261,6 +263,10 @@ classes:
       - >-
         A platform with several modes of operation at different levels has a different
         builder_id for each.
+      - >-
+        Related to SPDX's Tool, hardware or software that carries out a function: the
+        platform's software and hardware are tools, and the people and organizations
+        trusted to run it are not.
     slots:
       - component_versions
     attributes:

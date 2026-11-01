@@ -239,11 +239,25 @@ classes:
 enums:
   SlsaVerificationResult:
     description: The outcome of verifying an artifact against a policy.
+    see_also:
+      - https://www.w3.org/TR/EARL10-Schema/
+    comments:
+      - >-
+        PASSED and FAILED mean the outcomes of the same names in W3C's Evaluation and
+        Report Language (EARL) 1.0, for which a policy is a test criterion; the
+        mapping is this project's own.
+      - >-
+        The meanings are full addresses with no prefix bound for them, because the
+        Python generator writes no namespace for a prefix bound only in an imported
+        module, and shortens a full address to any prefix that covers it. The
+        Python model holds no meaning for them; the other generators keep it.
     permissible_values:
       PASSED:
         description: The artifact met the policy.
+        meaning: http://www.w3.org/ns/earl#passed
       FAILED:
         description: The artifact did not meet the policy.
+        meaning: http://www.w3.org/ns/earl#failed
     in_subset:
       - slsa_build_track
       - slsa_source_track
@@ -264,6 +278,10 @@ enums:
       - >-
         The working-draft Dependency and Build Environment tracks name no results yet,
         so none are listed for them.
+      - >-
+        Only FAILED has a public term: it means EARL's failed, as
+        SlsaVerificationResult's FAILED does, since a VSA lists it only when
+        verification failed. No vocabulary names SLSA's levels or verified properties.
     permissible_values:
       SLSA_BUILD_LEVEL_UNEVALUATED:
         description: The issuer makes no claim about the Build track level.
@@ -297,6 +315,7 @@ enums:
           the artifact.
       FAILED:
         description: Policy evaluation failed.
+        meaning: http://www.w3.org/ns/earl#failed
     in_subset:
       - slsa_build_track
       - slsa_source_track
