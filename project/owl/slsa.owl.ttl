@@ -753,7 +753,7 @@ slsa:SlsaVerificationResult a owl:Class ;
 	owl:unionOf _:c14n406 ;
 	skos:definition "The outcome of verifying an artifact against a policy." ;
 	skos:inScheme slsa:slsa_verification ;
-	skos:note "PASSED and FAILED mean the outcomes of the same names in W3C's Evaluation and Report Language (EARL) 1.0, for which a policy is a test criterion; the mapping is this project's own." , "The meanings are full addresses, because the Python generator writes no namespace for a prefix that only an enum's meaning uses." ;
+	skos:note "PASSED and FAILED mean the outcomes of the same names in W3C's Evaluation and Report Language (EARL) 1.0, for which a policy is a test criterion; the mapping is this project's own." , "The meanings are full addresses with no prefix bound for them, because the Python generator writes no namespace for a prefix bound only in an imported module, and shortens a full address to any prefix that covers it. The Python model holds no meaning for them; the other generators keep it." ;
 	linkml:permissible_values <http://www.w3.org/ns/earl#failed> , <http://www.w3.org/ns/earl#passed> .
 slsa:SlsaVerificationSummary a owl:Class ;
 	rdfs:label "SlsaVerificationSummary" ;

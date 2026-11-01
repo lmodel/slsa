@@ -247,8 +247,10 @@ enums:
         Report Language (EARL) 1.0, for which a policy is a test criterion; the
         mapping is this project's own.
       - >-
-        The meanings are full addresses, because the Python generator writes no
-        namespace for a prefix that only an enum's meaning uses.
+        The meanings are full addresses with no prefix bound for them, because the
+        Python generator writes no namespace for a prefix bound only in an imported
+        module, and shortens a full address to any prefix that covers it. The
+        Python model holds no meaning for them; the other generators keep it.
     permissible_values:
       PASSED:
         description: The artifact met the policy.
