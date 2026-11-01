@@ -12,9 +12,9 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 - **The attestation's JSON keys as aliases**, such as `buildType` on `build_type` and `timeVerified` on `time_verified`; tests check each against SLSA's provenance format and VSA schema.
 - **Disjoint classes for the ontology:** a predicate is of one kind only, and no named reference is both a branch and a tag. Each module also gains `in_language` and `keywords`.
 
-### Fixed
+### Changed
 
-- **The vendored in-toto core is lmodel/in-toto v0.1.1's.** Its comment on `predicate` now says that this repository's adapt copy calls the slot `slsa_predicate`; v0.1.0's named only in-toto's own copy's name.
+- **The vendored in-toto core is lmodel/in-toto v0.2.0's**, which adds SPDX 3.0.1 and DCAT mappings, in-toto's JSON names as aliases and disjoint predicate kinds; nothing in it is renamed or narrowed.
 
 ## [0.8.0] - 2026-10-30
 

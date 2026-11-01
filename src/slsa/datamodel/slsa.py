@@ -64,6 +64,7 @@ version = "1.2.0"
 # Namespaces
 DCAT = CurieNamespace('dcat', 'http://www.w3.org/ns/dcat#')
 DOAP = CurieNamespace('doap', 'http://usefulinc.com/ns/doap#')
+IN_TOTO_IO = CurieNamespace('in_toto_io', 'https://in-toto.io/')
 IN_TOTO_LINKML = CurieNamespace('in_toto_linkml', 'https://w3id.org/lmodel/in-toto/')
 LINKML = CurieNamespace('linkml', 'https://w3id.org/linkml/')
 PROV = CurieNamespace('prov', 'http://www.w3.org/ns/prov#')

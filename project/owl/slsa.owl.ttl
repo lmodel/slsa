@@ -5,6 +5,7 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix slsa: <https://w3id.org/lmodel/slsa/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix linkml: <https://w3id.org/linkml/> .
@@ -17,10 +18,12 @@ xsd:dateTime a rdfs:Datatype ;
 	rdfs:subClassOf _:c14n339 , _:c14n39 , _:c14n491 , _:c14n510 , _:c14n58 , _:c14n77 ;
 	skos:definition "One digest under an algorithm that InTotoDigestSet does not name, such as an SCS's own revision type." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
-	skos:note "An SCS that does not use cryptographic digests defines a canonical revision type of its own that includes the repository, such as svn_revision_id." , "Each algorithm appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this." , "In the attestation's JSON the algorithm is a key of the digest set beside the named ones, and an algorithm the framework does not define documents how its value is encoded." .
+	skos:note "An SCS that does not use cryptographic digests defines a canonical revision type of its own that includes the repository, such as svn_revision_id." , "Each algorithm appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this." , "In the attestation's JSON the algorithm is a key of the digest set beside the named ones, and an algorithm the framework does not define documents how its value is encoded." , "It is related to, not the same as, an SPDX 3 Hash, whose algorithm comes from a closed list, where this one's may be a revision type rather than a digest." ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/Hash> .
 <https://w3id.org/lmodel/in-toto/InTotoAnnotation> a owl:Class ;
 	rdfs:label "InTotoAnnotation" ;
 	rdfs:subClassOf _:c14n203 , _:c14n230 , _:c14n396 , _:c14n397 , _:c14n57 ;
+	skos:closeMatch <https://spdx.org/rdf/3.0.1/terms/Core/DictionaryEntry> ;
 	skos:definition "One vendor-specific annotation on a resource descriptor: a key and its values." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
 	skos:note "Each key appears once in a list, since the attestation's JSON uses it as a key; the validator does not check this." , "The attestation's JSON allows any JSON value. A string becomes one value and an array one value per item; any other value or item is written as its JSON text, so one value cannot tell a string from a one-item array." .
@@ -28,34 +31,40 @@ xsd:dateTime a rdfs:Datatype ;
 	rdfs:label "InTotoDigestSet" ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md> ;
 	rdfs:subClassOf _:c14n102 , _:c14n109 , _:c14n131 , _:c14n133 , _:c14n134 , _:c14n159 , _:c14n160 , _:c14n167 , _:c14n180 , _:c14n192 , _:c14n20 , _:c14n209 , _:c14n212 , _:c14n214 , _:c14n224 , _:c14n234 , _:c14n236 , _:c14n245 , _:c14n250 , _:c14n259 , _:c14n28 , _:c14n284 , _:c14n303 , _:c14n305 , _:c14n307 , _:c14n309 , _:c14n311 , _:c14n312 , _:c14n317 , _:c14n326 , _:c14n328 , _:c14n331 , _:c14n335 , _:c14n345 , _:c14n355 , _:c14n36 , _:c14n360 , _:c14n369 , _:c14n373 , _:c14n390 , _:c14n394 , _:c14n40 , _:c14n404 , _:c14n409 , _:c14n411 , _:c14n415 , _:c14n431 , _:c14n438 , _:c14n445 , _:c14n45 , _:c14n454 , _:c14n46 , _:c14n470 , _:c14n472 , _:c14n475 , _:c14n478 , _:c14n487 , _:c14n488 , _:c14n49 , _:c14n493 , _:c14n508 , _:c14n517 , _:c14n521 , _:c14n524 , _:c14n532 , _:c14n533 , _:c14n540 , _:c14n549 , _:c14n550 , _:c14n6 , _:c14n63 , _:c14n70 , _:c14n84 , _:c14n85 , _:c14n91 ;
+	skos:altLabel "DigestSet" ;
 	skos:definition "A set of one or more digests over one artifact, keyed by algorithm, from which a consumer picks the algorithm it trusts." ;
 	skos:editorialNote "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
-	skos:note "A consumer accepts only the algorithms it considers secure and ignores the rest, and two sets match when any accepted algorithm matches." , "SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least 32 bytes, since a shorter digest resists collisions too weakly to identify an artifact." , "The named algorithms take lowercase hexadecimal, and additional_digests holds any other algorithm, such as an SCS's own revision type." .
+	skos:note "A consumer accepts only the algorithms it considers secure and ignores the rest, and two sets match when any accepted algorithm matches." , "A field named after an algorithm that SPDX 3 also names relates to SPDX's individual for it. BLAKE2b is left unmapped: the framework allows any length from 32 to 64 bytes, where SPDX names three fixed lengths." , "SHAKE and BLAKE2 digests can be of any length, and this schema asks for at least 32 bytes, since a shorter digest resists collisions too weakly to identify an artifact." , "The named algorithms take lowercase hexadecimal, and additional_digests holds any other algorithm, such as an SCS's own revision type." .
 <https://w3id.org/lmodel/in-toto/InTotoPredicate> a owl:Class ;
 	rdfs:label "InTotoPredicate" ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/predicate.md> ;
 	rdfs:subClassOf slsa:SlsaPredicate , _:c14n216 , _:c14n26 , _:c14n99 ;
+	skos:altLabel "Predicate" ;
 	skos:definition "The base of every predicate an in-toto statement can carry; predicate_kind names the concrete kind." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
-	skos:note "The statement's predicate_type names the predicate's type by URI, and each concrete class says which URI it renders. Nothing ties the two, since a schema that imports this module may model a predicate under its own URI." .
+	skos:note "A predicate is of one kind only, so the kinds that extend this class are mutually disjoint." , "The statement's predicate_type names the predicate's type by URI, and each concrete class says which URI it renders. Nothing ties the two, since a schema that imports this module may model a predicate under its own URI." .
 <https://w3id.org/lmodel/in-toto/InTotoResourceDescriptor> a owl:Class ;
 	rdfs:label "InTotoResourceDescriptor" ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/resource_descriptor.md> ;
 	rdfs:subClassOf _:c14n103 , _:c14n107 , _:c14n118 , _:c14n142 , _:c14n16 , _:c14n166 , _:c14n176 , _:c14n200 , _:c14n251 , _:c14n295 , _:c14n333 , _:c14n346 , _:c14n388 , _:c14n42 , _:c14n420 , _:c14n453 , _:c14n496 , _:c14n504 , _:c14n53 , _:c14n54 , _:c14n98 ;
+	skos:altLabel "ResourceDescriptor" ;
 	skos:definition "A reference to a software artifact or other resource by URI or digest, or the resource itself as content, with optional metadata." ;
 	skos:editorialNote "Each condition in any_of names its range through a nested any_of, because the JSON Schema generator leaves a condition's own range out, and a null value would then count as present." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
-	skos:note "A descriptor carries at least one of a URI, a digest or its content; a field that needs a particular one says so." .
+	skos:note "A descriptor carries at least one of a URI, a digest or its content; a field that needs a particular one says so." , "It describes an artifact, where an SPDX 3 Artifact is the artifact itself, so the two are related rather than the same." ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/Artifact> .
 <https://w3id.org/lmodel/in-toto/InTotoResourceUri> a rdfs:Datatype ;
 	owl:equivalentClass _:c14n440 .
 <https://w3id.org/lmodel/in-toto/InTotoStatement> a owl:Class ;
 	rdfs:label "InTotoStatement" ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md> ;
 	rdfs:subClassOf _:c14n15 , _:c14n170 , _:c14n187 , _:c14n2 , _:c14n213 , _:c14n243 , _:c14n253 , _:c14n296 , _:c14n321 , _:c14n359 , _:c14n384 ;
+	skos:altLabel "Statement" ;
 	skos:definition "The statement layer of an in-toto attestation: the subjects it is about, the type of its predicate and the predicate itself." ;
+	skos:exactMatch <https://in-toto.io/Statement/v1> ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
-	skos:note "A statement is the attestation, and its predicate is one kind of claim about the subjects, such as a test result or build provenance." , "The signature envelope around a statement, and the bundle that collects signed statements, are outside this model." .
+	skos:note "A statement is the attestation, and its predicate is one kind of claim about the subjects, such as a test result or build provenance." , "Its exact mapping is the type URI its statement_type holds, as each predicate class maps to its predicate_type." , "The signature envelope around a statement, and the bundle that collects signed statements, are outside this model." .
 <https://w3id.org/lmodel/in-toto/InTotoStatementSubject> a owl:Class ;
 	rdfs:label "InTotoStatementSubject" ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md> ;
@@ -75,10 +84,12 @@ xsd:dateTime a rdfs:Datatype ;
 	skos:note "A name starts with a lowercase letter, as the framework's own names do, so that SHA256 is not taken for sha256, and it may hold a colon, as go-witness's gitoid:sha256 does. The framework itself sets no rule for other names." , "An algorithm that InTotoDigestSet names, by its JSON key or by its field name, goes in that field instead." .
 <https://w3id.org/lmodel/in-toto/annotation_key> a owl:DatatypeProperty ;
 	rdfs:label "annotation_key" ;
+	skos:closeMatch <https://spdx.org/rdf/3.0.1/terms/Core/key> ;
 	skos:definition "The annotation's key." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/annotation_values> a owl:DatatypeProperty ;
 	rdfs:label "annotation_values" ;
+	skos:closeMatch <https://spdx.org/rdf/3.0.1/terms/Core/value> ;
 	skos:definition "The annotation's values." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/annotations> a owl:ObjectProperty ;
@@ -106,26 +117,33 @@ xsd:dateTime a rdfs:Datatype ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/dir_hash> a owl:DatatypeProperty ;
 	rdfs:label "dir_hash" ;
+	skos:altLabel "dirHash" ;
 	skos:definition "A digest over a directory's content by the dirhash Hash1 function, in lowercase hexadecimal rather than base64." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/download_location> a owl:DatatypeProperty ;
 	rdfs:label "download_location" ;
+	skos:altLabel "downloadLocation" ;
+	skos:closeMatch dcat:downloadURL , <https://spdx.org/rdf/3.0.1/terms/Software/downloadLocation> ;
 	skos:definition "Where the resource can be fetched, when that differs from its identifying URI." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/git_blob> a owl:DatatypeProperty ;
 	rdfs:label "git_blob" ;
+	skos:altLabel "gitBlob" ;
 	skos:definition "The git blob id of a file's content." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/git_commit> a owl:DatatypeProperty ;
 	rdfs:label "git_commit" ;
+	skos:altLabel "gitCommit" ;
 	skos:definition "The git commit id of a source revision." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/git_tag> a owl:DatatypeProperty ;
 	rdfs:label "git_tag" ;
+	skos:altLabel "gitTag" ;
 	skos:definition "The git object id of an annotated tag." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/git_tree> a owl:DatatypeProperty ;
 	rdfs:label "git_tree" ;
+	skos:altLabel "gitTree" ;
 	skos:definition "The git tree id of a source revision's content, or of any file tree." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/gost> a owl:DatatypeProperty ;
@@ -136,9 +154,12 @@ xsd:dateTime a rdfs:Datatype ;
 	rdfs:label "md5" ;
 	skos:definition "The MD5 digest of the artifact." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
-	skos:note "MD5 lacks collision resistance, so most consumers should not accept it." .
+	skos:note "MD5 lacks collision resistance, so most consumers should not accept it." ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/md5> .
 <https://w3id.org/lmodel/in-toto/media_type> a owl:DatatypeProperty ;
 	rdfs:label "media_type" ;
+	skos:altLabel "mediaType" ;
+	skos:closeMatch <https://spdx.org/rdf/3.0.1/terms/Core/contentType> ;
 	skos:definition "The IANA media type of the resource's content." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/predicate> a owl:ObjectProperty ;
@@ -154,16 +175,19 @@ xsd:dateTime a rdfs:Datatype ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/predicate_type> a owl:DatatypeProperty ;
 	rdfs:label "predicate_type" ;
+	skos:altLabel "predicateType" ;
 	skos:definition "The URI that names the predicate's type and so its schema, such as https://in-toto.io/attestation/test-result/v0.1." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/resource_name> a owl:DatatypeProperty ;
 	rdfs:label "resource_name" ;
+	skos:altLabel "name" ;
 	skos:definition "A name for the resource within the attestation that carries it." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/resource_uri> a owl:DatatypeProperty ;
 	rdfs:label "resource_uri" ;
 	rdfs:range <https://w3id.org/lmodel/in-toto/InTotoResourceUri> ;
 	rdfs:seeAlso <https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri> ;
+	skos:altLabel "uri" ;
 	skos:definition "The URI that identifies a resource, such as a package URL, a git repository address or an OCI image reference." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/ripemd160> a owl:DatatypeProperty ;
@@ -174,39 +198,48 @@ xsd:dateTime a rdfs:Datatype ;
 	rdfs:label "sha1" ;
 	skos:definition "The SHA-1 digest of the artifact." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
-	skos:note "SHA-1 lacks collision resistance, so most consumers should not rely on it." .
+	skos:note "SHA-1 lacks collision resistance, so most consumers should not rely on it." ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha1> .
 <https://w3id.org/lmodel/in-toto/sha224> a owl:DatatypeProperty ;
 	rdfs:label "sha224" ;
 	skos:definition "The SHA-224 digest of the artifact." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha224> .
 <https://w3id.org/lmodel/in-toto/sha256> a owl:DatatypeProperty ;
 	rdfs:label "sha256" ;
 	skos:definition "The SHA-256 digest of the artifact." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha256> .
 <https://w3id.org/lmodel/in-toto/sha384> a owl:DatatypeProperty ;
 	rdfs:label "sha384" ;
 	skos:definition "The SHA-384 digest of the artifact." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha384> .
 <https://w3id.org/lmodel/in-toto/sha3_224> a owl:DatatypeProperty ;
 	rdfs:label "sha3_224" ;
 	skos:definition "The SHA3-224 digest of the artifact." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha3_224> .
 <https://w3id.org/lmodel/in-toto/sha3_256> a owl:DatatypeProperty ;
 	rdfs:label "sha3_256" ;
 	skos:definition "The SHA3-256 digest of the artifact." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha3_256> .
 <https://w3id.org/lmodel/in-toto/sha3_384> a owl:DatatypeProperty ;
 	rdfs:label "sha3_384" ;
 	skos:definition "The SHA3-384 digest of the artifact." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha3_384> .
 <https://w3id.org/lmodel/in-toto/sha3_512> a owl:DatatypeProperty ;
 	rdfs:label "sha3_512" ;
 	skos:definition "The SHA3-512 digest of the artifact." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha3_512> .
 <https://w3id.org/lmodel/in-toto/sha512> a owl:DatatypeProperty ;
 	rdfs:label "sha512" ;
 	skos:definition "The SHA-512 digest of the artifact." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/HashAlgorithm/sha512> .
 <https://w3id.org/lmodel/in-toto/sha512_224> a owl:DatatypeProperty ;
 	rdfs:label "sha512_224" ;
 	skos:definition "The SHA-512/224 digest of the artifact." ;
@@ -229,6 +262,7 @@ xsd:dateTime a rdfs:Datatype ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/statement_type> a owl:DatatypeProperty ;
 	rdfs:label "statement_type" ;
+	skos:altLabel "_type" ;
 	skos:definition "The in-toto statement type, always https://in-toto.io/Statement/v1." ;
 	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
 <https://w3id.org/lmodel/in-toto/subject> a owl:ObjectProperty ;
@@ -238,7 +272,8 @@ xsd:dateTime a rdfs:Datatype ;
 <https://w3id.org/lmodel/in-toto/value> a owl:DatatypeProperty ;
 	rdfs:label "value" ;
 	skos:definition "The digest under that algorithm, in the encoding the algorithm documents." ;
-	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> .
+	skos:inScheme <https://w3id.org/lmodel/in-toto/in_toto_core> ;
+	skos:relatedMatch <https://spdx.org/rdf/3.0.1/terms/Core/hashValue> .
 <https://w3id.org/lmodel/slsa.owl.ttl> dcterms:license "Apache-2.0"@en ;
 	dcterms:source <https://slsa.dev/spec/v1.2> ;
 	dcterms:title "Supply-chain Levels for Software Artifacts (SLSA)"@en ;
