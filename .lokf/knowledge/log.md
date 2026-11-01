@@ -1,5 +1,9 @@
 # Change Log
 
+## 2026-11-01
+
+* **Changed**: the schema concept says which mappings the schema declares, as the README's Mappings section now does.
+
 ## 2026-10-31
 
 * **Changed**: the in-toto pages name lmodel/in-toto v0.1.1, whose core module the schema now vendors; only its comment on `predicate` changed.
