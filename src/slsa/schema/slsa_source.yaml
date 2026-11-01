@@ -6,8 +6,21 @@ description: >-
   The SLSA Source track: source control systems, repositories, revisions and
   named references, and the source provenance an SCS issues about them.
 license: Apache-2.0
+in_language: en
+keywords:
+  - SLSA
+  - source control system
+  - source repository
+  - source revision
+  - branch
+  - tag
+  - source provenance
 see_also:
   - https://slsa.dev/spec/v1.2/source-requirements
+comments:
+  - >-
+    The mappings to DOAP are this project's own, made by comparing each term's
+    definition with SLSA's; SLSA publishes no alignment of its own.
 
 default_prefix: slsa
 default_range: string
@@ -15,6 +28,7 @@ default_range: string
 prefixes:
   linkml: https://w3id.org/linkml/
   slsa: https://w3id.org/lmodel/slsa/
+  doap: http://usefulinc.com/ns/doap#
 
 imports:
   - linkml:types
@@ -57,12 +71,16 @@ classes:
     description: >-
       A self-contained unit that holds a set of files, their revision history and
       metadata such as branches and tags.
+    close_mappings:
+      - doap:Repository
     see_also:
       - https://slsa.dev/spec/v1.2/source-requirements#definitions
     attributes:
       repository_uri:
         identifier: true
         description: The stable locator the SCS gives the repository.
+        close_mappings:
+          - doap:location
         range: uri
       hosted_by:
         description: The source control system that hosts the repository.
@@ -116,6 +134,11 @@ classes:
       reference_type says whether it is a branch or a tag.
     see_also:
       - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    comments:
+      - >-
+        A branch moves and a tag never does, so no named reference is both, which
+        children_are_mutually_disjoint states for the ontology.
+    children_are_mutually_disjoint: true
     slots:
       - repository
       - revision
@@ -139,6 +162,8 @@ classes:
   SlsaBranch:
     is_a: SlsaNamedReference
     description: A named reference that moves to track a line of development.
+    narrow_mappings:
+      - doap:GitBranch
     in_subset:
       - slsa_source_track
 

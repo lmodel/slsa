@@ -15,8 +15,9 @@ A copy of the specification's pages sits beside the schema in
 Element names carry a prefix (`SlsaStatement`, `SlsaPackage`, and
 `InTotoStatement` in the in-toto layer) so they can be imported beside other
 vocabularies, slots are snake_case, and permissible values keep the strings
-SLSA defines, such as `SLSA_BUILD_LEVEL_3`. Every element links to the page it
-renders. The in-toto layer's elements live under `in_toto_linkml:`
+SLSA defines, such as `SLSA_BUILD_LEVEL_3`. A field whose name differs from
+its key in the attestation's JSON lists that key as an alias, such as
+`buildType` on `build_type`. Every element links to the page it renders. The in-toto layer's elements live under `in_toto_linkml:`
 (`https://w3id.org/lmodel/in-toto/`), except `media_type` and `algorithm`,
 which take the IRIs LOKF gives them, and every other element lives under
 `slsa:` (`https://w3id.org/lmodel/slsa/`).

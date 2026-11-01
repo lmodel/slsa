@@ -22,7 +22,7 @@ Two sources add elements of their own, each in a subset: the CNCF *Secure Softwa
 
 ## Mappings
 
-None. The schema declares no mappings to other vocabularies.
+The two predicate classes map exactly to their predicate type URIs, `https://slsa.dev/provenance/v1` and `https://slsa.dev/verification_summary/v1`. Other terms map to [SPDX 3.0.1](https://spdx.org/rdf/3.0.1/terms/)'s Build profile, Core and Software terms, to [DOAP](https://github.com/ewilderj/doap) and to [W3C PROV-O](https://www.w3.org/TR/prov-o/). SLSA publishes no alignment, so those mappings are this project's own, made by comparing definitions; [tests/test_schema_rules.py](tests/test_schema_rules.py) lists each term they name and the file it was checked in.
 
 ## Repository Structure
 

@@ -7,6 +7,12 @@ description: >-
   (Tamanna et al., 2024, arXiv:2409.05014), for recording how a deployment
   fares against them. Not part of the SLSA specification.
 license: Apache-2.0
+in_language: en
+keywords:
+  - SLSA
+  - adoption
+  - challenges
+  - strategies
 see_also:
   - https://arxiv.org/abs/2409.05014
 

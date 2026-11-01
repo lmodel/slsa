@@ -2,11 +2,17 @@
    "@context": {
       "xsd": "http://www.w3.org/2001/XMLSchema#",
       "dcat": "http://www.w3.org/ns/dcat#",
+      "doap": "http://usefulinc.com/ns/doap#",
       "in_toto_linkml": "https://w3id.org/lmodel/in-toto/",
       "linkml": "https://w3id.org/linkml/",
+      "prov": "http://www.w3.org/ns/prov#",
       "skos": "http://www.w3.org/2004/02/skos/core#",
       "slsa": "https://w3id.org/lmodel/slsa/",
+      "slsa_dev": "https://slsa.dev/",
       "spdx": "http://spdx.org/rdf/terms#",
+      "spdx_build": "https://spdx.org/rdf/3.0.1/terms/Build/",
+      "spdx_core": "https://spdx.org/rdf/3.0.1/terms/Core/",
+      "spdx_software": "https://spdx.org/rdf/3.0.1/terms/Software/",
       "@vocab": "https://w3id.org/lmodel/slsa/",
       "build_env_level": {
          "@context": {

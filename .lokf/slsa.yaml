@@ -8,6 +8,14 @@ description: 'A LinkML model of the SLSA specification: its tracks and levels, t
 version: 1.2.0
 source: https://slsa.dev/spec/v1.2
 license: Apache-2.0
+in_language: en
+keywords:
+- supply chain security
+- software supply chain
+- SLSA
+- build provenance
+- verification summary
+- in-toto
 see_also:
 - https://lmodel.github.io/slsa
 - https://slsa.dev/spec/v1.2/
@@ -26,6 +34,12 @@ prefixes:
   spdx: http://spdx.org/rdf/terms#
   xsd: http://www.w3.org/2001/XMLSchema#
   slsa: https://w3id.org/lmodel/slsa/
+  spdx_core: https://spdx.org/rdf/3.0.1/terms/Core/
+  spdx_software: https://spdx.org/rdf/3.0.1/terms/Software/
+  prov: http://www.w3.org/ns/prov#
+  slsa_dev: https://slsa.dev/
+  spdx_build: https://spdx.org/rdf/3.0.1/terms/Build/
+  doap: http://usefulinc.com/ns/doap#
 imports:
 - linkml:types
 - lokf
@@ -519,6 +533,9 @@ classes:
     abstract: true
     description: The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate
       names the concrete kind.
+    comments:
+    - Each predicate is of one kind only, which children_are_mutually_disjoint states for the ontology.
+    children_are_mutually_disjoint: true
     in_subset:
     - slsa_build_track
     - slsa_source_track
@@ -527,6 +544,9 @@ classes:
     abstract: true
     description: A person or organization that takes part in a software supply chain, in one of the roles
       SLSA names.
+    broad_mappings:
+    - spdx_core:Agent
+    - prov:Agent
     see_also:
     - https://slsa.dev/spec/v1.2/terminology#roles
     comments:
@@ -569,6 +589,8 @@ classes:
     attributes:
       verifier_id:
         description: The URI that identifies the verifier.
+        aliases:
+        - id
         range: in_toto_type_uri
         required: true
     in_subset:
@@ -605,6 +627,8 @@ classes:
       builder_dependencies:
         description: Dependencies of the platform's orchestrator that do not run inside the build but
           may affect provenance generation or its guarantees.
+        aliases:
+        - builderDependencies
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true
@@ -651,6 +675,8 @@ classes:
   SlsaPackage:
     description: A unit of software distributed under a package name, which is the primary security boundary
       SLSA protects. Its artifacts are the outputs of builds.
+    close_mappings:
+    - spdx_software:Package
     see_also:
     - https://slsa.dev/spec/v1.2/terminology#distribution-model
     slots:
@@ -687,6 +713,10 @@ classes:
     is_a: SlsaPredicate
     description: The predicate that says how a build platform produced a set of artifacts, so that consumers
       can verify the build met their expectations and others can rebuild it.
+    exact_mappings:
+    - slsa_dev:provenance/v1
+    close_mappings:
+    - spdx_build:Build
     see_also:
     - https://slsa.dev/spec/v1.2/build-provenance#provenance
     comments:
@@ -696,11 +726,15 @@ classes:
     attributes:
       build_definition:
         description: The inputs to the build; required at Build L1.
+        aliases:
+        - buildDefinition
         range: SlsaBuildDefinition
         required: true
         inlined: true
       run_details:
         description: What is specific to this execution of the build; required at Build L1.
+        aliases:
+        - runDetails
         range: SlsaRunDetails
         required: true
         inlined: true
@@ -715,11 +749,19 @@ classes:
       build_type:
         description: The URI of the template that says how to run the build and read its parameters and
           dependencies; required at Build L1.
+        aliases:
+        - buildType
+        close_mappings:
+        - spdx_build:buildType
         range: in_toto_type_uri
         required: true
       external_parameters:
         description: The inputs under the tenant's control; required at Build L1, complete at Build L3
           and verified by consumers.
+        aliases:
+        - externalParameters
+        broad_mappings:
+        - spdx_build:parameter
         range: SlsaBuildParameter
         multivalued: true
         required: true
@@ -731,6 +773,13 @@ classes:
       internal_parameters:
         description: The inputs the platform sets itself; kept for debugging, incident response and reproduction,
           and not verified by consumers.
+        aliases:
+        - internalParameters
+        related_mappings:
+        - spdx_build:parameter
+        comments:
+        - 'Related, not narrower: SPDX''s parameter is an input provided to the builder, and an internal
+          parameter is one the platform sets itself.'
         range: SlsaBuildParameter
         multivalued: true
         inlined: true
@@ -738,6 +787,8 @@ classes:
       resolved_dependencies:
         description: The artifacts fetched during the build, as far as the platform knows them; completeness
           is best effort through Build L3.
+        aliases:
+        - resolvedDependencies
         range: InTotoResourceDescriptor
         multivalued: true
         inlined: true
@@ -775,6 +826,8 @@ classes:
     - slsa_build_track
   SlsaBuildParameter:
     description: One named input to a build, with a string value.
+    broad_mappings:
+    - spdx_core:DictionaryEntry
     comments:
     - The specification recommends string values; a structured value is written as its JSON text.
     - Each name appears once in a list, since the attestation's JSON uses it as a key; the validator does
@@ -782,9 +835,13 @@ classes:
     attributes:
       parameter_name:
         description: The parameter's name.
+        broad_mappings:
+        - spdx_core:key
         required: true
       parameter_value:
         description: The parameter's value.
+        broad_mappings:
+        - spdx_core:value
     in_subset:
     - slsa_build_track
   SlsaRunDetails:
@@ -801,6 +858,8 @@ classes:
         inlined: true
       build_metadata:
         description: Metadata about this execution of the build.
+        aliases:
+        - metadata
         range: SlsaBuildMetadata
         inlined: true
       byproducts:
@@ -820,11 +879,23 @@ classes:
       invocation_id:
         description: An identifier for this build invocation, in a format the builder defines; useful
           for finding its logs.
+        aliases:
+        - invocationId
+        close_mappings:
+        - spdx_build:buildId
       started_on:
         description: When the build started.
+        aliases:
+        - startedOn
+        close_mappings:
+        - spdx_build:buildStartTime
         range: in_toto_timestamp
       finished_on:
         description: When the build finished.
+        aliases:
+        - finishedOn
+        close_mappings:
+        - spdx_build:buildEndTime
         range: in_toto_timestamp
     in_subset:
     - slsa_build_track
@@ -833,6 +904,8 @@ classes:
     description: The predicate in which a verifier records that it evaluated artifacts against a policy
       and the SLSA levels they met, so consumers can rely on the verifier instead of reading every underlying
       attestation.
+    exact_mappings:
+    - slsa_dev:verification_summary/v1
     see_also:
     - https://slsa.dev/spec/v1.2/verification_summary
     - https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation
@@ -856,6 +929,8 @@ classes:
         inlined: true
       time_verified:
         description: When the verification happened.
+        aliases:
+        - timeVerified
         range: in_toto_timestamp
       policy:
         description: The policy the subject was verified against, by URI and preferably by digest too.
@@ -864,17 +939,23 @@ classes:
         inlined: true
       input_attestations:
         description: Every attestation the verifier consulted, each with a digest; complete when present.
+        aliases:
+        - inputAttestations
         range: SlsaVerificationSummaryInputAttestation
         multivalued: true
         inlined: true
         inlined_as_list: true
       verification_result:
         description: Whether the subject passed the policy.
+        aliases:
+        - verificationResult
         range: SlsaVerificationResult
         required: true
       verified_levels:
         description: The highest level verified in each track, any verified property, and any result of
           the issuer's own; a level implies the levels below it.
+        aliases:
+        - verifiedLevels
         range: slsa_result_value
         pattern: ^(SLSA_BUILD_LEVEL_(UNEVALUATED|[0-3])|SLSA_SOURCE_LEVEL_(UNEVALUATED|[0-4])|SLSA_SOURCE_TWO_PARTY_REVIEWED|SLSA_BUILD_REPRODUCED|([!-RT-rt-~]|[Ss]$|[Ss][!-KM-km-~]|[Ss][Ll]$|[Ss][Ll][!-RT-rt-~]|[Ss][Ll][Ss]$|[Ss][Ll][Ss][!-@B-`b-~]|[Ss][Ll][Ss][Aa]$|[Ss][Ll][Ss][Aa][!-^`-~])[!-~]*)$
         multivalued: true
@@ -896,6 +977,8 @@ classes:
       dependency_levels:
         description: How many transitive dependencies were verified at each level; absent when the verifier
           makes no claim about dependencies.
+        aliases:
+        - dependencyLevels
         range: SlsaDependencyLevelCount
         multivalued: true
         inlined: true
@@ -905,6 +988,8 @@ classes:
           list cannot, so an empty list reads as no claim.
       slsa_version:
         description: The SLSA specification version the verifier applied, as MAJOR.MINOR.
+        aliases:
+        - slsaVersion
         pattern: ^[0-9]+\.[0-9]+$
     in_subset:
     - slsa_build_track
@@ -974,6 +1059,8 @@ classes:
   SlsaSourceRepository:
     description: A self-contained unit that holds a set of files, their revision history and metadata
       such as branches and tags.
+    close_mappings:
+    - doap:Repository
     see_also:
     - https://slsa.dev/spec/v1.2/source-requirements#definitions
     attributes:
@@ -1022,6 +1109,10 @@ classes:
       says whether it is a branch or a tag.
     see_also:
     - https://slsa.dev/spec/v1.2/source-requirements#definitions
+    comments:
+    - A branch moves and a tag never does, so no named reference is both, which children_are_mutually_disjoint
+      states for the ontology.
+    children_are_mutually_disjoint: true
     slots:
     - repository
     - slsa_revision
@@ -1040,6 +1131,8 @@ classes:
   SlsaBranch:
     is_a: SlsaNamedReference
     description: A named reference that moves to track a line of development.
+    narrow_mappings:
+    - doap:GitBranch
     in_subset:
     - slsa_source_track
   SlsaTag:
@@ -1301,6 +1394,8 @@ slots:
     - predicate
   component_versions:
     description: The version of each named component of a platform.
+    aliases:
+    - version
     slot_uri: slsa:component_versions
     range: SlsaComponentVersion
     multivalued: true

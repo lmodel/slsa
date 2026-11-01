@@ -88,6 +88,13 @@ linkml_meta = LinkMLMeta({'comments': ['The version is the SLSA specification ve
                  './slsa_dependency',
                  './slsa_build_environment',
                  './slsa_adoption'],
+     'in_language': 'en',
+     'keywords': ['supply chain security',
+                  'software supply chain',
+                  'SLSA',
+                  'build provenance',
+                  'verification summary',
+                  'in-toto'],
      'license': 'Apache-2.0',
      'name': 'slsa',
      'prefixes': {'linkml': {'prefix_prefix': 'linkml',
@@ -349,6 +356,7 @@ class SlsaParty(ConfiguredBaseModel):
     A person or organization that takes part in a software supply chain, in one of the roles SLSA names.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
+         'broad_mappings': ['spdx_core:Agent', 'prov:Agent'],
          'comments': ['One party may act in several roles, and several parties may '
                       'share one role.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
@@ -393,10 +401,11 @@ class SlsaVerifier(SlsaParty):
          'in_subset': ['slsa_build_track', 'slsa_source_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/verification_summary#verifier']})
 
-    component_versions: Optional[list[SlsaComponentVersion]] = Field(default=None, description="""The version of each named component of a platform.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerifier', 'SlsaBuildPlatform'],
+    component_versions: Optional[list[SlsaComponentVersion]] = Field(default=None, description="""The version of each named component of a platform.""", json_schema_extra = { "linkml_meta": {'aliases': ['version'],
+         'domain_of': ['SlsaVerifier', 'SlsaBuildPlatform'],
          'in_subset': ['slsa_build_track'],
          'slot_uri': 'slsa:component_versions'} })
-    verifier_id: URI = Field(default=..., description="""The URI that identifies the verifier.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerifier']} })
+    verifier_id: URI = Field(default=..., description="""The URI that identifies the verifier.""", json_schema_extra = { "linkml_meta": {'aliases': ['id'], 'domain_of': ['SlsaVerifier']} })
     party_type: Literal["SlsaVerifier"] = Field(default="SlsaVerifier", description="""The role the party acts in, one of this class's descendants.""", json_schema_extra = { "linkml_meta": {'designates_type': True, 'domain_of': ['SlsaParty']} })
     party_name: Optional[str] = Field(default=None, description="""The party's name.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaParty']} })
 
@@ -423,14 +432,15 @@ class SlsaBuildPlatform(ConfiguredBaseModel):
          'see_also': ['https://slsa.dev/spec/v1.2/terminology#build-model',
                       'https://slsa.dev/spec/v1.2/build-provenance#builder']})
 
-    component_versions: Optional[list[SlsaComponentVersion]] = Field(default=None, description="""The version of each named component of a platform.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerifier', 'SlsaBuildPlatform'],
+    component_versions: Optional[list[SlsaComponentVersion]] = Field(default=None, description="""The version of each named component of a platform.""", json_schema_extra = { "linkml_meta": {'aliases': ['version'],
+         'domain_of': ['SlsaVerifier', 'SlsaBuildPlatform'],
          'in_subset': ['slsa_build_track'],
          'slot_uri': 'slsa:component_versions'} })
-    builder_id: URI = Field(default=..., description="""The URI that identifies the platform and determines its SLSA Build level.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildPlatform']} })
+    builder_id: URI = Field(default=..., description="""The URI that identifies the platform and determines its SLSA Build level.""", json_schema_extra = { "linkml_meta": {'aliases': ['id'], 'domain_of': ['SlsaBuildPlatform']} })
     build_level: Optional[SlsaBuildLevel] = Field(default=None, description="""The highest SLSA Build level the platform's provenance can meet.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildPlatform']} })
     hosted: Optional[bool] = Field(default=None, description="""Whether the platform is a hosted service on shared or dedicated infrastructure rather than an individual's workstation.""", json_schema_extra = { "linkml_meta": {'comments': ['Build L2 and above require a hosted platform.'],
          'domain_of': ['SlsaBuildPlatform']} })
-    builder_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildPlatform']} })
+    builder_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.""", json_schema_extra = { "linkml_meta": {'aliases': ['builderDependencies'], 'domain_of': ['SlsaBuildPlatform']} })
 
 
 class SlsaControlPlane(ConfiguredBaseModel):
@@ -482,7 +492,8 @@ class SlsaPackage(ConfiguredBaseModel):
     """
     A unit of software distributed under a package name, which is the primary security boundary SLSA protects. Its artifacts are the outputs of builds.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'close_mappings': ['spdx_software:Package'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track', 'slsa_dependency_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/terminology#distribution-model']})
 
@@ -508,11 +519,20 @@ class SlsaBuildDefinition(ConfiguredBaseModel):
          'in_subset': ['slsa_build_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#builddefinition']})
 
-    build_type: URI = Field(default=..., description="""The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
-    external_parameters: list[SlsaBuildParameter] = Field(default=..., description="""The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.""", min_length=1, json_schema_extra = { "linkml_meta": {'comments': ['Verifiers reject parameters they do not recognize here.'],
+    build_type: URI = Field(default=..., description="""The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.""", json_schema_extra = { "linkml_meta": {'aliases': ['buildType'],
+         'close_mappings': ['spdx_build:buildType'],
          'domain_of': ['SlsaBuildDefinition']} })
-    internal_parameters: Optional[list[SlsaBuildParameter]] = Field(default=None, description="""The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
-    resolved_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildDefinition']} })
+    external_parameters: list[SlsaBuildParameter] = Field(default=..., description="""The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.""", min_length=1, json_schema_extra = { "linkml_meta": {'aliases': ['externalParameters'],
+         'broad_mappings': ['spdx_build:parameter'],
+         'comments': ['Verifiers reject parameters they do not recognize here.'],
+         'domain_of': ['SlsaBuildDefinition']} })
+    internal_parameters: Optional[list[SlsaBuildParameter]] = Field(default=None, description="""The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.""", json_schema_extra = { "linkml_meta": {'aliases': ['internalParameters'],
+         'comments': ["Related, not narrower: SPDX's parameter is an input provided to "
+                      'the builder, and an internal parameter is one the platform sets '
+                      'itself.'],
+         'domain_of': ['SlsaBuildDefinition'],
+         'related_mappings': ['spdx_build:parameter']} })
+    resolved_dependencies: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.""", json_schema_extra = { "linkml_meta": {'aliases': ['resolvedDependencies'], 'domain_of': ['SlsaBuildDefinition']} })
     hermetic: Optional[bool] = Field(default=None, description="""Whether the build could reach only the dependencies it declared, with no other network or filesystem access.""", json_schema_extra = { "linkml_meta": {'comments': ["SLSA v1.2 does not require hermetic builds; Build L3's "
                       'isolation is a different property, and hermeticity is a '
                       'candidate for a future Build L4.',
@@ -537,15 +557,16 @@ class SlsaBuildParameter(ConfiguredBaseModel):
     """
     One named input to a build, with a string value.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['The specification recommends string values; a structured value '
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'broad_mappings': ['spdx_core:DictionaryEntry'],
+         'comments': ['The specification recommends string values; a structured value '
                       'is written as its JSON text.',
                       "Each name appears once in a list, since the attestation's JSON "
                       'uses it as a key; the validator does not check this.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_build',
          'in_subset': ['slsa_build_track']})
 
-    parameter_name: str = Field(default=..., description="""The parameter's name.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildParameter']} })
-    parameter_value: Optional[str] = Field(default=None, description="""The parameter's value.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildParameter']} })
+    parameter_name: str = Field(default=..., description="""The parameter's name.""", json_schema_extra = { "linkml_meta": {'broad_mappings': ['spdx_core:key'], 'domain_of': ['SlsaBuildParameter']} })
+    parameter_value: Optional[str] = Field(default=None, description="""The parameter's value.""", json_schema_extra = { "linkml_meta": {'broad_mappings': ['spdx_core:value'], 'domain_of': ['SlsaBuildParameter']} })
 
 
 class SlsaRunDetails(ConfiguredBaseModel):
@@ -557,7 +578,7 @@ class SlsaRunDetails(ConfiguredBaseModel):
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#rundetails']})
 
     builder: SlsaBuildPlatform = Field(default=..., description="""The build platform that ran the build and is trusted to have written this provenance; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaRunDetails']} })
-    build_metadata: Optional[SlsaBuildMetadata] = Field(default=None, description="""Metadata about this execution of the build.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaRunDetails']} })
+    build_metadata: Optional[SlsaBuildMetadata] = Field(default=None, description="""Metadata about this execution of the build.""", json_schema_extra = { "linkml_meta": {'aliases': ['metadata'], 'domain_of': ['SlsaRunDetails']} })
     byproducts: Optional[list[InTotoResourceDescriptor]] = Field(default=None, description="""Artifacts the build produced beside its outputs that may help debugging or incident response, such as logs.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaRunDetails']} })
 
 
@@ -569,9 +590,15 @@ class SlsaBuildMetadata(ConfiguredBaseModel):
          'in_subset': ['slsa_build_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#buildmetadata']})
 
-    invocation_id: Optional[str] = Field(default=None, description="""An identifier for this build invocation, in a format the builder defines; useful for finding its logs.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildMetadata']} })
-    started_on: Optional[str] = Field(default=None, description="""When the build started.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildMetadata']} })
-    finished_on: Optional[str] = Field(default=None, description="""When the build finished.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildMetadata']} })
+    invocation_id: Optional[str] = Field(default=None, description="""An identifier for this build invocation, in a format the builder defines; useful for finding its logs.""", json_schema_extra = { "linkml_meta": {'aliases': ['invocationId'],
+         'close_mappings': ['spdx_build:buildId'],
+         'domain_of': ['SlsaBuildMetadata']} })
+    started_on: Optional[str] = Field(default=None, description="""When the build started.""", json_schema_extra = { "linkml_meta": {'aliases': ['startedOn'],
+         'close_mappings': ['spdx_build:buildStartTime'],
+         'domain_of': ['SlsaBuildMetadata']} })
+    finished_on: Optional[str] = Field(default=None, description="""When the build finished.""", json_schema_extra = { "linkml_meta": {'aliases': ['finishedOn'],
+         'close_mappings': ['spdx_build:buildEndTime'],
+         'domain_of': ['SlsaBuildMetadata']} })
 
 
 class SlsaDependencyLevelCount(ConfiguredBaseModel):
@@ -617,11 +644,12 @@ class SlsaSourceRepository(ConfiguredBaseModel):
     """
     A self-contained unit that holds a set of files, their revision history and metadata such as branches and tags.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'close_mappings': ['doap:Repository'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
          'in_subset': ['slsa_source_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/source-requirements#definitions']})
 
-    repository_uri: str = Field(default=..., description="""The stable locator the SCS gives the repository.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaSourceRepository']} })
+    repository_uri: str = Field(default=..., description="""The stable locator the SCS gives the repository.""", json_schema_extra = { "linkml_meta": {'close_mappings': ['doap:location'], 'domain_of': ['SlsaSourceRepository']} })
     hosted_by: Optional[str] = Field(default=None, description="""The source control system that hosts the repository.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaSourceRepository']} })
 
 
@@ -651,7 +679,11 @@ class SlsaNamedReference(ConfiguredBaseModel):
     """
     A user-friendly name for a revision in a repository, such as main or v1.2.3; reference_type says whether it is a branch or a tag.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'children_are_mutually_disjoint': True,
+         'comments': ['A branch moves and a tag never does, so no named reference is '
+                      'both, which children_are_mutually_disjoint states for the '
+                      'ontology.'],
+         'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
          'in_subset': ['slsa_source_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/source-requirements#definitions']})
 
@@ -671,7 +703,8 @@ class SlsaBranch(SlsaNamedReference):
     A named reference that moves to track a line of development.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/lmodel/slsa/slsa_source',
-         'in_subset': ['slsa_source_track']})
+         'in_subset': ['slsa_source_track'],
+         'narrow_mappings': ['doap:GitBranch']})
 
     repository: Optional[str] = Field(default=None, description="""The source repository this belongs to.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaSourceRevision', 'SlsaNamedReference'],
          'in_subset': ['slsa_source_track'],
@@ -1558,6 +1591,9 @@ class SlsaPredicate(InTotoPredicate):
     The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
+         'children_are_mutually_disjoint': True,
+         'comments': ['Each predicate is of one kind only, which '
+                      'children_are_mutually_disjoint states for the ontology.'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_core',
          'in_subset': ['slsa_build_track',
                        'slsa_source_track',
@@ -1572,16 +1608,18 @@ class SlsaBuildProvenance(SlsaPredicate):
     """
     The predicate that says how a build platform produced a set of artifacts, so that consumers can verify the build met their expectations and others can rebuild it.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'comments': ['The statement that carries it has predicate_type '
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'close_mappings': ['spdx_build:Build'],
+         'comments': ['The statement that carries it has predicate_type '
                       'https://slsa.dev/provenance/v1.',
                       'Complicated provenance generation was the challenge with the '
                       'most issues in the study (Tamanna et al., 2024, CI.1).'],
+         'exact_mappings': ['slsa_dev:provenance/v1'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_build',
          'in_subset': ['slsa_build_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/build-provenance#provenance']})
 
-    build_definition: SlsaBuildDefinition = Field(default=..., description="""The inputs to the build; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildProvenance']} })
-    run_details: SlsaRunDetails = Field(default=..., description="""What is specific to this execution of the build; required at Build L1.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaBuildProvenance']} })
+    build_definition: SlsaBuildDefinition = Field(default=..., description="""The inputs to the build; required at Build L1.""", json_schema_extra = { "linkml_meta": {'aliases': ['buildDefinition'], 'domain_of': ['SlsaBuildProvenance']} })
+    run_details: SlsaRunDetails = Field(default=..., description="""What is specific to this execution of the build; required at Build L1.""", json_schema_extra = { "linkml_meta": {'aliases': ['runDetails'], 'domain_of': ['SlsaBuildProvenance']} })
     predicate_kind: Literal["SlsaBuildProvenance"] = Field(default="SlsaBuildProvenance", description="""The kind of predicate, one of this class's descendants.""", json_schema_extra = { "linkml_meta": {'designates_type': True,
          'domain_of': ['InTotoPredicate'],
          'slot_uri': 'in_toto_linkml:predicate_kind'} })
@@ -1598,6 +1636,7 @@ class SlsaVerificationSummary(SlsaPredicate):
                       'Verification tooling and the places attestations are stored '
                       'were an adoption difficulty practitioners reported (Tamanna et '
                       'al., 2024, LF.1).'],
+         'exact_mappings': ['slsa_dev:verification_summary/v1'],
          'from_schema': 'https://w3id.org/lmodel/slsa/slsa_verification',
          'in_subset': ['slsa_build_track', 'slsa_source_track'],
          'see_also': ['https://slsa.dev/spec/v1.2/verification_summary',
@@ -1612,11 +1651,12 @@ class SlsaVerificationSummary(SlsaPredicate):
          'see_also': ['https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri'],
          'slot_uri': 'in_toto_linkml:resource_uri'} })
     verifier: SlsaVerifier = Field(default=..., description="""The verifier that made this determination.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    time_verified: Optional[str] = Field(default=None, description="""When the verification happened.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
+    time_verified: Optional[str] = Field(default=None, description="""When the verification happened.""", json_schema_extra = { "linkml_meta": {'aliases': ['timeVerified'], 'domain_of': ['SlsaVerificationSummary']} })
     policy: SlsaVerificationSummaryPolicy = Field(default=..., description="""The policy the subject was verified against, by URI and preferably by digest too.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    input_attestations: Optional[list[SlsaVerificationSummaryInputAttestation]] = Field(default=None, description="""Every attestation the verifier consulted, each with a digest; complete when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    verification_result: SlsaVerificationResult = Field(default=..., description="""Whether the subject passed the policy.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
-    verified_levels: list[str] = Field(default=..., description="""The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.""", min_length=1, json_schema_extra = { "linkml_meta": {'comments': ['A VSA lists at most one level per track, and only FAILED when '
+    input_attestations: Optional[list[SlsaVerificationSummaryInputAttestation]] = Field(default=None, description="""Every attestation the verifier consulted, each with a digest; complete when present.""", json_schema_extra = { "linkml_meta": {'aliases': ['inputAttestations'], 'domain_of': ['SlsaVerificationSummary']} })
+    verification_result: SlsaVerificationResult = Field(default=..., description="""Whether the subject passed the policy.""", json_schema_extra = { "linkml_meta": {'aliases': ['verificationResult'], 'domain_of': ['SlsaVerificationSummary']} })
+    verified_levels: list[str] = Field(default=..., description="""The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.""", min_length=1, json_schema_extra = { "linkml_meta": {'aliases': ['verifiedLevels'],
+         'comments': ['A VSA lists at most one level per track, and only FAILED when '
                       'verification failed; the validator checks neither.'],
          'domain_of': ['SlsaVerificationSummary']} })
     organization_properties: Optional[list[str]] = Field(default=None, description="""Properties the organization defines for the revision, each prefixed ORG_SOURCE_; ORG_SOURCE_INTERNAL_ marks one not meant for external consumers.""", json_schema_extra = { "linkml_meta": {'deprecated': 'Write these properties in verified_levels, where the '
@@ -1625,11 +1665,12 @@ class SlsaVerificationSummary(SlsaPredicate):
          'deprecated_element_has_possible_replacement': 'slsa:verified_levels',
          'domain_of': ['SlsaVerificationSummary'],
          'in_subset': ['slsa_source_track']} })
-    dependency_levels: Optional[list[SlsaDependencyLevelCount]] = Field(default=None, description="""How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.""", json_schema_extra = { "linkml_meta": {'comments': ["The attestation's JSON tells an empty map (no dependencies) "
+    dependency_levels: Optional[list[SlsaDependencyLevelCount]] = Field(default=None, description="""How many transitive dependencies were verified at each level; absent when the verifier makes no claim about dependencies.""", json_schema_extra = { "linkml_meta": {'aliases': ['dependencyLevels'],
+         'comments': ["The attestation's JSON tells an empty map (no dependencies) "
                       'from an absent one (no claim); this list cannot, so an empty '
                       'list reads as no claim.'],
          'domain_of': ['SlsaVerificationSummary']} })
-    slsa_version: Optional[str] = Field(default=None, description="""The SLSA specification version the verifier applied, as MAJOR.MINOR.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SlsaVerificationSummary']} })
+    slsa_version: Optional[str] = Field(default=None, description="""The SLSA specification version the verifier applied, as MAJOR.MINOR.""", json_schema_extra = { "linkml_meta": {'aliases': ['slsaVersion'], 'domain_of': ['SlsaVerificationSummary']} })
     predicate_kind: Literal["SlsaVerificationSummary"] = Field(default="SlsaVerificationSummary", description="""The kind of predicate, one of this class's descendants.""", json_schema_extra = { "linkml_meta": {'designates_type': True,
          'domain_of': ['InTotoPredicate'],
          'slot_uri': 'in_toto_linkml:predicate_kind'} })

@@ -9,6 +9,14 @@ description: >-
 version: 1.2.0
 source: https://slsa.dev/spec/v1.2
 license: Apache-2.0
+in_language: en
+keywords:
+  - supply chain security
+  - software supply chain
+  - SLSA
+  - build provenance
+  - verification summary
+  - in-toto
 see_also:
   - https://lmodel.github.io/slsa
   - https://slsa.dev/spec/v1.2/

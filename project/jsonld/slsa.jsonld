@@ -7,10 +7,19 @@
     "slsa_core imports only the LinkML types, each track module imports the core, and this file adds only the document root, so an importer can take one module."
   ],
   "source": "https://slsa.dev/spec/v1.2",
+  "in_language": "en",
   "see_also": [
     "https://lmodel.github.io/slsa",
     "https://slsa.dev/spec/v1.2/",
     "https://github.com/slsa-framework/slsa"
+  ],
+  "keywords": [
+    "supply chain security",
+    "software supply chain",
+    "SLSA",
+    "build provenance",
+    "verification summary",
+    "in-toto"
   ],
   "id": "https://w3id.org/lmodel/slsa",
   "version": "1.2.0",
@@ -886,6 +895,9 @@
         "slsa_build_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "aliases": [
+        "version"
+      ],
       "mappings": [
         "https://w3id.org/lmodel/slsa/component_versions"
       ],
@@ -1361,6 +1373,9 @@
       "name": "slsaVerifier__verifier_id",
       "description": "The URI that identifies the verifier.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "aliases": [
+        "id"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/verifier_id",
       "alias": "verifier_id",
       "owner": "SlsaVerifier",
@@ -1375,6 +1390,9 @@
       "name": "slsaBuildPlatform__builder_id",
       "description": "The URI that identifies the platform and determines its SLSA Build level.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "aliases": [
+        "id"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/builder_id",
       "identifier": true,
       "alias": "builder_id",
@@ -1419,6 +1437,9 @@
       "name": "slsaBuildPlatform__builder_dependencies",
       "description": "Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
+      "aliases": [
+        "builderDependencies"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/builder_dependencies",
       "alias": "builder_dependencies",
       "owner": "SlsaBuildPlatform",
@@ -1552,6 +1573,9 @@
       "name": "slsaBuildProvenance__build_definition",
       "description": "The inputs to the build; required at Build L1.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "buildDefinition"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/build_definition",
       "alias": "build_definition",
       "owner": "SlsaBuildProvenance",
@@ -1568,6 +1592,9 @@
       "name": "slsaBuildProvenance__run_details",
       "description": "What is specific to this execution of the build; required at Build L1.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "runDetails"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/run_details",
       "alias": "run_details",
       "owner": "SlsaBuildProvenance",
@@ -1584,6 +1611,12 @@
       "name": "slsaBuildDefinition__build_type",
       "description": "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "buildType"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/buildType"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/build_type",
       "alias": "build_type",
       "owner": "SlsaBuildDefinition",
@@ -1601,6 +1634,12 @@
         "Verifiers reject parameters they do not recognize here."
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "externalParameters"
+      ],
+      "broad_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/parameter"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/external_parameters",
       "alias": "external_parameters",
       "owner": "SlsaBuildDefinition",
@@ -1618,7 +1657,16 @@
     {
       "name": "slsaBuildDefinition__internal_parameters",
       "description": "The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.",
+      "comments": [
+        "Related, not narrower: SPDX's parameter is an input provided to the builder, and an internal parameter is one the platform sets itself."
+      ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "internalParameters"
+      ],
+      "related_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/parameter"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/internal_parameters",
       "alias": "internal_parameters",
       "owner": "SlsaBuildDefinition",
@@ -1635,6 +1683,9 @@
       "name": "slsaBuildDefinition__resolved_dependencies",
       "description": "The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "resolvedDependencies"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/resolved_dependencies",
       "alias": "resolved_dependencies",
       "owner": "SlsaBuildDefinition",
@@ -1709,6 +1760,9 @@
       "name": "slsaBuildParameter__parameter_name",
       "description": "The parameter's name.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "broad_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/key"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/parameter_name",
       "alias": "parameter_name",
       "owner": "SlsaBuildParameter",
@@ -1723,6 +1777,9 @@
       "name": "slsaBuildParameter__parameter_value",
       "description": "The parameter's value.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "broad_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Core/value"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/parameter_value",
       "alias": "parameter_value",
       "owner": "SlsaBuildParameter",
@@ -1751,6 +1808,9 @@
       "name": "slsaRunDetails__build_metadata",
       "description": "Metadata about this execution of the build.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "metadata"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/build_metadata",
       "alias": "build_metadata",
       "owner": "SlsaRunDetails",
@@ -1782,6 +1842,12 @@
       "name": "slsaBuildMetadata__invocation_id",
       "description": "An identifier for this build invocation, in a format the builder defines; useful for finding its logs.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "invocationId"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/buildId"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/invocation_id",
       "alias": "invocation_id",
       "owner": "SlsaBuildMetadata",
@@ -1795,6 +1861,12 @@
       "name": "slsaBuildMetadata__started_on",
       "description": "When the build started.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "startedOn"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/buildStartTime"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/started_on",
       "alias": "started_on",
       "owner": "SlsaBuildMetadata",
@@ -1808,6 +1880,12 @@
       "name": "slsaBuildMetadata__finished_on",
       "description": "When the build finished.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "aliases": [
+        "finishedOn"
+      ],
+      "close_mappings": [
+        "https://spdx.org/rdf/3.0.1/terms/Build/buildEndTime"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/finished_on",
       "alias": "finished_on",
       "owner": "SlsaBuildMetadata",
@@ -1837,6 +1915,9 @@
       "name": "slsaVerificationSummary__time_verified",
       "description": "When the verification happened.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "timeVerified"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/time_verified",
       "alias": "time_verified",
       "owner": "SlsaVerificationSummary",
@@ -1866,6 +1947,9 @@
       "name": "slsaVerificationSummary__input_attestations",
       "description": "Every attestation the verifier consulted, each with a digest; complete when present.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "inputAttestations"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/input_attestations",
       "alias": "input_attestations",
       "owner": "SlsaVerificationSummary",
@@ -1882,6 +1966,9 @@
       "name": "slsaVerificationSummary__verification_result",
       "description": "Whether the subject passed the policy.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "verificationResult"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/verification_result",
       "alias": "verification_result",
       "owner": "SlsaVerificationSummary",
@@ -1899,6 +1986,9 @@
         "A VSA lists at most one level per track, and only FAILED when verification failed; the validator checks neither."
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "verifiedLevels"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/verified_levels",
       "alias": "verified_levels",
       "owner": "SlsaVerificationSummary",
@@ -1939,6 +2029,9 @@
         "The attestation's JSON tells an empty map (no dependencies) from an absent one (no claim); this list cannot, so an empty list reads as no claim."
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "dependencyLevels"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/dependency_levels",
       "alias": "dependency_levels",
       "owner": "SlsaVerificationSummary",
@@ -1955,6 +2048,9 @@
       "name": "slsaVerificationSummary__slsa_version",
       "description": "The SLSA specification version the verifier applied, as MAJOR.MINOR.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_verification",
+      "aliases": [
+        "slsaVersion"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/slsa_version",
       "alias": "slsa_version",
       "owner": "SlsaVerificationSummary",
@@ -2014,6 +2110,9 @@
       "name": "slsaSourceRepository__repository_uri",
       "description": "The stable locator the SCS gives the repository.",
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_source",
+      "close_mappings": [
+        "http://usefulinc.com/ns/doap#location"
+      ],
       "slot_uri": "https://w3id.org/lmodel/slsa/repository_uri",
       "identifier": true,
       "alias": "repository_uri",
@@ -3453,6 +3552,9 @@
       "name": "SlsaPredicate",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaPredicate",
       "description": "The base of every predicate this schema models; the predicate_kind it takes from InTotoPredicate names the concrete kind.",
+      "comments": [
+        "Each predicate is of one kind only, which children_are_mutually_disjoint states for the ontology."
+      ],
       "in_subset": [
         "slsa_build_track",
         "slsa_source_track",
@@ -3466,6 +3568,7 @@
       ],
       "slot_usage": {},
       "class_uri": "https://w3id.org/lmodel/slsa/SlsaPredicate",
+      "children_are_mutually_disjoint": true,
       "@type": "ClassDefinition"
     },
     {
@@ -3482,6 +3585,10 @@
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_core",
       "see_also": [
         "https://slsa.dev/spec/v1.2/terminology#roles"
+      ],
+      "broad_mappings": [
+        "spdx_core:Agent",
+        "prov:Agent"
       ],
       "abstract": true,
       "slots": [
@@ -3569,6 +3676,9 @@
         {
           "name": "verifier_id",
           "description": "The URI that identifies the verifier.",
+          "aliases": [
+            "id"
+          ],
           "range": "in_toto_type_uri",
           "required": true,
           "@type": "SlotDefinition"
@@ -3622,6 +3732,9 @@
         {
           "name": "builder_id",
           "description": "The URI that identifies the platform and determines its SLSA Build level.",
+          "aliases": [
+            "id"
+          ],
           "identifier": true,
           "range": "in_toto_type_uri",
           "@type": "SlotDefinition"
@@ -3644,6 +3757,9 @@
         {
           "name": "builder_dependencies",
           "description": "Dependencies of the platform's orchestrator that do not run inside the build but may affect provenance generation or its guarantees.",
+          "aliases": [
+            "builderDependencies"
+          ],
           "range": "InTotoResourceDescriptor",
           "multivalued": true,
           "inlined": true,
@@ -3745,6 +3861,9 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/terminology#distribution-model"
       ],
+      "close_mappings": [
+        "spdx_software:Package"
+      ],
       "slots": [
         "ecosystem",
         "slsaPackage__package_name",
@@ -3813,6 +3932,12 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/build-provenance#provenance"
       ],
+      "exact_mappings": [
+        "slsa_dev:provenance/v1"
+      ],
+      "close_mappings": [
+        "spdx_build:Build"
+      ],
       "is_a": "SlsaPredicate",
       "slots": [
         "inTotoPredicate__predicate_kind",
@@ -3824,6 +3949,9 @@
         {
           "name": "build_definition",
           "description": "The inputs to the build; required at Build L1.",
+          "aliases": [
+            "buildDefinition"
+          ],
           "range": "SlsaBuildDefinition",
           "required": true,
           "inlined": true,
@@ -3832,6 +3960,9 @@
         {
           "name": "run_details",
           "description": "What is specific to this execution of the build; required at Build L1.",
+          "aliases": [
+            "runDetails"
+          ],
           "range": "SlsaRunDetails",
           "required": true,
           "inlined": true,
@@ -3866,6 +3997,12 @@
         {
           "name": "build_type",
           "description": "The URI of the template that says how to run the build and read its parameters and dependencies; required at Build L1.",
+          "aliases": [
+            "buildType"
+          ],
+          "close_mappings": [
+            "spdx_build:buildType"
+          ],
           "range": "in_toto_type_uri",
           "required": true,
           "@type": "SlotDefinition"
@@ -3875,6 +4012,12 @@
           "description": "The inputs under the tenant's control; required at Build L1, complete at Build L3 and verified by consumers.",
           "comments": [
             "Verifiers reject parameters they do not recognize here."
+          ],
+          "aliases": [
+            "externalParameters"
+          ],
+          "broad_mappings": [
+            "spdx_build:parameter"
           ],
           "range": "SlsaBuildParameter",
           "required": true,
@@ -3887,6 +4030,15 @@
         {
           "name": "internal_parameters",
           "description": "The inputs the platform sets itself; kept for debugging, incident response and reproduction, and not verified by consumers.",
+          "comments": [
+            "Related, not narrower: SPDX's parameter is an input provided to the builder, and an internal parameter is one the platform sets itself."
+          ],
+          "aliases": [
+            "internalParameters"
+          ],
+          "related_mappings": [
+            "spdx_build:parameter"
+          ],
           "range": "SlsaBuildParameter",
           "multivalued": true,
           "inlined": true,
@@ -3896,6 +4048,9 @@
         {
           "name": "resolved_dependencies",
           "description": "The artifacts fetched during the build, as far as the platform knows them; completeness is best effort through Build L3.",
+          "aliases": [
+            "resolvedDependencies"
+          ],
           "range": "InTotoResourceDescriptor",
           "multivalued": true,
           "inlined": true,
@@ -3955,6 +4110,9 @@
         "slsa_build_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_build",
+      "broad_mappings": [
+        "spdx_core:DictionaryEntry"
+      ],
       "slots": [
         "slsaBuildParameter__parameter_name",
         "slsaBuildParameter__parameter_value"
@@ -3964,12 +4122,18 @@
         {
           "name": "parameter_name",
           "description": "The parameter's name.",
+          "broad_mappings": [
+            "spdx_core:key"
+          ],
           "required": true,
           "@type": "SlotDefinition"
         },
         {
           "name": "parameter_value",
           "description": "The parameter's value.",
+          "broad_mappings": [
+            "spdx_core:value"
+          ],
           "@type": "SlotDefinition"
         }
       ],
@@ -4005,6 +4169,9 @@
         {
           "name": "build_metadata",
           "description": "Metadata about this execution of the build.",
+          "aliases": [
+            "metadata"
+          ],
           "range": "SlsaBuildMetadata",
           "inlined": true,
           "@type": "SlotDefinition"
@@ -4043,17 +4210,35 @@
         {
           "name": "invocation_id",
           "description": "An identifier for this build invocation, in a format the builder defines; useful for finding its logs.",
+          "aliases": [
+            "invocationId"
+          ],
+          "close_mappings": [
+            "spdx_build:buildId"
+          ],
           "@type": "SlotDefinition"
         },
         {
           "name": "started_on",
           "description": "When the build started.",
+          "aliases": [
+            "startedOn"
+          ],
+          "close_mappings": [
+            "spdx_build:buildStartTime"
+          ],
           "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         },
         {
           "name": "finished_on",
           "description": "When the build finished.",
+          "aliases": [
+            "finishedOn"
+          ],
+          "close_mappings": [
+            "spdx_build:buildEndTime"
+          ],
           "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         }
@@ -4078,6 +4263,9 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/verification_summary",
         "https://slsa.dev/spec/v1.2/source-requirements#source-verification-summary-attestation"
+      ],
+      "exact_mappings": [
+        "slsa_dev:verification_summary/v1"
       ],
       "is_a": "SlsaPredicate",
       "slots": [
@@ -4106,6 +4294,9 @@
         {
           "name": "time_verified",
           "description": "When the verification happened.",
+          "aliases": [
+            "timeVerified"
+          ],
           "range": "in_toto_timestamp",
           "@type": "SlotDefinition"
         },
@@ -4120,6 +4311,9 @@
         {
           "name": "input_attestations",
           "description": "Every attestation the verifier consulted, each with a digest; complete when present.",
+          "aliases": [
+            "inputAttestations"
+          ],
           "range": "SlsaVerificationSummaryInputAttestation",
           "multivalued": true,
           "inlined": true,
@@ -4129,6 +4323,9 @@
         {
           "name": "verification_result",
           "description": "Whether the subject passed the policy.",
+          "aliases": [
+            "verificationResult"
+          ],
           "range": "SlsaVerificationResult",
           "required": true,
           "@type": "SlotDefinition"
@@ -4138,6 +4335,9 @@
           "description": "The highest level verified in each track, any verified property, and any result of the issuer's own; a level implies the levels below it.",
           "comments": [
             "A VSA lists at most one level per track, and only FAILED when verification failed; the validator checks neither."
+          ],
+          "aliases": [
+            "verifiedLevels"
           ],
           "range": "slsa_result_value",
           "required": true,
@@ -4164,6 +4364,9 @@
           "comments": [
             "The attestation's JSON tells an empty map (no dependencies) from an absent one (no claim); this list cannot, so an empty list reads as no claim."
           ],
+          "aliases": [
+            "dependencyLevels"
+          ],
           "range": "SlsaDependencyLevelCount",
           "multivalued": true,
           "inlined": true,
@@ -4173,6 +4376,9 @@
         {
           "name": "slsa_version",
           "description": "The SLSA specification version the verifier applied, as MAJOR.MINOR.",
+          "aliases": [
+            "slsaVersion"
+          ],
           "pattern": "^[0-9]+\\.[0-9]+$",
           "@type": "SlotDefinition"
         }
@@ -4313,6 +4519,9 @@
       "see_also": [
         "https://slsa.dev/spec/v1.2/source-requirements#definitions"
       ],
+      "close_mappings": [
+        "doap:Repository"
+      ],
       "slots": [
         "slsaSourceRepository__repository_uri",
         "slsaSourceRepository__hosted_by"
@@ -4322,6 +4531,9 @@
         {
           "name": "repository_uri",
           "description": "The stable locator the SCS gives the repository.",
+          "close_mappings": [
+            "doap:location"
+          ],
           "identifier": true,
           "range": "uri",
           "@type": "SlotDefinition"
@@ -4408,6 +4620,9 @@
       "name": "SlsaNamedReference",
       "definition_uri": "https://w3id.org/lmodel/slsa/SlsaNamedReference",
       "description": "A user-friendly name for a revision in a repository, such as main or v1.2.3; reference_type says whether it is a branch or a tag.",
+      "comments": [
+        "A branch moves and a tag never does, so no named reference is both, which children_are_mutually_disjoint states for the ontology."
+      ],
       "in_subset": [
         "slsa_source_track"
       ],
@@ -4445,6 +4660,7 @@
         }
       ],
       "class_uri": "https://w3id.org/lmodel/slsa/SlsaNamedReference",
+      "children_are_mutually_disjoint": true,
       "@type": "ClassDefinition"
     },
     {
@@ -4455,6 +4671,9 @@
         "slsa_source_track"
       ],
       "from_schema": "https://w3id.org/lmodel/slsa/slsa_source",
+      "narrow_mappings": [
+        "doap:GitBranch"
+      ],
       "is_a": "SlsaNamedReference",
       "slots": [
         "repository",
@@ -5724,8 +5943,8 @@
   ],
   "metamodel_version": "1.12.0",
   "source_file": "slsa.yaml",
-  "source_file_date": "2026-10-30T16:19:28",
-  "source_file_size": 3821,
+  "source_file_date": "2026-11-01T00:24:57",
+  "source_file_size": 3966,
   "@type": "SchemaDefinition",
   "@context": [
     "project/jsonld/slsa.context.jsonld",

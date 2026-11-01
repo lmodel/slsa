@@ -6,6 +6,12 @@ The `v0.1.0` tag is a baseline, not a release: it marks where versioning starts 
 
 ## [Unreleased]
 
+### Added
+
+- **Mappings to SLSA's predicate type URIs, SPDX 3.0.1, DOAP and PROV-O.** The two predicate classes map exactly to their predicate types; the build provenance's fields map closely to SPDX's Build profile, and packages, parties and repositories to SPDX, PROV-O and DOAP terms, by the project's own comparison.
+- **The attestation's JSON keys as aliases**, such as `buildType` on `build_type` and `timeVerified` on `time_verified`; tests check each against SLSA's provenance format and VSA schema.
+- **Disjoint classes for the ontology:** a predicate is of one kind only, and no named reference is both a branch and a tag. Each module also gains `in_language` and `keywords`.
+
 ### Fixed
 
 - **The vendored in-toto core is lmodel/in-toto v0.1.1's.** Its comment on `predicate` now says that this repository's adapt copy calls the slot `slsa_predicate`; v0.1.0's named only in-toto's own copy's name.
