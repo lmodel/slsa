@@ -6137,7 +6137,7 @@
   ],
   "metamodel_version": "1.12.0",
   "source_file": "slsa.yaml",
-  "source_file_date": "2026-11-01T00:24:57",
+  "source_file_date": "2026-11-01T18:08:52",
   "source_file_size": 3966,
   "@type": "SchemaDefinition",
   "@context": [

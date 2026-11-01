@@ -882,6 +882,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+    aliases:
+    - uri
     mappings:
     - in_toto_linkml:resource_uri
     slot_uri: in_toto_linkml:resource_uri
@@ -2054,6 +2056,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha256
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha256
     slot_uri: in_toto_linkml:sha256
     alias: sha256
     owner: InTotoDigestSet
@@ -2067,6 +2071,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha224
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha224
     slot_uri: in_toto_linkml:sha224
     alias: sha224
     owner: InTotoDigestSet
@@ -2080,6 +2086,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha384
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha384
     slot_uri: in_toto_linkml:sha384
     alias: sha384
     owner: InTotoDigestSet
@@ -2093,6 +2101,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha512
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha512
     slot_uri: in_toto_linkml:sha512
     alias: sha512
     owner: InTotoDigestSet
@@ -2132,6 +2142,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha3_224
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha3_224
     slot_uri: in_toto_linkml:sha3_224
     alias: sha3_224
     owner: InTotoDigestSet
@@ -2145,6 +2157,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha3_256
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha3_256
     slot_uri: in_toto_linkml:sha3_256
     alias: sha3_256
     owner: InTotoDigestSet
@@ -2158,6 +2172,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha3_384
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha3_384
     slot_uri: in_toto_linkml:sha3_384
     alias: sha3_384
     owner: InTotoDigestSet
@@ -2171,6 +2187,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha3_512
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha3_512
     slot_uri: in_toto_linkml:sha3_512
     alias: sha3_512
     owner: InTotoDigestSet
@@ -2277,6 +2295,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:sha1
+    related_mappings:
+    - spdx_core:HashAlgorithm/sha1
     slot_uri: in_toto_linkml:sha1
     alias: sha1
     owner: InTotoDigestSet
@@ -2292,6 +2312,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:md5
+    related_mappings:
+    - spdx_core:HashAlgorithm/md5
     slot_uri: in_toto_linkml:md5
     alias: md5
     owner: InTotoDigestSet
@@ -2304,6 +2326,8 @@ slots:
     description: A digest over a directory's content by the dirhash Hash1 function,
       in lowercase hexadecimal rather than base64.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - dirHash
     mappings:
     - in_toto_linkml:dir_hash
     slot_uri: in_toto_linkml:dir_hash
@@ -2317,6 +2341,8 @@ slots:
     name: inTotoDigestSet__git_commit
     description: The git commit id of a source revision.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - gitCommit
     mappings:
     - in_toto_linkml:git_commit
     slot_uri: in_toto_linkml:git_commit
@@ -2330,6 +2356,8 @@ slots:
     name: inTotoDigestSet__git_tree
     description: The git tree id of a source revision's content, or of any file tree.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - gitTree
     mappings:
     - in_toto_linkml:git_tree
     slot_uri: in_toto_linkml:git_tree
@@ -2343,6 +2371,8 @@ slots:
     name: inTotoDigestSet__git_blob
     description: The git blob id of a file's content.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - gitBlob
     mappings:
     - in_toto_linkml:git_blob
     slot_uri: in_toto_linkml:git_blob
@@ -2356,6 +2386,8 @@ slots:
     name: inTotoDigestSet__git_tag
     description: The git object id of an annotated tag.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - gitTag
     mappings:
     - in_toto_linkml:git_tag
     slot_uri: in_toto_linkml:git_tag
@@ -2439,6 +2471,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:value
+    related_mappings:
+    - spdx_core:hashValue
     slot_uri: in_toto_linkml:value
     alias: value
     owner: InTotoAdditionalDigest
@@ -2453,6 +2487,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:annotation_key
+    close_mappings:
+    - spdx_core:key
     slot_uri: in_toto_linkml:annotation_key
     alias: annotation_key
     owner: InTotoAnnotation
@@ -2466,6 +2502,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     mappings:
     - in_toto_linkml:annotation_values
+    close_mappings:
+    - spdx_core:value
     slot_uri: in_toto_linkml:annotation_values
     alias: annotation_values
     owner: InTotoAnnotation
@@ -2477,6 +2515,8 @@ slots:
     name: inTotoResourceDescriptor__resource_name
     description: A name for the resource within the attestation that carries it.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - name
     mappings:
     - in_toto_linkml:resource_name
     slot_uri: in_toto_linkml:resource_name
@@ -2490,8 +2530,13 @@ slots:
     description: Where the resource can be fetched, when that differs from its identifying
       URI.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - downloadLocation
     mappings:
     - in_toto_linkml:download_location
+    close_mappings:
+    - spdx_software:downloadLocation
+    - dcat:downloadURL
     slot_uri: in_toto_linkml:download_location
     alias: download_location
     owner: InTotoResourceDescriptor
@@ -2502,8 +2547,12 @@ slots:
     name: inTotoResourceDescriptor__media_type
     description: The IANA media type of the resource's content.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - mediaType
     mappings:
     - dcat:mediaType
+    close_mappings:
+    - spdx_core:contentType
     slot_uri: dcat:mediaType
     alias: media_type
     owner: InTotoResourceDescriptor
@@ -2547,6 +2596,8 @@ slots:
     name: inTotoStatement__statement_type
     description: The in-toto statement type, always https://in-toto.io/Statement/v1.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - _type
     mappings:
     - in_toto_linkml:statement_type
     slot_uri: in_toto_linkml:statement_type
@@ -2579,6 +2630,8 @@ slots:
     description: The URI that names the predicate's type and so its schema, such as
       https://in-toto.io/attestation/test-result/v0.1.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    aliases:
+    - predicateType
     mappings:
     - in_toto_linkml:predicate_type
     slot_uri: in_toto_linkml:predicate_type
@@ -2609,6 +2662,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+    aliases:
+    - uri
     mappings:
     - in_toto_linkml:resource_uri
     is_a: resource_uri
@@ -2630,6 +2685,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+    aliases:
+    - uri
     mappings:
     - in_toto_linkml:resource_uri
     is_a: resource_uri
@@ -2695,6 +2752,8 @@ slots:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
+    aliases:
+    - uri
     mappings:
     - in_toto_linkml:resource_uri
     is_a: resource_uri
@@ -4057,6 +4116,9 @@ classes:
       JSON Schema generator leaves a condition's own range out, and a null value would
       then count as present.
     comments:
+    - 'A field named after an algorithm that SPDX 3 also names relates to SPDX''s
+      individual for it. BLAKE2b is left unmapped: the framework allows any length
+      from 32 to 64 bytes, where SPDX names three fixed lengths.'
     - The named algorithms take lowercase hexadecimal, and additional_digests holds
       any other algorithm, such as an SCS's own revision type.
     - A consumer accepts only the algorithms it considers secure and ignores the rest,
@@ -4067,6 +4129,8 @@ classes:
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+    aliases:
+    - DigestSet
     slots:
     - inTotoDigestSet__sha256
     - inTotoDigestSet__sha224
@@ -4097,21 +4161,29 @@ classes:
       sha256:
         name: sha256
         description: The SHA-256 digest of the artifact.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha256
         slot_uri: in_toto_linkml:sha256
         pattern: ^[a-f0-9]{64}$
       sha224:
         name: sha224
         description: The SHA-224 digest of the artifact.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha224
         slot_uri: in_toto_linkml:sha224
         pattern: ^[a-f0-9]{56}$
       sha384:
         name: sha384
         description: The SHA-384 digest of the artifact.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha384
         slot_uri: in_toto_linkml:sha384
         pattern: ^[a-f0-9]{96}$
       sha512:
         name: sha512
         description: The SHA-512 digest of the artifact.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha512
         slot_uri: in_toto_linkml:sha512
         pattern: ^[a-f0-9]{128}$
       sha512_224:
@@ -4127,21 +4199,29 @@ classes:
       sha3_224:
         name: sha3_224
         description: The SHA3-224 digest of the artifact.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha3_224
         slot_uri: in_toto_linkml:sha3_224
         pattern: ^[a-f0-9]{56}$
       sha3_256:
         name: sha3_256
         description: The SHA3-256 digest of the artifact.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha3_256
         slot_uri: in_toto_linkml:sha3_256
         pattern: ^[a-f0-9]{64}$
       sha3_384:
         name: sha3_384
         description: The SHA3-384 digest of the artifact.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha3_384
         slot_uri: in_toto_linkml:sha3_384
         pattern: ^[a-f0-9]{96}$
       sha3_512:
         name: sha3_512
         description: The SHA3-512 digest of the artifact.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha3_512
         slot_uri: in_toto_linkml:sha3_512
         pattern: ^[a-f0-9]{128}$
       shake128:
@@ -4184,6 +4264,8 @@ classes:
         description: The SHA-1 digest of the artifact.
         comments:
         - SHA-1 lacks collision resistance, so most consumers should not rely on it.
+        related_mappings:
+        - spdx_core:HashAlgorithm/sha1
         slot_uri: in_toto_linkml:sha1
         pattern: ^[a-f0-9]{40}$
       md5:
@@ -4191,33 +4273,45 @@ classes:
         description: The MD5 digest of the artifact.
         comments:
         - MD5 lacks collision resistance, so most consumers should not accept it.
+        related_mappings:
+        - spdx_core:HashAlgorithm/md5
         slot_uri: in_toto_linkml:md5
         pattern: ^[a-f0-9]{32}$
       dir_hash:
         name: dir_hash
         description: A digest over a directory's content by the dirhash Hash1 function,
           in lowercase hexadecimal rather than base64.
+        aliases:
+        - dirHash
         slot_uri: in_toto_linkml:dir_hash
         pattern: ^[a-f0-9]{64}$
       git_commit:
         name: git_commit
         description: The git commit id of a source revision.
+        aliases:
+        - gitCommit
         slot_uri: in_toto_linkml:git_commit
         pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
       git_tree:
         name: git_tree
         description: The git tree id of a source revision's content, or of any file
           tree.
+        aliases:
+        - gitTree
         slot_uri: in_toto_linkml:git_tree
         pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
       git_blob:
         name: git_blob
         description: The git blob id of a file's content.
+        aliases:
+        - gitBlob
         slot_uri: in_toto_linkml:git_blob
         pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
       git_tag:
         name: git_tag
         description: The git object id of an annotated tag.
+        aliases:
+        - gitTag
         slot_uri: in_toto_linkml:git_tag
         pattern: ^[a-f0-9]{40}([a-f0-9]{24})?$
       additional_digests:
@@ -4393,9 +4487,13 @@ classes:
       type of its own that includes the repository, such as svn_revision_id.
     - Each algorithm appears once in a list, since the attestation's JSON uses it
       as a key; the validator does not check this.
+    - It is related to, not the same as, an SPDX 3 Hash, whose algorithm comes from
+      a closed list, where this one's may be a revision type rather than a digest.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/digest_set.md
+    related_mappings:
+    - spdx_core:Hash
     slots:
     - inTotoAdditionalDigest__algorithm
     - inTotoAdditionalDigest__value
@@ -4419,6 +4517,8 @@ classes:
         name: value
         description: The digest under that algorithm, in the encoding the algorithm
           documents.
+        related_mappings:
+        - spdx_core:hashValue
         slot_uri: in_toto_linkml:value
         required: true
         pattern: ^\S+$
@@ -4435,6 +4535,8 @@ classes:
     - Each key appears once in a list, since the attestation's JSON uses it as a key;
       the validator does not check this.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
+    close_mappings:
+    - spdx_core:DictionaryEntry
     slots:
     - inTotoAnnotation__annotation_key
     - inTotoAnnotation__annotation_values
@@ -4442,11 +4544,15 @@ classes:
       annotation_key:
         name: annotation_key
         description: The annotation's key.
+        close_mappings:
+        - spdx_core:key
         slot_uri: in_toto_linkml:annotation_key
         required: true
       annotation_values:
         name: annotation_values
         description: The annotation's values.
+        close_mappings:
+        - spdx_core:value
         slot_uri: in_toto_linkml:annotation_values
         multivalued: true
     class_uri: in_toto_linkml:InTotoAnnotation
@@ -4462,9 +4568,15 @@ classes:
     comments:
     - A descriptor carries at least one of a URI, a digest or its content; a field
       that needs a particular one says so.
+    - It describes an artifact, where an SPDX 3 Artifact is the artifact itself, so
+      the two are related rather than the same.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/resource_descriptor.md
+    aliases:
+    - ResourceDescriptor
+    related_mappings:
+    - spdx_core:Artifact
     slots:
     - resource_uri
     - digest
@@ -4477,16 +4589,27 @@ classes:
       resource_name:
         name: resource_name
         description: A name for the resource within the attestation that carries it.
+        aliases:
+        - name
         slot_uri: in_toto_linkml:resource_name
       download_location:
         name: download_location
         description: Where the resource can be fetched, when that differs from its
           identifying URI.
+        aliases:
+        - downloadLocation
+        close_mappings:
+        - spdx_software:downloadLocation
+        - dcat:downloadURL
         slot_uri: in_toto_linkml:download_location
         range: in_toto_resource_uri
       media_type:
         name: media_type
         description: The IANA media type of the resource's content.
+        aliases:
+        - mediaType
+        close_mappings:
+        - spdx_core:contentType
         slot_uri: dcat:mediaType
       content:
         name: content
@@ -4558,9 +4681,15 @@ classes:
       statements, are outside this model.
     - A statement is the attestation, and its predicate is one kind of claim about
       the subjects, such as a test result or build provenance.
+    - Its exact mapping is the type URI its statement_type holds, as each predicate
+      class maps to its predicate_type.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/statement.md
+    aliases:
+    - Statement
+    exact_mappings:
+    - in_toto_io:Statement/v1
     slots:
     - predicate
     - inTotoStatement__statement_type
@@ -4570,6 +4699,8 @@ classes:
       statement_type:
         name: statement_type
         description: The in-toto statement type, always https://in-toto.io/Statement/v1.
+        aliases:
+        - _type
         slot_uri: in_toto_linkml:statement_type
         range: in_toto_type_uri
         required: true
@@ -4588,6 +4719,8 @@ classes:
         name: predicate_type
         description: The URI that names the predicate's type and so its schema, such
           as https://in-toto.io/attestation/test-result/v0.1.
+        aliases:
+        - predicateType
         slot_uri: in_toto_linkml:predicate_type
         range: in_toto_type_uri
         required: true
@@ -4601,9 +4734,13 @@ classes:
     - The statement's predicate_type names the predicate's type by URI, and each concrete
       class says which URI it renders. Nothing ties the two, since a schema that imports
       this module may model a predicate under its own URI.
+    - A predicate is of one kind only, so the kinds that extend this class are mutually
+      disjoint.
     from_schema: https://w3id.org/lmodel/in-toto/in_toto_core
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/predicate.md
+    aliases:
+    - Predicate
     abstract: true
     slots:
     - inTotoPredicate__predicate_kind
@@ -4615,8 +4752,9 @@ classes:
         designates_type: true
         range: string
     class_uri: in_toto_linkml:InTotoPredicate
+    children_are_mutually_disjoint: true
 metamodel_version: 1.12.0
 source_file: slsa.yaml
-source_file_date: '2026-11-01T00:24:57'
+source_file_date: '2026-11-01T18:08:52'
 source_file_size: 3966
 

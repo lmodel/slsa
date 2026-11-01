@@ -55,7 +55,10 @@ imports:
 types:
   in_toto_resource_uri:
     typeof: uri
-    base: URI
+    # The type inherits base URI and repr str from uri. Setting base here makes
+    # gen-pydantic skip the inherited repr and write an annotation it never imports:
+    # https://github.com/linkml/linkml/issues/3491
+    # base: URI
     description: >-
       A URI that identifies or locates a resource, such as a package URL or a git
       repository address, with its scheme and authority in lowercase.
@@ -70,7 +73,8 @@ types:
 
   in_toto_type_uri:
     typeof: uri
-    base: URI
+    # As for in_toto_resource_uri: https://github.com/linkml/linkml/issues/3491
+    # base: URI
     description: >-
       A URI that names a type, such as a statement's or a predicate's, with its
       scheme and authority in lowercase.

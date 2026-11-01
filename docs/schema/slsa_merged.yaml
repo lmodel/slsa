@@ -374,7 +374,6 @@ types:
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#resourceuri
     typeof: uri
-    base: URI
     pattern: ^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$
   in_toto_type_uri:
     name: in_toto_type_uri
@@ -387,7 +386,6 @@ types:
     see_also:
     - https://github.com/in-toto/attestation/blob/v1.2.0/spec/v1/field_types.md#typeuri
     typeof: uri
-    base: URI
     pattern: ^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$
   in_toto_timestamp:
     name: in_toto_timestamp

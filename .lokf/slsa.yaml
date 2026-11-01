@@ -1524,7 +1524,6 @@ slots:
 types:
   in_toto_resource_uri:
     typeof: uri
-    base: URI
     description: A URI that identifies or locates a resource, such as a package URL or a git repository
       address, with its scheme and authority in lowercase.
     see_also:
@@ -1535,7 +1534,6 @@ types:
     pattern: ^[a-z][a-z0-9+.-]*:(//[^/?#A-Z]*([/?#].*)?|[^/].*|/[^/].*|/)?$
   in_toto_type_uri:
     typeof: uri
-    base: URI
     description: A URI that names a type, such as a statement's or a predicate's, with its scheme and
       authority in lowercase.
     see_also:
