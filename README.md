@@ -14,7 +14,7 @@ Supply-chain Levels for Software Artifacts (LinkML)
 
 ## What it models
 
-The [SLSA specification](https://slsa.dev/spec/v1.2/), version 1.2: the Build and Source tracks, the build provenance and Verification Summary Attestation predicates, and the roles, build platform and package model. The in-toto statement layer they sit in comes from [lmodel/in-toto](https://github.com/lmodel/in-toto)'s core module, vendored in [src/slsa/schema/in_toto/](src/slsa/schema/in_toto). The Dependency and Build Environment tracks follow the working draft at 1.2. The schema's `version` is 1.2.0, the copy in [src/slsa/schema/spec/](src/slsa/schema/spec) matches the `v1.2` tag, and a weekly workflow opens an issue when the SLSA Working Group tags a newer version.
+The schema models the [SLSA specification](https://slsa.dev/spec/v1.2/), version 1.2: the Build and Source tracks, the build provenance and Verification Summary Attestation predicates, and the roles, build platform and package model. The in-toto statement layer comes from [lmodel/in-toto](https://github.com/lmodel/in-toto)'s core module, vendored in [src/slsa/schema/in_toto/](src/slsa/schema/in_toto). The Dependency and Build Environment tracks follow the working draft at 1.2. The copy in [src/slsa/schema/spec/](src/slsa/schema/spec) matches the `v1.2` tag, and a weekly workflow opens an issue when the SLSA Working Group tags a newer version.
 
 ## Influences
 
@@ -22,7 +22,14 @@ Two sources add elements of their own, each in a subset: the CNCF *Secure Softwa
 
 ## Mappings
 
-The two predicate classes map exactly to their predicate type URIs, `https://slsa.dev/provenance/v1` and `https://slsa.dev/verification_summary/v1`. Other terms map to [SPDX 3.0.1](https://spdx.org/rdf/3.0.1/terms/)'s Build profile, Core and Software terms, to [DOAP](https://github.com/ewilderj/doap), to [W3C PROV-O](https://www.w3.org/TR/prov-o/), and, for the results `PASSED` and `FAILED`, to the outcomes of those names in [W3C EARL 1.0](https://www.w3.org/TR/EARL10-Schema/). SLSA publishes no alignment, so those mappings are this project's own, made by comparing definitions. SPDX's build `environment` and `configSource` fields name SLSA 0.2's, so they map where SLSA's table for migrating from 0.2 puts those fields. [tests/test_schema_rules.py](tests/test_schema_rules.py) lists each term the mappings name and the file it was checked in.
+SLSA publishes no alignment, so every mapping but the first is this project's own.
+
+* **Predicate types**: the two predicate classes map exactly to `https://slsa.dev/provenance/v1` and `https://slsa.dev/verification_summary/v1`.
+* **[SPDX 3.0.1](https://spdx.org/rdf/3.0.1/terms/)**: Build profile, Core and Software terms. SPDX's build `environment` and `configSource` map where SLSA's migration table from 0.2 puts those fields.
+* **[DOAP](https://github.com/ewilderj/doap)** and **[W3C PROV-O](https://www.w3.org/TR/prov-o/)**: the nearest terms.
+* **[W3C EARL 1.0](https://www.w3.org/TR/EARL10-Schema/)**: the results `PASSED` and `FAILED` mean EARL's outcomes of those names.
+
+[tests/test_schema_rules.py](tests/test_schema_rules.py) lists each term the mappings name and the file it was checked in.
 
 ## Repository Structure
 
@@ -46,23 +53,19 @@ Several pre-defined command-recipes are available using [just](https://github.co
 
 ## Knowledge Trust Ladder (KTL)
 
-`.lokf/` holds this project's [KTL](https://w3id.org/ktl/) knowledge bundle. Its domain schema is `.lokf/slsa.yaml`, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy.
+`.lokf/` holds this project's [KTL](https://w3id.org/ktl/) knowledge bundle. Its domain schema, `.lokf/slsa.yaml`, is the copy `just lokf-adapt` writes from `src/slsa/schema/slsa.yaml`, and `just lokf-adapt-check` says when it is stale. Edit the source, never the copy.
 
-`just lokf-adapt` rewrites the copy and `just lokf-adapt-check` says when it is stale; `project.justfile` says which classes the copy roots on `Concept`. A concept may name any of them, or a subclass, as its `type`. Obsidian users of the KTL Registrar and KTL Curator plugins should add them to the *Known LOKF types* setting:
+The copy roots these classes on `Concept`, so a concept may name any of them, or a subclass, as its `type`. In Obsidian, add them to the *Known LOKF types* setting of the KTL Registrar and KTL Curator plugins:
 
 ```text
 SlsaProducer, SlsaConsumer, SlsaVerifier, SlsaInfrastructureProvider, SlsaBuildImageProducer, SlsaBuildPlatform, SlsaControlPlane, SlsaPackage, SlsaPackageRegistry, SlsaSourceControlSystem, SlsaSourceRepository, SlsaSourceRevision, SlsaBuildImage
 ```
 
-In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. Two slots are renamed in the copy, because LOKF 0.9.0 defines slots of the same names: `revision` is `slsa_revision`, with its IRI still `slsa:revision`, and a statement's `predicate` is `slsa_predicate`, with in-toto's IRI. A slsa document keeps both keys. Every other key keeps its name, because no other top-level class, slot, enum or type in the schema has a name that `lokf.yaml` defines. `lokf adapt` does not compare class attributes, so `media_type` keeps the name it shares with a LOKF slot, and takes that slot's IRI, `dcat:mediaType`.
+In the copy, LOKF's `id` stands in for each class's own identifier (`builder_id`, `repository_uri` and the like), so a concept writes `id`. LOKF 0.9.0 defines `revision` and `predicate`, so the copy renames them `slsa_revision`, with its IRI still `slsa:revision`, and `slsa_predicate`, with in-toto's IRI. A slsa document keeps both keys. `media_type` keeps its name, because `lokf adapt` does not compare class attributes, and takes LOKF's IRI, `dcat:mediaType`.
 
 ## License
 
-The schema and the code are under the Apache License 2.0 ([LICENSE](LICENSE)).
-
-The repository also carries the specification's pages in [src/slsa/schema/spec/](src/slsa/schema/spec) and the CNCF Secure Software Factory whitepaper in [docs/](docs/), each under its own license. See [NOTICE](NOTICE).
-
-This is not an official SLSA release, and its use does not imply endorsement by the SLSA Working Group, OpenSSF or the CNCF.
+The schema and the code are under the Apache License 2.0 ([LICENSE](LICENSE)). The specification's pages in [src/slsa/schema/spec/](src/slsa/schema/spec) and the CNCF Secure Software Factory whitepaper in [docs/](docs/) keep their own licences: see [NOTICE](NOTICE). This is not an official SLSA release, and its use does not imply endorsement by the SLSA Working Group, OpenSSF or the CNCF.
 
 ## Contributing and security
 
