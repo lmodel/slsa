@@ -2,6 +2,7 @@
 
 ## 2026-11-01
 
+* **Changed**: the in-toto pages, the schema concept, the licence policy and the source map name lmodel/in-toto v0.2.0, whose core module the schema now vendors, and its new pinned hash.
 * **Changed**: the schema concept says which mappings the schema declares, as the README's Mappings section now does.
 
 ## 2026-10-31
