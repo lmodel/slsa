@@ -26,7 +26,7 @@ references:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/test-data
 generated:
   by: process:ktl-librarian
-  at: "2026-10-30T23:13:40Z"
+  at: "2026-11-06T21:13:28Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -39,7 +39,7 @@ verified:
 2. Edit the schema in `src/slsa/schema/`: `slsa.yaml` and the modules it imports. Leave `in_toto/in_toto_core.yaml` as it is: it is lmodel/in-toto's core module, copied unchanged,[^notice] and `tests/test_in_toto_import.py` fails when its git object hash differs from the one it pins. To take a later release of lmodel/in-toto, replace the file and the pinned hash together.[^test_in_toto_import.py]
 3. Run `just gen-project` to regenerate `project/` and the Python data models. After you rename or remove a class, run `just clean` first: `gen-java` writes one file per class into `project/java/` and deletes none.
 4. Run `just gen-doc` to regenerate `docs/schema/slsa.yaml` and `docs/elements/`. To see them on the site, run `npm run dev` in `website/`, as `website/README.md` says. Then run `just gen-merged` to regenerate `docs/schema/slsa_merged.yaml`.
-5. Run `just lokf-adapt` to regenerate `.lokf/slsa.yaml`, the bundle's domain schema. [slsa LinkML schema](../datasets/slsa-linkml-schema.md) says which `lokf` the recipe runs, and how to run another.
+5. Run `just lokf-adapt` to regenerate `.lokf/schema/slsa.yaml`, the bundle's domain schema. [slsa LinkML schema](../datasets/slsa-linkml-schema.md) says which `lokf` the recipe runs, and how to run another.
 6. Run `just test`. It runs three steps:
     - `_test-schema` runs `gen-project` into a scratch `tmp/` folder.
     - `_test-python` regenerates the Python models and runs pytest.
@@ -50,7 +50,7 @@ verified:
 `.github/workflows/main.yaml` runs `just test` on every push to `main` and on every pull request, on Python 3.10, 3.11, 3.12, 3.13 and 3.14. On Python 3.13 it also runs two more steps:
 
 - `just lint`, before the tests;
-- `just lokf-adapt-check`, after the tests and after `uv sync --locked --project .lokf` installs the bundle's toolkit. It fails when `.lokf/slsa.yaml` is stale against the schema or `.lokf/lokf.yaml`.
+- `just lokf-adapt-check`, after the tests and after `uv sync --locked --project .lokf` installs the bundle's toolkit. It fails when `.lokf/schema/slsa.yaml` is stale against the schema or `.lokf/schema/lokf.yaml`.
 
 On WSL2 (Windows Subsystem for Linux), run `export JUST_TEMPDIR=/tmp` before any recipe. Without `JUST_TEMPDIR`, shebang recipes fail with "Permission denied" errors, so the justfile prints a warning when the variable is missing.
 

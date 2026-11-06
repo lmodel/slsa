@@ -3,7 +3,7 @@ type: Dataset
 id: https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
 genre: reference
 title: slsa LinkML schema
-description: "The modular LinkML schema of the SLSA specification v1.2 (schema id `https://w3id.org/lmodel/slsa`): `slsa.yaml` imports a core module and one module per track, predicate or study, covering the Build, Source, Dependency and Build Environment tracks; the core imports the in-toto statement layer from lmodel/in-toto's vendored core module and adds SlsaStatement; its `lokf adapt` copy in `.lokf/slsa.yaml` is the bundle's domain schema."
+description: "The modular LinkML schema of the SLSA specification v1.2 (schema id `https://w3id.org/lmodel/slsa`): `slsa.yaml` imports a core module and one module per track, predicate or study, covering the Build, Source, Dependency and Build Environment tracks; the core imports the in-toto statement layer from lmodel/in-toto's vendored core module and adds SlsaStatement; its `lokf adapt` copy in `.lokf/schema/slsa.yaml` is the bundle's domain schema."
 resource: src/slsa/schema/slsa.yaml
 version: 1.2.0
 license: Apache-2.0
@@ -23,7 +23,7 @@ relatedTo:
   - https://w3id.org/lmodel/slsa/knowledge/references/openssf-supply-chain
 generated:
   by: process:ktl-librarian
-  at: "2026-11-01T00:30:27Z"
+  at: "2026-11-06T21:13:28Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -106,11 +106,11 @@ Together, the modules hold 42 classes, 9 enums, 4 types and 6 subsets. The in-to
 
 `SlsaBuildLevel`, `SlsaSourceLevel`, `SlsaDependencyLevel` and `SlsaBuildEnvironmentLevel` name each track's [levels](../glossary/slsa-level.md). `SlsaResult` lists the verification results SLSA defines, and `SlsaVerificationResult` says whether a verification passed. A VSA's verified levels take the `slsa_result_value` type, which admits SLSA's results and an issuer's own. `SlsaReviewType` names the forms of review that may approve a revision. `SlsaAdoptionChallenge` and `SlsaAdoptionStrategy` encode the [adoption study](../references/slsa-adoption-study.md)'s themes.
 
-The slsa modules tag their elements with subsets, which [Schema subsets](../explanations/schema-subsets.md) explains. The merged copies in `docs/schema/`, the Python data models, the `project/` artifacts and `.lokf/slsa.yaml` are generated from these files: see [Generated artifacts](generated-artefacts.md). The README says that the two predicate classes map exactly to their predicate type URIs, and that the schema's other mappings, to SPDX 3.0.1, DOAP, W3C PROV-O and, for the results `PASSED` and `FAILED`, W3C EARL 1.0, are the project's own, made by comparing definitions. It says that SPDX's build `environment` and `configSource` fields map where SLSA's table for migrating from 0.2 puts the fields they name.[^readme.md]
+The slsa modules tag their elements with subsets, which [Schema subsets](../explanations/schema-subsets.md) explains. The merged copies in `docs/schema/`, the Python data models, the `project/` artifacts and `.lokf/schema/slsa.yaml` are generated from these files: see [Generated artifacts](generated-artefacts.md). The README says that the two predicate classes map exactly to their predicate type URIs, and that the schema's other mappings, to SPDX 3.0.1, DOAP, W3C PROV-O and, for the results `PASSED` and `FAILED`, W3C EARL 1.0, are the project's own, made by comparing definitions. It says that SPDX's build `environment` and `configSource` fields map where SLSA's table for migrating from 0.2 puts the fields they name.[^readme.md]
 
 ## As the bundle's domain schema
 
-A domain schema adds a host's own classes and keys to the LOKF vocabulary. The README says that the bundle's domain schema is `.lokf/slsa.yaml`, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy. `just lokf-adapt` rewrites the copy, and `just lokf-adapt-check` fails when the copy is stale.[^readme.md]
+A domain schema adds a host's own classes and keys to the LOKF vocabulary. The README says that the bundle's domain schema is `.lokf/schema/slsa.yaml`, a copy that `lokf adapt` wrote from `src/slsa/schema/slsa.yaml`. Edit the source, never the copy. `just lokf-adapt` rewrites the copy, and `just lokf-adapt-check` fails when the copy is stale.[^readme.md]
 
 `project.justfile` passes nine root classes to `lokf adapt`: `SlsaParty`, `SlsaBuildPlatform`, `SlsaControlPlane`, `SlsaPackage`, `SlsaPackageRegistry`, `SlsaSourceControlSystem`, `SlsaSourceRepository`, `SlsaSourceRevision` and `SlsaBuildImage`. A concept may name any of them, or a subclass, as its `type`. The README lists thirteen classes for Obsidian users of the KTL Registrar and KTL Curator plugins to add to the *Known LOKF types* setting. They are the eight roots other than `SlsaParty`, which the schema marks abstract, and the five subclasses of `SlsaParty`: `SlsaProducer`, `SlsaConsumer`, `SlsaVerifier`, `SlsaInfrastructureProvider` and `SlsaBuildImageProducer`.
 

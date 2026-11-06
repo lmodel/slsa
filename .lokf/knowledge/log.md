@@ -1,5 +1,9 @@
 # Change Log
 
+## 2026-11-06
+
+* **Changed**: `lokf.yaml` and `slsa.yaml` moved into `.lokf/schema/`, where KTL v0.62.0 keeps a sidecar's schema files, and the concepts that name them follow.
+
 ## 2026-11-01
 
 * **Changed**: the schema concept names the EARL outcomes the results mean, and the SPDX Build fields that map by SLSA's migration table, as the README's Mappings section now does.
