@@ -41,7 +41,7 @@ npx skills add noelmcloughlin/knowledge-trust-ladder --skill ktl-curator --yes  
 
 ## Before opening a pull request
 
-- **Edit the schema, then regenerate.** Edit `src/slsa/schema/`, run `just gen-project`, `just gen-doc`, `just gen-merged` and `just lokf-adapt`, and commit the output; `project/`, `src/slsa/datamodel/`, `docs/schema/` and `.lokf/slsa.yaml` are generated.
+- **Edit the schema, then regenerate.** Edit `src/slsa/schema/`, run `just gen-project`, `just gen-doc`, `just gen-merged` and `just lokf-adapt`, and commit the output; `project/`, `src/slsa/datamodel/`, `docs/schema/` and `.lokf/schema/slsa.yaml` are generated.
 - **Cite the passage a description renders.** A class, slot or enum value says what the SLSA specification, the whitepaper or the study says; name the page in the pull request. [AI_COVENANT.md](AI_COVENANT.md) says why.
 - **Leave `src/slsa/schema/spec/` as upstream wrote it.** Replace it from a SLSA release instead; [NOTICE](NOTICE) records which release, and `upstream-watch.yaml` checks it.
 - **Run the tests**: `just test` (schema generation, `pytest`, and the examples under `tests/data/`). Example data goes in `tests/data/valid/` and `tests/data/invalid/`, named `ClassName-###.yaml`.

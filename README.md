@@ -53,7 +53,7 @@ Several pre-defined command-recipes are available using [just](https://github.co
 
 ## Knowledge Trust Ladder (KTL)
 
-`.lokf/` holds this project's [KTL](https://w3id.org/ktl/) knowledge bundle. Its domain schema, `.lokf/slsa.yaml`, is the copy `just lokf-adapt` writes from `src/slsa/schema/slsa.yaml`, and `just lokf-adapt-check` says when it is stale. Edit the source, never the copy.
+`.lokf/` holds this project's [KTL](https://w3id.org/ktl/) knowledge bundle. Its domain schema, `.lokf/schema/slsa.yaml`, is the copy `just lokf-adapt` writes from `src/slsa/schema/slsa.yaml`, and `just lokf-adapt-check` says when it is stale. Edit the source, never the copy.
 
 The copy roots these classes on `Concept`, so a concept may name any of them, or a subclass, as its `type`. In Obsidian, add them to the *Known LOKF types* setting of the KTL Registrar and KTL Curator plugins:
 

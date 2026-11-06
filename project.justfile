@@ -6,8 +6,8 @@
 
 # ============ Knowledge bundle: the adapted domain schema ============
 
-# `.lokf/slsa.yaml` is the copy `lokf adapt` writes from the schema so that it
-# can sit beside `.lokf/lokf.yaml` (`lokf adapt --help` lists the moves). The
+# `.lokf/schema/slsa.yaml` is the copy `lokf adapt` writes from the schema so that it
+# can sit beside `.lokf/schema/lokf.yaml` (`lokf adapt --help` lists the moves). The
 # roots are the classes a knowledge concept may use as its `type`; a class with
 # an identifier of its own is one of them, because the copy gives it LOKF's
 # `id` in place of that identifier. The recipes run the `lokf` the sidecar's
@@ -16,15 +16,15 @@
 lokf_cmd := env_var_or_default("LOKF_CMD", "uv run --project .lokf lokf")
 lokf_adapt_roots := "--root SlsaParty --root SlsaBuildPlatform --root SlsaControlPlane --root SlsaPackage --root SlsaPackageRegistry --root SlsaSourceControlSystem --root SlsaSourceRepository --root SlsaSourceRevision --root SlsaBuildImage"
 
-# Rewrite .lokf/slsa.yaml from the schema (run after every schema change)
+# Rewrite .lokf/schema/slsa.yaml from the schema (run after every schema change)
 [group('knowledge bundle')]
 lokf-adapt:
-  {{lokf_cmd}} adapt {{source_schema_path}} {{lokf_adapt_roots}} --lokf .lokf/lokf.yaml -o .lokf/slsa.yaml
+  {{lokf_cmd}} adapt {{source_schema_path}} {{lokf_adapt_roots}} --lokf .lokf/schema/lokf.yaml -o .lokf/schema/slsa.yaml
 
-# Fail when .lokf/slsa.yaml is stale against the schema or .lokf/lokf.yaml
+# Fail when .lokf/schema/slsa.yaml is stale against the schema or .lokf/schema/lokf.yaml
 [group('knowledge bundle')]
 lokf-adapt-check:
-  {{lokf_cmd}} adapt {{source_schema_path}} {{lokf_adapt_roots}} --lokf .lokf/lokf.yaml -o .lokf/slsa.yaml --check
+  {{lokf_cmd}} adapt {{source_schema_path}} {{lokf_adapt_roots}} --lokf .lokf/schema/lokf.yaml -o .lokf/schema/slsa.yaml --check
 
 # ============ The merged schema for the docs site ============
 
