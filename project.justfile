@@ -35,3 +35,17 @@ lokf-adapt-check:
 [group('model development')]
 gen-merged:
   uv run gen-linkml --mergeimports -f yaml {{source_schema_path}} > docs/schema/{{schema_name}}_merged.yaml
+
+# ============ Artefacts gen-project does not write ============
+
+# Write one LinkML YAML with every import merged, as the copier template's recipe does
+[group('model development - extended')]
+gen-merged-schema:
+  mkdir -p {{dest}}/linkml
+  uv run gen-linkml --mergeimports -o {{dest}}/linkml/{{schema_name}}.merged.linkml.yaml {{source_schema_path}}
+
+# Write the schema as RDF Turtle; gen-project's rdf generator is switched off in LinkML
+[group('model development - extended')]
+gen-rdf:
+  mkdir -p {{dest}}/rdf
+  uv run gen-rdf --mergeimports {{source_schema_path}} > {{dest}}/rdf/{{schema_name}}.ttl
