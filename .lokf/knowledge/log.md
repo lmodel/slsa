@@ -2,6 +2,7 @@
 
 ## 2026-11-15
 
+* **Changed**: The concepts that state the project's Python floor or its test matrix say 3.11, since the project no longer supports Python 3.10.
 * **Changed**: Regenerate and test says to preview the schema's pages with the Hugo site's `scripts/build.sh serve`.
 * **Changed**: The documentation site, the knowledge sources and the licence policy describe the Hugo site that replaced the Astro one, set by `website/site.toml`.
 
