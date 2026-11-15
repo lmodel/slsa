@@ -64,7 +64,7 @@ skip = [
   "src/slsa/schema/spec/*",
   # Copied in by the KTL sidecar sync and written by npm, not by hand.
   ".lokf/scripts/*",
-  "website/package-lock.json",
+  "website/uv.lock",
 ]
 
 # Reminder: words have to be lowercased for the ignore-words-list
@@ -89,5 +89,5 @@ extend-exclude = [
   "src/slsa/datamodel/slsa.py",
   "src/slsa/schema/spec/*",
   ".lokf/scripts/*",
-  "website/package-lock.json",
+  "website/uv.lock",
 ]

@@ -34,7 +34,7 @@ SLSA publishes no alignment, so every mapping but the first is this project's ow
 ## Repository Structure
 
 * [docs/](docs/): the documentation pages the website shows
-  * [elements/](docs/elements/): generated schema documentation
+  * `docs/elements/`: generated schema documentation
 * [examples/](examples/): examples of using the schema
 * [project/](project/): project files (these files are auto-generated, do not edit)
 * [src/](src/): source files (edit these)
@@ -45,7 +45,7 @@ SLSA publishes no alignment, so every mapping but the first is this project's ow
       Python datamodel
 * [tests/](tests/): Python tests
   * [data/](tests/data): example data
-* [website/](website/): the documentation website, an Astro Starlight site built from the README, `docs/`, the schema's pages and the knowledge bundle
+* [website/](website/): the documentation website, a Hugo site built from the README, `docs/`, the schema's pages and the knowledge bundle
 
 ## Developer Tools
 
