@@ -33,7 +33,7 @@ sources:
   - resource: CONTRIBUTING.md
 generated:
   by: process:ktl-librarian
-  at: "2026-10-31T12:18:36Z"
+  at: "2026-11-15T03:01:34Z"
 status: draft
 ---
 
@@ -53,7 +53,7 @@ Each concept derived from a file or folder of this repository names it by its pa
 | `project.justfile`, the README's Knowledge Trust Ladder (KTL) and Mappings sections | the domain-schema and mappings sections of `datasets/slsa-linkml-schema` | re-read the `--root` classes, the known-types list, the `LOKF_CMD` note, the renamed and kept keys, and whether the schema declares mappings |
 | the comment on the adapted schema copy check in `.github/workflows/main.yaml`, the Compare with the last released bundle and Pack the domain schema steps of `.github/workflows/knowledge-release.yaml` | the release's schema asset in `datasets/generated-artefacts` | re-read the asset's name, its checksum file, what the comparison reads and which releases get it |
 | `tests/data/`, `tests/test_data.py`, `tests/test_schema_rules.py` | `datasets/test-data` | re-list and count the files in `tests/data/valid/` and `tests/data/invalid/`; re-read the naming rule and the two tests |
-| `website/site.config.mjs`, `website/scripts/routes.mjs`, `website/README.md`, `docs/index.md`, `.github/workflows/knowledge-website.yaml` | `services/documentation-site` | confirm the triggers and the deploy switch, the `DOCS`, `REDIRECTS` and `HOME` settings, and where a link to a file under `docs/` that is no page goes |
+| `website/site.toml`, `website/layouts/_partials/route.html`, `website/README.md`, `docs/index.md`, `.github/workflows/knowledge-website.yaml` | `services/documentation-site` | confirm the triggers and the deploy switch, the redirects and docs groups in `site.toml`, and where a link to a file under `docs/` that is no page goes |
 | `.github/workflows/main.yaml`, `CONTRIBUTING.md` | CI facts in `playbooks/regenerate-and-test` | confirm the Python matrix, the `just test`, `just lint` and `just lokf-adapt-check` steps and the regeneration steps |
 | `.github/workflows/pypi-publish.yaml`, `.github/workflows/semantic-release.yml`, `.releaserc.json`, `.github/scripts/changelog-release.mjs`, the Releasing section of `CONTRIBUTING.md` | `playbooks/release` | re-read the triggers, the environments, the repository variables and the release rules |
 | `README.md` (License section), `NOTICE`, `LICENSE`, the License section of `CONTRIBUTING.md` | `policies/license-and-attribution` | re-read each third-party entry in `NOTICE` and the README's License section |

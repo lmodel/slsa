@@ -3,8 +3,8 @@ type: Service
 id: https://w3id.org/lmodel/slsa/knowledge/services/documentation-site
 genre: reference
 title: slsa documentation site
-description: The Astro Starlight site in `website/`, built from the README, `docs/`, the schema's gen-doc pages and the knowledge bundle by the Knowledge website workflow, which publishes it at `https://lmodel.github.io/slsa/` once `KNOWLEDGE_WEBSITE_ENABLED` is true. Its `REDIRECTS` setting sends the retired mkdocs site's page addresses, such as `/elements/<name>`, on to the new pages.
-resource: website/site.config.mjs
+description: The Hugo site in `website/`, built from the README, `docs/`, the schema's gen-doc pages and the knowledge bundle by the Knowledge website workflow, which publishes it at `https://lmodel.github.io/slsa/` once `KNOWLEDGE_WEBSITE_ENABLED` is true. It sends the retired mkdocs site's page addresses, such as `/elements/<name>`, on to the new pages.
+resource: website/site.toml
 endpoint: https://lmodel.github.io/slsa/
 documentation: https://lmodel.github.io/slsa/
 sources:
@@ -12,7 +12,9 @@ sources:
     title: the build and deploy workflow
   - resource: website/README.md
     title: what each page is built from, and how to preview the site
-  - resource: website/scripts/routes.mjs
+  - resource: website/site.toml
+    title: the site's address, title and redirects
+  - resource: website/layouts/_partials/route.html
     title: where a link to a file under `docs/` that is no page goes
   - resource: docs/
     title: the site's hand-written pages
@@ -20,8 +22,7 @@ dependsOn:
   - https://w3id.org/lmodel/slsa/knowledge/datasets/slsa-linkml-schema
 generated:
   by: process:ktl-librarian
-  at: "2026-10-30T23:20:11Z"
-  revision: ff03483ebe9399faaadd37581b88d33b2bd65b1f
+  at: "2026-11-15T03:01:34Z"
 status: draft
 verified:
   - by: process:ktl-librarian
@@ -30,13 +31,13 @@ verified:
 
 # Documentation site
 
-`website/` holds an Astro Starlight site that the ktl-website skill laid down. `website/README.md` says what each page is built from:
+`website/` holds a Hugo site that the ktl-website skill laid down. `website/README.md` says what each page is built from:
 
 - the README is the home page;
 - each page under `docs/` is a page under `docs/`;
 - each concept in `.lokf/knowledge/` is a page under `knowledge/`, with its trust label;
-- `CHANGELOG.md` is a page per release;
-- the schema's `gen-doc` pages are pages under `schema/`.
+- `CHANGELOG.md` is a page per release under `changelog/`;
+- the schema's `gen-doc` pages are pages under `schema/`, each also at `elements/<Name>/`.
 
 The site also serves the four files `lokf export` writes under `knowledge/`.
 
@@ -49,12 +50,12 @@ The site also serves the four files `lokf export` writes under `knowledge/`.
 
 It deploys the default branch's build to GitHub Pages only once the repository variable `KNOWLEDGE_WEBSITE_ENABLED` is `true`, and deploys nothing for a pull request.
 
-`website/site.config.mjs` names `docs/` as the docs folder in `DOCS` and gives it no sidebar groups, so every docs page sits in one Guides group, by title, with `docs/index.md` first as its Overview. `docs/about.md` is the only other docs page. `DOCS.exclude` keeps `docs/templates-linkml/` off the site.
+`website/site.toml` names no docs groups, so the pages at the top of `docs/` form one group. The site leaves `docs/templates-linkml/` and `docs/elements/` out.
 
-`HOME` in the same file gives the home page four buttons, in this order: Browse the bundle, Schema (the schema's pages), Bundle health and Knowledge graph.
+The home page has the same five buttons on every site: the schema, the bundle, the architecture page, the glossary and the quick start. A button whose page is not there is greyed.
 
-`REDIRECTS` in the same file sends three addresses the retired mkdocs site gave its pages on to their new pages: `/elements` to `/schema/`, each `/elements/<name>` to `/schema/<name>/`, and `/about` to `/docs/about/`. Its `/elements/[...slug]` entry stands for one redirect per schema page.
+`website/site.toml` sends `/about` on to the page built from `docs/about.md`, and each `/schema/<name>/` address on to that element's page. The site itself sends each `/elements/<name>/` address, which the retired mkdocs site gave a schema page, on to the element's page.
 
-A link from a docs page to a file under `docs/` that is no page of the site opens that file in the repository on GitHub. Such files are `schema/slsa.yaml`, `schema/slsa_merged.yaml` (the same schema with no imports) and `Secure_Software_Factory_Whitepaper.pdf`.
+A link from a docs page to a file under `docs/` that is no page of the site opens that file on GitHub. Such files are `schema/slsa_merged.yaml` (the schema with no imports) and `Secure_Software_Factory_Whitepaper.pdf`.
 
-To preview the site, run `npm ci --ignore-scripts` and then `npm run dev` in `website/`. It needs Node.js 22.12 or later and uv.
+To preview the site, run `scripts/build.sh serve` in `website/`. It needs bash, git and uv, and takes Hugo and Pagefind from PyPI.

@@ -19,6 +19,7 @@ The `slsa-linkml` package is a LinkML schema and the Python datamodel generated 
 | Surface | What holds it |
 | --- | --- |
 | `main.yaml` and `lint-and-docs.yaml` on every pull request, and `knowledge-registrar.yaml` on any that touches `.lokf/`: tests, linters and the bundle's form | Read-only jobs with `persist-credentials: false`; `uv sync --locked` installs only what `uv.lock` pins. |
+| `scorecard.yml` and `codeql.yml`, which publish the OpenSSF Scorecard and scan the code | Read-only checkout; only the upload of results can write: `security-events: write`, and for Scorecard `id-token: write`. |
 | `semantic-release.yml`, which pushes a changelog commit and tag to `main` and dispatches the publish | Runs only on a push to `main`, in the `release` Environment, installing its pinned tools with `--ignore-scripts`. [Repository hardening](https://github.com/noelmcloughlin/knowledge-trust-ladder/blob/main/docs/threat-model.md#repository-hardening). |
 | `pypi-publish.yaml`, which uploads to PyPI | Trusted publishing (OIDC), no stored token; the upload job runs behind the `pypi-release` Environment and builds nothing itself. A dispatch publishes only from a `v*` tag. Off until `PYPI_RELEASE_ENABLED` is `true`. |
 | `deploy-docs.yaml`, which pushes the site to `gh-pages` | Runs only from `main`, with `contents: write` alone. The dev dependencies `uv.lock` pins run while that credential is on disk. |
