@@ -1,5 +1,9 @@
 # Change Log
 
+## 2026-11-15
+
+* **Changed**: The documentation site, the knowledge sources and the licence policy describe the Hugo site that replaced the Astro one, set by `website/site.toml`.
+
 ## 2026-11-06
 
 * **Changed**: `lokf.yaml` and `slsa.yaml` moved into `.lokf/schema/`, where KTL v0.62.0 keeps a sidecar's schema files, and the concepts that name them follow.
