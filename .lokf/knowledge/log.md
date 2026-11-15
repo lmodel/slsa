@@ -2,6 +2,7 @@
 
 ## 2026-11-15
 
+* **Changed**: Regenerate and test says to preview the schema's pages with the Hugo site's `scripts/build.sh serve`.
 * **Changed**: The documentation site, the knowledge sources and the licence policy describe the Hugo site that replaced the Astro one, set by `website/site.toml`.
 
 ## 2026-11-06
